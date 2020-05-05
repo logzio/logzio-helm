@@ -1,0 +1,63 @@
+{{- if .Values.logzioCert }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: logzio-cert
+  namespace: kube-system
+  labels:
+    k8s-app: metricbeat
+data:
+{{- range $path, $config := .Values.logzioCert }}
+  {{ $path }}: |-
+{{ $config | indent 4 -}}
+{{- end -}}
+{{- end -}}
+
+{{- if .Values.metricbeatConfig }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: metricbeat-config
+  namespace: kube-system
+  labels:
+    k8s-app: metricbeat
+data:
+{{- range $path, $config := .Values.metricbeatConfig }}
+  {{ $path }}: |-
+{{ $config | indent 4 -}}
+{{- end -}}
+{{- end -}}
+
+{{- if .Values.daemonset.metricbeatConfig }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: metricbeat-daemonset-modules
+  namespace: kube-system
+  labels:
+    k8s-app: metricbeat
+data:
+{{- range $path, $config := .Values.daemonset.metricbeatConfig }}
+  {{ $path }}: |-
+{{ $config | indent 4 -}}
+{{- end -}}
+{{- end -}}
+
+{{- if .Values.deployment.metricbeatConfig }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: metricbeat-deployment-modules
+  namespace: kube-system
+  labels:
+    k8s-app: metricbeat
+data:
+{{- range $path, $config := .Values.deployment.metricbeatConfig }}
+  {{ $path }}: |-
+{{ $config | indent 4 -}}
+{{- end -}}
+{{- end -}}

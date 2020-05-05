@@ -1,0 +1,126 @@
+# Deploy singleton instance in the whole cluster for some unique data sources, like kube-state-metrics
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metricbeat
+  namespace: kube-system
+  labels:
+    k8s-app: metricbeat
+spec:
+  selector:
+    matchLabels:
+      k8s-app: metricbeat
+  template:
+    metadata:
+      labels:
+        k8s-app: metricbeat
+    spec:
+      serviceAccountName: {{ template "metricbeat.serviceAccount" . }}
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+      - name: "metricbeat"
+        image: "{{ .Values.image }}:{{ .Values.imageTag }}"
+        args: [
+          "-c", "/etc/metricbeat.yml",
+          "-e",
+        ]
+        env:
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: LOGZIO_METRICS_SHIPPING_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: logzio-metrics-secret
+              key: logzio-metrics-shipping-token
+        - name: LOGZIO_METRICS_LISTENER_HOST
+          valueFrom:
+            secretKeyRef:
+              name: logzio-metrics-secret
+              key: logzio-metrics-listener-host
+        - name: KUBE_STATE_METRICS_NAMESPACE
+          valueFrom:
+            secretKeyRef:
+              name: cluster-details
+              key: kube-state-metrics-namespace
+        - name: KUBE_STATE_METRICS_PORT
+          valueFrom:
+            secretKeyRef:
+              name: cluster-details
+              key: kube-state-metrics-port
+        - name: CLUSTER_NAME
+          valueFrom:
+            secretKeyRef:
+              name: cluster-details
+              key: cluster-name
+        securityContext: {{ toYaml ( .Values.podSecurityContext | default .Values.deployment.securityContext ) | nindent 10 }}
+        resources: {{ toYaml ( .Values.resources | default .Values.deployment.resources ) | nindent 10 }}
+        volumeMounts:
+        {{- range .Values.secretMounts | default .Values.deployment.secretMounts }}
+        - name: {{ .name }}
+          mountPath: "{{ .mountPath }}"
+          readOnly: true
+          {{- if .subPath }}
+          subPath: {{ .subPath }}
+          {{- end }}
+        {{- end }}
+        {{- range $path, $config := .Values.metricbeatConfig }}
+        - name: metricbeat-config
+          mountPath: /etc/{{ $path }}
+          readOnly: true
+          subPath: {{ $path }}
+        {{ else }}
+        {{- range $path, $config := .Values.deployment.metricbeatConfig }}
+        - name: metricbeat-config
+          mountPath: /etc/{{ $path }}
+          readOnly: true
+          subPath: {{ $path }}
+        {{- end }}
+        {{- end }}
+        - name: dockersock
+          mountPath: /var/run/docker.sock
+        - name: proc
+          mountPath: /hostfs/proc
+          readOnly: true
+        - name: cgroup
+          mountPath: /hostfs/sys/fs/cgroup
+          readOnly: true
+        {{- if .Values.extraVolumeMounts | default .Values.deployment.extraVolumeMounts }}
+{{ toYaml ( .Values.extraVolumeMounts | default .Values.deployment.extraVolumeMounts ) | indent 8 }}
+        {{- end }}
+      volumes:
+      {{- range .Values.secretMounts | default .Values.deployment.secretMounts }}
+      - name: {{ .name }}
+        configMap:
+          defaultMode: 0600
+          name: {{ .secretName }}
+      {{- end }}
+      {{- if .Values.metricbeatConfig }}
+      - name: metricbeat-config
+        configMap:
+          defaultMode: 0600
+          name: {{ template "metricbeat.fullname" . }}-config
+      {{- else if .Values.deployment.metricbeatConfig }}
+      - name: metricbeat-config
+        configMap:
+          defaultMode: 0600
+          name: {{ template "metricbeat.fullname" . }}-deployment-config
+      {{- end }}
+      - name: proc
+        hostPath:
+          path: /proc
+      - name: cgroup
+        hostPath:
+          path: /sys/fs/cgroup
+      - name: dockersock
+        hostPath:
+          path: /var/run/docker.sock
+      - name: data
+        hostPath:
+          path: {{ .Values.hostPathRoot }}/{{ template "metricbeat.fullname" . }}-{{ .Release.Namespace }}-data
+          type: DirectoryOrCreate
+      {{- if .Values.extraVolumes | default .Values.deployment.extraVolumes }}
+{{ toYaml ( .Values.extraVolumes | default .Values.deployment.extraVolumes ) | indent 6 }}
+      {{- end }}

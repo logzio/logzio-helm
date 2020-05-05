@@ -1,0 +1,2 @@
+Watch all containers come up.
+  $ kubectl get pods --namespace=kube-system -l app={{ template "metricbeat.fullname" . }} -w
