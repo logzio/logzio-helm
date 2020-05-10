@@ -1,0 +1,13 @@
+apiVersion: v1
+entries:
+  logzio-helm-metrics:
+  - apiVersion: v1
+    appVersion: 0.0.1
+    created: "2020-05-10T12:15:37.672975+03:00"
+    description: A Helm chart for Kubernetes
+    digest: de425742798f468754a0f7c729334bc73864f634a49c38f6f8f6bdcb25b0d599
+    name: logzio-helm-metrics
+    urls:
+    - https://logzio.github.io/logzio-helm/logzio-helm-metrics-0.0.1.tgz
+    version: 0.0.1
+generated: "2020-05-10T12:15:37.670129+03:00"
