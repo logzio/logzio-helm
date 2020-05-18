@@ -1,9 +1,9 @@
-#Logzio Kubernetes Helm Charts
+# Logzio Kubernetes Helm Charts
 
 Helm is a tool for managing Charts. Charts are packages of pre-configured Kubernetes resources.  
 This repo contains Helm charts for shipping logs & metrics to logz.io.
 
-##Charts
+## Charts
 
 Please look in the chart directories for the documentation for each chart.
 
