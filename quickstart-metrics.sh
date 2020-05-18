@@ -58,4 +58,4 @@ kubectl --namespace=kube-system create secret generic cluster-details \
   --from-literal=kube-state-metrics-port=$kube_stat_port \
   --from-literal=cluster-name=$cluster_name
 
-helm install --repo https://logzio.github.io/logzio-helm/metricbeat logzio-helm-metrics logzio-helm-metrics
+helm install --namespace=kube-system --repo https://logzio.github.io/logzio-helm/metricbeat logzio-helm-metrics logzio-helm-metrics
