@@ -111,7 +111,7 @@ Specify each parameter using the `--set key=value[,key=value]` argument to `helm
 
 ```shell
 helm install --namespace=kube-system logzio-helm-metrics logzio-helm/logzio-helm-metrics \
-  --set=image.tag=7.7.0,terminationGracePeriodSeconds=30
+  --set=imageTag=7.7.0,terminationGracePeriodSeconds=30
 ```
 
 ### Uninstalling the Chart
