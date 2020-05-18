@@ -107,7 +107,7 @@ Give your metrics some time to get from your system to ours, and then open [Logz
 | `deployment.securityContext` | Configurable [securityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) for Metricbeat Deployment pod execution environment. | see [values.yaml](https://github.com/logzio/logzio-helm/blob/master/metricbeat/values.yaml) |
 | `deployment.secretMounts` | Allows you easily mount a secret as a file inside the Deployment Useful for mounting certificates and other secrets. | see [values.yaml](https://github.com/logzio/logzio-helm/blob/master/metricbeat/values.yaml) |
 
-Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
+If you wish to change the default values, specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
 ```shell
 helm install --namespace=kube-system logzio-helm-metrics logzio-helm/logzio-helm-metrics \
