@@ -91,7 +91,10 @@ Give your metrics some time to get from your system to ours, and then open [Logz
 | `serviceAccount.create` | Specifies whether a service account should be created. | `true` |
 | `serviceAccount.name` | Name of the service account. | `metricbeat` |
 | `podSecurityContext` | Configurable [securityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) for Metricbeat DaemonSet and Deployment pod execution environment. | `{}` |
+| `resources` | Allows you to set the resources for both Metricbeat DaemonSet and Deployment. | `{}` |
 | `clusterRoleRules` | Configurable [cluster role rules](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#role-and-clusterrole) that Metricbeat uses to access Kubernetes resources. | see [values.yaml](https://github.com/logzio/logzio-helm/blob/master/metricbeat/values.yaml) |
+| `managedServiceAccount` | Whether the serviceAccount should be managed by this helm chart. Set this to false in order to manage your own service account and related roles. | `true` |
+| `secretMounts` | Allows you easily mount a secret as a file inside DaemonSet and Deployment Useful for mounting certificates and other secrets. | `see [values.yaml](https://github.com/logzio/logzio-helm/blob/master/metricbeat/values.yaml)` |
 | `terminationGracePeriod` | Termination period (in seconds) to wait before killing Metricbeat pod process on pod shutdown. | `30` |
 | `hostPathRoot` | Fully-qualified [hostPath](https://kubernetes.io/docs/concepts/storage/volumes/#hostpath) that will be used to persist Metricbeat registry data. | `/var/lib` |
 | `logzioCert` | Logzio public SSL certificate. | see [values.yaml](https://github.com/logzio/logzio-helm/blob/master/metricbeat/values.yaml) |
@@ -100,11 +103,13 @@ Give your metrics some time to get from your system to ours, and then open [Logz
 | `daemonset.extraVolumes` | Templatable string of additional `volumes` to be passed to the DaemonSet. | see [values.yaml](https://github.com/logzio/logzio-helm/blob/master/metricbeat/values.yaml) |
 | `daemonset.metricbeatConfig` | Allows you to add any config files in `/usr/share/metricbeat` such as `metricbeat.yml` for Metricbeat Daemonset. | see [values.yaml](https://github.com/logzio/logzio-helm/blob/master/metricbeat/values.yaml) |
 | `daemonset.securityContext` | Configurable [securityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) for Metricbeat DaemonSet pod execution environment. | see [values.yaml](https://github.com/logzio/logzio-helm/blob/master/metricbeat/values.yaml) |
+| `daemonset.resources` | Allows you to set the resources for Metricbeat Deployment. | see [values.yaml](https://github.com/logzio/logzio-helm/blob/master/metricbeat/values.yaml) |
 | `daemonset.secretMounts` | Allows you easily mount a secret as a file inside the DaemonSet. Useful for mounting certificates and other secrets. | see [values.yaml](https://github.com/logzio/logzio-helm/blob/master/metricbeat/values.yaml) |
 | `deployment.extraVolumeMounts` | Templatable string of additional volumeMounts to be passed to the Deployment. | see [values.yaml](https://github.com/logzio/logzio-helm/blob/master/metricbeat/values.yaml) |
 | `deployment.extraVolumes` | Templatable string of additional `volumes` to be passed to the Deployment. | see [values.yaml](https://github.com/logzio/logzio-helm/blob/master/metricbeat/values.yaml) |
 | `deployment.metricbeatConfig` | Allows you to add any config files in `/usr/share/metricbeat` such as `metricbeat.yml` for Metricbeat Deployment. | see [values.yaml](https://github.com/logzio/logzio-helm/blob/master/metricbeat/values.yaml) |
 | `deployment.securityContext` | Configurable [securityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) for Metricbeat Deployment pod execution environment. | see [values.yaml](https://github.com/logzio/logzio-helm/blob/master/metricbeat/values.yaml) |
+| `deployment.resources` | Allows you to set the resources for Metricbeat Deployment. | see [values.yaml](https://github.com/logzio/logzio-helm/blob/master/metricbeat/values.yaml) |
 | `deployment.secretMounts` | Allows you easily mount a secret as a file inside the Deployment Useful for mounting certificates and other secrets. | see [values.yaml](https://github.com/logzio/logzio-helm/blob/master/metricbeat/values.yaml) |
 
 If you wish to change the default values, specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
