@@ -3,6 +3,14 @@ imageTag: "7.6.2"
 nameOverride: ""
 fullnameOverride: "metricbeat"
 
+apiVersions:
+  ConfigMap: v1
+  Deployment: apps/v1
+  DaemonSet: apps/v1
+  ServiceAccount: v1
+  ClusterRole: rbac.authorization.k8s.io/v1beta1
+  ClusterRoleBinding: rbac.authorization.k8s.io/v1beta1
+
 serviceAccount:
   create: true
   name: metricbeat

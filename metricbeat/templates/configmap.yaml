@@ -1,6 +1,6 @@
 {{- if .Values.logzioCert }}
 ---
-apiVersion: v1
+apiVersion: {{ .Values.apiVersions.ConfigMap }}
 kind: ConfigMap
 metadata:
   name: logzio-cert
@@ -16,7 +16,7 @@ data:
 
 {{- if .Values.metricbeatConfig }}
 ---
-apiVersion: v1
+apiVersion: {{ .Values.apiVersions.ConfigMap }}
 kind: ConfigMap
 metadata:
   name: metricbeat-config
@@ -32,7 +32,7 @@ data:
 
 {{- if .Values.daemonset.metricbeatConfig }}
 ---
-apiVersion: v1
+apiVersion: {{ .Values.apiVersions.ConfigMap }}
 kind: ConfigMap
 metadata:
   name: metricbeat-daemonset-modules
@@ -48,7 +48,7 @@ data:
 
 {{- if .Values.deployment.metricbeatConfig }}
 ---
-apiVersion: v1
+apiVersion: {{ .Values.apiVersions.ConfigMap }}
 kind: ConfigMap
 metadata:
   name: metricbeat-deployment-modules
