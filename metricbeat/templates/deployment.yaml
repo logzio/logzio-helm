@@ -1,5 +1,5 @@
 # Deploy singleton instance in the whole cluster for some unique data sources, like kube-state-metrics
-apiVersion: apps/v1
+apiVersion: {{ .Values.apiVersions.Deployment }}
 kind: Deployment
 metadata:
   name: metricbeat
