@@ -11,6 +11,9 @@ apiVersions:
   ClusterRole: rbac.authorization.k8s.io/v1beta1
   ClusterRoleBinding: rbac.authorization.k8s.io/v1beta1
 
+shippingProtocol: http
+shippingPort: 10255
+
 serviceAccount:
   create: true
   name: metricbeat
@@ -182,51 +185,6 @@ daemonset:
     configMap:
       defaultMode: 0600
       name: metricbeat-daemonset-modules
-  metricbeatConfig:
-    system.yml: |-
-      - module: system
-        period: 10s
-        metricsets:
-          - cpu
-          - load
-          - memory
-          - network
-          - process
-          - process_summary
-          - core
-          - diskio
-          - socket
-        processes: ['.*']
-        process.include_top_n:
-          by_cpu: 5      # include top 5 processes by CPU
-          by_memory: 5   # include top 5 processes by memory
-        cpu.metrics:  ["percentages", "normalized_percentages"]
-
-      - module: system
-        period: 1m
-        metricsets:
-          - filesystem
-          - fsstat
-        processors:
-        - drop_event.when.regexp:
-            system.filesystem.mount_point: '^/(sys|cgroup|proc|dev|etc|host|lib)($|/)'
-    kubernetes.yml: |-
-      - module: kubernetes
-        period: 10s
-        metricsets:
-          - node
-          - system
-          - pod
-          - container
-          - volume
-          - state_node
-          - state_pod
-          - state_container
-        hosts: ["https://${HOST_IP}:10250"]
-        enabled: true
-        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
-        ssl.certificate_authorities:
-          - /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
   securityContext:
     runAsUser: 0
   resources:
