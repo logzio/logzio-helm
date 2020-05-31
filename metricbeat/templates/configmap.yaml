@@ -29,8 +29,9 @@ data:
 {{ $config | indent 4 -}}
 {{- end -}}
 {{- end -}}
-
+{{ printf "\n" }}
 ---
+
 apiVersion: {{ .Values.apiVersions.ConfigMap }}
 kind: ConfigMap
 metadata:
