@@ -79,7 +79,7 @@ kubectl --namespace=kube-system create secret generic cluster-details \
   --from-literal=kube-state-metrics-port=$kube_stat_port \
   --from-literal=cluster-name=$cluster_name
 
-helm install --dry-run \
+helm install --namespace=kube-system \
 --set=shippingProtocol=${shipping_protocol} \
 --set=shippingPort=${shipping_port} \
 --set=apiVersions.Deployment=${deployment_api} \
