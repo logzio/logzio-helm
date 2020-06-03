@@ -1,5 +1,5 @@
 image: "docker.elastic.co/beats/metricbeat"
-imageTag: "7.6.2"
+imageTag: "7.3.2"
 nameOverride: ""
 fullnameOverride: "metricbeat"
 

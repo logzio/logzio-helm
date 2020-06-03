@@ -85,7 +85,7 @@ Give your metrics some time to get from your system to ours, and then open [Logz
 | Parameter | Description | Default |
 |---|---|---|
 | `image` | The Metricbeat Docker image. | `"docker.elastic.co/beats/metricbeat"` |
-| `imageTag` | The Metricbeat Docker image tag. | `"7.6.2"` |
+| `imageTag` | The Metricbeat Docker image tag. | `"7.3.2"` |
 | `nameOverride` | Overrides the chart name for resources. | `""` |
 | `fullnameOverride` | Overrides the full name of the resources. | `"metricbeat"` |
 | `apiVersions.ConfigMap` | Api version of `configmap.yaml`. | `v1` |
