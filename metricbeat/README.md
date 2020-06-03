@@ -1,7 +1,7 @@
-# Logzio-helm-metrics
+# Logzio-k8s-metrics
 
 Helm is a tool for managing Charts. Charts are packages of pre-configured Kubernetes resources.  
-Logzio-helm-metrics allows you to ship metrics from your Kubernetes cluster.
+Logzio-k8s-metrics allows you to ship metrics from your Kubernetes cluster.
 
 ### Prerequisites:
 * [Helm CLI](https://helm.sh/docs/intro/install/) installed
@@ -62,7 +62,7 @@ kubectl --namespace=kube-system create secret generic cluster-details \
 --from-literal=cluster-name=<<CLUSTER-NAME>>
 ```
 
-#### 3. Add logzio-helm-metrics repo to your helm repo list
+#### 3. Add logzio-k8s-metrics repo to your helm repo list
 
 ```shell
 helm repo add logzio-helm https://logzio.github.io/logzio-helm/metricbeat
@@ -71,7 +71,7 @@ helm repo add logzio-helm https://logzio.github.io/logzio-helm/metricbeat
 #### 4. Deploy
 
 ```shell
-helm install --namespace=kube-system logzio-helm-metrics logzio-helm/logzio-helm-metrics
+helm install --namespace=kube-system logzio-k8s-metrics logzio-helm/logzio-k8s-metrics
 ```
 
 #### 5. Check Logz.io for your metrics
@@ -88,6 +88,14 @@ Give your metrics some time to get from your system to ours, and then open [Logz
 | `imageTag` | The Metricbeat Docker image tag. | `"7.6.2"` |
 | `nameOverride` | Overrides the chart name for resources. | `""` |
 | `fullnameOverride` | Overrides the full name of the resources. | `"metricbeat"` |
+| `apiVersions.ConfigMap` | Api version of `configmap.yaml`. | `v1` |
+| `apiVersions.Deployment` | Api version of `deployment.yaml.` | `apps/v1` |
+| `apiVersions.DaemonSet` | Api version of `daemonset.yaml`. | `apps/v1` |
+| `apiVersions.ServiceAccount` | Api version of `serviceaccount.yaml`. | `v1` |
+| `apiVersions.ClusterRole` | Api version of `clusterrole.yaml`. | `rbac.authorization.k8s.io/v1beta1` |
+| `apiVersions.ClusterRoleBinding` | Api version of `clusterrolebinding.yaml`. | `rbac.authorization.k8s.io/v1beta1` |
+| `shippingProtocol` | Shipping protocol. | `http` |
+| `shippingPort` | Shipping port. | `10255` |
 | `serviceAccount.create` | Specifies whether a service account should be created. | `true` |
 | `serviceAccount.name` | Name of the service account. | `metricbeat` |
 | `podSecurityContext` | Configurable [securityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) for Metricbeat DaemonSet and Deployment pod execution environment. | `{}` |
@@ -115,15 +123,15 @@ Give your metrics some time to get from your system to ours, and then open [Logz
 If you wish to change the default values, specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
 ```shell
-helm install --namespace=kube-system logzio-helm-metrics logzio-helm/logzio-helm-metrics \
+helm install --namespace=kube-system logzio-k8s-metrics logzio-helm/logzio-k8s-metrics \
   --set=imageTag=7.7.0,terminationGracePeriodSeconds=30
 ```
 
 ### Uninstalling the Chart
 
 The command removes all the k8s components associated with the chart and deletes the release.  
-To uninstall the `logzio-helm-metrics` deployment:
+To uninstall the `logzio-k8s-metrics` deployment:
 
 ```shell
-helm uninstall --namespace=kube-system logzio-helm-metrics
+helm uninstall --namespace=kube-system logzio-k8s-metrics
 ```
