@@ -1,9 +1,13 @@
 echo "Checking for installed prerequisites.."
+echo "Checking for kubectl .............\c"
 has_kubectl=$(kubectl 2>&1)
 if [[ $has_kubectl == *"command not found"* ]]; then
-  echo "kubectl not found! Please install and configure kubectl first."
+  echo -n "kubectl not found! Please install and configure kubectl first."
   exit 1
 fi
+
+echo "Passed"
+echo "Checking for jq      .............\c"
 
 has_jq=$(jq --version 2>&1)
 if [[ $has_jq == *"not found"* ]]; then
@@ -12,23 +16,29 @@ if [[ $has_jq == *"not found"* ]]; then
   elif [[ "$OSTYPE" == "darwin"* ]]; then
       brew install jq
   else
-      echo "This OS is not supported by this installation script. Please follow the manual instructions at https://docs.logz.io/shipping/metrics-sources/kubernetes.html"
+      echo -n "This OS is not supported by this installation script. Please follow the manual instructions at https://docs.logz.io/shipping/metrics-sources/kubernetes.html"
       exit 1
   fi
 fi
 
+echo "Passed"
+echo "Checking for helm    .............\c"
 
 has_helm=$(helm version 2>&1)
 if [[ $has_helm == *"not found"* ]]; then
       curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 fi
 
+echo "Passed"
+echo "Checking for kubectl .............\c"
 
 has_kube_stat_metrics=$(kubectl get deployments --all-namespaces | grep kube-state-metrics)
 if [[ -z $has_kube_stat_metrics ]]; then
   echo "ERROR: kube-state-metrics is not deployed in your cluster. Please deploy it from https://github.com/kubernetes/kube-state-metrics and run this script again"
   exit 1
 fi
+
+echo "Passed"
 
 kube_stat_ns=$(kubectl get deployments --all-namespaces -o json | jq '.items[] | select(.metadata.name == "kube-state-metrics")' | jq -r '.metadata.namespace')
 kube_stat_port=$(kubectl get deployments --all-namespaces -o json | jq '.items[] | select(.metadata.name == "kube-state-metrics")' | jq '.spec.template.spec.containers[0].ports[] | select(.name == "http-metrics")' | jq '.containerPort')
