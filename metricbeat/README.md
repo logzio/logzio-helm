@@ -1,7 +1,8 @@
 # Logzio-k8s-metrics
 
-Helm is a tool for managing Charts. Charts are packages of pre-configured Kubernetes resources.  
+Helm is a tool for managing packages of pre-configured Kubernetes resources using Charts.
 Logzio-k8s-metrics allows you to ship metrics from your Kubernetes cluster.
+
 
 ### Prerequisites:
 * [Helm CLI](https://helm.sh/docs/intro/install/) installed
