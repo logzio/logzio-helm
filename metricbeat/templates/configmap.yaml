@@ -1,6 +1,6 @@
 {{- if .Values.logzioCert }}
 ---
-apiVersion: v1
+apiVersion: {{ .Values.apiVersions.ConfigMap }}
 kind: ConfigMap
 metadata:
   name: logzio-cert
@@ -16,7 +16,7 @@ data:
 
 {{- if .Values.metricbeatConfig }}
 ---
-apiVersion: v1
+apiVersion: {{ .Values.apiVersions.ConfigMap }}
 kind: ConfigMap
 metadata:
   name: metricbeat-config
@@ -29,10 +29,10 @@ data:
 {{ $config | indent 4 -}}
 {{- end -}}
 {{- end -}}
-
-{{- if .Values.daemonset.metricbeatConfig }}
+{{ printf "\n" }}
 ---
-apiVersion: v1
+
+apiVersion: {{ .Values.apiVersions.ConfigMap }}
 kind: ConfigMap
 metadata:
   name: metricbeat-daemonset-modules
@@ -40,15 +40,55 @@ metadata:
   labels:
     k8s-app: metricbeat
 data:
-{{- range $path, $config := .Values.daemonset.metricbeatConfig }}
-  {{ $path }}: |-
-{{ $config | indent 4 -}}
-{{- end -}}
-{{- end -}}
+  system.yml: |-
+    - module: system
+      period: 10s
+      metricsets:
+        - cpu
+        - load
+        - memory
+        - network
+        - process
+        - process_summary
+        - core
+        - diskio
+        - socket
+      processes: ['.*']
+      process.include_top_n:
+        by_cpu: 5      # include top 5 processes by CPU
+        by_memory: 5   # include top 5 processes by memory
+      cpu.metrics:  ["percentages", "normalized_percentages"]
+
+    - module: system
+      period: 1m
+      metricsets:
+        - filesystem
+        - fsstat
+      processors:
+      - drop_event.when.regexp:
+          system.filesystem.mount_point: '^/(sys|cgroup|proc|dev|etc|host|lib)($|/)'
+  kubernetes.yml: |-
+    - module: kubernetes
+      period: 10s
+      metricsets:
+        - node
+        - system
+        - pod
+        - container
+        - volume
+        - state_node
+        - state_pod
+        - state_container
+      hosts: ["{{ .Values.shippingProtocol }}://${HOST_IP}:{{ .Values.shippingPort }}"]
+      enabled: true
+      bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+      ssl.certificate_authorities:
+        - /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+
 
 {{- if .Values.deployment.metricbeatConfig }}
 ---
-apiVersion: v1
+apiVersion: {{ .Values.apiVersions.ConfigMap }}
 kind: ConfigMap
 metadata:
   name: metricbeat-deployment-modules

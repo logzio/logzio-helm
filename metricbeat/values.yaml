@@ -1,26 +1,26 @@
-replicaCount: 1
-
 image: "docker.elastic.co/beats/metricbeat"
-imageTag: "7.6.2"
-imagePullPolicy: "IfNotPresent"
-imagePullSecrets: []
+imageTag: "7.3.2"
 nameOverride: ""
 fullnameOverride: "metricbeat"
 
+apiVersions:
+  ConfigMap: v1
+  Deployment: apps/v1
+  DaemonSet: apps/v1
+  ServiceAccount: v1
+  ClusterRole: rbac.authorization.k8s.io/v1beta1
+  ClusterRoleBinding: rbac.authorization.k8s.io/v1beta1
+
+shippingProtocol: http
+shippingPort: 10255
+
 serviceAccount:
   create: true
-  annotations: {}
   name: metricbeat
 
 podSecurityContext: {}
 
-securityContext: {}
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
+resources: {}
 
 clusterRoleRules:
 - apiGroups: [""]
@@ -47,17 +47,73 @@ managedServiceAccount: true
 secretMounts:
 - name: cert
   secretName: logzio-cert
-  mountPath: "/etc/pki/tls/certs/COMODORSADomainValidationSecureServerCA.crt"
+  mountPath: "/etc/pki/tls/certs/TrustExternalCARoot_and_USERTrustRSAAAACA.crt"
   readOnly: true
-  subPath: COMODORSADomainValidationSecureServerCA.crt
-podSecurityContext: {}
+  subPath: TrustExternalCARoot_and_USERTrustRSAAAACA.crt
+
 terminationGracePeriod: 30
-# Root directory where metricbeat will write data to in order to persist registry data across pod restarts (file position and other metadata).
+
 hostPathRoot: /var/lib
-extraVolumes: {}
 
 logzioCert:
-  COMODORSADomainValidationSecureServerCA.crt: |-
+  TrustExternalCARoot_and_USERTrustRSAAAACA.crt: |-
+    -----BEGIN CERTIFICATE-----
+    MIIENjCCAx6gAwIBAgIBATANBgkqhkiG9w0BAQUFADBvMQswCQYDVQQGEwJTRTEU
+    MBIGA1UEChMLQWRkVHJ1c3QgQUIxJjAkBgNVBAsTHUFkZFRydXN0IEV4dGVybmFs
+    IFRUUCBOZXR3b3JrMSIwIAYDVQQDExlBZGRUcnVzdCBFeHRlcm5hbCBDQSBSb290
+    MB4XDTAwMDUzMDEwNDgzOFoXDTIwMDUzMDEwNDgzOFowbzELMAkGA1UEBhMCU0Ux
+    FDASBgNVBAoTC0FkZFRydXN0IEFCMSYwJAYDVQQLEx1BZGRUcnVzdCBFeHRlcm5h
+    bCBUVFAgTmV0d29yazEiMCAGA1UEAxMZQWRkVHJ1c3QgRXh0ZXJuYWwgQ0EgUm9v
+    dDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALf3GjPm8gAELTngTlvt
+    H7xsD821+iO2zt6bETOXpClMfZOfvUq8k+0DGuOPz+VtUFrWlymUWoCwSXrbLpX9
+    uMq/NzgtHj6RQa1wVsfwTz/oMp50ysiQVOnGXw94nZpAPA6sYapeFI+eh6FqUNzX
+    mk6vBbOmcZSccbNQYArHE504B4YCqOmoaSYYkKtMsE8jqzpPhNjfzp/haW+710LX
+    a0Tkx63ubUFfclpxCDezeWWkWaCUN/cALw3CknLa0Dhy2xSoRcRdKn23tNbE7qzN
+    E0S3ySvdQwAl+mG5aWpYIxG3pzOPVnVZ9c0p10a3CitlttNCbxWyuHv77+ldU9U0
+    WicCAwEAAaOB3DCB2TAdBgNVHQ4EFgQUrb2YejS0Jvf6xCZU7wO94CTLVBowCwYD
+    VR0PBAQDAgEGMA8GA1UdEwEB/wQFMAMBAf8wgZkGA1UdIwSBkTCBjoAUrb2YejS0
+    Jvf6xCZU7wO94CTLVBqhc6RxMG8xCzAJBgNVBAYTAlNFMRQwEgYDVQQKEwtBZGRU
+    cnVzdCBBQjEmMCQGA1UECxMdQWRkVHJ1c3QgRXh0ZXJuYWwgVFRQIE5ldHdvcmsx
+    IjAgBgNVBAMTGUFkZFRydXN0IEV4dGVybmFsIENBIFJvb3SCAQEwDQYJKoZIhvcN
+    AQEFBQADggEBALCb4IUlwtYj4g+WBpKdQZic2YR5gdkeWxQHIzZlj7DYd7usQWxH
+    YINRsPkyPef89iYTx4AWpb9a/IfPeHmJIZriTAcKhjW88t5RxNKWt9x+Tu5w/Rw5
+    6wwCURQtjr0W4MHfRnXnJK3s9EK0hZNwEGe6nQY1ShjTK3rMUUKhemPR5ruhxSvC
+    Nr4TDea9Y355e6cJDUCrat2PisP29owaQgVR1EX1n6diIWgVIEM8med8vSTYqZEX
+    c4g/VhsxOBi0cQ+azcgOno4uG+GMmIPLHzHxREzGBHNJdmAPx/i9F4BrLunMTA5a
+    mnkPIAou1Z5jJh5VkpTYghdae9C8x49OhgQ=
+    -----END CERTIFICATE-----
+    -----BEGIN CERTIFICATE-----
+    MIIFgTCCBGmgAwIBAgIQOXJEOvkit1HX02wQ3TE1lTANBgkqhkiG9w0BAQwFADB7
+    MQswCQYDVQQGEwJHQjEbMBkGA1UECAwSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
+    VQQHDAdTYWxmb3JkMRowGAYDVQQKDBFDb21vZG8gQ0EgTGltaXRlZDEhMB8GA1UE
+    AwwYQUFBIENlcnRpZmljYXRlIFNlcnZpY2VzMB4XDTE5MDMxMjAwMDAwMFoXDTI4
+    MTIzMTIzNTk1OVowgYgxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpOZXcgSmVyc2V5
+    MRQwEgYDVQQHEwtKZXJzZXkgQ2l0eTEeMBwGA1UEChMVVGhlIFVTRVJUUlVTVCBO
+    ZXR3b3JrMS4wLAYDVQQDEyVVU0VSVHJ1c3QgUlNBIENlcnRpZmljYXRpb24gQXV0
+    aG9yaXR5MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAgBJlFzYOw9sI
+    s9CsVw127c0n00ytUINh4qogTQktZAnczomfzD2p7PbPwdzx07HWezcoEStH2jnG
+    vDoZtF+mvX2do2NCtnbyqTsrkfjib9DsFiCQCT7i6HTJGLSR1GJk23+jBvGIGGqQ
+    Ijy8/hPwhxR79uQfjtTkUcYRZ0YIUcuGFFQ/vDP+fmyc/xadGL1RjjWmp2bIcmfb
+    IWax1Jt4A8BQOujM8Ny8nkz+rwWWNR9XWrf/zvk9tyy29lTdyOcSOk2uTIq3XJq0
+    tyA9yn8iNK5+O2hmAUTnAU5GU5szYPeUvlM3kHND8zLDU+/bqv50TmnHa4xgk97E
+    xwzf4TKuzJM7UXiVZ4vuPVb+DNBpDxsP8yUmazNt925H+nND5X4OpWaxKXwyhGNV
+    icQNwZNUMBkTrNN9N6frXTpsNVzbQdcS2qlJC9/YgIoJk2KOtWbPJYjNhLixP6Q5
+    D9kCnusSTJV882sFqV4Wg8y4Z+LoE53MW4LTTLPtW//e5XOsIzstAL81VXQJSdhJ
+    WBp/kjbmUZIO8yZ9HE0XvMnsQybQv0FfQKlERPSZ51eHnlAfV1SoPv10Yy+xUGUJ
+    5lhCLkMaTLTwJUdZ+gQek9QmRkpQgbLevni3/GcV4clXhB4PY9bpYrrWX1Uu6lzG
+    KAgEJTm4Diup8kyXHAc/DVL17e8vgg8CAwEAAaOB8jCB7zAfBgNVHSMEGDAWgBSg
+    EQojPpbxB+zirynvgqV/0DCktDAdBgNVHQ4EFgQUU3m/WqorSs9UgOHYm8Cd8rID
+    ZsswDgYDVR0PAQH/BAQDAgGGMA8GA1UdEwEB/wQFMAMBAf8wEQYDVR0gBAowCDAG
+    BgRVHSAAMEMGA1UdHwQ8MDowOKA2oDSGMmh0dHA6Ly9jcmwuY29tb2RvY2EuY29t
+    L0FBQUNlcnRpZmljYXRlU2VydmljZXMuY3JsMDQGCCsGAQUFBwEBBCgwJjAkBggr
+    BgEFBQcwAYYYaHR0cDovL29jc3AuY29tb2RvY2EuY29tMA0GCSqGSIb3DQEBDAUA
+    A4IBAQAYh1HcdCE9nIrgJ7cz0C7M7PDmy14R3iJvm3WOnnL+5Nb+qh+cli3vA0p+
+    rvSNb3I8QzvAP+u431yqqcau8vzY7qN7Q/aGNnwU4M309z/+3ri0ivCRlv79Q2R+
+    /czSAaF9ffgZGclCKxO/WIu6pKJmBHaIkU4MiRTOok3JMrO66BQavHHxW/BBC5gA
+    CiIDEOUMsfnNkjcZ7Tvx5Dq2+UUTJnWvu6rvP3t3O9LEApE9GQDTF1w52z97GA1F
+    zZOFli9d31kWTz9RvdVFGD/tSo7oBmF0Ixa1DVBzJ0RHfxBdiSprhTEUxOipakyA
+    vGp4z7h/jnZymQyd/teRCBaho1+V
+    -----END CERTIFICATE-----
     -----BEGIN CERTIFICATE-----
     MIIGCDCCA/CgAwIBAgIQKy5u6tl1NmwUim7bo3yMBzANBgkqhkiG9w0BAQwFADCB
     hTELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4G
@@ -117,17 +173,9 @@ metricbeatConfig:
       logstash:
         hosts: ["${LOGZIO_METRICS_LISTENER_HOST}:5015"]
         ssl:
-          certificate_authorities: ['/etc/pki/tls/certs/COMODORSADomainValidationSecureServerCA.crt']
+          certificate_authorities: ['/etc/pki/tls/certs/TrustExternalCARoot_and_USERTrustRSAAAACA.crt']
 
 daemonset:
-  affinity: {}
-  # Extra environment variables for Metricbeat container.
-  envFrom: []
-  # - configMapRef:
-  #     name: config-secret
-  extraEnvs: []
-  #  - name: MY_ENVIRONMENT_VAR
-  #    value: the_value_goes_here
   extraVolumeMounts:
     - name: modules
       mountPath: /usr/share/metricbeat/modules.d
@@ -137,52 +185,6 @@ daemonset:
     configMap:
       defaultMode: 0600
       name: metricbeat-daemonset-modules
-  hostNetworking: false
-  metricbeatConfig:
-    system.yml: |-
-      - module: system
-        period: 10s
-        metricsets:
-          - cpu
-          - load
-          - memory
-          - network
-          - process
-          - process_summary
-          - core
-          - diskio
-          - socket
-        processes: ['.*']
-        process.include_top_n:
-          by_cpu: 5      # include top 5 processes by CPU
-          by_memory: 5   # include top 5 processes by memory
-        cpu.metrics:  ["percentages", "normalized_percentages"]
-
-      - module: system
-        period: 1m
-        metricsets:
-          - filesystem
-          - fsstat
-        processors:
-        - drop_event.when.regexp:
-            system.filesystem.mount_point: '^/(sys|cgroup|proc|dev|etc|host|lib)($|/)'
-    kubernetes.yml: |-
-      - module: kubernetes
-        period: 10s
-        metricsets:
-          - node
-          - system
-          - pod
-          - container
-          - volume
-          - state_node
-          - state_pod
-          - state_container
-        hosts: ["https://${HOST_IP}:10250"]
-        enabled: true
-        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
-        ssl.certificate_authorities:
-          - /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
   securityContext:
     runAsUser: 0
   resources:
@@ -194,20 +196,11 @@ daemonset:
   secretMounts:
   - name: cert
     secretName: logzio-cert
-    mountPath: "/etc/pki/tls/certs/COMODORSADomainValidationSecureServerCA.crt"
+    mountPath: "/etc/pki/tls/certs/TrustExternalCARoot_and_USERTrustRSAAAACA.crt"
     readOnly: true
-    subPath: COMODORSADomainValidationSecureServerCA.crt
-  nodeSelector: {}
+    subPath: TrustExternalCARoot_and_USERTrustRSAAAACA.crt
 
 deployment:
-  affinity: {}
-  # Extra environment variables for Metricbeat container.
-  envFrom: []
-  # - configMapRef:
-  #     name: config-secret
-  extraEnvs: []
-  #  - name: MY_ENVIRONMENT_VAR
-  #    value: the_value_goes_here
   extraVolumeMounts:
   - name: modules
     mountPath: /usr/share/metricbeat/modules.d
@@ -241,6 +234,6 @@ deployment:
       memory: 100Mi
   secretMounts:
   - name: cert
-    mountPath: "/etc/pki/tls/certs/COMODORSADomainValidationSecureServerCA.crt"
+    mountPath: "/etc/pki/tls/certs/TrustExternalCARoot_and_USERTrustRSAAAACA.crt"
     readOnly: true
-    subPath: COMODORSADomainValidationSecureServerCA.crt
+    subPath: TrustExternalCARoot_and_USERTrustRSAAAACA.crt

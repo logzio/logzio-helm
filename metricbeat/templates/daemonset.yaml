@@ -1,6 +1,6 @@
 ---
 # Deploy a Metricbeat instance per node for node metrics retrieval
-apiVersion: apps/v1
+apiVersion: {{ .Values.apiVersions.DaemonSet }}
 kind: DaemonSet
 metadata:
   name: metricbeat-new

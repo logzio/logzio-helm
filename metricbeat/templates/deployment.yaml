@@ -1,5 +1,5 @@
 # Deploy singleton instance in the whole cluster for some unique data sources, like kube-state-metrics
-apiVersion: apps/v1
+apiVersion: {{ .Values.apiVersions.Deployment }}
 kind: Deployment
 metadata:
   name: metricbeat
@@ -121,6 +121,6 @@ spec:
         hostPath:
           path: {{ .Values.hostPathRoot }}/{{ template "metricbeat.fullname" . }}-{{ .Release.Namespace }}-data
           type: DirectoryOrCreate
-      {{- if .Values.extraVolumes | default .Values.deployment.extraVolumes }}
-{{ toYaml ( .Values.extraVolumes | default .Values.deployment.extraVolumes ) | indent 6 }}
+      {{- if .Values.deployment.extraVolumes }}
+{{ toYaml .Values.deployment.extraVolumes | indent 6 }}
       {{- end }}

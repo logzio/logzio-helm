@@ -1,5 +1,5 @@
 {{- if .Values.managedServiceAccount }}
-apiVersion: rbac.authorization.k8s.io/v1beta1
+apiVersion: {{ .Values.apiVersions.ClusterRoleBinding }}
 kind: ClusterRoleBinding
 metadata:
   name: metricbeat
