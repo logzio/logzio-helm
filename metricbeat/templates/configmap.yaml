@@ -4,7 +4,7 @@ apiVersion: {{ .Values.apiVersions.ConfigMap }}
 kind: ConfigMap
 metadata:
   name: logzio-cert
-  namespace: kube-system
+  namespace: {{ .Values.namespace }}
   labels:
     k8s-app: metricbeat
 data:
@@ -20,7 +20,7 @@ apiVersion: {{ .Values.apiVersions.ConfigMap }}
 kind: ConfigMap
 metadata:
   name: metricbeat-config
-  namespace: kube-system
+  namespace: {{ .Values.namespace }}
   labels:
     k8s-app: metricbeat
 data:
@@ -36,7 +36,7 @@ apiVersion: {{ .Values.apiVersions.ConfigMap }}
 kind: ConfigMap
 metadata:
   name: metricbeat-daemonset-modules
-  namespace: kube-system
+  namespace: {{ .Values.namespace }}
   labels:
     k8s-app: metricbeat
 data:
@@ -92,7 +92,7 @@ apiVersion: {{ .Values.apiVersions.ConfigMap }}
 kind: ConfigMap
 metadata:
   name: metricbeat-deployment-modules
-  namespace: kube-system
+  namespace: {{ .Values.namespace }}
   labels:
     k8s-app: metricbeat
 data:

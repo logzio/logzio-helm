@@ -3,7 +3,7 @@ apiVersion: {{ .Values.apiVersions.Deployment }}
 kind: Deployment
 metadata:
   name: metricbeat
-  namespace: kube-system
+  namespace: {{ .Values.namespace }}
   labels:
     k8s-app: metricbeat
 spec:
