@@ -120,6 +120,7 @@ Give your metrics some time to get from your system to ours, and then open [Logz
 | `deployment.securityContext` | Configurable [securityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) for Metricbeat Deployment pod execution environment. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/metricbeat/values.yaml). |
 | `deployment.resources` | Allows you to set the resources for Metricbeat Deployment. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/metricbeat/values.yaml). |
 | `deployment.secretMounts` | Allows you to easily mount a secret as a file inside the Deployment Useful for mounting certificates and other secrets. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/metricbeat/values.yaml). |
+| `namespace` | Chart's namespace | `kube-system` |
 
 If you wish to change the default values, specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
@@ -136,3 +137,10 @@ To uninstall the `logzio-k8s-metrics` deployment:
 ```shell
 helm uninstall --namespace=kube-system logzio-k8s-metrics
 ```
+
+
+## Change log
+ - **0.0.2**:
+    - Supporting dynamic namespace.
+ - **0.0.1**:
+    - Initial release.
