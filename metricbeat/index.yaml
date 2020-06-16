@@ -3,11 +3,20 @@ entries:
   logzio-k8s-metrics:
   - apiVersion: v1
     appVersion: 0.0.1
-    created: "2020-06-14T10:54:56.685047+03:00"
+    created: "2020-06-16T18:07:29.870402+03:00"
+    description: A Helm chart for shipping k8s metrics to logzio.io
+    digest: f01dd8b4a9d8647b650cadfe1b03dc8d12ab26c15d51d9cd5a59bbd18dc9b5e2
+    name: logzio-k8s-metrics
+    urls:
+    - https://logzio.github.io/logzio-helm/metricbeat/logzio-k8s-metrics-0.0.2.tgz
+    version: 0.0.2
+  - apiVersion: v1
+    appVersion: 0.0.1
+    created: "2020-06-16T18:07:29.869112+03:00"
     description: A Helm chart for shipping k8s metrics to logzio.io
     digest: 2e4f2f94dc919d7d5b20fcfd7e7f93d36385c8167de671d5077edd8c3f8a951d
     name: logzio-k8s-metrics
     urls:
     - https://logzio.github.io/logzio-helm/metricbeat/logzio-k8s-metrics-0.0.1.tgz
     version: 0.0.1
-generated: "2020-06-14T10:54:56.683141+03:00"
+generated: "2020-06-16T18:07:29.865837+03:00"
