@@ -93,7 +93,7 @@ kubectl --namespace=${namespace} create secret generic cluster-details \
   --from-literal=kube-state-metrics-port=$kube_stat_port \
   --from-literal=cluster-name=$cluster_name
 
-read -ep "Show yaml before deploying? (y/n) " answer
+read -ep "Show generated yaml? (y/n) " answer
 if [ "$answer" = "y" ]; then
   debug="--debug"
 fi
