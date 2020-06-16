@@ -11,6 +11,8 @@ apiVersions:
   ClusterRole: rbac.authorization.k8s.io/v1beta1
   ClusterRoleBinding: rbac.authorization.k8s.io/v1beta1
 
+namespace: kube-system
+
 shippingProtocol: http
 shippingPort: 10255
 

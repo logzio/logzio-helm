@@ -4,7 +4,7 @@ apiVersion: {{ .Values.apiVersions.DaemonSet }}
 kind: DaemonSet
 metadata:
   name: metricbeat-new
-  namespace: kube-system
+  namespace: {{ .Values.namespace }}
   labels:
     k8s-app: metricbeat
 spec:

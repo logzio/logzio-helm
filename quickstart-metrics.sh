@@ -1,5 +1,6 @@
+#!/bin/bash
 echo "Checking for installed prerequisites.."
-echo "Checking for kubectl .............\c"
+echo -n "Checking for kubectl ............. "
 has_kubectl=$(kubectl 2>&1)
 if [[ $has_kubectl == *"command not found"* ]]; then
   echo -n "kubectl not found! Please install and configure kubectl first."
@@ -7,7 +8,7 @@ if [[ $has_kubectl == *"command not found"* ]]; then
 fi
 
 echo "Passed"
-echo "Checking for jq      .............\c"
+echo -n "Checking for jq ............. "
 
 has_jq=$(jq --version 2>&1)
 if [[ $has_jq == *"not found"* ]]; then
@@ -22,7 +23,7 @@ if [[ $has_jq == *"not found"* ]]; then
 fi
 
 echo "Passed"
-echo "Checking for helm    .............\c"
+echo -n "Checking for helm    ............. "
 
 has_helm=$(helm version 2>&1)
 if [[ $has_helm == *"not found"* ]]; then
@@ -30,7 +31,7 @@ if [[ $has_helm == *"not found"* ]]; then
 fi
 
 echo "Passed"
-echo "Checking for kubectl .............\c"
+echo -n "Checking for kubectl ............. "
 
 has_kube_stat_metrics=$(kubectl get deployments --all-namespaces | grep kube-state-metrics)
 if [[ -z $has_kube_stat_metrics ]]; then
@@ -73,7 +74,10 @@ if [[ $shipping_protocol == "https" ]]; then
   shipping_port="10250"
 fi
 
-kubectl --namespace=kube-system create secret generic logzio-metrics-secret \
+read -ep "Target namespace to deploy [kube-system]: " namespace
+namespace=${namespace:-"kube-system"}
+
+kubectl --namespace=${namespace} create secret generic logzio-metrics-secret \
   --from-literal=logzio-metrics-shipping-token=$metrics_token \
   --from-literal=logzio-metrics-listener-host=$listener_host
 
@@ -84,12 +88,19 @@ fi
 read -ep "Cluster name [${cluster_name}]: " real_cluster_name
 real_cluster_name=${real_cluster_name:-"${cluster_name}"}
 
-kubectl --namespace=kube-system create secret generic cluster-details \
+kubectl --namespace=${namespace} create secret generic cluster-details \
   --from-literal=kube-state-metrics-namespace=$kube_stat_ns \
   --from-literal=kube-state-metrics-port=$kube_stat_port \
   --from-literal=cluster-name=$cluster_name
 
-helm install --namespace=kube-system \
+read -ep "Show generated yaml? (y/n) " answer
+if [ "$answer" = "y" ]; then
+  debug="--debug"
+fi
+
+helm install ${debug} \
+--namespace=${namespace} \
+--set=namespace=${namespace} \
 --set=shippingProtocol=${shipping_protocol} \
 --set=shippingPort=${shipping_port} \
 --set=apiVersions.Deployment=${deployment_api} \
