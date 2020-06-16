@@ -99,6 +99,7 @@ if [ "$answer" = "y" ]; then
 fi
 
 helm install ${debug} \
+--namespace=${namespace} \
 --set=namespace=${namespace} \
 --set=shippingProtocol=${shipping_protocol} \
 --set=shippingPort=${shipping_port} \
