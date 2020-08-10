@@ -124,8 +124,7 @@ Give your logs some time to get from your system to ours, and then open [Logz.io
 | `dnsPolicy` | Specifies pod-specific DNS policies. | `ClusterFirstWithHostNet` |
 | `daemonset.ignoreOlder` | Logs older than this will be ignored. | `3h` |
 | `daemonset.logzioCodec` | Set to `json` if shipping JSON logs. Otherwise, set to `plain`. | `json` |
-| `daemonset.logzioType` | The log type you'll use with this Daemonset. This is shown in your logs under the `type` field in Kibana.
-Logz.io applies parsing based on type. | `filebeat` |
+| `daemonset.logzioType` | The log type you'll use with this Daemonset. This is shown in your logs under the `type` field in Kibana. Logz.io applies parsing based on type. | `filebeat` |
 | `daemonset.fieldsUnderRoot` | If this option is set to true, the custom fields are stored as top-level fields in the output document instead of being grouped under a `fields` sub-dictionary. | `true` |
 | `daemonset.securityContext` | Configurable [securityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) for Filebeat DaemonSet pod execution environment. | See [values.yaml]() |
 | `daemonset.resources` | Allows you to set the resources for Filebeat Daemonset. | See [values.yaml]() |
