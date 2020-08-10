@@ -1,0 +1,38 @@
+{{- if .Values.logzioCert }}
+---
+apiVersion: {{ .Values.apiVersions.configMap }}
+kind: ConfigMap
+metadata:
+  name: logzio-logs-cert
+  namespace: {{ .Values.namespace }}
+  labels:
+    k8s-app: filebeat
+data:
+{{- range $path, $config := .Values.logzioCert }}
+  {{ $path }}: |-
+{{ $config | indent 4 -}}
+{{- end -}}
+{{- end -}}
+
+{{- if .Values.filebeatConfig }}
+---
+apiVersion: {{ .Values.apiVersions.configMap }}
+kind: ConfigMap
+metadata:
+  name: filebeat-config
+  namespace: {{ .Values.namespace }}
+  labels:
+    k8s-app: filebeat
+data:
+{{- if eq .Values.configType "standard" }}
+{{- range $path, $config := .Values.filebeatConfig.standardConfig }}
+  {{ $path }}: |-
+{{ $config | indent 4 -}}
+{{- end -}}
+{{- else if eq .Values.configType "autodiscover" }}
+{{- range $path, $config := fromYaml .Values.filebeatConfig.autodiscoverConfig }}
+  {{ $path }}: |-
+{{ $config | indent 4 -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
