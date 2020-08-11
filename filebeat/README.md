@@ -1,7 +1,7 @@
 
 
 # Logzio-k8s-logs
-This readme is still under development.
+**This readme is still under development.**
 
 Helm is a tool for managing packages of pre-configured Kubernetes resources using Charts.
 Logzio-k8s-logs allows you to ship logs from your Kubernetes cluster to Logz.io.
