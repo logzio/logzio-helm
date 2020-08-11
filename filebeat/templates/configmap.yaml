@@ -30,7 +30,12 @@ data:
 {{ $config | indent 4 -}}
 {{- end -}}
 {{- else if eq .Values.configType "autodiscover" }}
-{{- range $path, $config := fromYaml .Values.filebeatConfig.autodiscoverConfig }}
+{{- range $path, $config := .Values.filebeatConfig.autodiscoverConfig }}
+  {{ $path }}: |-
+{{ $config | indent 4 -}}
+{{- end -}}
+{{- else if eq .Values.configType "auto-custom" }}
+{{- range $path, $config := fromYaml .Values.filebeatConfig.autoCustomConfig }}
   {{ $path }}: |-
 {{ $config | indent 4 -}}
 {{- end -}}

@@ -9,6 +9,7 @@ apiVersions:
   clusterRoleBinding: rbac.authorization.k8s.io/v1
   clusterRole: rbac.authorization.k8s.io/v1
   serviceAccount: v1
+  secret: v1
 
 namespace: kube-system
 
@@ -119,6 +120,7 @@ filebeatConfig:
           hosts: ["${LOGZIO_LOGS_LISTENER_HOST}:5015"]
           ssl:
             certificate_authorities: ['/etc/pki/tls/certs/SectigoRSADomainValidationSecureServerCA.crt']
+  autoCustomConfig: {}
 
 serviceAccount:
   create: true
@@ -159,3 +161,8 @@ daemonset:
       mountPath: /etc/pki/tls/certs/SectigoRSADomainValidationSecureServerCA.crt
       readOnly: true
       subPath: SectigoRSADomainValidationSecureServerCA.crt
+
+secrets:
+  logzioShippingToken: ''
+  logzioListener: ''
+  clusterName: ''
