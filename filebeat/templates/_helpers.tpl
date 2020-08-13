@@ -27,3 +27,14 @@ Create the name of the service account to use
     {{ default "default" .Values.serviceAccount.name }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Convert logzio region code to listener host
+*/}}
+{{- define "logzio.listenerHost" }}
+{{- if or ( eq $.Values.secrets.logzioRegion "us" ) ( eq $.Values.secrets.logzioRegion " " ) -}}
+{{- printf "listener.logz.io" }}
+{{- else if or ( eq $.Values.secrets.logzioRegion "au" ) ( eq $.Values.secrets.logzioRegion "ca" ) ( eq $.Values.secrets.logzioRegion "eu" ) ( eq $.Values.secrets.logzioRegion "nl" ) ( eq $.Values.secrets.logzioRegion "uk" ) ( eq $.Values.secrets.logzioRegion "wa" ) }}
+{{- printf "listener-%s.logz.io" .Values.secrets.logzioRegion -}}
+{{- end -}}
+{{- end -}}

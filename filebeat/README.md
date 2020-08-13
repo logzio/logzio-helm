@@ -30,14 +30,14 @@ helm repo add logzio-helm https://logzio.github.io/logzio-helm/filebeat
 
 Replace `<<SHIPPING-TOKEN>>` with the [token](https://app.logz.io/#/dashboard/settings/general) of the account you want to ship to.
 
-Replace `<<LISTENER-HOST>>` with your region’s listener host (for example, `listener.logz.io`). For more information on finding your account’s region, see [Account region](https://docs.logz.io/user-guide/accounts/account-region.html).
+Replace `<<LISTENER-REGION>>` with your region’s code (for example, `eu`). For more information on finding your account’s region, see [Account region](https://docs.logz.io/user-guide/accounts/account-region.html).
 
 Replace `<<CLUSTER-NAME>>` with your cluster's name.
 
 ```shell
 helm install --namespace=kube-system \
 --set secrets.logzioShippingToken='<<SHIPPING-TOKEN>>' \
---set secrets.logzioListener='<<LISTENER-HOST>>' \
+--set secrets.logzioListener='<<LISTENER-REGION>>' \
 --set secrets.clusterName='<<CLUSTER-NAME>>' \
 logzio-k8s-logs logzio-helm/logzio-k8s-logs
 ```
@@ -63,7 +63,7 @@ helm repo add logzio-helm https://logzio.github.io/logzio-helm/filebeat
 In the following commands, make the following changes:
 * Replace `<<SHIPPING-TOKEN>>` with the [token](https://app.logz.io/#/dashboard/settings/general) of the account you want to ship to.
 
-* Replace `<<LISTENER-HOST>>` with your region’s listener host (for example, `listener.logz.io`). For more information on finding your account’s region, see [Account region](https://docs.logz.io/user-guide/accounts/account-region.html).
+* Replace `<<LISTENER-REGION>>` with your region’s code (for example, `eu`). For more information on finding your account’s region, see [Account region](https://docs.logz.io/user-guide/accounts/account-region.html).
 
 * Replace `<<CLUSTER-NAME>>` with your cluster's name.
 
@@ -72,7 +72,7 @@ This daemonset's default autodiscover configuration is [hints based](https://www
 helm install --namespace=kube-system \
 --set configType='autodiscover' \
 --set secrets.logzioShippingToken='<<SHIPPING-TOKEN>>' \
---set secrets.logzioListener='<<LISTENER-HOST>>' \
+--set secrets.logzioListener='<<LISTENER-REGION>>' \
 --set secrets.clusterName='<<CLUSTER-NAME>>' \
 logzio-k8s-logs logzio-helm/logzio-k8s-logs
 ```
@@ -81,7 +81,7 @@ If you have a custom configuration, deploy with:
 helm install --namespace=kube-system \
 --set configType='auto-custom' \
 --set secrets.logzioShippingToken='<<SHIPPING-TOKEN>>' \
---set secrets.logzioListener='<<LISTENER-HOST>>' \
+--set secrets.logzioListener='<<LISTENER-REGION>>' \
 --set secrets.clusterName='<<CLUSTER-NAME>>' \
 --set-file filebeatConfig.autoCustomConfig=/path/to/your/config.yaml \
 logzio-k8s-logs logzio-helm/logzio-k8s-logs
@@ -150,9 +150,9 @@ Give your logs some time to get from your system to ours, and then open [Logz.io
 | `daemonset.resources` | Allows you to set the resources for Filebeat Daemonset. | See [values.yaml]() |
 | `daemonset.volumes` | Templatable string of additional `volumes` to be passed to the DaemonSet. | See [values.yaml]() |
 | `daemonset.volumeMounts` | Templatable string of additional `volumeMounts` to be passed to the DaemonSet. | See [values.yaml]() |
-| `secrets.logzioShippingToken`| Secret with your [logzio shipping token](https://app.logz.io/#/dashboard/settings/general). | `''` |
-| `secrets.logzioListener`| Secret with your [logzio listener](https://docs.logz.io/user-guide/accounts/account-region.html). | `''` |
-| `secrets.logzioListener`| Secret with your cluster name. | `''` |
+| `secrets.logzioShippingToken`| Secret with your [logzio shipping token](https://app.logz.io/#/dashboard/settings/general). | `""` |
+| `secrets.logzioRegion`| Secret with your [logzio region](https://docs.logz.io/user-guide/accounts/account-region.html). Defaults to US East. | `" "` |
+| `secrets.clusterName`| Secret with your cluster name. | `""` |
 
 
 If you wish to change the default values, specify each parameter using the `--set key=value` argument to `helm install`. For example,
