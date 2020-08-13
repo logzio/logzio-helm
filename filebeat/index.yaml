@@ -1,0 +1,13 @@
+apiVersion: v1
+entries:
+  logzio-k8s-logs:
+  - apiVersion: v1
+    appVersion: 7.8.1
+    created: "2020-08-13T14:45:38.917165+03:00"
+    description: A Helm chart for shipping k8s logs to logz.io via Filebeat.
+    digest: fe9162b04899e8ada4e2c92ce1e12f34b428e7035eeecae7ad3e1b2ac43e6403
+    name: logzio-k8s-logs
+    urls:
+    - https://logzio.github.io/logzio-helm/filebeat/logzio-k8s-logs-0.0.1.tgz
+    version: 0.0.1
+generated: "2020-08-13T14:45:38.915052+03:00"
