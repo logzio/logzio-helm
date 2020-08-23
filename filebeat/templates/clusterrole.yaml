@@ -1,0 +1,9 @@
+{{- if .Values.managedServiceAccount }}
+apiVersion: {{ .Values.apiVersions.clusterRole }}
+kind: ClusterRole
+metadata:
+  name: filebeat
+  labels:
+    k8s-app: filebeat
+rules: {{ toYaml .Values.clusterRoleRules | nindent 2 -}}
+{{- end -}}
