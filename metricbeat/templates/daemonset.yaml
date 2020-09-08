@@ -30,6 +30,10 @@ spec:
           "-system.hostfs=/hostfs",
         ]
         env:
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
         - name: POD_NAMESPACE
           valueFrom:
             fieldRef:
@@ -63,9 +67,15 @@ spec:
             secretKeyRef:
               name: cluster-details
               key: cluster-name
+        - name: SSL_VERIFICATION_MODE
+          value: {{ .Values.daemonset.sslVerificationMode }}
         securityContext: {{ toYaml ( .Values.podSecurityContext | default .Values.daemonset.securityContext ) | nindent 10 }}
         resources: {{ toYaml ( .Values.resources | default .Values.daemonset.resources ) | nindent 10 }}
         volumeMounts:
+        - name: metricbeat-config
+          mountPath: /etc/metricbeat.yml
+          readOnly: true
+          subPath: metricbeat.yml
         {{- range .Values.secretMounts | default .Values.daemonset.secretMounts }}
         - name: {{ .name }}
           mountPath: "{{ .mountPath }}"
@@ -73,19 +83,6 @@ spec:
           {{- if .subPath }}
           subPath: {{ .subPath }}
           {{- end }}
-        {{- end }}
-        {{- range $path, $config := .Values.metricbeatConfig }}
-        - name: metricbeat-config
-          mountPath: /etc/{{ $path }}
-          readOnly: true
-          subPath: {{ $path }}
-        {{ else }}
-        {{- range $path, $config := .Values.daemonset.metricbeatConfig }}
-        - name: metricbeat-config
-          mountPath: /etc/{{ $path }}
-          readOnly: true
-          subPath: {{ $path }}
-        {{- end }}
         {{- end }}
         - name: dockersock
           mountPath: /var/run/docker.sock
@@ -105,17 +102,10 @@ spec:
           defaultMode: 0600
           name: {{ .secretName }}
       {{- end }}
-      {{- if .Values.metricbeatConfig }}
       - name: metricbeat-config
         configMap:
           defaultMode: 0600
           name: {{ template "metricbeat.fullname" . }}-config
-      {{- else if .Values.daemonset.metricbeatConfig }}
-      - name: metricbeat-config
-        configMap:
-          defaultMode: 0600
-          name: {{ template "metricbeat.fullname" . }}-daemonset-config
-      {{- end }}
       - name: proc
         hostPath:
           path: /proc

@@ -24,9 +24,21 @@ metadata:
   labels:
     k8s-app: metricbeat
 data:
-{{- range $path, $config := .Values.metricbeatConfig }}
+{{- if eq .Values.configType "standard" }}
+{{- range $path, $config := .Values.metricbeatConfig.standardConfig }}
   {{ $path }}: |-
 {{ $config | indent 4 -}}
+{{- end -}}
+{{- else if eq .Values.configType "autodiscover" }}
+{{- range $path, $config := .Values.metricbeatConfig.autodiscoverConfig }}
+  {{ $path }}: |-
+{{ $config | indent 4 -}}
+{{- end -}}
+{{- else if eq .Values.configType "auto-custom" }}
+{{- range $path, $config := fromYaml .Values.metricbeatConfig.autoCustomConfig }}
+  {{ $path }}: |-
+{{ $config | indent 4 -}}
+{{- end -}}
 {{- end -}}
 {{- end -}}
 {{ printf "\n" }}
@@ -76,14 +88,15 @@ data:
         - pod
         - container
         - volume
-        - state_node
-        - state_pod
-        - state_container
+      host: ${NODE_NAME}
       hosts: ["{{ .Values.shippingProtocol }}://${HOST_IP}:{{ .Values.shippingPort }}"]
       enabled: true
       bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
-      ssl.certificate_authorities:
-        - /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+      ssl.verification_mode: ${SSL_VERIFICATION_MODE}
+#     If there is a CA bundle that contains the issuer of the certificate used in the Kubelet API,
+#     remove ssl.verification_mode entry and use the CA, for instance:
+#     ssl.certificate_authorities:
+#       - /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
 
 
 {{- if .Values.deployment.metricbeatConfig }}

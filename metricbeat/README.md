@@ -1,7 +1,8 @@
 # Logzio-k8s-metrics
 
 Helm is a tool for managing packages of pre-configured Kubernetes resources using Charts.
-Logzio-k8s-metrics allows you to ship metrics from your Kubernetes cluster.
+Logzio-k8s-metrics allows you to ship metrics from your Kubernetes cluster.  
+You can either deploy this Daemonset with the standrad configuration, or with autodiscover configuration. For further information about Metricbeat's autodiscover please see [Autodiscover documentation](https://www.elastic.co/guide/en/beats/metricbeat/7.9/configuration-autodiscover.html).
 
 
 ### Prerequisites:
@@ -72,8 +73,71 @@ helm repo add logzio-helm https://logzio.github.io/logzio-helm/metricbeat
 
 #### 4. Deploy
 
+You have two options for deployment:
+* [Standard configuration](#standard-config)
+* [Autodiscover configuration](#autodiscover-config)
+* [Custom configuration](#custom-config)
+
+
+<div id="standard-config">
+
+##### Deploy with standard configuration:  
 ```shell
 helm install --namespace=kube-system logzio-k8s-metrics logzio-helm/logzio-k8s-metrics
+```
+</div>
+
+<div id="autodiscover-config">
+
+##### Deploy with Autodiscover configuration:  
+This Daemonset's default autodiscover configuration is [hints based](https://www.elastic.co/guide/en/beats/metricbeat/current/configuration-autodiscover-hints.html).
+```shell
+helm install --namespace=kube-system \
+--set configType='autodiscover' \
+logzio-k8s-metrics logzio-helm/logzio-k8s-metrics
+```
+*For more information about Autodiscover:* [Kubernetes configuration](https://www.elastic.co/guide/en/beats/metricbeat/current/configuration-autodiscover.html#_kubernetes)
+, [autodiscover's appenders](https://www.elastic.co/guide/en/beats/metricbeat/current/configuration-autodiscover-advanced.html).
+
+</div>
+<div id="custom-config">
+
+##### Deploy with custom configuration:  
+```shell
+helm install --namespace=kube-system \
+--set configType='auto-custom' \
+--set-file metricbeatConfig.autoCustomConfig=/path/to/your/config.yaml \
+logzio-k8s-metrics logzio-helm/logzio-k8s-metrics
+```
+</div>
+
+
+*Note:* If you're using a custom config, please make sure that you're using a `.yaml` file in the following structure:
+```
+metricbeat.yml: |-
+  metricbeat.config.modules:
+    path: ${path.config}/modules.d/*.yml
+    reload.enabled: false
+
+  metricbeat.autodiscover:
+    # your autodiscover config
+    # ...
+              
+  processors:
+    - add_cloud_metadata: ~
+  fields:
+    logzio_codec: json
+    token: ${LOGZIO_METRICS_SHIPPING_TOKEN}
+    cluster: ${CLUSTER_NAME}
+    type: metricbeat
+  fields_under_root: true
+  ignore_older: 3hr
+  output:
+    logstash:
+      hosts: ["${LOGZIO_METRICS_LISTENER_HOST}:5015"]
+      ssl:
+        certificate_authorities: ['/etc/pki/tls/certs/SectigoRSADomainValidationSecureServerCA.crt']
+
 ```
 
 #### 5. Check Logz.io for your metrics
@@ -87,7 +151,7 @@ Give your metrics some time to get from your system to ours, and then open [Logz
 | Parameter | Description | Default |
 |---|---|---|
 | `image` | The Metricbeat Docker image. | `"docker.elastic.co/beats/metricbeat"` |
-| `imageTag` | The Metricbeat Docker image tag. | `"7.3.2"` |
+| `imageTag` | The Metricbeat Docker image tag. | `"7.9.1"` |
 | `nameOverride` | Overrides the Chart name for resources. | `""` |
 | `fullnameOverride` | Overrides the full name of the resources. | `"metricbeat"` |
 | `apiVersions.ConfigMap` | API version of `configmap.yaml`. | `v1` |
@@ -115,6 +179,7 @@ Give your metrics some time to get from your system to ours, and then open [Logz
 | `daemonset.securityContext` | Configurable [securityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) for Metricbeat DaemonSet pod execution environment. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/metricbeat/values.yaml). |
 | `daemonset.resources` | Allows you to set the resources for Metricbeat Deployment. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/metricbeat/values.yaml). |
 | `daemonset.secretMounts` | Allows you to easily mount a secret as a file inside the DaemonSet. Useful for mounting certificates and other secrets. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/metricbeat/values.yaml). |
+| `daemonset.sslVerificationMode` | Set the ssl verification mode for Metricbeat | `"none"` |
 | `deployment.extraVolumeMounts` | Templatable string of additional volumeMounts to be passed to the Deployment. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/metricbeat/values.yaml). |
 | `deployment.extraVolumes` | Templatable string of additional `volumes` to be passed to the Deployment. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/metricbeat/values.yaml). |
 | `deployment.metricbeatConfig` | Allows you to add any config files in `/usr/share/metricbeat` such as `metricbeat.yml` for Metricbeat Deployment. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/metricbeat/values.yaml). |
@@ -141,6 +206,9 @@ helm uninstall --namespace=kube-system logzio-k8s-metrics
 
 
 ## Change log
+ - **0.0.3**:
+    - Upgrade to Metricbeat version 7.9.1.
+    - Support for Autodiscover through Metricbeat.
  - **0.0.2**:
     - Supporting dynamic namespace.
  - **0.0.1**:
