@@ -73,7 +73,7 @@ helm repo add logzio-helm https://logzio.github.io/logzio-helm/metricbeat
 
 #### 4. Deploy
 
-You have two options for deployment:
+You have three options for deployment:
 * [Standard configuration](#standard-config)
 * [Autodiscover configuration](#autodiscover-config)
 * [Custom configuration](#custom-config)
