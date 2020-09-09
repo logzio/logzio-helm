@@ -13,7 +13,7 @@ You can either deploy this Daemonset with the standrad configuration, or with au
 
 You have two options for deployment:
 * [Default configuration <span class="sm ital">(recommended)</span>](#default-config)
-* [Custom configuration](#custom-config)
+* [Custom configuration](#manual-config)
 
 <div id="default-config">
 
@@ -37,7 +37,7 @@ Give your metrics some time to get from your system to ours, and then open [Logz
 
 </div>
 
-<div id="custom-config">
+<div id="manual-config">
 
 ### Manually deployment:
 
@@ -81,7 +81,7 @@ You have three options for deployment:
 
 <div id="standard-config">
 
-##### Deploy with standard configuration:  
+#### Deploy with standard configuration:  
 ```shell
 helm install --namespace=kube-system logzio-k8s-metrics logzio-helm/logzio-k8s-metrics
 ```
@@ -89,8 +89,10 @@ helm install --namespace=kube-system logzio-k8s-metrics logzio-helm/logzio-k8s-m
 
 <div id="autodiscover-config">
 
-##### Deploy with Autodiscover configuration:  
+#### Deploy with Autodiscover configuration:  
 This Daemonset's default autodiscover configuration is [hints based](https://www.elastic.co/guide/en/beats/metricbeat/current/configuration-autodiscover-hints.html).
+Add your own [configuration](#autodiscover-configuration) and run:
+
 ```shell
 helm install --namespace=kube-system \
 --set configType='autodiscover' \
@@ -100,17 +102,16 @@ logzio-k8s-metrics logzio-helm/logzio-k8s-metrics
 , [autodiscover's appenders](https://www.elastic.co/guide/en/beats/metricbeat/current/configuration-autodiscover-advanced.html).
 
 </div>
+
 <div id="custom-config">
 
-##### Deploy with custom configuration:  
+#### Deploy with custom configuration:  
 ```shell
 helm install --namespace=kube-system \
 --set configType='auto-custom' \
 --set-file metricbeatConfig.autoCustomConfig=/path/to/your/config.yaml \
 logzio-k8s-metrics logzio-helm/logzio-k8s-metrics
 ```
-</div>
-
 
 *Note:* If you're using a custom config, please make sure that you're using a `.yaml` file in the following structure:
 ```
@@ -140,11 +141,15 @@ metricbeat.yml: |-
 
 ```
 
+</div>
+
 #### 5. Check Logz.io for your metrics
 
 Give your metrics some time to get from your system to ours, and then open [Logz.io](https://app.logz.io/).
 
 </div>
+
+<div id="#autodiscover-configuration">
 
 ### Configuration
 
@@ -194,6 +199,7 @@ If you wish to change the default values, specify each parameter using the `--se
 helm install --namespace=kube-system logzio-k8s-metrics logzio-helm/logzio-k8s-metrics \
   --set=imageTag=7.7.0,terminationGracePeriodSeconds=30
 ```
+</div>
 
 ### Uninstalling the Chart
 
