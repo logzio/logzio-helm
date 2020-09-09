@@ -149,7 +149,7 @@ Give your metrics some time to get from your system to ours, and then open [Logz
 
 </div>
 
-<div id="#autodiscover-configuration">
+<div id="autodiscover-configuration">
 
 ### Configuration
 
