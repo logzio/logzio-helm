@@ -2,7 +2,8 @@
 
 Helm is a tool for managing packages of pre-configured Kubernetes resources using Charts.
 Logzio-k8s-metrics allows you to ship metrics from your Kubernetes cluster.  
-You can either deploy this Daemonset with the standrad configuration, or with autodiscover configuration. For further information about Metricbeat's autodiscover please see [Autodiscover documentation](https://www.elastic.co/guide/en/beats/metricbeat/7.9/configuration-autodiscover.html).
+You can either deploy this Daemonset with the standrad configuration, or with autodiscover configuration. For further information about Metricbeat's autodiscover please see [Autodiscover documentation](https://www.elastic.co/guide/en/beats/metricbeat/7.9/configuration-autodiscover.html).  
+*Note*: This integration supports Autodiscover with Metricbeat version 7.6+ and default’s to Metricbeat 7.9.1.
 
 
 ### Prerequisites:
@@ -31,6 +32,7 @@ bash <(curl -s https://raw.githubusercontent.com/logzio/logzio-helm/master/quick
 | Logz.io metrics shipping token (Required) | The [token](https://app.logz.io/#/dashboard/settings/general) of the account you want to ship to. |
 | Logz.io region (Default: `Blank (US East)`) | Two-letter region code, or blank for US East (Northern Virginia). This determines your listener URL (where you’re shipping the logs to) and API URL. You can find your region code in the [Regions and URLs](https://docs.logz.io/user-guide/accounts/account-region.html#regions-and-urls) table. |
 | Cluster name (Default: `detected by the script` | The name of the Kubernetes cluster you’re deploying in. |
+| Standard or autodiscover deployment (Default: `standard` | To deploy with [configuration templates](https://www.elastic.co/guide/en/beats/metricbeat/current/configuration-autodiscover.html) answer 'autodiscover'. |
 
 #### 2. Check Logz.io for your metrics
 Give your metrics some time to get from your system to ours, and then open [Logz.io](https://app.logz.io/).
@@ -90,8 +92,7 @@ helm install --namespace=kube-system logzio-k8s-metrics logzio-helm/logzio-k8s-m
 <div id="autodiscover-config">
 
 #### Deploy with Autodiscover configuration:  
-This Daemonset's default autodiscover configuration is [hints based](https://www.elastic.co/guide/en/beats/metricbeat/current/configuration-autodiscover-hints.html).
-Add your own [configuration](#autodiscover-configuration) and run:
+This Daemonset's default autodiscover configuration is [hints based](https://www.elastic.co/guide/en/beats/metricbeat/current/configuration-autodiscover-hints.html):
 
 ```shell
 helm install --namespace=kube-system \
@@ -149,8 +150,6 @@ Give your metrics some time to get from your system to ours, and then open [Logz
 
 </div>
 
-<div id="autodiscover-configuration">
-
 ### Configuration
 
 | Parameter | Description | Default |
@@ -199,7 +198,6 @@ If you wish to change the default values, specify each parameter using the `--se
 helm install --namespace=kube-system logzio-k8s-metrics logzio-helm/logzio-k8s-metrics \
   --set=imageTag=7.7.0,terminationGracePeriodSeconds=30
 ```
-</div>
 
 ### Uninstalling the Chart
 
@@ -214,7 +212,7 @@ helm uninstall --namespace=kube-system logzio-k8s-metrics
 ## Change log
  - **0.0.3**:
     - Upgrade to Metricbeat version 7.9.1.
-    - Support for Autodiscover through Metricbeat.
+    - Support for Autodiscover through Metricbeat 7.6+.
  - **0.0.2**:
     - Supporting dynamic namespace.
  - **0.0.1**:
