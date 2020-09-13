@@ -58,6 +58,10 @@ spec:
         securityContext: {{ toYaml ( .Values.podSecurityContext | default .Values.deployment.securityContext ) | nindent 10 }}
         resources: {{ toYaml ( .Values.resources | default .Values.deployment.resources ) | nindent 10 }}
         volumeMounts:
+        - name: metricbeat-config
+          mountPath: /etc/metricbeat.yml
+          readOnly: true
+          subPath: metricbeat.yml
         {{- range .Values.secretMounts | default .Values.deployment.secretMounts }}
         - name: {{ .name }}
           mountPath: "{{ .mountPath }}"
@@ -65,19 +69,6 @@ spec:
           {{- if .subPath }}
           subPath: {{ .subPath }}
           {{- end }}
-        {{- end }}
-        {{- range $path, $config := .Values.metricbeatConfig }}
-        - name: metricbeat-config
-          mountPath: /etc/{{ $path }}
-          readOnly: true
-          subPath: {{ $path }}
-        {{ else }}
-        {{- range $path, $config := .Values.deployment.metricbeatConfig }}
-        - name: metricbeat-config
-          mountPath: /etc/{{ $path }}
-          readOnly: true
-          subPath: {{ $path }}
-        {{- end }}
         {{- end }}
         - name: dockersock
           mountPath: /var/run/docker.sock
@@ -97,17 +88,10 @@ spec:
           defaultMode: 0600
           name: {{ .secretName }}
       {{- end }}
-      {{- if .Values.metricbeatConfig }}
       - name: metricbeat-config
         configMap:
           defaultMode: 0600
           name: {{ template "metricbeat.fullname" . }}-config
-      {{- else if .Values.deployment.metricbeatConfig }}
-      - name: metricbeat-config
-        configMap:
-          defaultMode: 0600
-          name: {{ template "metricbeat.fullname" . }}-deployment-config
-      {{- end }}
       - name: proc
         hostPath:
           path: /proc

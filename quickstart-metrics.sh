@@ -93,10 +93,14 @@ kubectl --namespace=${namespace} create secret generic cluster-details \
   --from-literal=kube-state-metrics-port=$kube_stat_port \
   --from-literal=cluster-name=$cluster_name
 
+read -ep "Deploy with standard or autodiscover configuration? [standard]: " deployment_config
+deployment_config=${deployment_config:-"standard"}
+
 read -ep "Show generated yaml? (y/n) " answer
 if [ "$answer" = "y" ]; then
   debug="--debug"
 fi
+
 
 helm install ${debug} \
 --namespace=${namespace} \
@@ -109,4 +113,5 @@ helm install ${debug} \
 --set=apiVersions.ServiceAccount=${serviceaccount_api} \
 --set=apiVersions.ClusterRole=${clusterrole_api} \
 --set=apiVersions.ClusterRoleBinding=${clusterrolebinding_api} \
+--set=configType=${deployment_config} \
 --repo https://logzio.github.io/logzio-helm/metricbeat logzio-k8s-metrics logzio-k8s-metrics
