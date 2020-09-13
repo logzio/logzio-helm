@@ -109,7 +109,7 @@ metricbeatConfig:
         reload.enabled: false
 
       processors:
-        - add_cloud_metadata:
+        - add_cloud_metadata: ~
 
       fields:
         logzio_codec: json
