@@ -3,7 +3,7 @@
 Helm is a tool for managing packages of pre-configured Kubernetes resources using Charts.
 Logzio-k8s-metrics allows you to ship metrics from your Kubernetes cluster.  
 You can either deploy this Daemonset with the standrad configuration, or with autodiscover configuration. For further information about Metricbeat's autodiscover please see [Autodiscover documentation](https://www.elastic.co/guide/en/beats/metricbeat/7.9/configuration-autodiscover.html).  
-*Note*: This integration supports Autodiscover with Metricbeat version 7.6+ and default’s to Metricbeat 7.9.1.
+*Note*: This integration supports Autodiscover with Metricbeat version 7.6+ and defaults to Metricbeat 7.9.1.
 
 
 ### Prerequisites:
@@ -13,8 +13,8 @@ You can either deploy this Daemonset with the standrad configuration, or with au
 * Kubelet read-only-port 10255 enabled. Kubelet read-only-port 10255 is enabled by default on some cluster versions. If it isn’t enabled, follow Kubernetes’s instructions for enabling 10255 as a read-only-port in Kubelet’s config file
 
 You have two options for deployment:
-* [Default configuration <span class="sm ital">(recommended)</span>](#default-config)
-* [Custom configuration](#manual-config)
+* [Automated configuration <span class="sm ital">(recommended)</span>](#default-config)
+* [Manual configuration](#manual-config)
 
 <div id="default-config">
 
@@ -31,8 +31,8 @@ bash <(curl -s https://raw.githubusercontent.com/logzio/logzio-helm/master/quick
 |---|---|
 | Logz.io metrics shipping token (Required) | The [token](https://app.logz.io/#/dashboard/settings/general) of the account you want to ship to. |
 | Logz.io region (Default: `Blank (US East)`) | Two-letter region code, or blank for US East (Northern Virginia). This determines your listener URL (where you’re shipping the logs to) and API URL. You can find your region code in the [Regions and URLs](https://docs.logz.io/user-guide/accounts/account-region.html#regions-and-urls) table. |
-| Cluster name (Default: `detected by the script` | The name of the Kubernetes cluster you’re deploying in. |
-| Standard or autodiscover deployment (Default: `standard` | To deploy with [configuration templates](https://www.elastic.co/guide/en/beats/metricbeat/current/configuration-autodiscover.html) answer 'autodiscover'. |
+| Cluster name (Default: `detected by the script`) | The name of the Kubernetes cluster you’re deploying in. |
+| Standard or autodiscover deployment (Default: `standard`) | To deploy with [configuration templates](https://www.elastic.co/guide/en/beats/metricbeat/current/configuration-autodiscover.html) answer 'autodiscover'. |
 
 #### 2. Check Logz.io for your metrics
 Give your metrics some time to get from your system to ours, and then open [Logz.io](https://app.logz.io/).
@@ -41,7 +41,7 @@ Give your metrics some time to get from your system to ours, and then open [Logz
 
 <div id="manual-config">
 
-### Manually deployment:
+### Manual deployment:
 
 #### 1. Store your Logz.io credentials
 Save your Logz.io shipping credentials as a Kubernetes secret.
