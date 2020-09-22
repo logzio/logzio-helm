@@ -69,6 +69,10 @@ spec:
               key: cluster-name
         - name: SSL_VERIFICATION_MODE
           value: {{ .Values.daemonset.sslVerificationMode }}
+        - name: SHIPPING_PROTOCOL
+          value: {{ .Values.shippingProtocol | quote }}
+        - name: SHIPPING_PORT
+          value: {{ .Values.shippingPort | quote }}
         securityContext: {{ toYaml ( .Values.podSecurityContext | default .Values.daemonset.securityContext ) | nindent 10 }}
         resources: {{ toYaml ( .Values.resources | default .Values.daemonset.resources ) | nindent 10 }}
         volumeMounts:
