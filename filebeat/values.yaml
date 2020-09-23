@@ -143,6 +143,8 @@ daemonset:
     requests:
       cpu: 100m
       memory: 100Mi
+  tolerations:
+  - operator: Exists
   volumes:
     - name: cert
       configMap:

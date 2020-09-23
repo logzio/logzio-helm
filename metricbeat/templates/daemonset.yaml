@@ -99,6 +99,10 @@ spec:
         {{- if .Values.extraVolumeMounts | default .Values.daemonset.extraVolumeMounts }}
 {{ toYaml ( .Values.extraVolumeMounts | default .Values.daemonset.extraVolumeMounts ) | indent 8 }}
         {{- end }}
+      {{- if .Values.daemonset.tolerations }}
+      tolerations:
+{{ toYaml .Values.daemonset.tolerations | indent 6 }}
+      {{- end }}
       volumes:
       {{- range .Values.secretMounts | default .Values.daemonset.secretMounts }}
       - name: {{ .name }}

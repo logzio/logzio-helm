@@ -70,6 +70,10 @@ spec:
           readOnly: {{ .readOnly }}
           subPath: {{ .subPath }}
       {{- end }}
+      {{- if .Values.daemonset.tolerations }}
+      tolerations:
+{{ toYaml .Values.daemonset.tolerations | indent 6 }}
+      {{- end }}
       volumes:
       - name: varlibdockercontainers
         hostPath:
