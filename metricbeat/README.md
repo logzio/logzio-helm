@@ -25,6 +25,7 @@ You have two options for deployment:
 ```shell
 bash <(curl -s https://raw.githubusercontent.com/logzio/logzio-helm/master/quickstart-metrics.sh)
 ```
+**Note:** The script is currently only compatible with Helm 3.
 
 ##### Prompts and answers
 
@@ -206,7 +207,7 @@ helm install --namespace=kube-system logzio-k8s-metrics logzio-helm/logzio-k8s-m
   --set=imageTag=7.7.0,terminationGracePeriodSeconds=30
 ```
 
-For values that are configurations, such as `metricbeatConfig.autoCustomConfig`, `deployment.metricbeatConfig.custom` and `daemonset.metricbeatConfig.custom`, use the `--set-file` argument in `helm install`. For example,
+To override configurations such as `metricbeatConfig.autoCustomConfig`, `deployment.metricbeatConfig.custom` and `daemonset.metricbeatConfig.custom`, use the `--set-file` argument in `helm install`. For example,
 ```shell
 helm install --namespace=kube-system logzio-k8s-metrics logzio-helm/logzio-k8s-metrics \
   --set-file deployment.metricbeatConfig.custom=/path/to/your/config.yaml
