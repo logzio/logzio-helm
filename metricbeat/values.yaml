@@ -157,6 +157,7 @@ metricbeatConfig:
   autoCustomConfig: {}
 
 daemonset:
+  leanConfig: false
   extraVolumeMounts:
     - name: modules
       mountPath: /usr/share/metricbeat/modules.d
@@ -181,8 +182,107 @@ daemonset:
     readOnly: true
     subPath: SectigoRSADomainValidationSecureServerCA.crt
   sslVerificationMode: "none"
+  metricbeatConfig:
+    default:
+      system.yml: |-
+        - module: system
+          period: 10s
+          metricsets:
+            - cpu
+            - load
+            - memory
+            - network
+            - process
+            - process_summary
+            - core
+            - diskio
+            - socket
+          processes: ['.*']
+          process.include_top_n:
+            by_cpu: 5      # include top 5 processes by CPU
+            by_memory: 5   # include top 5 processes by memory
+          cpu.metrics:  ["percentages", "normalized_percentages"]
+        - module: system
+          period: 1m
+          metricsets:
+            - filesystem
+            - fsstat
+          processors:
+          - drop_event.when.regexp:
+              system.filesystem.mount_point: '^/(sys|cgroup|proc|dev|etc|host|lib)($|/)'
+      kubernetes.yml: |-
+        - module: kubernetes
+          period: 10s
+          metricsets:
+            - node
+            - system
+            - pod
+            - container
+            - volume
+          host: ${NODE_NAME}
+          hosts: ["${SHIPPING_PROTOCOL}://${HOST_IP}:${SHIPPING_PORT}"]
+          enabled: true
+          bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+          ssl.verification_mode: ${SSL_VERIFICATION_MODE}
+      #   If there is a CA bundle that contains the issuer of the certificate used in the Kubelet API,
+      #   remove ssl.verification_mode entry and use the CA, for instance:
+      #   ssl.certificate_authorities:
+      #     - /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+    lean:
+      system.yml: |-
+        - module: system
+          period: 10s
+          metricsets:
+            - cpu
+            - load
+            - memory
+            - network
+            - process
+            - process_summary
+            - core
+            - diskio
+            - socket
+          processes: ['.*']
+          process.include_top_n:
+            by_cpu: 5      # include top 5 processes by CPU
+            by_memory: 5   # include top 5 processes by memory
+          cpu.metrics:  ["percentages", "normalized_percentages"]
+          processors:
+            - include_fields:
+                fields: ["token","tags","type","@timestamp","event.module","metricset.name","host.name","system.cpu.cores", "system.cpu.iowait.pct", "system.cpu.nice.pct", "system.cpu.softirq.pct", "system.cpu.steal.pct", "system.cpu.system.pct", "system.cpu.user.pct", "system.diskio.io.time", "system.diskio.name", "system.diskio.read.bytes", "system.diskio.write.bytes", "system.filesystem.device", "system.filesystem.used.pct", "system.fsstat.total", "system.load.norm.", "system.memory.free", "system.memory.total", "system.memory.used.bytes", "system.memory.used.pct", "system.network.in.bytes", "system.network.name", "system.network.out.bytes", "system.process.cpu.total.pct", "system.process.memory.rss.bytes", "cluster", "system.load.norm.1", "system.load.1", "system.load.5", "system.load.15", "system.filesystem.used.pct", "system.filesystem.device_name", "system.fsstat.total_size.used", "system.fsstat.total_size.total", "system.cpu.cores", "system.process.cpu.total.pct", "system.process.memory.rss.bytes" , "process.name"]
+        - module: system
+          period: 1m
+          metricsets:
+            - filesystem
+            - fsstat
+          processors:
+            - include_fields:
+                fields: ["token","tags","type","@timestamp","event.module","metricset.name","host.name","system.cpu.cores", "system.cpu.iowait.pct", "system.cpu.nice.pct", "system.cpu.softirq.pct", "system.cpu.steal.pct", "system.cpu.system.pct", "system.cpu.user.pct", "system.diskio.io.time", "system.diskio.name", "system.diskio.read.bytes", "system.diskio.write.bytes", "system.filesystem.device", "system.filesystem.used.pct", "system.fsstat.total", "system.load.norm.", "system.memory.free", "system.memory.total", "system.memory.used.bytes", "system.memory.used.pct", "system.network.in.bytes", "system.network.name", "system.network.out.bytes", "system.process.cpu.total.pct", "system.process.memory.rss.bytes", "cluster", "system.load.norm.1", "system.load.1", "system.load.5", "system.load.15", "system.filesystem.used.pct", "system.filesystem.device_name", "system.fsstat.total_size.used", "system.fsstat.total_size.total", "system.cpu.cores", "system.process.cpu.total.pct", "system.process.memory.rss.bytes" , "process.name"]  
+      kubernetes.yml: |-
+        - module: kubernetes
+          period: 10s
+          metricsets:
+            - node
+            - system
+            - pod
+            - container
+            - volume
+          host: ${NODE_NAME}
+          hosts: ["${SHIPPING_PROTOCOL}://${HOST_IP}:${SHIPPING_PORT}"]
+          enabled: true
+          bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+          ssl.verification_mode: ${SSL_VERIFICATION_MODE}
+          processors:
+            - include_fields:
+                fields: ["token","tags","type","@timestamp","event.module","metricset.name","host.name","kubernetes.container.cpu.usage.core.ns", "kubernetes.container.id", "kubernetes.container.memory.available.bytes", "kubernetes.container.memory.workingset.bytes", "kubernetes.container.name", "kubernetes.container.rootfs.capacity.bytes", "kubernetes.container.rootfs.used.bytes", "kubernetes.container.status.phase", "kubernetes.node.cpu.capacity.cores", "kubernetes.node.fs.available.bytes", "kubernetes.node.fs.capacity.bytes", "kubernetes.node.fs.used.bytes", "kubernetes.node.name", "kubernetes.node.start", "kubernetes.node.status.ready", "kubernetes.pod.name", "kubernetes.pod.network.rx.bytes", "kubernetes.pod.network.tx.bytes", "kubernetes.pod.status.phase", "cluster", "kubernetes.namespace"]
+    #     If there is a CA bundle that contains the issuer of the certificate used in the Kubelet API,
+    #     remove ssl.verification_mode entry and use the CA, for instance:
+    #     ssl.certificate_authorities:
+    #       - /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+    custome: {}
 
 deployment:
+  leanConfig: false
   extraVolumeMounts:
   - name: modules
     mountPath: /usr/share/metricbeat/modules.d
@@ -193,19 +293,38 @@ deployment:
       defaultMode: 0600
       name: metricbeat-deployment-modules
   metricbeatConfig:
-    kubernetes.yml: |-
-      - module: kubernetes
-        metricsets:
-          - state_node
-          - state_deployment
-          - state_replicaset
-          - state_pod
-          - state_container
-          - event
-        period: 10s
-        hosts: ["kube-state-metrics.${KUBE_STATE_METRICS_NAMESPACE}:${KUBE_STATE_METRICS_PORT}"]
-        enabled: true
-        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+    default:
+      kubernetes.yml: |-
+        - module: kubernetes
+          metricsets:
+            - state_node
+            - state_deployment
+            - state_replicaset
+            - state_pod
+            - state_container
+            - event
+          period: 10s
+          hosts: ["kube-state-metrics.${KUBE_STATE_METRICS_NAMESPACE}:${KUBE_STATE_METRICS_PORT}"]
+          enabled: true
+          bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+    lean:
+      kubernetes.yml: |-
+        - module: kubernetes
+          metricsets:
+            - state_node
+            - state_deployment
+            - state_replicaset
+            - state_pod
+            - state_container
+            - event
+          period: 10s
+          hosts: ["kube-state-metrics.${KUBE_STATE_METRICS_NAMESPACE}:${KUBE_STATE_METRICS_PORT}"]
+          enabled: true
+          bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+          processors:
+            - include_fields:
+                fields: ["token","tags","type","@timestamp","event.module","metricset.name","host.name","kubernetes.container.cpu.usage.core.ns", "kubernetes.container.id", "kubernetes.container.memory.available.bytes", "kubernetes.container.memory.workingset.bytes", "kubernetes.container.name", "kubernetes.container.rootfs.capacity.bytes", "kubernetes.container.rootfs.used.bytes", "kubernetes.container.status.phase", "kubernetes.node.cpu.capacity.cores", "kubernetes.node.fs.available.bytes", "kubernetes.node.fs.capacity.bytes", "kubernetes.node.fs.used.bytes", "kubernetes.node.name", "kubernetes.node.start", "kubernetes.node.status.ready", "kubernetes.pod.name", "kubernetes.pod.network.rx.bytes", "kubernetes.pod.network.tx.bytes", "kubernetes.pod.status.phase", "cluster", "kubernetes.namespace"]
+    custom: {}
   securityContext:
     runAsUser: 0
   resources:

@@ -41,9 +41,9 @@ data:
 {{- end -}}
 {{- end -}}
 {{- end -}}
-{{ printf "\n" }}
----
 
+{{- if .Values.daemonset.metricbeatConfig }}
+---
 apiVersion: {{ .Values.apiVersions.ConfigMap }}
 kind: ConfigMap
 metadata:
@@ -52,52 +52,8 @@ metadata:
   labels:
     k8s-app: metricbeat
 data:
-  system.yml: |-
-    - module: system
-      period: 10s
-      metricsets:
-        - cpu
-        - load
-        - memory
-        - network
-        - process
-        - process_summary
-        - core
-        - diskio
-        - socket
-      processes: ['.*']
-      process.include_top_n:
-        by_cpu: 5      # include top 5 processes by CPU
-        by_memory: 5   # include top 5 processes by memory
-      cpu.metrics:  ["percentages", "normalized_percentages"]
-
-    - module: system
-      period: 1m
-      metricsets:
-        - filesystem
-        - fsstat
-      processors:
-      - drop_event.when.regexp:
-          system.filesystem.mount_point: '^/(sys|cgroup|proc|dev|etc|host|lib)($|/)'
-  kubernetes.yml: |-
-    - module: kubernetes
-      period: 10s
-      metricsets:
-        - node
-        - system
-        - pod
-        - container
-        - volume
-      host: ${NODE_NAME}
-      hosts: ["{{ .Values.shippingProtocol }}://${HOST_IP}:{{ .Values.shippingPort }}"]
-      enabled: true
-      bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
-      ssl.verification_mode: ${SSL_VERIFICATION_MODE}
-#     If there is a CA bundle that contains the issuer of the certificate used in the Kubelet API,
-#     remove ssl.verification_mode entry and use the CA, for instance:
-#     ssl.certificate_authorities:
-#       - /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-
+{{- include "metricbeat.chosenDaemonsetConfig" . }}
+{{- end -}}
 
 {{- if .Values.deployment.metricbeatConfig }}
 ---
@@ -109,8 +65,5 @@ metadata:
   labels:
     k8s-app: metricbeat
 data:
-{{- range $path, $config := .Values.deployment.metricbeatConfig }}
-  {{ $path }}: |-
-{{ $config | indent 4 -}}
-{{- end -}}
+{{- include "metricbeat.chosenDeploymentConfig" . }}
 {{- end -}}
