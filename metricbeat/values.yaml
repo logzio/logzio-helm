@@ -344,3 +344,4 @@ secrets:
   logzioRegion: " "
   clusterName: ""
   kube-state-metrics-port: "8080"
+  kube-state-metrics-values: "kube-system"
