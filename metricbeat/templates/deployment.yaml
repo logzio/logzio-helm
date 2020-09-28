@@ -43,17 +43,17 @@ spec:
         - name: KUBE_STATE_METRICS_NAMESPACE
           valueFrom:
             secretKeyRef:
-              name: cluster-details
+              name: logzio-metrics-secret
               key: kube-state-metrics-namespace
         - name: KUBE_STATE_METRICS_PORT
           valueFrom:
             secretKeyRef:
-              name: cluster-details
+              name: logzio-metrics-secret
               key: kube-state-metrics-port
         - name: CLUSTER_NAME
           valueFrom:
             secretKeyRef:
-              name: cluster-details
+              name: logzio-metrics-secret
               key: cluster-name
         securityContext: {{ toYaml ( .Values.podSecurityContext | default .Values.deployment.securityContext ) | nindent 10 }}
         resources: {{ toYaml ( .Values.resources | default .Values.deployment.resources ) | nindent 10 }}

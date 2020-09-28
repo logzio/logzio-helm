@@ -338,3 +338,9 @@ deployment:
     mountPath: "/etc/pki/tls/certs/SectigoRSADomainValidationSecureServerCA.crt"
     readOnly: true
     subPath: SectigoRSADomainValidationSecureServerCA.crt
+
+secrets:
+  logzioShippingToken: ""
+  logzioRegion: " "
+  clusterName: ""
+  kube-state-metrics-port: "8080"
