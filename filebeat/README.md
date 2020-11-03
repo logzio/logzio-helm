@@ -13,6 +13,7 @@ You have two options for deployment:
 * [Standard configuration](#standard-config)
 * [Autodiscover configuration](#autodiscover-config)
 
+**Note:** Helm 2 will reach [EOL on November 2020](https://helm.sh/blog/2019-10-22-helm-2150-released/#:~:text=6%20months%20after%20Helm%203's,Helm%202%20will%20formally%20end). This document follows the command syntax recommended for Helm 3, but the Chart will work with both Helm 2 and Helm 3. 
 <div id="standard-config">
 
 ### Standard configuration deployment:
