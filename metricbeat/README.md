@@ -17,6 +17,8 @@ You have two options for deployment:
 * [Automated configuration <span class="sm ital">(recommended)</span>](#default-config)
 * [Manual configuration](#manual-config)
 
+**Note:** Helm 2 will reach [EOL on November 2020](https://helm.sh/blog/2019-10-22-helm-2150-released/#:~:text=6%20months%20after%20Helm%203's,Helm%202%20will%20formally%20end). While this Chart works with both Helm 2 and Helm 3, the commands syntax in this doc is for Helm 3.
+
 <div id="default-config">
 
 ### Automatic deployment:
