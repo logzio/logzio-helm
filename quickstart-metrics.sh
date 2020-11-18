@@ -67,8 +67,21 @@ else
 fi
 listener_host="listener${logzio_region}.logz.io"
 
-read -ep "Kubelet shipping protocol [http]: " shipping_protocol
-shipping_protocol=${shipping_protocol:-"http"}
+cluster_name=$(kubectl config current-context)
+if [[ $cluster_name == *"cluster/"* ]]; then
+  cluster_name=${cluster_name#*"cluster/"}
+fi
+read -ep "Cluster name [${cluster_name}]: " real_cluster_name
+real_cluster_name=${real_cluster_name:-"${cluster_name}"}
+
+has_eks=$(aws eks describe-cluster --name ${real_cluster_name} | grep ":eks:")
+if [[ $has_eks ]]; then
+  shipping_protocol="https"
+else
+  read -ep "Kubelet shipping protocol [http]: " shipping_protocol
+  shipping_protocol=${shipping_protocol:-"http"}
+fi
+
 shipping_port="10255"
 if [[ $shipping_protocol == "https" ]]; then
   shipping_port="10250"
@@ -76,13 +89,6 @@ fi
 
 read -ep "Target namespace to deploy [kube-system]: " namespace
 namespace=${namespace:-"kube-system"}
-
-cluster_name=$(kubectl config current-context)
-if [[ $cluster_name == *"cluster/"* ]]; then
-  cluster_name=${cluster_name#*"cluster/"}
-fi
-read -ep "Cluster name [${cluster_name}]: " real_cluster_name
-real_cluster_name=${real_cluster_name:-"${cluster_name}"}
 
 read -ep "Deploy with standard or autodiscover configuration? [standard]: " deployment_config
 deployment_config=${deployment_config:-"standard"}
