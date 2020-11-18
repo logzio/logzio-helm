@@ -10,6 +10,7 @@ apiVersions:
   ServiceAccount: v1
   ClusterRole: rbac.authorization.k8s.io/v1beta1
   ClusterRoleBinding: rbac.authorization.k8s.io/v1beta1
+  Secrets: v1
 
 namespace: kube-system
 
@@ -257,7 +258,7 @@ daemonset:
             - fsstat
           processors:
             - include_fields:
-                fields: ["token","tags","type","@timestamp","event.module","metricset.name","host.name","system.cpu.cores", "system.cpu.iowait.pct", "system.cpu.nice.pct", "system.cpu.softirq.pct", "system.cpu.steal.pct", "system.cpu.system.pct", "system.cpu.user.pct", "system.diskio.io.time", "system.diskio.name", "system.diskio.read.bytes", "system.diskio.write.bytes", "system.filesystem.device", "system.filesystem.used.pct", "system.fsstat.total", "system.load.norm.", "system.memory.free", "system.memory.total", "system.memory.used.bytes", "system.memory.used.pct", "system.network.in.bytes", "system.network.name", "system.network.out.bytes", "system.process.cpu.total.pct", "system.process.memory.rss.bytes", "cluster", "system.load.norm.1", "system.load.1", "system.load.5", "system.load.15", "system.filesystem.used.pct", "system.filesystem.device_name", "system.fsstat.total_size.used", "system.fsstat.total_size.total", "system.cpu.cores", "system.process.cpu.total.pct", "system.process.memory.rss.bytes" , "process.name"]  
+                fields: ["token","tags","type","@timestamp","event.module","metricset.name","host.name","system.cpu.cores", "system.cpu.iowait.pct", "system.cpu.nice.pct", "system.cpu.softirq.pct", "system.cpu.steal.pct", "system.cpu.system.pct", "system.cpu.user.pct", "system.diskio.io.time", "system.diskio.name", "system.diskio.read.bytes", "system.diskio.write.bytes", "system.filesystem.device", "system.filesystem.used.pct", "system.fsstat.total", "system.load.norm.", "system.memory.free", "system.memory.total", "system.memory.used.bytes", "system.memory.used.pct", "system.network.in.bytes", "system.network.name", "system.network.out.bytes", "system.process.cpu.total.pct", "system.process.memory.rss.bytes", "cluster", "system.load.norm.1", "system.load.1", "system.load.5", "system.load.15", "system.filesystem.used.pct", "system.filesystem.device_name", "system.fsstat.total_size.used", "system.fsstat.total_size.total", "system.cpu.cores", "system.process.cpu.total.pct", "system.process.memory.rss.bytes" , "process.name"]
       kubernetes.yml: |-
         - module: kubernetes
           period: 10s
@@ -338,3 +339,9 @@ deployment:
     mountPath: "/etc/pki/tls/certs/SectigoRSADomainValidationSecureServerCA.crt"
     readOnly: true
     subPath: SectigoRSADomainValidationSecureServerCA.crt
+secrets:
+  MetricsToken: ""
+  ListenerHost: ""
+  ClusterName: ""
+  KubeStatNamespace: ""
+  KubeStatPort: ""
