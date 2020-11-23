@@ -169,6 +169,7 @@ Give your metrics some time to get from your system to ours, and then open [Logz
 | `apiVersions.ServiceAccount` | API version of `serviceaccount.yaml`. | `v1` |
 | `apiVersions.ClusterRole` | API version of `clusterrole.yaml`. | `rbac.authorization.k8s.io/v1beta1` |
 | `apiVersions.ClusterRoleBinding` | API version of `clusterrolebinding.yaml`. | `rbac.authorization.k8s.io/v1beta1` |
+| `apiVersions.Secrets` | API version of `secrets.yaml`. | `v1` |
 | `shippingProtocol` | Shipping protocol. | `http` |
 | `shippingPort` | Shipping port. | `10255` |
 | `serviceAccount.create` | Specifies whether a service account should be created. | `true` |
@@ -202,6 +203,11 @@ Give your metrics some time to get from your system to ours, and then open [Logz
 | `deployment.resources` | Allows you to set the resources for Metricbeat Deployment. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/metricbeat/values.yaml). |
 | `deployment.secretMounts` | Allows you to easily mount a secret as a file inside the Deployment Useful for mounting certificates and other secrets. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/metricbeat/values.yaml). |
 | `namespace` | Chart's namespace | `kube-system` |
+| `secrets.MetricsToken`| Secret with your [logz.io Metrics token](https://docs.logz.io/user-guide/accounts/finding-your-metrics-account-token/). | `""` |
+| `secrets.ListenerHost`| Secret with your [logz.io listener host](https://docs.logz.io/user-guide/accounts/account-region.html#available-regions). Defaults to US East. | `" "` |
+| `secrets.ClusterName`| Secret with your cluster name. | `""` |
+| `secrets.KubeStatNamespace`| Secret with your Kube-Stat-Metrics namespace. | `""` |
+| `secrets.KubeStatPort`| Secret with your Kube-Stat-Metrics port. | `""` |
 
 If you wish to change the default values, specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
 
