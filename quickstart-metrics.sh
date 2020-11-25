@@ -67,20 +67,6 @@ else
 fi
 listener_host="listener${logzio_region}.logz.io"
 
-read -ep "Kubelet shipping protocol [http]: " shipping_protocol
-shipping_protocol=${shipping_protocol:-"http"}
-shipping_port="10255"
-if [[ $shipping_protocol == "https" ]]; then
-  shipping_port="10250"
-fi
-
-read -ep "Target namespace to deploy [kube-system]: " namespace
-namespace=${namespace:-"kube-system"}
-
-kubectl --namespace=${namespace} create secret generic logzio-metrics-secret \
-  --from-literal=logzio-metrics-shipping-token=$metrics_token \
-  --from-literal=logzio-metrics-listener-host=$listener_host
-
 cluster_name=$(kubectl config current-context)
 if [[ $cluster_name == *"cluster/"* ]]; then
   cluster_name=${cluster_name#*"cluster/"}
@@ -88,10 +74,21 @@ fi
 read -ep "Cluster name [${cluster_name}]: " real_cluster_name
 real_cluster_name=${real_cluster_name:-"${cluster_name}"}
 
-kubectl --namespace=${namespace} create secret generic cluster-details \
-  --from-literal=kube-state-metrics-namespace=$kube_stat_ns \
-  --from-literal=kube-state-metrics-port=$kube_stat_port \
-  --from-literal=cluster-name=$cluster_name
+has_eks=$(aws eks describe-cluster --name ${real_cluster_name} | grep ":eks:")
+if [[ $has_eks ]]; then
+  shipping_protocol="https"
+else
+  read -ep "Kubelet shipping protocol [http]: " shipping_protocol
+  shipping_protocol=${shipping_protocol:-"http"}
+fi
+
+shipping_port="10255"
+if [[ $shipping_protocol == "https" ]]; then
+  shipping_port="10250"
+fi
+
+read -ep "Target namespace to deploy [kube-system]: " namespace
+namespace=${namespace:-"kube-system"}
 
 read -ep "Deploy with standard or autodiscover configuration? [standard]: " deployment_config
 deployment_config=${deployment_config:-"standard"}
@@ -114,4 +111,9 @@ helm install ${debug} \
 --set=apiVersions.ClusterRole=${clusterrole_api} \
 --set=apiVersions.ClusterRoleBinding=${clusterrolebinding_api} \
 --set=configType=${deployment_config} \
+--set=secrets.MetricsToken=${metrics_token} \
+--set=secrets.ListenerHost=${listener_host} \
+--set=secrets.ClusterName=${real_cluster_name} \
+--set=secrets.KubeStatNamespace=${kube_stat_ns} \
+--set=secrets.KubeStatPort=${kube_stat_port} \
 --repo https://logzio.github.io/logzio-helm/metricbeat logzio-k8s-metrics logzio-k8s-metrics
