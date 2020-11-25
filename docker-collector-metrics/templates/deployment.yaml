@@ -1,0 +1,62 @@
+apiVersion: {{ .Values.apiVersions.deployment}}
+kind: Deployment
+metadata:
+  name: docker-collector-metrics
+  namespace: {{ .Values.namespace }}
+  labels:
+    k8s-app: docker-collector-metrics
+spec:
+  selector:
+    matchLabels:
+      k8s-app: docker-collector-metrics
+  template:
+    metadata:
+      labels:
+        k8s-app: docker-collector-metrics
+    spec:
+      serviceAccountName: {{ template "docker-collector-metrics.serviceAccount" . }}
+      hostNetwork: {{ .Values.hostNetwork }}
+      dnsPolicy: {{ .Values.dnsPolicy }}
+      containers:
+      - name: "docker-collector-metrics"
+        image: "{{ .Values.image }}:{{ .Values.imageTag }}"
+        env:
+        - name: LOGZIO_MODULES
+          value: aws
+        - name: LOGZIO_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: docker-collector-metrics-secret
+              key: logzio-metrics-shipping-token
+        - name: AWS_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: docker-collector-metrics-secret
+              key: aws-access-key
+        - name: AWS_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: docker-collector-metrics-secret
+              key: aws-secret-key
+        - name: AWS_REGION
+          value: {{ .Values.awsRegion }}
+        - name: AWS_NAMESPACES
+          value: {{ join "," .Values.awsNamespaces }}
+        - name: LOGZIO_REGION
+          value: {{ .Values.logzioRegion }}
+        - name: LOGZIO_TYPE
+          value: {{ .Values.logzioType }}
+        - name: LOGZIO_LOG_LEVEL
+          value: {{ .Values.logzioLogLevel }}
+        {{- if ( ne "-" .Values.logzioExtraDimension ) }}
+        - name: LOGZIO_EXTRA_DIMENSIONS
+          value: {{ .Values.logzioExtraDimension }}
+        {{- end }}
+        - name: DEBUG
+          value: {{ .Values.debug | quote }}
+        {{- if ( ne "-" .Values.hostname ) }}
+        - name: HOSTNAME
+          value: {{ .Values.hostname }}
+        {{- end }}
+        securityContext: {{ toYaml .Values.securityContext | nindent 10 }}
+        resources: {{ toYaml .Values.resources | nindent 10 }}

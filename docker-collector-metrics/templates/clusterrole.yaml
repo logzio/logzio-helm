@@ -1,0 +1,9 @@
+{{- if .Values.managedServiceAccount }}
+apiVersion: {{ .Values.apiVersions.clusterRole }}
+kind: ClusterRole
+metadata:
+  name: docker-collector-metrics
+  labels:
+    k8s-app: docker-collector-metrics
+rules: {{ toYaml .Values.clusterRoleRules | nindent 2 -}}
+{{- end -}}
