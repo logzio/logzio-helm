@@ -3,7 +3,16 @@ entries:
   logzio-k8s-metrics:
   - apiVersion: v1
     appVersion: 7.9.1
-    created: "2020-09-23T11:27:25.708855+03:00"
+    created: "2020-11-25T13:58:17.745324+02:00"
+    description: A Helm chart for shipping k8s metrics to logzio.io
+    digest: 25b0c99e5ed0725439bc7fb430469fb41e51a010bda9907c8e16361cc70a0d0b
+    name: logzio-k8s-metrics
+    urls:
+    - https://logzio.github.io/logzio-helm/metricbeat/logzio-k8s-metrics-0.0.5.tgz
+    version: 0.0.5
+  - apiVersion: v1
+    appVersion: 7.9.1
+    created: "2020-11-25T13:58:17.744024+02:00"
     description: A Helm chart for shipping k8s metrics to logzio.io
     digest: b4eda9687a92fa7f27ab81be5d3325cfb54068e104e726916f82714e23c3cf95
     name: logzio-k8s-metrics
@@ -12,7 +21,7 @@ entries:
     version: 0.0.4
   - apiVersion: v1
     appVersion: 7.9.1
-    created: "2020-09-23T11:27:25.706977+03:00"
+    created: "2020-11-25T13:58:17.742652+02:00"
     description: A Helm chart for shipping k8s metrics to logzio.io
     digest: 74ac0b9f0a10de603c6b110e47865030e85ae69fd2a603015f3095ab0137c70f
     name: logzio-k8s-metrics
@@ -21,7 +30,7 @@ entries:
     version: 0.0.3
   - apiVersion: v1
     appVersion: 0.0.1
-    created: "2020-09-23T11:27:25.705911+03:00"
+    created: "2020-11-25T13:58:17.740618+02:00"
     description: A Helm chart for shipping k8s metrics to logzio.io
     digest: f01dd8b4a9d8647b650cadfe1b03dc8d12ab26c15d51d9cd5a59bbd18dc9b5e2
     name: logzio-k8s-metrics
@@ -30,11 +39,11 @@ entries:
     version: 0.0.2
   - apiVersion: v1
     appVersion: 0.0.1
-    created: "2020-09-23T11:27:25.70457+03:00"
+    created: "2020-11-25T13:58:17.739006+02:00"
     description: A Helm chart for shipping k8s metrics to logzio.io
     digest: 2e4f2f94dc919d7d5b20fcfd7e7f93d36385c8167de671d5077edd8c3f8a951d
     name: logzio-k8s-metrics
     urls:
     - https://logzio.github.io/logzio-helm/metricbeat/logzio-k8s-metrics-0.0.1.tgz
     version: 0.0.1
-generated: "2020-09-23T11:27:25.702631+03:00"
+generated: "2020-11-25T13:58:17.735694+02:00"
