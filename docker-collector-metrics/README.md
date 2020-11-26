@@ -23,10 +23,12 @@ helm repo add logzio-helm https://logzio.github.io/logzio-helm/docker-collector-
 ```shell
 helm install -n kube-system \
 --set secrets.logzioShippingToken="<<SHIPPING-TOKEN>>" \
+--set logzioRegion="<<LOGZIO-REGION>>" \
 --set awsRegion="<<AWS-REGION>>" \
 --set awsNamespaces="{<<AWS-NAMESPACES>>}" \
 --set secrets.awsAccessKey="<<AWS-ACCESS-KEY>>" \
 --set secrets.awsSecretKey="<<AWS-SECRET-KEY>>" \
+--set logzioType="<<LOGZIO-TYPE>>" \
 docker-collector-metrics logzio-helm/docker-collector-metrics .
 ```
 
@@ -35,10 +37,13 @@ Replace the params in the command above with the following values:
 | Parameter | Description |
 |---|---|
 | `<<SHIPPING-TOKEN>>` | [Token](https://app.logz.io/#/dashboard/settings/general) of the logzio account you want to ship to. |
+| `<<LOGZIO-REGION>>` | Two-letter region code. This determines your listener URL (where you're shipping the metrics to) and API URL. <br> You can find your region code in the [Regions and URLs](https://docs.logz.io/user-guide/accounts/account-region.html#regions-and-urls) table. |
 | `<<AWS-REGION>>`| Your region's slug. You can find this in the AWS region menu (in the top menu, to the right). |
 | `<<AWS-NAMESPACES>>` | Comma-separated list of namespaces of the metrics you want to collect. <br> You can find a complete list of namespaces at [_AWS Services That Publish CloudWatch Metrics_](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/aws-services-cloudwatch-metrics.html). <br> **Please note** that your namespace list is inside the `"{namespaces}"` format, as it appears in the above command. |
 | `<<AWS-ACCESS-KEY>>` | Your IAM user's access key ID. |
 | `<<AWS-SECRET-KEY>>` | Your IAM user's secret key. |
+| `<<LOGZIO-TYPE>>` | (Optional) This field is needed only if you're shipping metrics to Kibana and you want to override the default value (`docker-collector-metrics`). <br> In Kibana, this is shown in the `type` field. Logz.io applies parsing based on `type`. |
+
 
 For further variables and settings, see the configuration table below.
 
@@ -71,10 +76,8 @@ Give your metrics some time to get from your system to ours, and then open [Logz
 | `dnsPolicy` | Specifies pod-specific DNS policies. | `ClusterFirstWithHostNet` |
 | `awsRegion` | **Required**. Your AWS region slug. To find it follow the instructions [here](https://github.com/logzio/docker-collector-metrics#region-configuration). | `''` |
 | `awsNamespaces` | **Required**. Comma-separated list of namespaces of the metrics you want to collect. <br> You can find a complete list of namespaces at [_AWS Services That Publish CloudWatch Metrics_](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/aws-services-cloudwatch-metrics.html). <br> **Please note** that your namespace list is inside the `"{namespaces}"` format, as it appears in the above command. | `''` |
-| `logzioRegion` | Two-letter region code. This determines your listener URL (where you're shipping the metrics to) and API URL.  
-You can find your region code in the [Regions and URLs](https://docs.logz.io/user-guide/accounts/account-region.html#regions-and-urls) table.| `us` |
-| `logzioType` | This field is needed only if you're shipping metrics to Kibana and you want to override the default value.  
-In Kibana, this is shown in the `type` field. Logz.io applies parsing based on `type`. | `docker-collector-metrics` |
+| `logzioRegion` | Two-letter region code. This determines your listener URL (where you're shipping the metrics to) and API URL. <br>You can find your region code in the [Regions and URLs](https://docs.logz.io/user-guide/accounts/account-region.html#regions-and-urls) table.| `us` |
+| `logzioType` | This field is needed only if you're shipping metrics to Kibana and you want to override the default value. <br> In Kibana, this is shown in the `type` field. Logz.io applies parsing based on `type`. | `docker-collector-metrics` |
 | `logzioLogLevel` | The log level the module startup scripts will generate. | `INFO` |
 | `logzioExtraDimension` | Semicolon-separated list of dimensions to be included with your metrics (formatted as `dimensionName1=value1;dimensionName2=value2`). To use an environment variable as a value, format as `dimensionName=$ENV_VAR_NAME`. Environment variables must be the only value in the field. If an environment variable can't be resolved, the field is omitted. | `"-"` |
 | `debug` | Set to `true` if you want Metricbeat to run in debug mode. <br> **Note:** Debug mode tends to generate a lot of debugging output, so you should probably enable it temporarily only when an error occurs while running the docker-collector in production. | `false` |
