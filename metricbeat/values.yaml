@@ -176,6 +176,7 @@ daemonset:
     requests:
       cpu: 100m
       memory: 100Mi
+  tolerations: {}
   secretMounts:
   - name: cert
     secretName: logzio-cert

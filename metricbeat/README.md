@@ -193,6 +193,7 @@ Give your metrics some time to get from your system to ours, and then open [Logz
 | `daemonset.resources` | Allows you to set the resources for Metricbeat Deployment. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/metricbeat/values.yaml). |
 | `daemonset.secretMounts` | Allows you to easily mount a secret as a file inside the DaemonSet. Useful for mounting certificates and other secrets. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/metricbeat/values.yaml). |
 | `daemonset.sslVerificationMode` | Set the ssl verification mode for Metricbeat | `"none"` |
+| `daemonset.tolerations` | Set [tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) for all DaemonSet pods. | `{}` |
 | `deployment.leanConfig` | When set to `true`, sets the Deployment's Metricbeat modules to the minimal configuration required to populate Logz.io's dashboards. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/metricbeat/values.yaml). |
 | `deployment.extraVolumeMounts` | Templatable string of additional volumeMounts to be passed to the Deployment. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/metricbeat/values.yaml). |
 | `deployment.extraVolumes` | Templatable string of additional `volumes` to be passed to the Deployment. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/metricbeat/values.yaml). |
@@ -233,8 +234,10 @@ helm uninstall --namespace=kube-system logzio-k8s-metrics
 
 
 ## Change log
+  - **0.0.6**:
+    - Added option to set tolerations for daemonset (Thanks [jlewis42lines](https://github.com/jlewis42lines)!).
   - **0.0.5**:
-    - Mangage Logz.io metrics related secrets in helm
+    - Mangage Logz.io metrics related secrets in helm.
   - **0.0.4**:
     - Support lean configuration for modules in Deployment and Daemonset to match build-in dashboards in Logz.io.
     - Support custom configuration for modules in Deployment and Daemonset.
