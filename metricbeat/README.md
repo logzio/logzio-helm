@@ -234,8 +234,10 @@ helm uninstall --namespace=kube-system logzio-k8s-metrics
 
 
 ## Change log
+  - **0.0.6**:
+    - Added option to set tolerations for daemonset (Thanks [jlewis42lines](https://github.com/jlewis42lines)!).
   - **0.0.5**:
-    - Mangage Logz.io metrics related secrets in helm
+    - Mangage Logz.io metrics related secrets in helm.
   - **0.0.4**:
     - Support lean configuration for modules in Deployment and Daemonset to match build-in dashboards in Logz.io.
     - Support custom configuration for modules in Deployment and Daemonset.

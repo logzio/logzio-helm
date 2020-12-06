@@ -173,5 +173,7 @@ helm uninstall --namespace=kube-system logzio-k8s-logs
 
 
 ## Change log
+ - **0.0.2**:
+    - Added option to set tolerations for daemonset (Thanks [jlewis42lines](https://github.com/jlewis42lines)!).
  - **0.0.1**:
     - Initial release.
