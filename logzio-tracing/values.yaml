@@ -1,0 +1,7 @@
+secrets:
+  TracesToken: ""
+
+Configs:
+  Region: "us"
+
+namespace: "monitoring"
