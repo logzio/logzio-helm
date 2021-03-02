@@ -1,0 +1,55 @@
+apiVersion:  apps/v1
+kind: Deployment
+metadata:
+  name: otel-collector-logzio
+  labels:
+    app: otel-logzio
+    app.kubernetes.io/name: otel-logzio
+    app.kubernetes.io/component: collector
+  namespace: monitoring
+spec:
+  selector:
+    matchLabels:
+      app: otel-logzio
+      app.kubernetes.io/name: otel-logzio
+      app.kubernetes.io/component: collector
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: otel-logzio
+        app.kubernetes.io/name: otel-logzio
+        app.kubernetes.io/component: collector
+    spec:
+      containers:
+        - image: otel/opentelemetry-collector-contrib:0.17.0
+          name: otel-collector-logzio
+          ports:
+            - containerPort: 1888   # pprof extension
+              protocol: TCP
+            - containerPort: 9411  # Zipkin receiver
+              protocol: TCP
+            - containerPort: 8888  # Prometheus metrics exposed by the collector
+              protocol: TCP
+            - containerPort: 13133  # health_check extension
+              protocol: TCP
+            - containerPort: 14250 #jaeger receiver
+              protocol: TCP
+          env:
+            - name: LOGZIO_TRACES_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: logzio-traces-shipping-token # This is the secret you created in step 4 above.
+                  name: logzio-monitoring-secret
+          volumeMounts:
+            - name: otel-collector-config
+              mountPath: "/etc/otel/"
+              readOnly: true
+              # subPath: config.yml
+      volumes:
+        - name: otel-collector-config
+          configMap:
+            defaultMode: 0600
+            name: otel-collector-config
