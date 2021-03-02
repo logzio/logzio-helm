@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: otel-collector-config
+  namespace: monitoring
+  labels:
+    app: otel-logzio
+    component: otel-collector-conf
+data:
+  config.yaml: |
+    receivers:
+      opencensus:
+      zipkin:
+        endpoint: :9411
+      jaeger:
+        protocols:
+          thrift_http:
+          grpc:
+
+    exporters:
+      logzio:
+        account_token: "${LOGZIO_TRACES_TOKEN}"
+        region: us    # Replace with the 2-letter code for your region from the Logz.io Regions and Listener hosts table or from your Account settings page - as in step 3 above.
+      logging:
+
+    processors:
+      batch:
+      queued_retry:
+
+    extensions:
+      pprof:
+        endpoint: :1777
+      zpages:
+        endpoint: :55679
+      health_check:
+
+    service:
+      extensions: [health_check, pprof]
+      pipelines:
+        traces:
+          receivers: [opencensus, jaeger, zipkin]
+          processors: [batch, queued_retry]
+          exporters: [logzio]
