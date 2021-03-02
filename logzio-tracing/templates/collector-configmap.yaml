@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: otel-collector-config
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Values.Configs.Namespace }}
   labels:
     app: otel-logzio
     component: otel-collector-conf

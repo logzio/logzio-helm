@@ -6,7 +6,7 @@ metadata:
     app: otel-logzio
     app.kubernetes.io/name: otel-logzio
     app.kubernetes.io/component: collector
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Values.Configs.Namespace }}
 spec:
   ports:
     - name: jaeger-health-check
