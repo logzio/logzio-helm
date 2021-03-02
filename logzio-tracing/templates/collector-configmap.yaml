@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: otel-collector-config
-  namespace: monitoring
+  namespace: {{ .Values.namespace }}
   labels:
     app: otel-logzio
     component: otel-collector-conf
@@ -20,7 +20,7 @@ data:
     exporters:
       logzio:
         account_token: "${LOGZIO_TRACES_TOKEN}"
-        region: us    # Replace with the 2-letter code for your region from the Logz.io Regions and Listener hosts table or from your Account settings page - as in step 3 above.
+        region: {{ .Values.Configs.Region }}    # Replace with the 2-letter code for your region from the Logz.io Regions and Listener hosts table or from your Account settings page - as in step 3 above.
       logging:
 
     processors:
