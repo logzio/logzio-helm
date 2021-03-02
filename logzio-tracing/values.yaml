@@ -1,7 +1,6 @@
-secrets:
+Secrets:
   TracesToken: ""
 
 Configs:
   Region: "us"
-
-namespace: "monitoring"
+  Namespace: "monitoring"

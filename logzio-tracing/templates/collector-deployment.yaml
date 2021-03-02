@@ -6,7 +6,7 @@ metadata:
     app: otel-logzio
     app.kubernetes.io/name: otel-logzio
     app.kubernetes.io/component: collector
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Values.Configs.Namespace }}
 spec:
   selector:
     matchLabels:
@@ -38,7 +38,7 @@ spec:
             - containerPort: 14250 #jaeger receiver
               protocol: TCP
           env:
-            - name: LOGZIO_TRACES_TOKEN
+            - name: LOGZIO_TRACES_.Values.Configs.RegionTOKEN
               valueFrom:
                 secretKeyRef:
                   key: logzio-traces-shipping-token # This is the secret you created in step 4 above.
