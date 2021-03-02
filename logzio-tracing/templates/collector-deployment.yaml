@@ -24,21 +24,21 @@ spec:
         app.kubernetes.io/component: collector
     spec:
       containers:
-        - image: otel/opentelemetry-collector-contrib:0.17.0
+        - image: {{ .Values.Collector.Image}}
           name: otel-collector-logzio
           ports:
             - containerPort: 1888   # pprof extension
               protocol: TCP
-            - containerPort: 9411  # Zipkin receiver
+            - containerPort: {{ .Values.Collector.Ports.ZipkingReceiver}}  # Zipkin receiver
               protocol: TCP
             - containerPort: 8888  # Prometheus metrics exposed by the collector
               protocol: TCP
             - containerPort: 13133  # health_check extension
               protocol: TCP
-            - containerPort: 14250 #jaeger receiver
+            - containerPort: {{ .Values.Collector.Ports.JaegerReceiverGrpc}} #jaeger receiver
               protocol: TCP
           env:
-            - name: LOGZIO_TRACES_.Values.Configs.RegionTOKEN
+            - name: LOGZIO_TRACES_TOKEN
               valueFrom:
                 secretKeyRef:
                   key: logzio-traces-shipping-token # This is the secret you created in step 4 above.
