@@ -4,3 +4,13 @@ Secrets:
 Configs:
   Region: "us"
   Namespace: "monitoring"
+
+Agent:
+  Image: "jaegertracing/jaeger-agent:1.18.0"
+
+Collector:
+  Image: "otel/opentelemetry-collector-contrib:0.17.0"
+  Ports:
+    ZipkingReceiver: 9411
+    JaegerReceiverGrpc: 14250
+    JaegerReceiverHttp: 14268
