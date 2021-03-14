@@ -14,13 +14,13 @@ spec:
       protocol: TCP
       targetPort: 14269
     - name: jaeger-collector-http
-      port: {{ .Values.Collector.Ports.JaegerReceiverHttp}}
+      port: {{ .Values.Collector.Ports.JaegerReceiverHttp }}
       protocol: TCP
-      targetPort: {{ .Values.Collector.Ports.JaegerReceiverHttp}}
+      targetPort: {{ .Values.Collector.Ports.JaegerReceiverHttp }}
     - name: jaeger-collector-zipkin
-      port: 9411
+      port: {{ .Values.Collector.Ports.ZipkingReceiver }}
       protocol: TCP
-      targetPort: 9411
+      targetPort: {{ .Values.Collector.Ports.ZipkingReceiver }}
     - name: jaeger-collector-grpc
       port: {{ .Values.Collector.Ports.JaegerReceiverGrpc}}
       protocol: TCP
