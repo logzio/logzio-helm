@@ -29,9 +29,9 @@ spec:
           ports:
             - containerPort: 14268
               protocol: TCP
-            - containerPort: {{ .Values.Collector.Ports.ZipkingReceiver }}
+            - containerPort: {{ .Values.Jaeger.Collector.Ports.ZipkingReceiver }}
               protocol: TCP
-            - containerPort: {{ .Values.Collector.Ports.JaegerReceiverGrpc }}
+            - containerPort: {{ .Values.Jaeger.Collector.Ports.JaegerReceiverGrpc }}
               protocol: TCP
           readinessProbe:
             httpGet:

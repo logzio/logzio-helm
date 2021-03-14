@@ -14,17 +14,17 @@ spec:
       protocol: TCP
       targetPort: 14269
     - name: jaeger-collector-http
-      port: {{ .Values.Collector.Ports.JaegerReceiverHttp }}
+      port: {{ .Values.Otel.Collector.Ports.JaegerReceiverHttp }}
       protocol: TCP
-      targetPort: {{ .Values.Collector.Ports.JaegerReceiverHttp }}
+      targetPort: {{ .Values.Otel.Collector.Ports.JaegerReceiverHttp }}
     - name: jaeger-collector-zipkin
-      port: {{ .Values.Collector.Ports.ZipkingReceiver }}
+      port: {{ .Values.Otel.Collector.Ports.ZipkingReceiver }}
       protocol: TCP
-      targetPort: {{ .Values.Collector.Ports.ZipkingReceiver }}
+      targetPort: {{ .Values.Otel.Collector.Ports.ZipkingReceiver }}
     - name: jaeger-collector-grpc
-      port: {{ .Values.Collector.Ports.JaegerReceiverGrpc}}
+      port: {{ .Values.Otel.Collector.Ports.JaegerReceiverGrpc}}
       protocol: TCP
-      targetPort: {{ .Values.Collector.Ports.JaegerReceiverGrpc}}
+      targetPort: {{ .Values.Otel.Collector.Ports.JaegerReceiverGrpc}}
   selector:
     app: otel-logzio
     app.kubernetes.io/name: otel-logzio

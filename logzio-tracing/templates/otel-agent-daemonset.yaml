@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: otel-agent
+  namespace: {{ .Values.Configs.Namespace }}
+  labels:
+    app: otel-logzio
+    app.kubernetes.io/name: otel-logzio
+    app.kubernetes.io/component: agent
+spec:
+  selector:
+    matchLabels:
+      app: otel-logzio
+      app.kubernetes.io/name: otel-logzio
+      app.kubernetes.io/component: agent
+  template:
+    metadata:
+      labels:
+        app: otel-logzio
+        app.kubernetes.io/name: otel-logzio
+        app.kubernetes.io/component: agent
+    spec:
+
+#      serviceAccountName: otel-logzio
+      containers:
+        - image: {{ .Values.Configs.Namespace}}
+          name: otel-agent
+          resources:
+            limits:
+              cpu: 1
+              memory: 2Gi
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          ports:
+            - containerPort: 1777 # pprof extenstion port
+            - containerPort: 55679 # ZPages port.
+            - containerPort: 13133 # health_check extension port
+            - containerPort: 8888  # Metrics port
+            - containerPort: 55678 # OpenCensus receiver port for pometheus Metrics
+            - containerPort: 14268 # jaeger receiver port
+            - containerPort: {{ .Values.Otel.Collector.Ports.ZipkingReceiver}} # zipkin receiver port
+            - containerPort: 6831 # Jaeger agent port
+            - containerPort: 55680 # Default OpenTelemetry receiver port.
+          volumeMounts:
+            - name: otel-agent-config-vol
+              mountPath: "/etc/otel"
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      volumes:
+        - name: otel-agent-config-vol
+          configMap:
+            defaultMode: 0600
+            name: otel-agent-config

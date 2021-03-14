@@ -5,12 +5,20 @@ Configs:
   Region: "us"
   Namespace: "monitoring"
 
-Agent:
-  Image: "jaegertracing/jaeger-agent:1.18.0"
+Jaeger:
+  Agent:
+    Images: "jaegertracing/jaeger-agent:1.18.0"
+  Collector:
+    Ports:
+      ZipkingReceiver: 9411
+      JaegerReceiverGrpc: 14250
 
-Collector:
-  Image: "otel/opentelemetry-collector-contrib:0.17.0"
-  Ports:
-    ZipkingReceiver: 9411
-    JaegerReceiverGrpc: 14250
-    JaegerReceiverHttp: 14268
+Otel:
+  Collector:
+    Image: "otel/opentelemetry-collector-contrib:0.17.0"
+    Ports:
+      ZipkingReceiver: 9411
+      JaegerReceiverGrpc: 14250
+      JaegerReceiverHttp: 14268
+  Agent:
+    Image: "otel/opentelemetry-collector-contrib:0.17.0"
