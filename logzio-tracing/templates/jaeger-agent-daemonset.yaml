@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: jaeger-agent
-          image: {{ .Values.Agent.Image }}
+          image: {{ .Values.Jaeger.Agent.Images }}
           args: ["--reporter.grpc.host-port=otel-collector-logzio:14250", "--log-level=debug"]
           ports:
             - containerPort: 5775

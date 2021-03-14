@@ -24,18 +24,18 @@ spec:
         app.kubernetes.io/component: collector
     spec:
       containers:
-        - image: {{ .Values.Collector.Image}}
+        - image: {{ .Values.Otel.Collector.Image}}
           name: otel-collector-logzio
           ports:
             - containerPort: 1888   # pprof extension
               protocol: TCP
-            - containerPort: {{ .Values.Collector.Ports.ZipkingReceiver}}  # Zipkin receiver
+            - containerPort: {{ .Values.Otel.Collector.Ports.ZipkingReceiver}}  # Zipkin receiver
               protocol: TCP
             - containerPort: 8888  # Prometheus metrics exposed by the collector
               protocol: TCP
             - containerPort: 13133  # health_check extension
               protocol: TCP
-            - containerPort: {{ .Values.Collector.Ports.JaegerReceiverGrpc}} #jaeger receiver
+            - containerPort: {{ .Values.Otel.Collector.Ports.JaegerReceiverGrpc}} #jaeger receiver
               protocol: TCP
           env:
             - name: LOGZIO_TRACES_TOKEN
