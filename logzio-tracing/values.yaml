@@ -4,11 +4,15 @@ Secrets:
 Configs:
   Region: "us"
   Namespace: "monitoring"
+  AgentBrand: "otel"
+  CollectorBrand: "otel"
 
 Jaeger:
   Agent:
     Images: "jaegertracing/jaeger-agent:1.18.0"
+    Port: 6381
   Collector:
+    Image: "logzio/jaeger-logzio-collector:latest"
     Ports:
       ZipkingReceiver: 9411
       JaegerReceiverGrpc: 14250
