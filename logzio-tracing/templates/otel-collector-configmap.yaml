@@ -1,3 +1,4 @@
+{{- if eq .Values.Configs.CollectorBrand "otel" }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -41,3 +42,4 @@ data:
           receivers: [opencensus, jaeger, zipkin]
           processors: [batch, queued_retry]
           exporters: [logzio]
+{{- end -}}

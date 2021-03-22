@@ -1,3 +1,4 @@
+{{- if eq .Values.Configs.AgentBrand "otel" }}
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -40,7 +41,7 @@ spec:
             - containerPort: 55678 # OpenCensus receiver port for pometheus Metrics
             - containerPort: 14268 # jaeger receiver port
             - containerPort: {{ .Values.Otel.Collector.Ports.ZipkingReceiver}} # zipkin receiver port
-            - containerPort: 6831 # Jaeger agent port
+            - containerPort: {{ .Values.Jaeger.Agent.Port }} # Jaeger agent port
             - containerPort: 55680 # Default OpenTelemetry receiver port.
           volumeMounts:
             - name: otel-agent-config-vol
@@ -52,3 +53,4 @@ spec:
           configMap:
             defaultMode: 0600
             name: otel-agent-config
+{{- end -}}
