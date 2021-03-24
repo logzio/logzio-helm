@@ -24,20 +24,64 @@ metadata:
   labels:
     k8s-app: filebeat
 data:
-{{- if eq .Values.configType "standard" }}
-{{- range $path, $config := .Values.filebeatConfig.standardConfig }}
-  {{ $path }}: |-
-{{ $config | indent 4 -}}
-{{- end -}}
-{{- else if eq .Values.configType "autodiscover" }}
-{{- range $path, $config := .Values.filebeatConfig.autodiscoverConfig }}
-  {{ $path }}: |-
-{{ $config | indent 4 -}}
-{{- end -}}
-{{- else if eq .Values.configType "auto-custom" }}
-{{- range $path, $config := fromYaml .Values.filebeatConfig.autoCustomConfig }}
-  {{ $path }}: |-
-{{ $config | indent 4 -}}
-{{- end -}}
-{{- end -}}
-{{- end -}}
+  {{- if eq .Values.configType "standard" }}
+  filebeat.yml: |-
+    filebeat.inputs:
+    - type: container
+      paths:
+        - /var/log/containers/*.log
+      processors:
+        - add_kubernetes_metadata:
+            host: ${NODE_NAME}
+            matchers:
+            - logs_path:
+                logs_path: "/var/log/containers/"
+
+    processors:
+      - add_cloud_metadata: ~
+      {{- include "logzio.extraFields" . | nindent 6 }}
+    fields:
+      logzio_codec: ${LOGZIO_CODEC}
+      token: ${LOGZIO_LOGS_SHIPPING_TOKEN}
+      cluster: ${CLUSTER_NAME}
+      type: ${LOGZIO_TYPE}
+    fields_under_root: ${FIELDS_UNDER_ROOT}
+    ignore_older: ${IGNORE_OLDER}
+    output:
+      logstash:
+        hosts: ["${LOGZIO_LOGS_LISTENER_HOST}:5015"]
+        ssl:
+          certificate_authorities: ['/etc/pki/tls/certs/SectigoRSADomainValidationSecureServerCA.crt']
+  {{- else if eq .Values.configType "autodiscover" }}
+  filebeat.yml: |-
+    filebeat.autodiscover:
+      providers:
+        - type: kubernetes
+          node: ${NODE_NAME}
+          hints.enabled: true
+          hints.default_config:
+            type: container
+            paths:
+              - /var/log/containers/*-${data.kubernetes.container.id}.log
+          include_annotations: '*'
+
+    processors:
+      - add_cloud_metadata: ~
+      {{- include "logzio.extraFields" . | nindent 6 }}
+    fields:
+      logzio_codec: ${LOGZIO_CODEC}
+      token: ${LOGZIO_LOGS_SHIPPING_TOKEN}
+      cluster: ${CLUSTER_NAME}
+      type: ${LOGZIO_TYPE}
+    fields_under_root: ${FIELDS_UNDER_ROOT}
+    ignore_older: ${IGNORE_OLDER}
+    output:
+      logstash:
+        hosts: ["${LOGZIO_LOGS_LISTENER_HOST}:5015"]
+        ssl:
+          certificate_authorities: ['/etc/pki/tls/certs/SectigoRSADomainValidationSecureServerCA.crt']
+  {{- else if eq .Values.configType "custom" }}
+  filebeat.yml:
+    {{- toYaml .Values.filebeatConfig.customConfig | nindent 4 }}
+  {{- end }}
+{{- end }}

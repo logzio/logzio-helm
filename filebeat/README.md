@@ -1,34 +1,45 @@
 # Logzio-k8s-logs
 
-Helm is a tool for managing packages of pre-configured Kubernetes resources using Charts.
-Logzio-k8s-logs allows you to ship logs from your Kubernetes cluster to Logz.io.
-You can either deploy this Daemonset with the standrad configuration, or with autodiscover configuration. For further information about Filebeat's autodiscover please see [Autodiscover documentation](https://www.elastic.co/guide/en/beats/filebeat/current/configuration-autodiscover.html).
+Helm is a tool for managing packages of pre-configured Kubernetes resources
+using Charts. Logzio-k8s-logs allows you to ship logs from your Kubernetes
+cluster to Logz.io.  You can either deploy this Daemonset with the standrad
+configuration, or with autodiscover configuration. For further information about
+Filebeat's autodiscover please see [Autodiscover documentation](https://www.elastic.co/guide/en/beats/filebeat/current/configuration-autodiscover.html).
 
+## Prerequisites
 
-### Prerequisites:
 * [Helm CLI](https://helm.sh/docs/intro/install/) installed
 * Allow outgoing traffic to destination port 5015
 
+## Deployment
+
 You have two options for deployment:
+
 * [Standard configuration](#standard-config)
 * [Autodiscover configuration](#autodiscover-config)
 
-**Note:** Helm 2 will reach [EOL on November 2020](https://helm.sh/blog/2019-10-22-helm-2150-released/#:~:text=6%20months%20after%20Helm%203's,Helm%202%20will%20formally%20end). This document follows the command syntax recommended for Helm 3, but the Chart will work with both Helm 2 and Helm 3. 
+**Note:** Helm 2 will reach [EOL on November
+2020](https://helm.sh/blog/2019-10-22-helm-2150-released/#:~:text=6%20months%20after%20Helm%203's,Helm%202%20will%20formally%20end).
+This document follows the command syntax recommended for Helm 3, but the Chart
+will work with both Helm 2 and Helm 3.
+
+### Add logzio-k8s-logs repo to your helm repo list
+
+  ```shell
+  helm repo add logzio-helm https://logzio.github.io/logzio-helm/filebeat
+  ```
+
 <div id="standard-config">
 
-### Standard configuration deployment:
+### Standard configuration deployment
 
-#### 1. Add logzio-k8s-logs repo to your helm repo list
+Replace `<<SHIPPING-TOKEN>>` with the
+[token](https://app.logz.io/#/dashboard/settings/general) of the account you
+want to ship to.
 
-```shell
-helm repo add logzio-helm https://logzio.github.io/logzio-helm/filebeat
-```
-
-#### 2. Deploy
-
-Replace `<<SHIPPING-TOKEN>>` with the [token](https://app.logz.io/#/dashboard/settings/general) of the account you want to ship to.
-
-Replace `<<LISTENER-REGION>>` with your region’s code (for example, `eu`). For more information on finding your account’s region, see [Account region](https://docs.logz.io/user-guide/accounts/account-region.html).
+Replace `<<LISTENER-REGION>>` with your region’s code (for example, `eu`). For
+more information on finding your account’s region, see [Account
+region](https://docs.logz.io/user-guide/accounts/account-region.html).
 
 Replace `<<CLUSTER-NAME>>` with your cluster's name.
 
@@ -40,32 +51,32 @@ helm install --namespace=kube-system \
 logzio-k8s-logs logzio-helm/logzio-k8s-logs
 ```
 
-#### 3. Check Logz.io for your logs
-Give your logs some time to get from your system to ours, and then open [Logz.io](https://app.logz.io/).
-
 </div>
 
 <div id="autodiscover-config">
 
-### Autodiscover configuration deployment:
+### Autodiscover configuration deployment
 
-Autodiscover allows you to adapt settings as changes happen. By defining configuration templates, the autodiscover subsystem can monitor services as they start running.
+Autodiscover allows you to adapt settings as changes happen. By defining
+configuration templates, the autodiscover subsystem can monitor services as they
+start running.
 
-#### 1. Add logzio-k8s-logs repo to your helm repo list
-
-```shell
-helm repo add logzio-helm https://logzio.github.io/logzio-helm/filebeat
-```
-
-#### 3. Deploy
 In the following commands, make the following changes:
-* Replace `<<SHIPPING-TOKEN>>` with the [token](https://app.logz.io/#/dashboard/settings/general) of the account you want to ship to.
 
-* Replace `<<LISTENER-REGION>>` with your region’s code (for example, `eu`). For more information on finding your account’s region, see [Account region](https://docs.logz.io/user-guide/accounts/account-region.html).
+* Replace `<<SHIPPING-TOKEN>>` with the
+[token](https://app.logz.io/#/dashboard/settings/general) of the account you
+want to ship to.
+
+* Replace `<<LISTENER-REGION>>` with your region’s code (for example, `eu`). For
+more information on finding your account’s region, see [Account
+region](https://docs.logz.io/user-guide/accounts/account-region.html).
 
 * Replace `<<CLUSTER-NAME>>` with your cluster's name.
 
-This Daemonset's default autodiscover configuration is [hints based](https://www.elastic.co/guide/en/beats/filebeat/current/configuration-autodiscover-hints.html). If you wish to deploy it use:
+This Daemonset's default autodiscover configuration is [hints
+based](https://www.elastic.co/guide/en/beats/filebeat/current/configuration-autodiscover-hints.html).
+If you wish to deploy it use:
+
 ```shell
 helm install --namespace=kube-system \
 --set configType='autodiscover' \
@@ -74,10 +85,12 @@ helm install --namespace=kube-system \
 --set secrets.clusterName='<<CLUSTER-NAME>>' \
 logzio-k8s-logs logzio-helm/logzio-k8s-logs
 ```
+
 If you have a custom configuration, deploy with:
+
 ```shell
 helm install --namespace=kube-system \
---set configType='auto-custom' \
+--set configType='custom' \
 --set secrets.logzioShippingToken='<<SHIPPING-TOKEN>>' \
 --set secrets.logzioRegion='<<LISTENER-REGION>>' \
 --set secrets.clusterName='<<CLUSTER-NAME>>' \
@@ -85,35 +98,42 @@ helm install --namespace=kube-system \
 logzio-k8s-logs logzio-helm/logzio-k8s-logs
 ```
 
-*Note:* If you're using a custom config, please make sure that you're using a `.yaml` file in the following structure:
-```
-filebeat.yml: |-
-  filebeat.autodiscover:
-  #....
-    # your autodiscover config
-    # ...
-  processors:
-    - add_cloud_metadata: ~
-  fields:
-    logzio_codec: ${LOGZIO_CODEC}
-    token: ${LOGZIO_LOGS_SHIPPING_TOKEN}
-    cluster: ${CLUSTER_NAME}
-    type: ${LOGZIO_TYPE}
-  fields_under_root: ${FIELDS_UNDER_ROOT}
-  ignore_older: ${IGNORE_OLDER}
-  output:
-    logstash:
-      hosts: ["${LOGZIO_LOGS_LISTENER_HOST}:5015"]
-      ssl:
-        certificate_authorities: ['/etc/pki/tls/certs/SectigoRSADomainValidationSecureServerCA.crt']
+*Note:* If you're using a custom config, please make sure that you're using a
+`.yaml` file in the following structure:
+
+```shell
+filebeatConfig:
+  customConfig: |-
+    filebeat.autodiscover:
+    #....
+      # your autodiscover config
+      # ...
+    processors:
+      - add_cloud_metadata: ~
+    fields:
+      logzio_codec: ${LOGZIO_CODEC}
+      token: ${LOGZIO_LOGS_SHIPPING_TOKEN}
+      cluster: ${CLUSTER_NAME}
+      type: ${LOGZIO_TYPE}
+    fields_under_root: ${FIELDS_UNDER_ROOT}
+    ignore_older: ${IGNORE_OLDER}
+    output:
+      logstash:
+        hosts: ["${LOGZIO_LOGS_LISTENER_HOST}:5015"]
+        ssl:
+          certificate_authorities: ['/etc/pki/tls/certs/SectigoRSADomainValidationSecureServerCA.crt']
 ```
 
-#### 4. Check Logz.io for your logs
+### Check Logz.io for your logs
+
 Give your logs some time to get from your system to ours, and then open [Logz.io](https://app.logz.io/).
+
+Also, you can verify you don't have any [drop filters](https://app.logz.io/#/dashboard/tools/drop-filters)
+that may drop your newly sent logs.
 
 </div>
 
-### Configuration
+## Configuration
 
 | Parameter | Description | Default |
 |---|---|---|
@@ -132,9 +152,8 @@ Give your logs some time to get from your system to ours, and then open [Logz.io
 | `clusterRoleRules` | Configurable [cluster role rules](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#role-and-clusterrole) that Filebeat uses to access Kubernetes resources. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/filebeat/values.yaml) |
 | `logzioCert` | Logzio public SSL certificate. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/filebeat/values.yaml) |
 | `configType` | Specifies which configuration to use for Filebeat. Set to `autodiscover` to use autodiscover. | `standard` |
-| `filebeatConfig.standardConfig` | Standard Filebeat configuration, using `filebeat.input`. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/filebeat/values.yaml) |
-| `filebeatConfig.autodiscoverConfig` | Autodiscover Filebeat configuration, using `filebeat.autodiscover`. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/filebeat/values.yaml) |
-| `filebeatConfig.autoCustomConfig` | Autodiscover Filebeat custom configuration, using `filebeat.autodiscover`. Should be used if you want to use your custimized autodiscover config | {} |
+| `filebeatConfig.customConfig` | Filebeat custom configuration, using `filebeat.autodiscover`. Should be used if you want to use your custimized autodiscover config | {} |
+| `filebeatConfig.extraFields`  | Filebeat processor add_fields to send extra fields to every log line | {} |
 | `serviceAccount.create` | Specifies whether a service account should be created. | `true` |
 | `serviceAccount.name` | Name of the service account. | `filebeat` |
 | `terminationGracePeriod` | Termination period (in seconds) to wait before killing Filebeat pod process on pod shutdown. | `30` |
@@ -153,8 +172,8 @@ Give your logs some time to get from your system to ours, and then open [Logz.io
 | `secrets.logzioRegion`| Secret with your [logzio region](https://docs.logz.io/user-guide/accounts/account-region.html). Defaults to US East. | `" "` |
 | `secrets.clusterName`| Secret with your cluster name. | `""` |
 
-
-If you wish to change the default values, specify each parameter using the `--set key=value` argument to `helm install`. For example,
+If you wish to change the default values, specify each parameter using the
+`--set key=value` argument to `helm install`. For example,
 
 ```shell
 helm install --namespace=kube-system logzio-k8s-logs logzio-helm/logzio-k8s-logs \
@@ -162,18 +181,18 @@ helm install --namespace=kube-system logzio-k8s-logs logzio-helm/logzio-k8s-logs
   --set terminationGracePeriodSeconds=30
 ```
 
-### Uninstalling the Chart
+## Uninstalling the Chart
 
-The command removes all the k8s components associated with the chart and deletes the release.  
-To uninstall the `logzio-k8s-logs` deployment:
+The command removes all the k8s components associated with the chart and deletes
+the release. To uninstall the `logzio-k8s-logs` deployment:
 
 ```shell
 helm uninstall --namespace=kube-system logzio-k8s-logs
 ```
 
-
 ## Change log
- - **0.0.2**:
-    - Added option to set tolerations for daemonset (Thanks [jlewis42lines](https://github.com/jlewis42lines)!).
- - **0.0.1**:
-    - Initial release.
+
+* **0.0.2**:
+  * Added option to set tolerations for daemonset (Thanks [jlewis42lines](https://github.com/jlewis42lines)!).
+* **0.0.1**:
+  * Initial release.

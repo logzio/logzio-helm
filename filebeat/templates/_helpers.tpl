@@ -38,3 +38,15 @@ Convert logzio region code to listener host
 {{- printf "listener-%s.logz.io" .Values.secrets.logzioRegion -}}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Generate list of additional fields
+*/}}
+{{- define "logzio.extraFields" }}
+{{- if .Values.filebeatConfig.extraFields }}
+- add_fields:
+    target: ''
+    fields:
+    {{- toYaml .Values.filebeatConfig.extraFields | nindent 6 }}
+{{- end -}}
+{{- end -}}
