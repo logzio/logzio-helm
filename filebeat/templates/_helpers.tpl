@@ -50,3 +50,12 @@ Generate list of additional fields
     {{- toYaml .Values.filebeatConfig.extraFields | nindent 6 }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Generate list of additional processors
+*/}}
+{{- define "logzio.additionalProcessors" }}
+{{- if .Values.filebeatConfig.additionalProcessors }}
+    {{- toYaml .Values.filebeatConfig.additionalProcessors }}
+{{- end -}}
+{{- end -}}

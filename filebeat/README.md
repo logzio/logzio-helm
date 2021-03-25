@@ -152,11 +152,11 @@ that may drop your newly sent logs.
 | `clusterRoleRules` | Configurable [cluster role rules](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#role-and-clusterrole) that Filebeat uses to access Kubernetes resources. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/filebeat/values.yaml) |
 | `logzioCert` | Logzio public SSL certificate. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/filebeat/values.yaml) |
 | `configType` | Specifies which configuration to use for Filebeat. Set to `autodiscover` to use autodiscover. | `standard` |
-| `filebeatConfig.customConfig` | Filebeat custom configuration, using `filebeat.autodiscover`. Should be used if you want to use your custimized autodiscover config | {} |
+| `filebeatConfig.customConfig` | Filebeat custom configuration as string. Should be used if you want to use your customized config | '' |
+| `filebeatConfig.additionalProcessors`  | Filebeat processors to add to the standard/auto configs | [] |
 | `filebeatConfig.extraFields`  | Filebeat processor add_fields to send extra fields to every log line | {} |
 | `serviceAccount.create` | Specifies whether a service account should be created. | `true` |
-| `serviceAccount.name` | Name of the service account. | `filebeat` |
-| `terminationGracePeriod` | Termination period (in seconds) to wait before killing Filebeat pod process on pod shutdown. | `30` |
+| `serviceAccount.name` | Name of the service account. | `filebeat` | | `terminationGracePeriod` | Termination period (in seconds) to wait before killing Filebeat pod process on pod shutdown. | `30` |
 | `hostNetwork` | Controls whether the pod may use the node network namespace. | `true` |
 | `dnsPolicy` | Specifies pod-specific DNS policies. | `ClusterFirstWithHostNet` |
 | `daemonset.ignoreOlder` | Logs older than this will be ignored. | `3h` |
@@ -180,6 +180,45 @@ helm install --namespace=kube-system logzio-k8s-logs logzio-helm/logzio-k8s-logs
   --set imageTag=7.7.0 \
   --set terminationGracePeriodSeconds=30
 ```
+
+## Additional Configuration
+
+In addition to our provided `filebeat.yml` configuration, you can add additional [processors](https://www.elastic.co/guide/en/beats/filebeat/current/defining-processors.html)
+to add extra fields to the messages sent, drop logs before sending them or use
+any filebeat processor you'd want.
+
+### Extra fields
+
+This uses the [add_fields](https://www.elastic.co/guide/en/beats/filebeat/current/add-fields.html)
+processor and is set like this:
+
+```shell
+helm install --namespace=kube-system logzio-k8s-logs logzio-helm/logzio-k8s-logs \
+  --set filebeatConfig.extraFields.environment="production" \
+  --set filebeatConfig.extraFields.foo="bar"
+```
+
+This will add the fields `environment:production` and `foo:bar` to every log
+line sent.
+
+Generated processor will look like this:
+
+```yaml
+filebeat.yml: |-
+  processors:
+    - add_fields:
+        target: ''
+        fields:
+          environment: production
+          foo: bar
+```
+
+### Additional Processors
+
+This is a general value to add any processor you'd like.
+
+Check out [values.yaml](./values.yaml) for a [drop_event](https://www.elastic.co/guide/en/beats/filebeat/current/drop-event.html)
+processor example.
 
 ## Uninstalling the Chart
 

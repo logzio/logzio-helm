@@ -40,6 +40,7 @@ data:
     processors:
       - add_cloud_metadata: ~
       {{- include "logzio.extraFields" . | nindent 6 }}
+      {{- include "logzio.additionalProcessors" . | nindent 6 }}
     fields:
       logzio_codec: ${LOGZIO_CODEC}
       token: ${LOGZIO_LOGS_SHIPPING_TOKEN}
@@ -68,6 +69,7 @@ data:
     processors:
       - add_cloud_metadata: ~
       {{- include "logzio.extraFields" . | nindent 6 }}
+      {{- include "logzio.additionalProcessors" . | nindent 6 }}
     fields:
       logzio_codec: ${LOGZIO_CODEC}
       token: ${LOGZIO_LOGS_SHIPPING_TOKEN}

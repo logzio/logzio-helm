@@ -67,9 +67,14 @@ configType: standard
 
 filebeatConfig:
   customConfig: ''
+  additionalProcessors: []
+    # - drop_event:
+    #     when:
+    #       regexp:
+    #         message: ".*DEBUG.*"
   extraFields:
-    # environment: production
-    # foo: bar
+    environment: production
+    foo: bar
 
 serviceAccount:
   create: true
