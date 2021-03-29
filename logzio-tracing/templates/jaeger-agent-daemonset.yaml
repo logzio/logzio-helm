@@ -24,7 +24,7 @@ spec:
       containers:
         - name: jaeger-agent
           image: {{ .Values.Jaeger.Agent.Images }}
-          args: ["--reporter.grpc.host-port=otel-collector-logzio:14250", "--log-level=debug"]
+          args: ["--reporter.grpc.host-port={{ .Values.Configs.CollectorBrand }}-collector-logzio:14250", "--log-level=debug"]
           ports:
             - containerPort: 5775
               protocol: UDP
