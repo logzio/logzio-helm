@@ -24,7 +24,7 @@ spec:
 
 #      serviceAccountName: otel-logzio
       containers:
-        - image: {{ .Values.Configs.Namespace}}
+        - image: {{ .Values.Otel.Agent.Image}}
           name: otel-agent
           resources:
             limits:
