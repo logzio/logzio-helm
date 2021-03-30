@@ -163,7 +163,9 @@ daemonset:
       readOnly: true
       subPath: SectigoRSADomainValidationSecureServerCA.crt
 
+
 secrets:
+  create: true
   logzioShippingToken: ""
   logzioRegion: " "
   clusterName: ""
