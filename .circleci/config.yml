@@ -1,13 +1,62 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine. See: https://circleci.com/docs/2.0/configuration-reference
-version: 2.1
-# Use a package of configuration called an orb.
-orbs:
-  # Declare a dependency on the welcome-orb
-  welcome: circleci/welcome-orb@0.4.1
-# Orchestrate or schedule a set of jobs
-workflows:
-  # Name the workflow "welcome"
-  welcome:
-    # Run the welcome/run job in its own container
-    jobs:
-      - welcome/run
+version: 2
+jobs:
+  build:
+    machine: true
+    environment:
+      CHANGE_MINIKUBE_NONE_USER: true
+      K8S_VERSION: v1.10.0
+      MINIKUBE_VERSION: v1.18.1
+      HELM_VERSION: v3.2.0
+    steps:
+    - checkout
+    - run:
+        name: Get info
+        command: |
+          uname -a
+          free -h
+          cat /etc/os-release
+    - run:
+        name: Install kubectl
+        command: |
+          curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/${K8S_VERSION}/bin/linux/amd64/kubectl && \
+              chmod +x kubectl && \
+              sudo mv kubectl /usr/local/bin/
+    - run:
+        name: Install minikube
+        command: |
+          curl -Lo minikube https://github.com/kubernetes/minikube/releases/download/${MINIKUBE_VERSION}/minikube-linux-amd64 && \
+              chmod +x minikube && \
+              sudo mv minikube /usr/local/bin/
+    - run:
+        name: Start minikube
+        command: |
+          # TODO: remove the --bootstrapper flag once this issue is solved: https://github.com/kubernetes/minikube/issues/2704
+          sudo minikube config set WantReportErrorPrompt false
+          sudo -E minikube start --vm-driver=none --bootstrapper=localkube --kubernetes-version=${K8S_VERSION}
+    - run:
+        name: Wait for minikube
+        command: |
+          JSONPATH='{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}{end}';
+          until sudo kubectl get nodes -o jsonpath="$JSONPATH" 2>&1 | grep -q "Ready=True";
+            do sleep 1;
+          done
+    - run:
+        name: Cluster info
+        command: |
+          sudo kubectl cluster-info
+    - run:
+        name: Install helm
+        command: |
+          curl -# -o helm-${HELM_VERSION}-linux-amd64.tar.gz https://storage.googleapis.com/kubernetes-helm/helm-${HELM_VERSION}-linux-amd64.tar.gz && \
+              tar -xzf helm-${HELM_VERSION}-linux-amd64.tar.gz && \
+              chmod +x linux-amd64/helm && \
+              sudo mv linux-amd64/helm /usr/local/bin/
+    - run:
+        name: Helm init
+        command: |
+          helm init
+          sleep 30
+    - run:
+        name: Helm lint
+        command: |
+          helm lint . 
