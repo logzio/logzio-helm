@@ -41,4 +41,4 @@ jobs:
           chmod u+x kubeval
           mkdir manifests
           helm template filebeat/ --output-dir manifests
-          find manifests/ -name '*.yaml' | grep -v crd | xargs ./kubeval -v $KUBERNETES_VERSION
+          find manifests/ -name '*.yaml' | grep -v crd | xargs ./kubeval 
