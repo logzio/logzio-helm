@@ -38,6 +38,6 @@ jobs:
           wget  https://github.com/instrumenta/kubeval/releases/download/v0.16.1/kubeval-linux-amd64.tar.gz
           tar xzvf kubeval-linux-amd64.tar.gz
           chmod u+x kubeval
-          mkdir /filebeat/manifests
+          mkdir manifests
           helm template filebeat/ --output-dir manifests
-          find /filebeat/manifests/ -name '*.yaml' | grep -v crd | xargs kubeval -v $K8S_VERSION
+          find manifests/ -name '*.yaml' | grep -v crd | xargs kubeval -v $K8S_VERSION
