@@ -29,11 +29,6 @@ jobs:
               chmod +x linux-amd64/helm && \
               sudo mv linux-amd64/helm /usr/local/bin/
     - run:
-        name: Helm init
-        command: |
-          helm init
-          sleep 30
-    - run:
         name: Helm lint
         command: |
           helm lint filebeat/
