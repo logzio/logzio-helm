@@ -31,6 +31,8 @@ jobs:
         name: Start minikube
         command: |
           # TODO: remove the --bootstrapper flag once this issue is solved: https://github.com/kubernetes/minikube/issues/2704
+          sudo apt-get update
+          sudo apt-get install -y conntrack
           sudo minikube config set WantReportErrorPrompt false
           sudo -E minikube start --vm-driver=none 
     - run:
