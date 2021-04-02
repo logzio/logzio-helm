@@ -59,4 +59,4 @@ jobs:
     - run:
         name: Helm lint
         command: |
-          helm lint . 
+          helm lint filebeat/
