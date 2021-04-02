@@ -32,7 +32,7 @@ jobs:
         command: |
           # TODO: remove the --bootstrapper flag once this issue is solved: https://github.com/kubernetes/minikube/issues/2704
           sudo minikube config set WantReportErrorPrompt false
-          minikube start --vm-driver=docker --kubernetes-version=${K8S_VERSION}
+          sudo -E minikube start --vm-driver=none 
     - run:
         name: Wait for minikube
         command: |
