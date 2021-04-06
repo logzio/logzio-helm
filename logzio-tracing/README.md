@@ -30,79 +30,27 @@ k8s-tracing logzio-tracing
 
 ```
 
-#### 3. Check Logz.io for your logs
-Give your logs some time to get from your system to ours, and then open [Logz.io](https://app.logz.io/).
-
-### Autodiscover configuration deployment:
-
-Autodiscover allows you to adapt settings as changes happen. By defining configuration templates, the autodiscover subsystem can monitor services as they start running.
-
-#### 1. Add logzio-k8s-logs repo to your helm repo list
-
-```shell
-helm repo add logzio-helm https://logzio.github.io/logzio-helm/filebeat
-```
-
-#### 3. Deploy
-In the following commands, make the following changes:
-* Replace `<<SHIPPING-TOKEN>>` with the [token](https://app.logz.io/#/dashboard/settings/general) of the account you want to ship to.
-
-* Replace `<<LISTENER-REGION>>` with your region’s code (for example, `eu`). For more information on finding your account’s region, see [Account region](https://docs.logz.io/user-guide/accounts/account-region.html).
-
-* Replace `<<CLUSTER-NAME>>` with your cluster's name.
-
-This Daemonset's default autodiscover configuration is [hints based](https://www.elastic.co/guide/en/beats/filebeat/current/configuration-autodiscover-hints.html). If you wish to deploy it use:
-```shell
-helm install --namespace=kube-system \
---set configType='autodiscover' \
---set secrets.logzioShippingToken='<<SHIPPING-TOKEN>>' \
---set secrets.logzioRegion='<<LISTENER-REGION>>' \
---set secrets.clusterName='<<CLUSTER-NAME>>' \
-logzio-k8s-logs logzio-helm/logzio-k8s-logs
-```
-If you have a custom configuration, deploy with:
-```shell
-helm install --namespace=kube-system \
---set configType='auto-custom' \
---set secrets.logzioShippingToken='<<SHIPPING-TOKEN>>' \
---set secrets.logzioRegion='<<LISTENER-REGION>>' \
---set secrets.clusterName='<<CLUSTER-NAME>>' \
---set-file filebeatConfig.autoCustomConfig=/path/to/your/config.yaml \
-logzio-k8s-logs logzio-helm/logzio-k8s-logs
-```
-
-*Note:* If you're using a custom config, please make sure that you're using a `.yaml` file in the following structure:
-```
-filebeat.yml: |-
-  filebeat.autodiscover:
-  #....
-    # your autodiscover config
-    # ...
-  processors:
-    - add_cloud_metadata: ~
-  fields:
-    logzio_codec: ${LOGZIO_CODEC}
-    token: ${LOGZIO_LOGS_SHIPPING_TOKEN}
-    cluster: ${CLUSTER_NAME}
-    type: ${LOGZIO_TYPE}
-  fields_under_root: ${FIELDS_UNDER_ROOT}
-  ignore_older: ${IGNORE_OLDER}
-  output:
-    logstash:
-      hosts: ["${LOGZIO_LOGS_LISTENER_HOST}:5015"]
-      ssl:
-        certificate_authorities: ['/etc/pki/tls/certs/SectigoRSADomainValidationSecureServerCA.crt']
-```
-
-#### 4. Check Logz.io for your logs
-Give your logs some time to get from your system to ours, and then open [Logz.io](https://app.logz.io/).
-
-
 
 ### Configuration
 
 | Parameter | Description | Default |
 |---|---|---|
+| `Secrets.TracesToken` | Secret with your [logzio traces token](https://app.logz.io/#/dashboard/settings/general) |  `""` |
+| `Configs.Region` | |  `"us"` |
+| `Configs.Namespace` | |  `"monitoring` |
+| `Configs.AgentBrand` | |  `"otel"` |
+| `Configs.CollectorBrand` | |  `"otel"` |
+| `Configs.LogLevel` | |  `"INFO"` |
+| `Jaeger.Agent.Image` | |  `"jaegertraci` |
+| `Jaeger.Agent.Port` | |  `6831` |
+| `Jaeger.Collector.Image` | |  `"logzio/jaege` |
+| `Jaeger.Collector.Ports.ZipkingReceiver` | |  `9` |
+| `Jaeger.Collector.Ports.JaegerReceiverGrpc` | | |` `Otel` | |` | 
+| `Otel.Collector.Image` | |  `"otel/opentel` |
+| `Otel.Collector.Ports.ZipkingReceiver` | |  `9` |
+| `Otel.Collector.Ports.JaegerReceiverHttp` | |  `9` |
+| `Otel.Collector.Ports.JaegerReceiverGrpc` | | |` `     ` | | |` `  Agent` | |` | 
+| `Otel.Collector.Image` | |  `"otel/opentel` |
 | `image` | The Filebeat docker image. | `docker.elastic.co/beats/filebeat` |
 | `imageTag` | The Filebeat docker image tag. | `7.8.1` |
 | `nameOverride` | Overrides the Chart name for resources. | `""` |

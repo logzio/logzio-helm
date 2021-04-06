@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: jaeger-agent
-          image: {{ .Values.Jaeger.Agent.Images }}
+          image: {{ .Values.Jaeger.Agent.Image }}
           args: ["--reporter.grpc.host-port={{ .Values.Configs.CollectorBrand }}-collector-logzio:14250", "--log-level={{ .Values.Configs.LogLevel | lower }}"]
           ports:
             - containerPort: 5775
