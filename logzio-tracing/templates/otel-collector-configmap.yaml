@@ -1,4 +1,4 @@
-{{- if eq .Values.Configs.CollectorBrand "otel" }}
+{{- if and (eq .Values.Configs.CollectorBrand "otel") (ne .Values.Configs.AgentBrand "otel") }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
