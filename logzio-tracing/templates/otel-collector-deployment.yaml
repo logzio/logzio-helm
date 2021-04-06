@@ -27,6 +27,9 @@ spec:
       containers:
         - image: {{ .Values.Otel.Collector.Image}}
           name: otel-collector-logzio
+          args:
+          - "--config=/etc/otel/config.yaml"
+          - "--log-level=DEBUG"
           ports:
             - containerPort: 1888   # pprof extension
               protocol: TCP

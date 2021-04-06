@@ -22,11 +22,9 @@ data:
       zipkin:
 
     exporters:
-    {{- if eq .Values.Configs.CollectorBrand "otel" }}
       logzio:
           account_token: ${LOGZIO_TRACES_TOKEN}
           region: {{ .Values.Configs.Region }}
-    {{ end }}
 
       logging:
         loglevel: info
@@ -49,7 +47,5 @@ data:
           processors: [batch]
           exporters:
             - logging
-          {{- if eq .Values.Configs.CollectorBrand "otel" }}
             - logzio
-          {{- end -}}
 {{- end -}}

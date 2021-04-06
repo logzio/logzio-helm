@@ -1,4 +1,4 @@
-{{- if eq .Values.Configs.CollectorBrand "jaeger" }}
+{{- if and (eq .Values.Configs.CollectorBrand "jaeger") (ne .Values.Configs.AgentBrand "otel") }}
 apiVersion:  apps/v1
 kind: Deployment
 metadata:
