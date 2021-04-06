@@ -6,6 +6,7 @@ Configs:
   Namespace: "monitoring"
   AgentBrand: "otel"
   CollectorBrand: "otel"
+  LogLevel: "INFO"
 
 Jaeger:
   Agent:

@@ -28,7 +28,7 @@ spec:
           name: otel-agent
           args:
             - "--config=/etc/otel/config.yaml"
-            - "--log-level=DEBUG"
+            - "--log-level={{ .Values.Configs.LogLevel | upper}}"
           resources:
             limits:
               cpu: 1
