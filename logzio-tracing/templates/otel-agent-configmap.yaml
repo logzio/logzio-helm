@@ -18,14 +18,15 @@ data:
         protocols:
           grpc:
           thrift_http:
+          thrift_compact:
       zipkin:
 
     exporters:
-      otlp:
-        endpoint: "{{ .Values.Configs.CollectorBrand }}-collector-logzio:14250"
-        insecure: true
+      logzio:
+          account_token: ${LOGZIO_TRACES_TOKEN}
+          region: {{ .Values.Configs.Region }}
       logging:
-        loglevel: debug
+        loglevel: info
 
     processors:
       batch:
@@ -43,5 +44,7 @@ data:
         traces:
           receivers: [otlp, opencensus, jaeger, zipkin]
           processors: [batch]
-          exporters: [otlp, logging]
+          exporters:
+            - logging
+            - logzio
 {{- end -}}

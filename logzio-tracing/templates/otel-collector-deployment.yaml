@@ -1,4 +1,4 @@
-{{- if eq .Values.Configs.CollectorBrand "otel" }}
+{{- if and (eq .Values.Configs.CollectorBrand "otel") (ne .Values.Configs.AgentBrand "otel") }}
 apiVersion:  apps/v1
 kind: Deployment
 metadata:
@@ -42,7 +42,7 @@ spec:
             - name: LOGZIO_TRACES_TOKEN
               valueFrom:
                 secretKeyRef:
-                  key: logzio-traces-shipping-token # This is the secret you created in step 4 above.
+                  key: logzio-traces-shipping-token
                   name: logzio-monitoring-secret
           volumeMounts:
             - name: otel-collector-config

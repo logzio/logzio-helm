@@ -26,6 +26,9 @@ spec:
       containers:
         - image: {{ .Values.Otel.Agent.Image}}
           name: otel-agent
+          args:
+            - "--config=/etc/otel/config.yaml"
+            - "--log-level=DEBUG"
           resources:
             limits:
               cpu: 1
@@ -46,6 +49,12 @@ spec:
           volumeMounts:
             - name: otel-agent-config-vol
               mountPath: "/etc/otel"
+          env:
+            - name: LOGZIO_TRACES_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: logzio-traces-shipping-token
+                  name: logzio-monitoring-secret
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
       volumes:
