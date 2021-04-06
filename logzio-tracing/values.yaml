@@ -10,7 +10,7 @@ Configs:
 
 Jaeger:
   Agent:
-    Images: "jaegertracing/jaeger-agent:1.18.0"
+    Image: "jaegertracing/jaeger-agent:1.18.0"
     Port: 6831
   Collector:
     Image: "logzio/jaeger-logzio-collector:latest"
