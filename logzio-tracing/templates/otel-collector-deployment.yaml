@@ -51,7 +51,6 @@ spec:
             - name: otel-collector-config
               mountPath: "/etc/otel/"
               readOnly: true
-              # subPath: config.yml
       volumes:
         - name: otel-collector-config
           configMap:
