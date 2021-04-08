@@ -1,0 +1,255 @@
+# Default values for opentelemetry-collector.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+nameOverride: "otel-collector"
+fullnameOverride: ""
+
+secrets:
+  MetricsToken: ""
+  ListenerHost: ""
+  p8s_logzio_name: "none"
+
+managedServiceAccount: true
+
+clusterRoleRules:
+- apiGroups:
+  - ""
+  resources:
+  - events
+  - namespaces
+  - namespaces/status
+  - nodes
+  - nodes/spec
+  - pods
+  - pods/metrics
+  - nodes/metrics
+  - pods/status
+  - replicationcontrollers
+  - replicationcontrollers/status
+  - resourcequotas
+  - services
+  - endpoints
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - daemonsets
+  - deployments
+  - replicasets
+  - statefulsets
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - extensions
+  resources:
+  - daemonsets
+  - deployments
+  - replicasets
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - batch
+  resources:
+  - jobs
+  - cronjobs
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+    - autoscaling
+  resources:
+    - horizontalpodautoscalers
+  verbs:
+    - get
+    - list
+    - watch
+
+
+config:
+  exporters:
+    logging:
+      loglevel: info
+    prometheusremotewrite:
+      endpoint: ${LISTENER_URL}
+      external_labels:
+        p8s_logzio_name: ${P8S_LOGZIO_NAME}
+      headers:
+        Authorization: "Bearer ${METRICS_TOKEN}"
+  extensions:
+    health_check: {}
+  processors:
+    batch: {}
+    # If set to null, will be overridden with values based on k8s resource limits
+    memory_limiter: null
+  receivers:
+    jaeger:
+      protocols:
+        grpc:
+          endpoint: 0.0.0.0:14250
+        thrift_http:
+          endpoint: 0.0.0.0:14268
+    prometheus:
+      config:
+        global:
+          scrape_interval: 10s
+          scrape_timeout: 10s
+          evaluation_interval: 10s
+        scrape_configs:
+        - job_name: 'kube-state-metrics'
+          honor_labels: true
+          honor_timestamps: true
+          scrape_interval: 30s
+          scrape_timeout: 10s
+          metrics_path: /metrics
+          static_configs:
+           - targets: ['${REALESE_NAME}-kube-state-metrics.${REALESE_NS}.svc.cluster.local:8080']
+
+        - job_name: 'kubernetes-cadvisor'
+          scheme: https
+          metrics_path: /metrics/cadvisor
+          tls_config:
+            ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+            insecure_skip_verify: true
+          bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+
+          kubernetes_sd_configs:
+          - role: node
+          relabel_configs:
+          - action: labelmap
+            regex: __meta_kubernetes_node_label_(.+)
+
+    zipkin:
+      endpoint: 0.0.0.0:9411
+  service:
+    extensions:
+      - health_check
+    pipelines:
+      metrics:
+        exporters:
+          - logging
+          - prometheusremotewrite
+        processors:
+          - memory_limiter
+          - batch
+        receivers:
+          - prometheus
+      traces:
+        exporters:
+          - logging
+        processors:
+          - memory_limiter
+          - batch
+        receivers:
+          - jaeger
+          - zipkin
+
+# Shared params for agentCollector daemonset and standaloneCollector deployment pods.
+# Can be overridden here or for any component independently using the same keys.
+
+image:
+  # If you want to use the contrib image `otel/opentelemetry-collector-contrib`, you also need to change `command.name` value to `otelcontribcol`.
+  repository: otel/opentelemetry-collector
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+imagePullSecrets: []
+
+# OpenTelemetry Collector executable
+command:
+  name: otelcol
+  extraArgs: []
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podSecurityContext: {}
+securityContext: {}
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+extraEnvs: []
+extraHostPathMounts: []
+secretMounts: []
+
+# Configuration for ports, shared between agentCollector, standaloneCollector and service.
+# Can be overridden here or for agentCollector and standaloneCollector independently.
+ports:
+  jaeger-thrift:
+    enabled: true
+    containerPort: 14268
+    servicePort: 14268
+    hostPort: 14268
+    protocol: TCP
+  jaeger-grpc:
+    enabled: true
+    containerPort: 14250
+    servicePort: 14250
+    hostPort: 14250
+    protocol: TCP
+  zipkin:
+    enabled: true
+    containerPort: 9411
+    servicePort: 9411
+    hostPort: 9411
+    protocol: TCP
+
+# Configuration for agent OpenTelemetry Collector daemonset, enabled by default
+agentCollector:
+  enabled: false
+
+  containerLogs:
+    enabled: false
+
+  resources:
+    limits:
+      cpu: 256m
+      memory: 512Mi
+
+  podAnnotations: {}
+
+  # Configuration override that will be merged into the agent's default config
+  configOverride: {}
+# Configuration for standalone OpenTelemetry Collector deployment, disabled by default
+standaloneCollector:
+  enabled: true
+
+  containerLogs:
+    enabled: false
+
+  resources:
+    limits:
+      cpu: 256m
+      memory: 512Mi
+
+  podAnnotations: {}
+  # Configuration override that will be merged into the agent's default config
+  configOverride: {}
+
+service:
+  type: ClusterIP
+  annotations: {}
+
+# autoscaling is used only if standaloneCollector enabled
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
