@@ -2,5 +2,8 @@ dependencies:
 - name: kube-state-metrics
   repository: ""
   version: 2.13.2
-digest: sha256:e4ac47ff11a6ef997d615141976b3fd0c2cb10964e524080853dc84f2676ee71
-generated: "2021-04-08T13:06:56.68622+03:00"
+- name: prometheus-node-exporter
+  repository: ""
+  version: 1.16.2
+digest: sha256:01c2bcd76140a966034fe409baf427cd4f6515ff29301432c5c050d732cc1dbd
+generated: "2021-04-08T18:04:18.733921+03:00"

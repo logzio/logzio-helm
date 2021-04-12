@@ -1,9 +1,7 @@
 apiVersion: v2
-name: k8s-metrics-otel
+name: otel-kubernetes-metrics
 description: A Helm chart for Kubernetes
-dependencies:
-- name: kube-state-metrics
-  version: "2.13.2"
+
 # A chart can be either an 'application' or a 'library' chart.
 #
 # Application charts are a collection of templates that can be packaged into versioned archives
