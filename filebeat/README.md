@@ -94,7 +94,7 @@ helm install --namespace=kube-system \
 --set secrets.logzioShippingToken='<<SHIPPING-TOKEN>>' \
 --set secrets.logzioRegion='<<LISTENER-REGION>>' \
 --set secrets.clusterName='<<CLUSTER-NAME>>' \
---set-file filebeatConfig.autoCustomConfig=/path/to/your/config.yaml \
+--set-file filebeatConfig.customConfig=/path/to/your/config.yaml \
 logzio-k8s-logs logzio-helm/logzio-k8s-logs
 ```
 
@@ -102,26 +102,24 @@ logzio-k8s-logs logzio-helm/logzio-k8s-logs
 `.yaml` file in the following structure:
 
 ```shell
-filebeatConfig:
-  customConfig: |-
-    filebeat.autodiscover:
-    #....
-      # your autodiscover config
-      # ...
-    processors:
-      - add_cloud_metadata: ~
-    fields:
-      logzio_codec: ${LOGZIO_CODEC}
-      token: ${LOGZIO_LOGS_SHIPPING_TOKEN}
-      cluster: ${CLUSTER_NAME}
-      type: ${LOGZIO_TYPE}
-    fields_under_root: ${FIELDS_UNDER_ROOT}
-    ignore_older: ${IGNORE_OLDER}
-    output:
-      logstash:
-        hosts: ["${LOGZIO_LOGS_LISTENER_HOST}:5015"]
-        ssl:
-          certificate_authorities: ['/etc/pki/tls/certs/SectigoRSADomainValidationSecureServerCA.crt']
+filebeat.autodiscover:
+#....
+  # your autodiscover config
+  # ...
+processors:
+  - add_cloud_metadata: ~
+fields:
+  logzio_codec: ${LOGZIO_CODEC}
+  token: ${LOGZIO_LOGS_SHIPPING_TOKEN}
+  cluster: ${CLUSTER_NAME}
+  type: ${LOGZIO_TYPE}
+fields_under_root: ${FIELDS_UNDER_ROOT}
+ignore_older: ${IGNORE_OLDER}
+output:
+  logstash:
+    hosts: ["${LOGZIO_LOGS_LISTENER_HOST}:5015"]
+    ssl:
+      certificate_authorities: ['/etc/pki/tls/certs/SectigoRSADomainValidationSecureServerCA.crt']
 ```
 
 ### Check Logz.io for your logs
@@ -190,8 +188,7 @@ any filebeat processor you'd want.
 
 ### Extra fields
 
-This uses the [add_fields](https://www.elastic.co/guide/en/beats/filebeat/current/add-fields.html)
-processor and is set like this:
+This uses the [add_fields](https://www.elastic.co/guide/en/beats/filebeat/current/add-fields.html) processor and is set like this:
 
 ```shell
 helm install --namespace=kube-system logzio-k8s-logs logzio-helm/logzio-k8s-logs \
@@ -199,8 +196,7 @@ helm install --namespace=kube-system logzio-k8s-logs logzio-helm/logzio-k8s-logs
   --set filebeatConfig.extraFields.foo="bar"
 ```
 
-This will add the fields `environment:production` and `foo:bar` to every log
-line sent.
+This will add the fields `environment:production` and `foo:bar` to every log line sent.
 
 Generated processor will look like this:
 
@@ -218,8 +214,7 @@ filebeat.yml: |-
 
 This is a general value to add any processor you'd like.
 
-Check out [values.yaml](./values.yaml) for a [drop_event](https://www.elastic.co/guide/en/beats/filebeat/current/drop-event.html)
-processor example.
+Check out [values.yaml](./values.yaml) for a [drop_event](https://www.elastic.co/guide/en/beats/filebeat/current/drop-event.html) processor example.
 
 ## Uninstalling the Chart
 
@@ -231,7 +226,9 @@ helm uninstall --namespace=kube-system logzio-k8s-logs
 ```
 
 ## Change log
-
+* **0.0.3**:
+  * Added ability to add extra fields and proccessors to Filebeat config (Thanks [mosheavni](https://github.com/mosheavni)!).
+  * Renaming of multiple fields in `values.yaml`.
 * **0.0.2**:
   * Added option to set tolerations for daemonset (Thanks [jlewis42lines](https://github.com/jlewis42lines)!).
 * **0.0.1**:

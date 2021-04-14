@@ -72,9 +72,9 @@ filebeatConfig:
     #     when:
     #       regexp:
     #         message: ".*DEBUG.*"
-  extraFields:
-    environment: production
-    foo: bar
+  extraFields: []
+    # environment: production
+    # foo: bar
 
 serviceAccount:
   create: true
