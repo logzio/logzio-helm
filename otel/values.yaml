@@ -6,7 +6,7 @@ nameOverride: "otel-collector"
 fullnameOverride: ""
 
 secrets:
-  MetricsToken: "HGwYXamgZErKKkMhmzdVZDhuZcpGKXeo"
+  MetricsToken: ""
   ListenerHost: "https://listener.logz.io:8053"
   p8s_logzio_name: "yotam-test-k8s"
 
