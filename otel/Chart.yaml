@@ -1,6 +1,6 @@
 apiVersion: v2
-name: otel-kubernetes-metrics
-description: A Helm chart for Kubernetes
+name: logzio-otel-k8s-metrics
+description: logzio-otel-k8s-metrics allows you to ship metrics from your Kubernetes cluster using opentelemtry collctor
 
 type: application
 
