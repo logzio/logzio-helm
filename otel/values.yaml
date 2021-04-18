@@ -6,9 +6,9 @@ nameOverride: "otel-collector"
 fullnameOverride: ""
 
 secrets:
-  MetricsToken: ""
+  MetricsToken: "HGwYXamgZErKKkMhmzdVZDhuZcpGKXeo"
   ListenerHost: "https://listener.logz.io:8053"
-  p8s_logzio_name: ""
+  p8s_logzio_name: "yotam-test-k8s"
 
 managedServiceAccount: true
 
@@ -91,16 +91,10 @@ config:
     # If set to null, will be overridden with values based on k8s resource limits
     memory_limiter: null
   receivers:
-    jaeger:
-      protocols:
-        grpc:
-          endpoint: 0.0.0.0:14250
-        thrift_http:
-          endpoint: 0.0.0.0:14268
     prometheus:
       config:
         global:
-          scrape_interval: 10s
+          scrape_interval: 15s
           scrape_timeout: 10s
           evaluation_interval: 10s
         scrape_configs:
@@ -116,8 +110,6 @@ config:
         - job_name: kubernetes-service-endpoints
           honor_timestamps: true
           honor_labels: true
-          scrape_interval: 10s
-          scrape_timeout: 10s
           metrics_path: /metrics
           scheme: http
           kubernetes_sd_configs:
@@ -168,8 +160,6 @@ config:
           - action: labelmap
             regex: __meta_kubernetes_node_label_(.+)
 
-    zipkin:
-      endpoint: 0.0.0.0:9411
   service:
     extensions:
       - health_check
@@ -183,15 +173,6 @@ config:
           - batch
         receivers:
           - prometheus
-      traces:
-        exporters:
-          - logging
-        processors:
-          - memory_limiter
-          - batch
-        receivers:
-          - jaeger
-          - zipkin
 
 # Shared params for agentCollector daemonset and standaloneCollector deployment pods.
 # Can be overridden here or for any component independently using the same keys.
@@ -232,18 +213,6 @@ secretMounts: []
 # Configuration for ports, shared between agentCollector, standaloneCollector and service.
 # Can be overridden here or for agentCollector and standaloneCollector independently.
 ports:
-  jaeger-thrift:
-    enabled: true
-    containerPort: 14268
-    servicePort: 14268
-    hostPort: 14268
-    protocol: TCP
-  jaeger-grpc:
-    enabled: true
-    containerPort: 14250
-    servicePort: 14250
-    hostPort: 14250
-    protocol: TCP
   zipkin:
     enabled: true
     containerPort: 9411
@@ -262,9 +231,7 @@ agentCollector:
     limits:
       cpu: 256m
       memory: 512Mi
-
   podAnnotations: {}
-
   # Configuration override that will be merged into the agent's default config
   configOverride: {}
 # Configuration for standalone OpenTelemetry Collector deployment, disabled by default
@@ -277,7 +244,7 @@ standaloneCollector:
   resources:
     limits:
       cpu: 256m
-      memory: 512Mi
+      memory: 250Mi
 
   podAnnotations: {}
   # Configuration override that will be merged into the agent's default config
