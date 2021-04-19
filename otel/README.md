@@ -32,7 +32,7 @@ Replace `<<METRICS-TOKEN>>` with the [token](https://app.logz.io/#/dashboard/set
 
 Replace `<<LISTENER-HOST>>` with your region’s listener host (for example, `https://listener.logz.io:8053`). For more information on finding your account’s region, see [Account region](https://docs.logz.io/user-guide/accounts/account-region.html).
 
-Replace `<<ENV-TAG>>` with the name you would like to give to this enviroment to easily find the metrics of this enviroment
+Replace `<<ENV-TAG>>` with the name you would like to give to this enviroment's metrics to easily find them.
 
 ```
 helm install  \
