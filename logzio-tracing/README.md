@@ -52,13 +52,7 @@ k8s-tracing logzio-tracing
 | `Otel.Collector.Ports.JaegerReceiverGrpc` | OpenTelemetry collector GRPC receiver port| `14250` |
 
 
-If you wish to change the default values, specify each parameter using the `--set key=value` argument to `helm install`. For example,
-
-```shell
-helm install --namespace=kube-system logzio-k8s-logs logzio-helm/logzio-k8s-logs \
-  --set imageTag=7.7.0 \
-  --set terminationGracePeriodSeconds=30
-```
+If you wish to change the default values, specify each parameter using the `--set key=value` argument to `helm install`.
 
 ### Uninstalling the Chart
 
@@ -66,12 +60,10 @@ The command removes all the k8s components associated with the chart and deletes
 To uninstall the `logzio-k8s-logs` deployment:
 
 ```shell
-helm uninstall --namespace=kube-system logzio-k8s-logs
+helm uninstall --namespace=kube-system logzio-tracing
 ```
 
 
 ## Change log
- - **0.0.2**:
-    - Added option to set tolerations for daemonset (Thanks [jlewis42lines](https://github.com/jlewis42lines)!).
  - **0.0.1**:
     - Initial release.
