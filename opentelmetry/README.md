@@ -7,12 +7,7 @@ logzio-otel-k8s-metrics allows you to ship metrics from your Kubernetes cluster 
 **Note:** This chart is a fork of the [opentelemtry-collector](https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-collector) helm chart, it is also dependent on the [kube-state-metrics](https://github.com/kubernetes/kube-state-metrics/tree/master/charts/kube-state-metrics) and [prometheus-node-exporter](https://github.com/helm/charts/tree/master/stable/prometheus-node-exporter) charts.
 
 ### Prerequisites:
-* [Helm CLI](https://helm.sh/docs/intro/install/) installed
-
-
-**Note:** Helm 2 reached [EOL on November 2020](https://helm.sh/blog/2019-10-22-helm-2150-released/#:~:text=6%20months%20after%20Helm%203's,Helm%202%20will%20formally%20end). This document follows the command syntax recommended for Helm 3, but the Chart will work with both Helm 2 and Helm 3.
-
-
+* [Helm 3](https://helm.sh/docs/intro/install/) installed
 
 
 ### Deployment:
