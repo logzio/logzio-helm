@@ -7,8 +7,8 @@ fullnameOverride: ""
 
 secrets:
   MetricsToken: ""
-  ListenerHost: "https://listener.logz.io:8053"
-  p8s_logzio_name: "yotam-test-k8s"
+  ListenerHost: ""
+  p8s_logzio_name: ""
 
 managedServiceAccount: true
 
@@ -244,7 +244,7 @@ standaloneCollector:
   resources:
     limits:
       cpu: 256m
-      memory: 250Mi
+      memory: 512Mi
 
   podAnnotations: {}
   # Configuration override that will be merged into the agent's default config

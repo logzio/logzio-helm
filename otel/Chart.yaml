@@ -8,7 +8,7 @@ dependencies:
 - name: kube-state-metrics
   version: "2.13.2"
 - name: prometheus-node-exporter
-  version: "1.16.2"
+  version: "1.18.0"
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
