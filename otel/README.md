@@ -10,7 +10,7 @@ logzio-otel-k8s-metrics allows you to ship metrics from your Kubernetes cluster 
 * [Helm CLI](https://helm.sh/docs/intro/install/) installed
 
 
-**Note:** Helm 2 will reach [EOL on November 2020](https://helm.sh/blog/2019-10-22-helm-2150-released/#:~:text=6%20months%20after%20Helm%203's,Helm%202%20will%20formally%20end). This document follows the command syntax recommended for Helm 3, but the Chart will work with both Helm 2 and Helm 3.
+**Note:** Helm 2 reached [EOL on November 2020](https://helm.sh/blog/2019-10-22-helm-2150-released/#:~:text=6%20months%20after%20Helm%203's,Helm%202%20will%20formally%20end). This document follows the command syntax recommended for Helm 3, but the Chart will work with both Helm 2 and Helm 3.
 
 
 
@@ -32,7 +32,7 @@ Replace `<<METRICS-TOKEN>>` with the [token](https://app.logz.io/#/dashboard/set
 
 Replace `<<LISTENER-HOST>>` with your region’s listener host (for example, `https://listener.logz.io:8053`). For more information on finding your account’s region, see [Account region](https://docs.logz.io/user-guide/accounts/account-region.html).
 
-Replace `<<ENV-TAG>>`
+Replace `<<ENV-TAG>>` with the name you would like to give to this enviroment's metrics to easily find them.
 
 ```
 helm install  \
