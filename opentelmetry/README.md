@@ -59,9 +59,8 @@ helm install logzio-otel-k8s-metrics logzio-helm/otel -f my_values.yaml --depend
 ### Collected metrics
 
 The default set up uses the Prometheus receiver with the following scrape jobs:
-* Kube state metrics
 * Cadvisor: Scrapes container metrics
-* Kubernetes service endpoints: These endpoints scrape metrics from the node exporters, from any other service for which the `prometheus.io/scrape: true` annotaion is true, and from services that expose Prometheus metrics at the `/metrics` endpoint.
+* Kubernetes service endpoints: These job scrape metrics from the node exporters, Kube state metrics, from any other service for which the `prometheus.io/scrape: true` annotaion is set, and from services that expose Prometheus metrics at the `/metrics` endpoint.
 
 You can customize your configuration by editing the `config` section in the `values.yaml` file.
 
