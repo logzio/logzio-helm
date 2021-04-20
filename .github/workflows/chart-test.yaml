@@ -48,4 +48,4 @@ jobs:
         # if: steps.list-changed.outputs.changed == 'true'
 
       - name: Run chart-testing (install)
-        run: ct install --all --helm-extra-args "--dependency-update"
+        run: ct install --all --helm-extra-args "--set secrets.MetricsToken=fakeXamgZErKKkMhmzdVZDhuZcpGKXeo --set secrets.p8s_logzio_name=test --set secrets.ListenerHost=https://listener.logz.io:8053"
