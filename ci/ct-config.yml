@@ -3,7 +3,4 @@ all:
 debug:
 chart-dirs:
   - opentelmetry
-helm-extra-args:
-  - --set secrets.MetricsToken=fakeXamgZErKKkMhmzdVZDhuZcpGKXeo
-  - --set secrets.p8s_logzio_name=test
-  - --set secrets.ListenerHost=https://listener.logz.io:8053
+helm-extra-args: --set secrets.MetricsToken=fakeXamgZErKKkMhmzdVZDhuZcpGKXeo --set secrets.p8s_logzio_name=test --set secrets.ListenerHost=https://listener.logz.io:8053
