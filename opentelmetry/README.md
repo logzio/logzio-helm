@@ -4,7 +4,7 @@
 The Helm tool is used to manage packages of pre-configured Kubernetes resources that use Charts.
 logzio-otel-k8s-metrics allows you to ship metrics from your Kubernetes cluster with the OpenTelemetry collector.
 
-**Note:** This chart is a fork of the [opentelemtry-collector](https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-collector) helm chart, it is also dependent on the [kube-state-metrics](https://github.com/kubernetes/kube-state-metrics/tree/master/charts/kube-state-metrics) and [prometheus-node-exporter](https://github.com/helm/charts/tree/master/stable/prometheus-node-exporter) charts.
+**Note:** This chart is a fork of the [opentelemtry-collector](https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-collector) helm chart, it is also dependent on the [kube-state-metrics](https://github.com/kubernetes/kube-state-metrics/tree/master/charts/kube-state-metrics) and [prometheus-node-exporter](https://github.com/helm/charts/tree/master/stable/prometheus-node-exporter) charts, that will be installed by default. To disable the dependency during installation, set `kubeStateMetrics.enabled` and `nodeExporter` to `false`.
 
 ### Prerequisites:
 * [Helm 3](https://helm.sh/docs/intro/install/) installed
@@ -34,7 +34,7 @@ helm install  \
 --set secrets.MetricsToken=<<METRICS-TOKEN>> \
 --set secrets.ListenerHost=<<LISTENER-HOST>> \
 --set secrets.p8s_logzio_name=<<ENV-TAG>> \
-logzio-otel-k8s-metrics logzio-helm/otel
+logzio-otel-k8s-metrics logzio-helm/otel --dependency-update
 ```
 
 #### 3. Check Logz.io for your metrics
@@ -53,7 +53,7 @@ You can use the following options to update your default parameter values:
 * Overide default values with your own `my_values.yaml` and apply it in the `helm install` command. For exapmle:
 
 ```
-helm install logzio-otel-k8s-metrics logzio-helm/otel -f my_values.yaml
+helm install logzio-otel-k8s-metrics logzio-helm/otel -f my_values.yaml --dependency-update
 ```
 
 ### Collected metrics

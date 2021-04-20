@@ -73,6 +73,15 @@ clusterRoleRules:
     - list
     - watch
 
+kubeStateMetrics:
+  ## If false, kube-state-metrics sub-chart will not be installed
+  ##
+  enabled: true
+
+nodeExporter:
+  ## If false, node-exporter will not be installed
+  ##
+  enabled: true
 
 config:
   exporters:
@@ -98,15 +107,6 @@ config:
           scrape_timeout: 10s
           evaluation_interval: 10s
         scrape_configs:
-        - job_name: 'kube-state-metrics'
-          honor_labels: true
-          honor_timestamps: true
-          scrape_interval: 30s
-          scrape_timeout: 10s
-          metrics_path: /metrics
-          static_configs:
-            - targets: ['${REALESE_NAME}-kube-state-metrics.${REALESE_NS}.svc.cluster.local:8080']
-
         - job_name: kubernetes-service-endpoints
           honor_timestamps: true
           honor_labels: true
