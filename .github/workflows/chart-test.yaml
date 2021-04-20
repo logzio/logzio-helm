@@ -41,7 +41,7 @@ jobs:
         run: helm repo update
 
       - name: Run chart-testing (lint)
-        run: ct lint --all --helm-extra-args "--dependency-update" --chart-dirs opentelemtry,filebeat,metricbeat
+        run: ct lint --all --chart-dirs opentelemtry,filebeat,metricbeat
 
       - name: Create kind cluster
         uses: helm/kind-action@v1.0.0
