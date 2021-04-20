@@ -1,4 +1,6 @@
 # See https://github.com/helm/chart-testing#configuration
+all:
+debug:
 chart-dirs:
   - opentelmetry
 helm-extra-args:
