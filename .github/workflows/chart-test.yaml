@@ -23,14 +23,6 @@ jobs:
       - name: Set up chart-testing
         uses: helm/chart-testing-action@v2.0.1
 
-      - name: Run chart-testing (list-changed)
-        id: list-changed
-        run: |
-          changed=$(ct list-changed)
-          if [[ -n "$changed" ]]; then
-            echo "::set-output name=changed::true"
-          fi
-
       - name: helm add prometheus-community
         run: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 
@@ -48,4 +40,4 @@ jobs:
         # if: steps.list-changed.outputs.changed == 'true'
 
       - name: Run chart-testing (install)
-        run: ct install --all --helm-extra-args "--set secrets.MetricsToken=fakeXamgZErKKkMhmzdVZDhuZcpGKXeo --set secrets.p8s_logzio_name=test --set secrets.ListenerHost=https://listener.logz.io:8053"
+        run: ct install --all --config ct.yaml

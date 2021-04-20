@@ -1,6 +1,7 @@
 # See https://github.com/helm/chart-testing#configuration
-remote: origin
 chart-dirs:
-  - filebeat
-  - metricbeat
   - opentelmetry
+helm-extra-args:
+  - --set secrets.MetricsToken=fakeXamgZErKKkMhmzdVZDhuZcpGKXeo
+  - --set secrets.p8s_logzio_name=test
+  - --set secrets.ListenerHost=https://listener.logz.io:8053
