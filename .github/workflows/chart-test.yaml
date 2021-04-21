@@ -36,11 +36,5 @@ jobs:
       - name: Run chart-testing-otel
         run: ct install --config ./ct/ct-otel.yml
 
-      - name: install dependencies for chart-testing-metricbeat
-        run: helm install test-ksm kube-state-metrics/kube-state-metrics
-
-      - name: Run chart-testing-metricbeat
-        run: ct install --config ./ct/ct-metricbeat.yml
-
       - name: Run chart-testing-filebeat
         run: ct install --config ./ct/ct-filebeat.yml

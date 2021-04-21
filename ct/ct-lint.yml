@@ -1,5 +1,4 @@
-all:
-# charts: charts/opentelmetry
+charts: charts/opentelmetry,charts/filebeat
 print-config:
 validate-maintainers: false
 validate-chart-schema: false

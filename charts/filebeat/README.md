@@ -127,7 +127,6 @@ Give your logs some time to get from your system to ours, and then open [Logz.io
 | `apiVersions.clusterRole` | ClusterRole API version. | `rbac.authorization.k8s.io/v1` |
 | `apiVersions.serviceAccount` | ServiceAccount API version. | `v1` |
 | `apiVersions.secret` | Secret API version. | `v1` |
-| `namespace` | Chart's namespace. | `kube-system` |
 | `managedServiceAccount` | Specifies whether the serviceAccount should be managed by this Helm Chart. Set this to `false` to manage your own service account and related roles. | `true` |
 | `clusterRoleRules` | Configurable [cluster role rules](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#role-and-clusterrole) that Filebeat uses to access Kubernetes resources. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/filebeat/values.yaml) |
 | `logzioCert` | Logzio public SSL certificate. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/filebeat/values.yaml) |
@@ -164,7 +163,7 @@ helm install --namespace=kube-system logzio-k8s-logs logzio-helm/logzio-k8s-logs
 
 ### Uninstalling the Chart
 
-The command removes all the k8s components associated with the chart and deletes the release.  
+The command removes all the k8s components associated with the chart and deletes the release.
 To uninstall the `logzio-k8s-logs` deployment:
 
 ```shell
