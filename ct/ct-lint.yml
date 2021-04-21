@@ -1,2 +1,3 @@
-# See https://github.com/helm/chart-testing#configuration
-charts strings: logzio-otel-k8s-metrics
+all:
+charts: charts/opentelmetry
+print-config:

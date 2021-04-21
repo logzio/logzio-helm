@@ -1,2 +1,2 @@
 debug:
-charts strings: logzio-otel-k8s-metrics
+charts: charts/opentelmetry
