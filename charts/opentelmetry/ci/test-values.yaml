@@ -6,9 +6,9 @@ nameOverride: "otel-collector"
 fullnameOverride: ""
 
 secrets:
-  MetricsToken: ""
-  ListenerHost: ""
-  p8s_logzio_name: ""
+  MetricsToken: "fakeXamgZErKKkMhmzdVZDhuZcpGKXeo"
+  ListenerHost: "https://listener.logz.io:8053"
+  p8s_logzio_name: "test"
 
 managedServiceAccount: true
 

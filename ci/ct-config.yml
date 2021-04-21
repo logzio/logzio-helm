@@ -1,3 +1,0 @@
-all:
-debug:
-helm-extra-args: --set-string secrets.MetricsToken=fakeXamgZErKKkMhmzdVZDhuZcpGKXeo,secrets.p8s_logzio_name=test,secrets.ListenerHost=https://listener.logz.io:8053

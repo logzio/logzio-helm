@@ -16,7 +16,7 @@ jobs:
           python-version: 3.7
 
       - name: Set up chart-testing
-        uses: helm/chart-testing-action@v2.0.1
+        uses: helm/chart-testing-action@v2.0.0
 
       - name: helm add prometheus-community
         run: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
@@ -28,7 +28,7 @@ jobs:
         run: helm repo update
 
       - name: Run chart-testing (lint)
-        run: ct lint --config ./ci/ct-lint.yml
+        run: ct lint --config ./ct/ct-lint.yml
         # --chart-dirs opentelmetry,filebeat,metricbeat
       - name: Create kind cluster
         uses: helm/kind-action@v1.0.0
@@ -36,7 +36,5 @@ jobs:
       - name: Run chart-testing OpenTelemetry
         run: cd charts
 
-      - name: install OpenTelemetry
-        run: helm install otel-k8s opentelmetry --dependency-update --debug
-      - name: OpenTelemetry logs
-        run: kubectl logs -l app.kubernetes.io/instance=otel-k8s
+      - name: Run chart-testing OpenTelemetry
+        run: ct install --config ./ct/ct-config.yml
