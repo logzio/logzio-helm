@@ -24,8 +24,8 @@ jobs:
       # - name: helm add kube-state-metrics
       #   run: helm repo add kube-state-metrics https://kubernetes.github.io/kube-state-metrics
 
-      - name: helm repo update
-        run: helm repo update
+      # - name: helm repo update
+      #   run: helm repo update
 
       - name: Run chart-testing (lint)
         run: ct lint --config ./ct/ct-lint.yml
