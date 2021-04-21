@@ -1,4 +1,3 @@
-# See https://github.com/helm/chart-testing#configuration
 all:
 debug:
-helm-extra-args: --set secrets.MetricsToken=${{ secrets.TEST_SHIPING_TOKEN }},secrets.p8s_logzio_name=test,secrets.ListenerHost=https://listener.logz.io:8053
+helm-extra-args: --set-string secrets.MetricsToken=fakeXamgZErKKkMhmzdVZDhuZcpGKXeo,secrets.p8s_logzio_name=test,secrets.ListenerHost=https://listener.logz.io:8053
