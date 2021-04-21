@@ -1,3 +1,2 @@
 # See https://github.com/helm/chart-testing#configuration
-all:
 charts strings: logzio-otel-k8s-metrics
