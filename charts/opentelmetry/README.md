@@ -15,7 +15,7 @@ logzio-otel-k8s-metrics allows you to ship metrics from your Kubernetes cluster 
 #### 1. Add the logzio-otel-k8s-metrics repo to your Helm repo list
 
 ```shell
-helm repo add logzio-helm https://logzio.github.io/logzio-helm/otel
+helm repo add logzio-otel https://logzio.github.io/logzio-helm/opentelemtry/
 ```
 
 #### 2. Deploy
@@ -34,7 +34,7 @@ helm install  \
 --set secrets.MetricsToken=<<METRICS-TOKEN>> \
 --set secrets.ListenerHost=<<LISTENER-HOST>> \
 --set secrets.p8s_logzio_name=<<ENV-TAG>> \
-logzio-otel-k8s-metrics logzio-helm/otel --dependency-update
+logzio-otel-k8s-metrics logzio-otel/logzio-otel-k8s-metrics
 ```
 
 #### 3. Check Logz.io for your metrics
@@ -53,8 +53,7 @@ You can use the following options to update your default parameter values:
 * Overide default values with your own `my_values.yaml` and apply it in the `helm install` command. For exapmle:
 
 ```
-helm install logzio-otel-k8s-metrics logzio-helm/otel -f my_values.yaml --dependency-update
-```
+helm install logzio-otel-k8s-metrics logzio-otel/logzio-otel-k8s-metrics -f my_values.yaml 
 
 ### Collected metrics
 
