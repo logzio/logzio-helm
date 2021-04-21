@@ -54,7 +54,7 @@ You can use the following options to update your default parameter values:
 
 ```
 helm install logzio-otel-k8s-metrics logzio-otel/logzio-otel-k8s-metrics -f my_values.yaml 
-
+```
 ### Collected metrics
 
 The default set up uses the Prometheus receiver with the following scrape jobs:
