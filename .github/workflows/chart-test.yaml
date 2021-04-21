@@ -18,23 +18,20 @@ jobs:
       - name: Set up chart-testing
         uses: helm/chart-testing-action@v2.0.0
 
-      - name: helm add prometheus-community
-        run: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+      # - name: helm add prometheus-community
+      #   run: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 
-      - name: helm add kube-state-metrics
-        run: helm repo add kube-state-metrics https://kubernetes.github.io/kube-state-metrics
+      # - name: helm add kube-state-metrics
+      #   run: helm repo add kube-state-metrics https://kubernetes.github.io/kube-state-metrics
 
       - name: helm repo update
         run: helm repo update
 
       - name: Run chart-testing (lint)
         run: ct lint --config ./ct/ct-lint.yml
-        # --chart-dirs opentelmetry,filebeat,metricbeat
+
       - name: Create kind cluster
         uses: helm/kind-action@v1.0.0
-        # if: steps.list-changed.outputs.changed == 'true'
-      - name: Run chart-testing OpenTelemetry
-        run: cd charts
 
-      - name: Run chart-testing OpenTelemetry
+      - name: Run chart-testing (install)
         run: ct install --config ./ct/ct-config.yml
