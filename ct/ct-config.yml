@@ -1,2 +1,3 @@
 all:
 debug:
+charts strings: logzio-otel-k8s-metrics
