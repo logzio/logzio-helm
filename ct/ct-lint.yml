@@ -1,3 +1,5 @@
 all:
-charts: charts/opentelmetry
+# charts: charts/opentelmetry
 print-config:
+validate-maintainers: false
+validate-chart-schema: false

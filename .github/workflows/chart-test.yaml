@@ -33,5 +33,5 @@ jobs:
       - name: Create kind cluster
         uses: helm/kind-action@v1.0.0
 
-      - name: Run chart-testing (install)
-        run: ct install --debug --charts charts/opentelmetry --helm-extra-args "--set secrets.MetricsToken=${{ secrets.TEST_SHIPING_TOKEN }}"
+      - name: Run chart-testing-otel (install)
+        run: ct install --config ./ct/ct-config.yml
