@@ -38,3 +38,6 @@ jobs:
 
       - name: Run chart-testing-filebeat
         run: ct install --config ./ct/ct-filebeat.yml
+
+      - name: Run chart-testing-tracing
+        run: ct install --config ./ct/ct-tracing.yml

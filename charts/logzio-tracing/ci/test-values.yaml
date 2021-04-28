@@ -1,0 +1,29 @@
+Secrets:
+  TracesToken: "fakeQAtOrFUZQRFMrvSqnKSEJhjjFZHz"
+
+Configs:
+  Region: "us"
+  Namespace: "monitoring"
+  AgentBrand: "otel"
+  CollectorBrand: "otel"
+  LogLevel: "INFO"
+
+Jaeger:
+  Agent:
+    Image: "jaegertracing/jaeger-agent:1.18.0"
+    Port: 6831
+  Collector:
+    Image: "logzio/jaeger-logzio-collector:latest"
+    Ports:
+      ZipkingReceiver: 9411
+      JaegerReceiverGrpc: 14250
+
+Otel:
+  Collector:
+    Image: "otel/opentelemetry-collector-contrib:0.17.0"
+    Ports:
+      ZipkingReceiver: 9411
+      JaegerReceiverGrpc: 14250
+      JaegerReceiverHttp: 14268
+  Agent:
+    Image: "otel/opentelemetry-collector-contrib:0.17.0"

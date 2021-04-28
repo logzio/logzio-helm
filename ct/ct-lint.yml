@@ -1,4 +1,4 @@
-charts: charts/opentelmetry,charts/filebeat
+charts: charts/opentelmetry,charts/filebeat,charts/logzio-tracing
 print-config:
 validate-maintainers: false
 validate-chart-schema: false
