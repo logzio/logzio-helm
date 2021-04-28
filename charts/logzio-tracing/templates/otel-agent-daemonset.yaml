@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: otel-agent
-  namespace: {{ .Values.Configs.Namespace }}
+  namespace: {{ .Release.Namespace }}
   labels:
     app: otel-logzio
     app.kubernetes.io/name: otel-logzio

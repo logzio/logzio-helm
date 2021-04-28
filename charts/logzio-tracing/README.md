@@ -37,7 +37,6 @@ k8s-tracing logzio-tracing
 |---|---|---|
 | `Secrets.TracesToken` | Secret with your [logzio traces token](https://app.logz.io/#/dashboard/settings/general) |  `""` |
 | `Configs.Region` | Your [logzio region](https://docs.logz.io/user-guide/accounts/account-region.html). Defaults to US East.|  `"us"` |
-| `Configs.Namespace` | Chart's namespace. |  `monitoring` |
 | `Configs.AgentBrand` | Which agent brand to use. Either `otel` or `jaeger`, choosing `otel` will not deploy a collector as well since OpenTelemetry's agents functions also as collectors. |  `"otel"` |
 | `Configs.CollectorBrand` | Which collector brand to use. Either `otel` or `jaeger` |  `"otel"` |
 | `Configs.LogLevel` | Log level of the collector and agents to emit. One of `DEBUG`, `INFO`, `WARN` or `ERROR`|  `"INFO"` |

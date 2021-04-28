@@ -3,7 +3,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: otel-agent-config
-  namespace: {{ .Values.Configs.Namespace}}
+  namespace: {{ .Release.Namespace}}
   labels:
     app: otel-logzio
     component: agent-confing

@@ -3,7 +3,6 @@ Secrets:
 
 Configs:
   Region: "us"
-  Namespace: "monitoring"
   AgentBrand: "otel"
   CollectorBrand: "otel"
   LogLevel: "INFO"
