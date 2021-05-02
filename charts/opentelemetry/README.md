@@ -86,3 +86,4 @@ helm uninstall logzio-otel-k8s-metrics
 ## Change log
 
 * 0.1.0 - Initial realese
+* 0.1.1 - Add option to enble pushgatway service
