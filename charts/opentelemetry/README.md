@@ -16,6 +16,11 @@ To disable the dependency during installation, set `kubeStateMetrics.enabled` an
 
 
 ##### Deploy the Helm chart
+First add `logzio-helm` repo
+```shell
+helm repo add logzio-helm https://logzio.github.io/logzio-helm
+helm repo update
+```
 
 To deploy the Helm chart, enter the relevant parameters for the placeholders and run the code. 
 
@@ -35,7 +40,7 @@ helm install  \
 --set secrets.MetricsToken=<<PROMETHEUS-METRICS-SHIPPING-TOKEN>> \
 --set secrets.ListenerHost=<<LISTENER-HOST>> \
 --set secrets.p8s_logzio_name=<<ENV-TAG>> \
-logzio-otel-k8s-metrics logzio-otel/logzio-otel-k8s-metrics
+logzio-otel-k8s-metrics logzio-helm/logzio-otel-k8s-metrics
 ```
 
 ##### Check Logz.io for your metrics
@@ -59,7 +64,7 @@ You can use the following options to update the Helm chart parameters:
 ###### Example:
 
 ```
-helm install logzio-otel-k8s-metrics logzio-otel/logzio-otel-k8s-metrics -f my_values.yaml 
+helm install logzio-otel-k8s-metrics logzio-helm/logzio-otel-k8s-metrics -f my_values.yaml 
 ```
 
 ##### Customize the metrics collected by the Helm chart 

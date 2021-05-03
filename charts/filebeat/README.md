@@ -21,7 +21,8 @@ You have two options for deployment:
 #### 1. Add logzio-k8s-logs repo to your helm repo list
 
 ```shell
-helm repo add logzio-helm https://logzio.github.io/logzio-helm/filebeat
+helm repo add logzio-helm https://logzio.github.io/logzio-helm
+helm repo update
 ```
 
 #### 2. Deploy
