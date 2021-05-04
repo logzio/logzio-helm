@@ -21,7 +21,8 @@ You have two options for deployment:
 #### 1. Add logzio-k8s-logs repo to your helm repo list
 
 ```shell
-helm repo add logzio-helm https://logzio.github.io/logzio-helm/filebeat
+helm repo add logzio-helm https://logzio.github.io/logzio-helm
+helm repo update
 ```
 
 #### 2. Deploy
@@ -54,7 +55,8 @@ Autodiscover allows you to adapt settings as changes happen. By defining configu
 #### 1. Add logzio-k8s-logs repo to your helm repo list
 
 ```shell
-helm repo add logzio-helm https://logzio.github.io/logzio-helm/filebeat
+helm repo add logzio-helm https://logzio.github.io/logzio-helm
+helm repo update
 ```
 
 #### 3. Deploy
@@ -172,6 +174,8 @@ helm uninstall --namespace=kube-system logzio-k8s-logs
 
 
 ## Change log
+ - **0.0.3**:
+    - Added CI workflow for automated testing
  - **0.0.2**:
     - Added option to set tolerations for daemonset (Thanks [jlewis42lines](https://github.com/jlewis42lines)!).
  - **0.0.1**:

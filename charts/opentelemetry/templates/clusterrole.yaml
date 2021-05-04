@@ -1,0 +1,9 @@
+{{- if .Values.managedServiceAccount }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: otel-collector
+  labels:
+    k8s-app: otel-collector
+rules: {{ toYaml .Values.clusterRoleRules | nindent 2 -}}
+{{- end -}}

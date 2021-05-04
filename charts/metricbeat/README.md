@@ -52,7 +52,8 @@ Give your metrics some time to get from your system to ours, and then open [Logz
 #### 1. Add logzio-k8s-metrics repo to your helm repo list
 
 ```shell
-helm repo add logzio-helm https://logzio.github.io/logzio-helm/metricbeat
+helm repo add logzio-helm https://logzio.github.io/logzio-helm
+helm repo update
 ```
 
 #### 2. Deploy
