@@ -1,0 +1,28 @@
+- aws_dimensions:
+  - CacheNodeId
+  - CacheClusterId
+  aws_metric_name: CPUUtilization
+  aws_namespace: AWS/Elasticache
+  aws_statistics:
+  - Sum
+- aws_dimensions:
+  - CacheNodeId
+  - CacheClusterId
+  aws_metric_name: FreeableMemory
+  aws_namespace: AWS/Elasticache
+  aws_statistics:
+  - Sum
+- aws_dimensions:
+  - CacheNodeId
+  - CacheClusterId
+  aws_metric_name: NetworkBytesIn
+  aws_namespace: AWS/Elasticache
+  aws_statistics:
+  - Sum
+- aws_dimensions:
+  - CacheNodeId
+  - CacheClusterId
+  aws_metric_name: NetworkBytesOut
+  aws_namespace: AWS/Elasticache
+  aws_statistics:
+  - Sum

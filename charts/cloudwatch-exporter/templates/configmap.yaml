@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "prometheus-cloudwatch-exporter.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ template "prometheus-cloudwatch-exporter.name" . }}
+    chart: {{ template "prometheus-cloudwatch-exporter.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  config.yml: |
+    {{ if .Values.custom_config}}
+    {{ tpl .Values.custom_config . | nindent 4 }}
+    {{ else }}
+    region: {{ .Values.config.aws_region }}
+    set_timestamp: {{ .Values.config.set_timestamp }}
+    period_seconds: {{ .Values.config.period_seconds }}
+    metrics:
+    {{- range .Values.config.namespaces }}
+    {{- $path := printf "cw_namespaces/%s.yml" . -}}
+    {{ $.Files.Get $path | nindent 4 }}
+    {{- end }}
+    {{ end }}
+
+    
+

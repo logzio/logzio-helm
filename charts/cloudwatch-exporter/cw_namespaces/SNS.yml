@@ -1,0 +1,30 @@
+- aws_dimensions:
+  - TopicName
+  aws_metric_name: NumberOfMessagesPublished
+  aws_namespace: AWS/SNS
+  aws_statistics:
+  - SampleCount
+- aws_dimensions:
+  - TopicName
+  aws_metric_name: PublishSize
+  aws_namespace: AWS/SNS
+  aws_statistics:
+  - Average
+- aws_dimensions:
+  - TopicName
+  aws_metric_name: NumberOfNotificationsFailed
+  aws_namespace: AWS/SNS
+  aws_statistics:
+  - SampleCount
+- aws_dimensions:
+  - TopicName
+  aws_metric_name: NumberOfNotificationsDelivered
+  aws_namespace: AWS/SNS
+  aws_statistics:
+  - SampleCount
+- aws_dimensions:
+  - TopicName
+  aws_metric_name: SMSSuccessRate
+  aws_namespace: AWS/SNS
+  aws_statistics:
+  - SampleCount

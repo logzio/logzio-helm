@@ -1,0 +1,46 @@
+- aws_dimensions:
+  - TableName
+  aws_metric_name: ThrottledRequests
+  aws_namespace: AWS/DynamoDB
+  aws_statistics:
+  - Average
+- aws_dimensions: []
+  aws_metric_name: AccountProvisionedReadCapacityUtilization
+  aws_namespace: AWS/DynamoDB
+  aws_statistics:
+  - Average
+- aws_dimensions: []
+  aws_metric_name: UserErrors
+  aws_namespace: AWS/DynamoDB
+  aws_statistics:
+  - Sum
+- aws_dimensions:
+  - TableName
+  aws_metric_name: SystemErrors
+  aws_namespace: AWS/DynamoDB
+  aws_statistics:
+  - Sum
+- aws_dimensions:
+  - TableName
+  aws_metric_name: ProvisionedReadCapacityUnits
+  aws_namespace: AWS/DynamoDB
+  aws_statistics:
+  - Average
+- aws_dimensions:
+  - Operation
+  - TableName
+  aws_metric_name: SuccessfulRequestLatency
+  aws_namespace: AWS/DynamoDB
+  aws_statistics:
+  - Average
+- aws_dimensions: []
+  aws_metric_name: AccountProvisionedWriteCapacityUtilization
+  aws_namespace: AWS/DynamoDB
+  aws_statistics:
+  - Average
+- aws_dimensions:
+  - TableName
+  aws_metric_name: ConsumedReadCapacityUnits
+  aws_namespace: AWS/DynamoDB
+  aws_statistics:
+  - Average

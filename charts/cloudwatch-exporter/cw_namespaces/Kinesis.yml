@@ -1,0 +1,71 @@
+- aws_dimensions:
+  - DeliveryStreamName
+  aws_metric_name: DeliveryToS3
+  aws_namespace: AWS/Kinesis
+  aws_statistics:
+  - Sum
+- aws_dimensions:
+  - DeliveryStreamName
+  aws_metric_name: DeliveryToS3
+  aws_namespace: AWS/Kinesis
+  aws_statistics:
+  - SampleCount
+- aws_dimensions:
+  - DeliveryStreamName
+  aws_metric_name: DeliveryToS3
+  aws_namespace: AWS/Kinesis
+  aws_statistics:
+  - Maximum
+- aws_dimensions:
+  - DeliveryStreamName
+  aws_metric_name: PutRecordBatch
+  aws_namespace: AWS/Kinesis
+  aws_statistics:
+  - Sum
+- aws_dimensions:
+  - DeliveryStreamName
+  aws_metric_name: IncomingRecords
+  aws_namespace: AWS/Kinesis
+  aws_statistics:
+  - Sum
+- aws_dimensions:
+  - DeliveryStreamName
+  aws_metric_name: IncomingBytes
+  aws_namespace: AWS/Kinesis
+  aws_statistics:
+  - Sum
+- aws_dimensions:
+  - region
+  - StreamName
+  aws_metric_name: StreamName
+  aws_namespace: AWS/Kinesis
+- aws_dimensions:
+  - StreamName
+  aws_metric_name: IncomingBytes
+  aws_namespace: AWS/Kinesis
+  aws_statistics:
+  - Sum
+- aws_dimensions:
+  - StreamName
+  aws_metric_name: IncomingRecords
+  aws_namespace: AWS/Kinesis
+  aws_statistics:
+  - Sum
+- aws_dimensions:
+  - StreamName
+  aws_metric_name: GetRecords
+  aws_namespace: AWS/Kinesis
+  aws_statistics:
+  - Sum
+- aws_dimensions:
+  - StreamName
+  aws_metric_name: ReadProvisionedThroughputExceeded
+  aws_namespace: AWS/Kinesis
+  aws_statistics:
+  - Sum
+- aws_dimensions:
+  - StreamName
+  aws_metric_name: PutRecord
+  aws_namespace: AWS/Kinesis
+  aws_statistics:
+  - Sum
