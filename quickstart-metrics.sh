@@ -116,4 +116,4 @@ helm install ${debug} \
 --set=secrets.ClusterName=${real_cluster_name} \
 --set=secrets.KubeStatNamespace=${kube_stat_ns} \
 --set=secrets.KubeStatPort=${kube_stat_port} \
---repo https://logzio.github.io/logzio-helm/metricbeat logzio-k8s-metrics logzio-k8s-metrics
+--repo https://logzio.github.io/logzio-helm logzio-k8s-metrics logzio-k8s-metrics
