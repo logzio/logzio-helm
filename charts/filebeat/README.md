@@ -163,6 +163,12 @@ helm install --namespace=kube-system logzio-k8s-logs logzio-helm/logzio-k8s-logs
   --set terminationGracePeriodSeconds=30
 ```
 
+Some values, like `daemonset.tolerations`, should be set like this:
+```shell
+--set daemonset.tolerations\[0\].key='value' \
+--set daemonset.tolerations\[0\].operator='Equal' \
+```
+
 ### Uninstalling the Chart
 
 The command removes all the k8s components associated with the chart and deletes the release.
