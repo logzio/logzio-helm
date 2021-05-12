@@ -165,8 +165,8 @@ helm install --namespace=kube-system logzio-k8s-logs logzio-helm/logzio-k8s-logs
 
 Some values, like `daemonset.tolerations`, should be set like this:
 ```shell
---set daemonset.tolerations\[0\].key='value' \
---set daemonset.tolerations\[0\].operator='Equal' \
+--set daemonset.tolerations[0].key='value' \
+--set daemonset.tolerations[0].operator='Equal' \
 ```
 
 ### Uninstalling the Chart
