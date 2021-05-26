@@ -1,0 +1,14 @@
+{{- if .Values.managedServiceAccount }}
+apiVersion: {{ .Values.apiVersions.clusterRoleBinding }}
+kind: ClusterRoleBinding
+metadata:
+  name: docker-collector-metrics
+subjects:
+- kind: ServiceAccount
+  name: {{ template "docker-collector-metrics.serviceAccount" . }}
+  namespace: {{ .Values.namespace }}
+roleRef:
+  kind: ClusterRole
+  name: docker-collector-metrics
+  apiGroup: {{ .Values.apiGroups.clusterRoleBinding }}
+{{- end -}}

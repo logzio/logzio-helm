@@ -1,0 +1,11 @@
+{{- if .Values.customAwsModule }}
+apiVersion: {{ .Values.apiVersions.configMap }}
+kind: ConfigMap
+metadata:
+  name: aws-custom-module
+  namespace: {{ .Values.namespace }}
+  labels:
+    k8s-app: docker-collector-metrics
+data:
+  aws.yml: {{ toYaml .Values.customAwsModule | indent 2 }}
+{{- end }}
