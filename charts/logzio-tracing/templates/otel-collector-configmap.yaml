@@ -25,7 +25,19 @@ data:
       logging:
 
     processors:
+      memory_limiter:
+        ballast_size_mib: 2000
+        check_interval: 1s
+        limit_mib: 4000
+        spike_limit_mib: 800
       batch:
+        send_batch_size: 10000
+        timeout: 5s
+      probabilistic_sampler:
+        hash_seed: 22
+        sampling_percentage: 1
+      k8s_tagger:
+        passthrough: true
       queued_retry:
 
     extensions:
@@ -39,7 +51,6 @@ data:
       extensions: [health_check, pprof]
       pipelines:
         traces:
-          receivers: [opencensus, jaeger, zipkin]
-          processors: [batch, queued_retry]
+          processors: [queued_retry, batch, memory_limiter, probabilistic_sampler, k8s_tagger]
           exporters: [logzio]
 {{- end -}}
