@@ -1,0 +1,49 @@
+{{- if and (eq .Values.Configs.CollectorBrand "jaeger") (ne .Values.Configs.AgentBrand "otel") }}
+apiVersion:  apps/v1
+kind: Deployment
+metadata:
+  name: jaeger-logzio-collector
+  labels:
+    app: jaeger-logzio
+    app.kubernetes.io/name: jaeger-logzio
+    app.kubernetes.io/component: collector
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: jaeger-logzio
+      app.kubernetes.io/name: jaeger-logzio
+      app.kubernetes.io/component: collector
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: jaeger-logzio
+        app.kubernetes.io/name: jaeger-logzio
+        app.kubernetes.io/component: collector
+    spec:
+      containers:
+        - image: {{.Values.Jaeger.Collector.Image}}
+          name: jaeger-logzio-collector
+          ports:
+            - containerPort: 14268
+              protocol: TCP
+            - containerPort: {{ .Values.Jaeger.Collector.Ports.ZipkingReceiver }}
+              protocol: TCP
+            - containerPort: {{ .Values.Jaeger.Collector.Ports.JaegerReceiverGrpc }}
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: "/"
+              port: 14269
+          env:
+            - name: ACCOUNT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: logzio-traces-shipping-token
+                  name: logzio-monitoring-secret
+            - name: REGION
+              value: {{ .Values.Configs.Region }}
+{{- end -}}

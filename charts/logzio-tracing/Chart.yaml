@@ -1,0 +1,4 @@
+apiVersion: v1
+name: logzio-tracing
+description: A Helm chart for shipping traces from services on K8S
+version: 0.0.1

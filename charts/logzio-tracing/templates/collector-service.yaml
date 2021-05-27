@@ -1,0 +1,34 @@
+{{- if ne .Values.Configs.AgentBrand "otel"}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{.Values.Configs.CollectorBrand}}-collector-logzio
+  labels:
+    app: {{.Values.Configs.CollectorBrand}}-logzio
+    app.kubernetes.io/name: {{.Values.Configs.CollectorBrand}}-logzio
+    app.kubernetes.io/component: collector
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+    - name: jaeger-health-check
+      port: 14269
+      protocol: TCP
+      targetPort: 14269
+    - name: jaeger-collector-http
+      port: {{ .Values.Otel.Collector.Ports.JaegerReceiverHttp }}
+      protocol: TCP
+      targetPort: {{ .Values.Otel.Collector.Ports.JaegerReceiverHttp }}
+    - name: jaeger-collector-zipkin
+      port: {{ .Values.Otel.Collector.Ports.ZipkingReceiver }}
+      protocol: TCP
+      targetPort: {{ .Values.Otel.Collector.Ports.ZipkingReceiver }}
+    - name: jaeger-collector-grpc
+      port: {{ .Values.Otel.Collector.Ports.JaegerReceiverGrpc}}
+      protocol: TCP
+      targetPort: {{ .Values.Otel.Collector.Ports.JaegerReceiverGrpc}}
+  selector:
+    app: {{.Values.Configs.CollectorBrand}}-logzio
+    app.kubernetes.io/name: {{.Values.Configs.CollectorBrand}}-logzio
+    app.kubernetes.io/component: collector
+  type: ClusterIP
+{{- end -}}

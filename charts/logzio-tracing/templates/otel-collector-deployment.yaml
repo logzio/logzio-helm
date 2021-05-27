@@ -1,0 +1,59 @@
+{{- if and (eq .Values.Configs.CollectorBrand "otel") (ne .Values.Configs.AgentBrand "otel") }}
+apiVersion:  apps/v1
+kind: Deployment
+metadata:
+  name: otel-collector-logzio
+  labels:
+    app: otel-logzio
+    app.kubernetes.io/name: otel-logzio
+    app.kubernetes.io/component: collector
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: otel-logzio
+      app.kubernetes.io/name: otel-logzio
+      app.kubernetes.io/component: collector
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: otel-logzio
+        app.kubernetes.io/name: otel-logzio
+        app.kubernetes.io/component: collector
+    spec:
+      containers:
+        - image: {{ .Values.Otel.Collector.Image}}
+          name: otel-collector-logzio
+          args:
+          - "--config=/etc/otel/config.yaml"
+          - "--log-level={{ .Values.Configs.LogLevel | upper}}"
+          ports:
+            - containerPort: 1888   # pprof extension
+              protocol: TCP
+            - containerPort: {{ .Values.Otel.Collector.Ports.ZipkingReceiver}}  # Zipkin receiver
+              protocol: TCP
+            - containerPort: 8888  # Prometheus metrics exposed by the collector
+              protocol: TCP
+            - containerPort: 13133  # health_check extension
+              protocol: TCP
+            - containerPort: {{ .Values.Otel.Collector.Ports.JaegerReceiverGrpc}} #jaeger receiver
+              protocol: TCP
+          env:
+            - name: LOGZIO_TRACES_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: logzio-traces-shipping-token
+                  name: logzio-monitoring-secret
+          volumeMounts:
+            - name: otel-collector-config
+              mountPath: "/etc/otel/"
+              readOnly: true
+      volumes:
+        - name: otel-collector-config
+          configMap:
+            defaultMode: 0600
+            name: otel-collector-config
+{{- end -}}
