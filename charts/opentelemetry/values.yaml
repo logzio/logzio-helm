@@ -228,7 +228,7 @@ ports:
     hostPort: 9411
     protocol: TCP
 
-# Configuration for agent OpenTelemetry Collector daemonset, enabled by default
+# Configuration for agent OpenTelemetry Collector daemonset, disabled by default
 agentCollector:
   enabled: false
 
@@ -242,7 +242,7 @@ agentCollector:
   podAnnotations: {}
   # Configuration override that will be merged into the agent's default config
   configOverride: {}
-# Configuration for standalone OpenTelemetry Collector deployment, disabled by default
+# Configuration for standalone OpenTelemetry Collector deployment, enabled by default
 standaloneCollector:
   enabled: true
 
