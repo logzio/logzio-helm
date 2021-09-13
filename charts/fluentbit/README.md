@@ -34,7 +34,7 @@ helm install  \
 --set logzio.token=<<LOGZIO_TOKEN>> \
 --set logzio.listenerHost=<<LISTENER_HOST>> \
 --set logzio.logType=<<LOG_TYPE>> \
-logzio-otel-k8s-metrics logzio-helm/logzio-otel-k8s-metrics
+logzio-fluent-bit logzio-helm/logzio-fluent-bit
 ```
 
 ##### Check Logz.io for your logs
@@ -58,7 +58,7 @@ You can use the following options to update the Helm chart parameters:
 ###### Example:
 
 ```
-helm install logzio-otel-k8s-metrics logzio-helm/logzio-otel-k8s-metrics -f my_values.yaml 
+helm install logzio-fluent-bit logzio-helm/logzio-fluent-bit -f my_values.yaml 
 ```
 
 To modify fluentbit configuration edit the `config` section in `values.yaml`.
@@ -69,7 +69,7 @@ The uninstall command is used to remove all the Kubernetes components associated
 To uninstall the `logzio-fluent-bit` deployment, use the following command:
 
 ```shell
-helm uninstall logzio-otel-k8s-metrics
+helm uninstall logzio-fluent-bit
 ```
 
 
