@@ -30,7 +30,7 @@ config:
   exporters:
     logzio:
       region: us
-      account_token: McvJQAtOrFUZQRFMrvSqnKSEJhjjFZHz
+      account_token: 
     logging:
   processors:
     batch:
