@@ -1,8 +1,8 @@
 # Default values for fluent-bit.
 logzio:
-  token: fake
+  token: <<token>>
   listenerHost: listener.logz.io
-  logType: helm-flu
+  logType: fluentbit
 # kind -- DaemonSet or Deployment
 kind: DaemonSet
 
