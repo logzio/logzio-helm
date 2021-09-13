@@ -102,11 +102,6 @@ prometheusRule:
 #     labels:
 #       severity: critical
 
-dashboards:
-  enabled: false
-  labelKey: grafana_dashboard
-  annotations: {}
-
 livenessProbe:
   httpGet:
     path: /
