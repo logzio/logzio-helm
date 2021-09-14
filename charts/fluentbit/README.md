@@ -15,21 +15,19 @@ First add `logzio-helm` repo
 helm repo add logzio-helm https://logzio.github.io/logzio-helm
 helm repo update
 ```
-
 To deploy the Helm chart, enter the relevant parameters for the placeholders and run the code. 
 
 ###### Configure the parameters in the code
 
-Replace the Logz-io `<<LOGZIO_TOKEN>>` with the [token](https://app.logz.io/#/dashboard/settings/manage-tokens/data-shipping) of the metrics account to which you want to send your data.
+Replace the Logz-io `<<LOGZIO_TOKEN>>` (required) with the [token](https://app.logz.io/#/dashboard/settings/manage-tokens/data-shipping) of the metrics account to which you want to send your data.
 
+Replace `<<LISTENER_HOST>>` (optional) with your region’s listener host (for example, `listener.logz.io`). For more information on finding your account’s region, see [Account region](https://docs.logz.io/user-guide/accounts/account-region.html). The default value is `listener.logz.io`
 
-Replace `<<LISTENER_HOST>>` with your region’s listener host (for example, `listener.logz.io`). For more information on finding your account’s region, see [Account region](https://docs.logz.io/user-guide/accounts/account-region.html). The default value is `listener.logz.io`
-
-Replace `<<LOG_TYPE>>` with the name for the desired log type, the default value is `fluentbit`.
+Replace `<<LOG_TYPE>>`(optional) with the name for the desired log type, the default value is `fluentbit`.
 
 ###### Run the Helm deployment code
 
-```
+```shell
 helm install  \
 --set logzio.token=<<LOGZIO_TOKEN>> \
 --set logzio.listenerHost=<<LISTENER_HOST>> \
