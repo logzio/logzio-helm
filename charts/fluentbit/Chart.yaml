@@ -1,0 +1,16 @@
+apiVersion: v2
+name: logzio-fluent-bit
+description: Fast and lightweight log agent based on fluentbit, collect and send your logs to logz.io
+keywords:
+  - logging
+  - fluent-bit
+  - fluentd
+type: application
+version: 0.0.1
+appVersion: 0.0.1
+sources:
+  - https://github.com/logzio/logzio-helm
+  - https://github.com/fluent/fluent-bit/
+maintainers:
+  - name: yotam.loewenbach
+    email: yotam.loewenbach@logz.io
