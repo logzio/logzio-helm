@@ -140,4 +140,26 @@ entries:
     urls:
     - https://logzio.github.io/logzio-helm/logzio-otel-k8s-metrics-0.1.0.tgz
     version: 0.1.0
+  logzio-fluent-bit:
+  - apiVersion: v2
+    appVersion: 0.0.1
+    created: "2021-09-14T09:07:38.34435+03:00"
+    description: Fast and lightweight log agent based on fluentbit, collect and send
+      your logs to logz.io
+    digest: 39ca68b0f100fb93adb2fde1ba92bba7ba53da2ea69e048f63eff8d51aa29420
+    keywords:
+    - logging
+    - fluent-bit
+    - fluentd
+    maintainers:
+    - email: yotam.loewenbach@logz.io
+      name: yotam.loewenbach
+    name: logzio-fluent-bit
+    sources:
+    - https://github.com/logzio/logzio-helm
+    - https://github.com/fluent/fluent-bit/
+    type: application
+    urls:
+    - https://logzio.github.io/logzio-helm/logzio-fluent-bit-0.0.1.tgz
+    version: 0.0.1
 generated: "2021-09-14T00:41:16.087077+03:00"
