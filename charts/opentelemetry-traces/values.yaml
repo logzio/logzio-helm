@@ -4,7 +4,6 @@
 
 nameOverride: ""
 fullnameOverride: ""
-
 config:
   receivers:
     jaeger:
@@ -30,7 +29,7 @@ config:
   exporters:
     logzio:
       region: us
-      account_token: 
+      account_token:
     logging:
   processors:
     batch:
@@ -47,6 +46,7 @@ config:
         receivers: [opencensus, jaeger, zipkin, otlp]
         processors: [batch]
         exporters: [logging, logzio]
+
 # Shared params for agentCollector daemonset and standaloneCollector deployment pods.
 # Can be overridden here or for any component independently using the same keys.
 
@@ -61,7 +61,7 @@ imagePullSecrets: []
 # OpenTelemetry Collector executable
 command:
   name: otelcontribcol
-  extraArgs: []
+  extraArgs: ["--log-level=DEBUG"]
 
 serviceAccount:
   # Specifies whether a service account should be created
