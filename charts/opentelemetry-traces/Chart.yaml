@@ -1,5 +1,5 @@
 apiVersion: v2
-name: logzio-traces
+name: logzio-otel-traces
 version: 0.0.1
 description: Based on OpenTelemetry Collector Helm chart for Kubernetes, collect traces and send to logzio
 type: application
