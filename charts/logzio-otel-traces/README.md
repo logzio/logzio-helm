@@ -1,5 +1,5 @@
 
-# Logzio-otel-k8s-metrics
+# Logzio-otel-traces
 
 ##  Overview
 
@@ -32,8 +32,8 @@ Replace `<<logzio-region>>` with the name of your logzio region e.g `us`,`eu`.
 
 ```
 helm install  \
---set config.exporters.logzio.region=<<logzio-region>> \
---set config.exporters.logzio.account_token=<<traces-token>> \
+--set config.exporters.logzio.region=us \
+--set config.exporters.logzio.account_token=McvJQAtOrFUZQRFMrvSqnKSEJhjjFZHz \
 logzio-otel-traces logzio-helm/logzio-otel-traces
 ```
 
