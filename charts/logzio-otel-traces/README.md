@@ -32,8 +32,8 @@ Replace `<<logzio-region>>` with the name of your Logz.io region e.g `us`,`eu`.
 
 ```
 helm install  \
---set config.exporters.logzio.region=us \
---set config.exporters.logzio.account_token=McvJQAtOrFUZQRFMrvSqnKSEJhjjFZHz \
+--set config.exporters.logzio.region=<<logzio-region>> \
+--set config.exporters.logzio.account_token=<<traces-token>> \
 logzio-otel-traces logzio-helm/logzio-otel-traces
 ```
 
