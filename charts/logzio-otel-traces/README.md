@@ -24,7 +24,7 @@ helm repo update
 
 ##### Configure the parameters in the code
 
-Replace the Logz-io `<<traces-token>>` with the [token](https://app.logz.io/#/dashboard/settings/manage-tokens/data-shipping) of the tracing account to which you want to send your data.
+Replace the Logz-io `<<traces-token>>` with the [token](https://app.logz.io/#/dashboard/settings/manage-tokens/data-shipping?product=tracing) of the tracing account to which you want to send your data.
 
 Replace `<<logzio-region>>` with the name of your Logz.io region e.g `us`,`eu`.
 
