@@ -1,0 +1,8 @@
+{{- if .Values.isRBAC }}
+apiVersion: {{ .Values.apiVersions.clusterRole }}
+kind: ClusterRole
+metadata:
+  name: fluentd
+  namespace: monitoring
+rules: {{ toYaml .Values.clusterRole.rules | nindent 2 -}}
+{{- end }}

@@ -1,0 +1,122 @@
+apiVersion: {{ .Values.apiVersions.daemonset }}
+kind: DaemonSet
+metadata:
+  name: fluentd
+  namespace: {{ .Values.namespace }}
+  labels:
+    k8s-app: fluentd
+    version: v1
+spec:
+  selector:
+    matchLabels:
+      k8s-app: fluentd
+  template:
+    metadata:
+      labels:
+        k8s-app: fluentd
+        version: v1
+    spec:
+      {{- if .Values.isRBAC }}
+      serviceAccount: {{ template "fluentd.serviceAccount" . }}
+      serviceAccountName: {{ template "fluentd.serviceAccount" . }}
+      {{- end }}
+      {{- if .Values.daemonset.tolerations }}
+      tolerations:
+{{ toYaml .Values.daemonset.tolerations | indent 6 }}
+      {{- end }}
+      # Because the image's entrypoint requires to write on /fluentd/etc but we mount configmap there which is read-only,
+      # this initContainers workaround or other is needed.
+      # See https://github.com/fluent/fluentd-kubernetes-daemonset/issues/90
+      initContainers:
+        - name: copy-fluentd-config
+          image: busybox
+          command: ['sh', '-c', 'cp /config-volume/..data/* /fluentd/etc']
+          volumeMounts:
+            - name: config-volume
+              mountPath: /config-volume
+            - name: fluentdconf
+              mountPath: /fluentd/etc
+            {{- if .Values.daemonset.init.extraVolumeMounts }}
+{{ toYaml .Values.daemonset.init.extraVolumeMounts | indent 12 }}
+            {{- end }}
+      containers:
+      - name: fluentd
+        image: "{{ .Values.image }}:{{ .Values.imageTag }}"
+        env:
+        - name: LOGZIO_LOG_SHIPPING_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: logzio-logs-secret
+              key: logzio-log-shipping-token
+        - name: LOGZIO_LOG_LISTENER
+          valueFrom:
+            secretKeyRef:
+              name: logzio-logs-secret
+              key: logzio-log-listener
+        - name: LOGZIO_BUFFER_TYPE
+          value: {{ .Values.daemonset.logzioBufferType | quote }}
+        - name: LOGZIO_BUFFER_PATH
+          value: {{ .Values.daemonset.logzioBufferPath | quote }}
+        - name: LOGZIO_OVERFLOW_ACTION
+          value: {{ .Values.daemonset.logzioOverflowAction | quote }}
+        - name: LOGZIO_CHUNK_LIMIT_SIZE
+          value: {{ .Values.daemonset.logzioChunkLimitSize | quote }}
+        - name: LOGZIO_QUEUE_LIMIT_LENGTH
+          value: {{ .Values.daemonset.logzioQueueLimitLength | quote }}
+        - name: LOGZIO_FLUSH_INTERVAL
+          value: {{ .Values.daemonset.logzioFlushInterval | quote }}
+        - name: LOGZIO_RETRY_MAX_INTERVAL
+          value: {{ .Values.daemonset.logzioRetryMaxInterval | quote }}
+        - name: LOGZIO_RETRY_FOREVER
+          value: {{ .Values.daemonset.logzioRetryForever | quote }}
+        - name: LOGZIO_FLUSH_THREAD_COUNT
+          value: {{ .Values.daemonset.logzioFlushThreadCount | quote }}
+        - name: LOGZIO_LOG_LEVEL
+          value: {{ .Values.daemonset.logzioLogLevel | quote }}
+        - name: FLUENTD_SYSTEMD_CONF
+          value: {{ .Values.daemonset.fluentdSystemdConf | quote }}
+        - name: FLUENTD_PROMETHEUS_CONF
+          value: {{ .Values.daemonset.fluentdPrometheusConf | quote }}
+        - name: INCLUDE_NAMESPACE
+          value: {{ .Values.daemonset.includeNamespace | quote }}
+        - name: KUBERNETES_VERIFY_SSL
+          value: {{ .Values.daemonset.kubernetesVerifySsl | quote }}
+        - name: AUDIT_LOG_FORMAT
+          value: {{ .Values.daemonset.auditLogFormat }}
+        {{- if .Values.daemonset.containerdRuntime }}
+        - name: FLUENTD_KUBERNETES_CONTAINERD_CONF
+          value: "kubernetes-containerd"
+        {{- end }}
+        {{- if .Values.daemonset.extraEnv }}
+{{ toYaml .Values.daemonset.extraEnv | indent 8 }}
+        {{- end }}
+        resources: {{ toYaml ( .Values.daemonset.resources ) | nindent 10 }}
+        volumeMounts:
+        - name: varlog
+          mountPath: /var/log
+        - name: varlibdockercontainers
+          mountPath: /var/lib/docker/containers
+          readOnly: true
+        - name: config-volume
+          mountPath: /config-volume
+        - name: fluentdconf
+          mountPath: /fluentd/etc
+        {{- if .Values.daemonset.extraVolumeMounts }}
+{{ toYaml .Values.daemonset.extraVolumeMounts | indent 8 }}
+        {{- end }}
+      terminationGracePeriodSeconds: {{ .Values.daemonset.terminationGracePeriodSeconds }}
+      volumes:
+      - name: varlog
+        hostPath:
+          path: /var/log
+      - name: varlibdockercontainers
+        hostPath:
+          path: /var/lib/docker/containers
+      - name: config-volume
+        configMap:
+          name: fluentd-config
+      - name: fluentdconf
+        emptyDir: {}
+      {{- if .Values.daemonset.extraVolumes }}
+{{ toYaml .Values.daemonset.extraVolumes | indent 6 }}
+      {{- end }}
