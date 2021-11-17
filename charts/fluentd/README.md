@@ -4,7 +4,7 @@ Helm is a tool for managing packages of pre-configured Kubernetes resources usin
 Logzio-fluentd allows you to ship logs from your Kubernetes cluster to Logz.io, using Fluentd.
 Fluentd is flexible enough and has the proper plugins to distribute logs to different third parties such as Logz.io.
 
-**Note:** If you're running on k8s 1.19.3+ you'll need to use our containerd configuration. To do that, please refer to `daemonset.containerdRuntime` in the [parameters table](ADD-LINK-TO-TABLE).
+**Note:** The chart defaults to configuration for Conatinerd CRI. If your cluster uses Docker as CRI, please refer to `daemonset.containerdRuntime` in the [parameters table](ADD-LINK-TO-TABLE).
 
 ### Deploying the Chart:
 
@@ -27,14 +27,14 @@ The following command will install the Chart with the default values.
 If you wish to change some of the values, add to this command `--set` flag(s) with the parameter(s) you'd like to change. For more information & example, see the [parameters table](ADD-LINK-TO-TABLE).
 You can learn more about the ways you can customise the Chart's value [here](https://helm.sh/docs/helm/helm_install/#synopsis).
 
-Replace `<<SHIPPING-TOKEN>>` with the [token](https://app.logz.io/#/dashboard/settings/general) of the account you want to ship to.
+Replace `<<LOG-SHIPPING-TOKEN>>` with the [token](https://app.logz.io/#/dashboard/settings/general) of the account you want to ship to.
 
-Replace `<<LISTENER-REGION>>` with your region’s code (for example, `eu`). For more information on finding your account’s region, see [Account region](https://docs.logz.io/user-guide/accounts/account-region.html).
+Replace `<<LISTENER-HOST>>` with your region’s code (for example, `eu`). For more information on finding your account’s region, see [Account region](https://docs.logz.io/user-guide/accounts/account-region.html).
 
 ```shell
 helm install -n monitoring \
---set secrets.logzioShippingToken='<<SHIPPING-TOKEN>>' \
---set secrets.logzioRegion='<<LISTENER-REGION>>' \
+--set secrets.logzioShippingToken='<<LOG-SHIPPING-TOKEN>>' \
+--set secrets.logzioRegion='<<LISTENER-HOST>>' \
 logzio-fluentd logzio-helm/logzio-fluentd
 ```
 
@@ -74,7 +74,7 @@ helm install -n monitoring \
 | `daemonset.includeNamespace` | Use if you wish to send logs from specific k8s namespaces, space delimited. Should be in the following format: `kubernetes.var.log.containers.**_<<NAMESPACE-TO-INCLUDE>>_** kubernetes.var.log.containers.**_<<ANOTHER-NAMESPACE>>_**`. | `""` |
 | `daemonset.kubernetesVerifySsl` | Enables to validate SSL certificates. | `true` |
 | `daemonset.auditLogFormat` | Match Fluentd's format for kube-apiserver audit logs. Set to `audit-json` if your audit logs are in json format. | `audit` |
-| `daemonset.containerdRuntime` | Determines whether to use a configuration for a Containerd runtime. Set to `false` if your cluster doesn't use Containerd as CRI. | `true` |
+| `daemonset.containerdRuntime` | Determines whether to use a configuration for a Containerd runtime. Set to `true` if your cluster uses Containerd as CRI. | `false` |
 | `daemonset.logzioBufferType` | Specifies which plugin to use as the backend. | `file` |
 | `daemonset.logzioBufferPath` | Path of the buffer. | `/var/log/fluentd-buffers/stackdriver.buffer` |
 | `daemonset.logzioOverflowAction` | Controls the behavior when the queue becomes full. | `block` |
@@ -93,7 +93,7 @@ helm install -n monitoring \
 | `daemonset.init.extraVolumeMounts` | If needed, more volume mounts to the init container can be added with this field. | `[]` |
 | `clusterRole.rules` | Configurable [cluster role rules](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#role-and-clusterrole) that Fluentd uses to access Kubernetes resources. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/fluentd/values.yaml). |
 | `secrets.logzioShippingToken` | Secret with your [logzio shipping token](https://app.logz.io/#/dashboard/settings/general). | `""` |
-| `secrets.logzioRegion` | Secret with your [logzio region](https://docs.logz.io/user-guide/accounts/account-region.html). Defaults to US East. | `" "` |
+| `secrets.logzioListener` | Secret with your logzio listener host. `listener.logz.io`. | `" "` |
 | `configmap.extraConfig` | If needed, more Fluentd configuration can be added with this field. | `{}` |
 | `configmap.fluent` | Configuration for `fluent.conf`. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/fluentd/values.yaml). |
 | `configmap.kubernetes` | Configuration for `kubernetes.conf`. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/fluentd/values.yaml). |

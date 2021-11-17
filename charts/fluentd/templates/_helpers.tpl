@@ -28,13 +28,14 @@ Create the name of the service account to use
 {{- end -}}
 {{- end -}}
 
+
 {{/*
 Convert logzio region code to listener host
 */}}
 {{- define "logzio.listenerHost" }}
-{{- if or ( eq $.Values.secrets.logzioRegion "us" ) ( eq $.Values.secrets.logzioRegion " " ) -}}
+{{- if or ( eq $.Values.secrets.logzioListener "listener.logz.io" ) ( eq $.Values.secrets.logzioRegion " " ) -}}
 {{- printf "https://listener.logz.io:8071" }}
-{{- else if or ( eq $.Values.secrets.logzioRegion "au" ) ( eq $.Values.secrets.logzioRegion "ca" ) ( eq $.Values.secrets.logzioRegion "eu" ) ( eq $.Values.secrets.logzioRegion "nl" ) ( eq $.Values.secrets.logzioRegion "uk" ) ( eq $.Values.secrets.logzioRegion "wa" ) }}
-{{- printf "https://listener-%s.logz.io:8071" .Values.secrets.logzioRegion -}}
+{{- else }}
+{{- printf "https://%s:8071" .Values.secrets.logzioListener -}}
 {{- end -}}
 {{- end -}}

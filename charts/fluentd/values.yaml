@@ -66,7 +66,7 @@ clusterRole:
 
 secrets:
   logzioShippingToken: ""
-  logzioRegion: " "
+  logzioListener: " "
 
 configmap:
   extraConfig: {}
