@@ -1,0 +1,11 @@
+apiVersion: v2
+name: logzio-fluentd
+description: A Helm chart for shipping Kubernetes logs via Fluentd.
+keywords:
+  - logging
+  - fluentd
+version: 0.0.1
+appVersion: 1.0.1
+maintainers:
+  - name: Miri Ignatiev
+    email: miri.ignatiev@logz.io

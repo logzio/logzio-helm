@@ -1,0 +1,14 @@
+{{- if .Values.isRBAC }}
+apiVersion: {{ .Values.apiVersions.clusterRoleBinding }}
+kind: ClusterRoleBinding
+metadata:
+  name: fluentd
+roleRef:
+  kind: ClusterRole
+  name: fluentd
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+- kind: ServiceAccount
+  name: {{ template "fluentd.serviceAccount" . }}
+  namespace: {{ .Values.namespace }}
+{{- end }}
