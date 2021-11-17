@@ -1,6 +1,6 @@
 # Logzio-fluentd
 
-Helm is a tool for managing packages of pre-configured Kubernetes resources using Charts.
+[Helm](https://helm.sh/) is a tool for managing packages of pre-configured Kubernetes resources using Charts.
 Logzio-fluentd allows you to ship logs from your Kubernetes cluster to Logz.io, using Fluentd.
 Fluentd is flexible enough and has the proper plugins to distribute logs to different third parties such as Logz.io.
 
@@ -9,6 +9,7 @@ Fluentd is flexible enough and has the proper plugins to distribute logs to diff
 ### Deploying the Chart:
 
 #### 1. Create a monitoring namespace
+
 Your DaemonSet will be deployed under the namespace `monitoring`.
 
 ```shell
@@ -25,7 +26,7 @@ helm repo add logzio-helm https://logzio.github.io/logzio-helm/fluentd
 
 The following command will install the Chart with the default values.
 If you wish to change some of the values, add to this command `--set` flag(s) with the parameter(s) you'd like to change. For more information & example, see the [configuration table](https://github.com/logzio/logzio-helm/tree/master/charts/fluentd#configuration).
-You can learn more about the ways you can customise the Chart's value [here](https://helm.sh/docs/helm/helm_install/#synopsis).
+You can learn more about the ways you can customise the Chart's values [here](https://helm.sh/docs/helm/helm_install/#synopsis).
 
 Replace `<<LOG-SHIPPING-TOKEN>>` with the [token](https://app.logz.io/#/dashboard/settings/general) of the account you want to ship to.
 
@@ -39,12 +40,13 @@ logzio-fluentd logzio-helm/logzio-fluentd
 ```
 
 #### 4. Check Logz.io for your logs
+
 Give your logs some time to get from your system to ours, and then open [Logz.io](https://app.logz.io/).
 
 
 ### Configuration
-This table contains all the parameters in `values.yaml`. 
-  If you wish to change the default values, specify each parameter using the `--set key=value` argument to `helm install` in step 2. For example:
+
+This table contains all the parameters in `values.yaml`. If you wish to change the default values, specify each parameter using the `--set key=value` argument to `helm install` in step 2. For example:
 
 ```shell
 helm install -n monitoring \
@@ -121,6 +123,7 @@ my-custom-conf-name2.conf: |-
 ### Uninstalling the Chart
 
 The command removes all the k8s components associated with the chart and deletes the release.  
+
 To uninstall the `logzio-fluentd` deployment:
 
 ```shell
