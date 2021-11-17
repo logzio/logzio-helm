@@ -4,7 +4,7 @@ Helm is a tool for managing packages of pre-configured Kubernetes resources usin
 Logzio-fluentd allows you to ship logs from your Kubernetes cluster to Logz.io, using Fluentd.
 Fluentd is flexible enough and has the proper plugins to distribute logs to different third parties such as Logz.io.
 
-**Note:** The chart defaults to configuration for Conatinerd CRI. If your cluster uses Docker as CRI, please refer to `daemonset.containerdRuntime` in the [parameters table](ADD-LINK-TO-TABLE).
+**Note:** The chart defaults to configuration for Conatinerd CRI. If your cluster uses Docker as CRI, please refer to `daemonset.containerdRuntime` in the [configuration table](https://github.com/logzio/logzio-helm/tree/master/charts/fluentd#configuration).
 
 ### Deploying the Chart:
 
@@ -24,7 +24,7 @@ helm repo add logzio-helm https://logzio.github.io/logzio-helm/fluentd
 #### 3. Deploy
 
 The following command will install the Chart with the default values.
-If you wish to change some of the values, add to this command `--set` flag(s) with the parameter(s) you'd like to change. For more information & example, see the [parameters table](ADD-LINK-TO-TABLE).
+If you wish to change some of the values, add to this command `--set` flag(s) with the parameter(s) you'd like to change. For more information & example, see the [configuration table](https://github.com/logzio/logzio-helm/tree/master/charts/fluentd#configuration).
 You can learn more about the ways you can customise the Chart's value [here](https://helm.sh/docs/helm/helm_install/#synopsis).
 
 Replace `<<LOG-SHIPPING-TOKEN>>` with the [token](https://app.logz.io/#/dashboard/settings/general) of the account you want to ship to.
@@ -34,7 +34,7 @@ Replace `<<LISTENER-HOST>>` with your region’s code (for example, `eu`). For m
 ```shell
 helm install -n monitoring \
 --set secrets.logzioShippingToken='<<LOG-SHIPPING-TOKEN>>' \
---set secrets.logzioRegion='<<LISTENER-HOST>>' \
+--set secrets.logzioListener='<<LISTENER-HOST>>' \
 logzio-fluentd logzio-helm/logzio-fluentd
 ```
 
@@ -42,7 +42,7 @@ logzio-fluentd logzio-helm/logzio-fluentd
 Give your logs some time to get from your system to ours, and then open [Logz.io](https://app.logz.io/).
 
 
-### Parameters
+### Configuration
 This table contains all the parameters in `values.yaml`. 
   If you wish to change the default values, specify each parameter using the `--set key=value` argument to `helm install` in step 2. For example:
 
@@ -56,7 +56,7 @@ helm install -n monitoring \
 | Parameter | Description | Default |
 |---|---|---|
 | `image` | The logzio-fluentd docker image. | `logzio/logzio-fluentd` |
-| `imageTag` | The logzio-fluentd docker image tag. | `1.0.0` |
+| `imageTag` | The logzio-fluentd docker image tag. | `1.0.1` |
 | `nameOverride` | Overrides the Chart name for resources. | `""` |
 | `fullnameOverride` | Overrides the full name of the resources. | `fluentd` |
 | `apiVersions.daemonset` | Daemonset API version. | `apps/v1` |
@@ -68,7 +68,7 @@ helm install -n monitoring \
 | `namespace` | Chart's namespace. | `monitoring` |
 | `isRBAC` | Specifies whether the Chart should be compatible to a RBAC cluster. If you're running on a non-RBAC cluster, set to `false`.  | `true` |
 | `serviceAccount.name` | Name of the service account. | `fluentd` |
-| `daemonset.tolerations` | Set [tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) for all DaemonSet pods. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/fluentd/values.yaml). |
+| `daemonset.tolerations` | Set [tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) for all DaemonSet pods. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
 | `daemonset.fluentdSystemdConf` | Controls whether Fluentd system messages will be enabled. | `disable` |
 | `daemonset.fluentdPrometheusConf` | Controls the launch of a prometheus plugin that monitors Fluentd. | `disable` |
 | `daemonset.includeNamespace` | Use if you wish to send logs from specific k8s namespaces, space delimited. Should be in the following format: `kubernetes.var.log.containers.**_<<NAMESPACE-TO-INCLUDE>>_** kubernetes.var.log.containers.**_<<ANOTHER-NAMESPACE>>_**`. | `""` |
@@ -86,28 +86,28 @@ helm install -n monitoring \
 | `daemonset.logzioFlushThreadCount` | Number of threads to flush the buffer. | `2` |
 | `daemonset.logzioLogLevel` | The log level for this container. | `info` |
 | `daemonset.extraEnv` | If needed, more env vars can be added with this field. | `[]` |
-| `daemonset.resources` | Allows you to set the resources for Fluentd Daemonset. |  See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/fluentd/values.yaml). |
+| `daemonset.resources` | Allows you to set the resources for Fluentd Daemonset. |  See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
 | `daemonset.extraVolumeMounts` | If needed, more volume mounts can be added with this field. | `[]` |
 | `daemonset.terminationGracePeriodSeconds` | Termination period (in seconds) to wait before killing Fluentd pod process on pod shutdown. | `30` |
 | `daemonset.extraVolumes` | If needed, more volumes can be added with this field. | `[]` |
 | `daemonset.init.extraVolumeMounts` | If needed, more volume mounts to the init container can be added with this field. | `[]` |
-| `clusterRole.rules` | Configurable [cluster role rules](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#role-and-clusterrole) that Fluentd uses to access Kubernetes resources. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/fluentd/values.yaml). |
+| `clusterRole.rules` | Configurable [cluster role rules](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#role-and-clusterrole) that Fluentd uses to access Kubernetes resources. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
 | `secrets.logzioShippingToken` | Secret with your [logzio shipping token](https://app.logz.io/#/dashboard/settings/general). | `""` |
 | `secrets.logzioListener` | Secret with your logzio listener host. `listener.logz.io`. | `" "` |
 | `configmap.extraConfig` | If needed, more Fluentd configuration can be added with this field. | `{}` |
-| `configmap.fluent` | Configuration for `fluent.conf`. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/fluentd/values.yaml). |
-| `configmap.kubernetes` | Configuration for `kubernetes.conf`. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/fluentd/values.yaml). |
-| `configmap.system` | Configuration for `system.conf`. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/fluentd/values.yaml). |
-| `configmap.systemd` | Configuration for `systemd.conf`. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/fluentd/values.yaml). |
-| `configmap.kubernetesContainerd` | Configuration for `kubernetes-containerd.conf`. This is the configuration that's being used when `daemonset.containerdRuntime` is set to `true` | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/fluentd/values.yaml). |
-| `configmap.audit` | Configuration for `audit.conf`. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/fluentd/values.yaml). |
-| `configmap.auditJson` | Configuration for `audit-json.conf`. This is the configuration that's being used when `daemonset.auditLogFormat` is set to `audit-json` | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/fluentd/values.yaml). |
+| `configmap.fluent` | Configuration for `fluent.conf`. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
+| `configmap.kubernetes` | Configuration for `kubernetes.conf`. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
+| `configmap.system` | Configuration for `system.conf`. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
+| `configmap.systemd` | Configuration for `systemd.conf`. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
+| `configmap.kubernetesContainerd` | Configuration for `kubernetes-containerd.conf`. This is the configuration that's being used when `daemonset.containerdRuntime` is set to `true` | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
+| `configmap.audit` | Configuration for `audit.conf`. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
+| `configmap.auditJson` | Configuration for `audit-json.conf`. This is the configuration that's being used when `daemonset.auditLogFormat` is set to `audit-json` | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
 
 **Note:** If you're adding your own configuration file via `configmap.extraConfig`:
-- Add a `--set-file` flag to your `helm install` command, as seen in the [example above](ADD-LINK-TO-TABLE).
+- Add a `--set-file` flag to your `helm install` command, as seen in the [example above](https://github.com/logzio/logzio-helm/tree/master/charts/fluentd#configuration).
 - Make sure that the `yaml` file with your configuration is in the following format:
 
-```shell
+```yaml
 my-custom-conf-name.conf: |-
 	# .....
 	# your config

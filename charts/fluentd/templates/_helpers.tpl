@@ -33,7 +33,7 @@ Create the name of the service account to use
 Convert logzio region code to listener host
 */}}
 {{- define "logzio.listenerHost" }}
-{{- if or ( eq $.Values.secrets.logzioListener "listener.logz.io" ) ( eq $.Values.secrets.logzioRegion " " ) -}}
+{{- if or ( eq $.Values.secrets.logzioListener "listener.logz.io" ) ( eq $.Values.secrets.logzioListener " " ) -}}
 {{- printf "https://listener.logz.io:8071" }}
 {{- else }}
 {{- printf "https://%s:8071" .Values.secrets.logzioListener -}}
