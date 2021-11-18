@@ -2,7 +2,7 @@ image: logzio/logzio-fluentd
 imageTag: 1.0.1
 
 nameOverride: ""
-fullnameOverride: fluentd
+fullnameOverride: ""
 
 apiVersions:
   daemonset: apps/v1
@@ -13,11 +13,12 @@ apiVersions:
   secret: v1
 
 namespace: monitoring
+k8sApp: fluentd-logzio
 
 isRBAC: true
 
 serviceAccount:
-  name: fluentd
+  name: ""
 
 daemonset:
   tolerations:

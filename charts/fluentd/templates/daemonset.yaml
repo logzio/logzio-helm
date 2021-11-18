@@ -1,19 +1,19 @@
 apiVersion: {{ .Values.apiVersions.daemonset }}
 kind: DaemonSet
 metadata:
-  name: fluentd
+  name: {{ include "fluentd.fullname" . }}
   namespace: {{ .Values.namespace }}
   labels:
-    k8s-app: fluentd
+    k8s-app: {{ .Values.k8sApp }}
     version: v1
 spec:
   selector:
     matchLabels:
-      k8s-app: fluentd
+      k8s-app: {{ .Values.k8sApp }}
   template:
     metadata:
       labels:
-        k8s-app: fluentd
+        k8s-app: {{ .Values.k8sApp }}
         version: v1
     spec:
       {{- if .Values.isRBAC }}
@@ -114,7 +114,7 @@ spec:
           path: /var/lib/docker/containers
       - name: config-volume
         configMap:
-          name: fluentd-config
+          name: {{ include "fluentd.fullname" . }}-config
       - name: fluentdconf
         emptyDir: {}
       {{- if .Values.daemonset.extraVolumes }}

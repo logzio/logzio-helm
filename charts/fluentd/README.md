@@ -60,7 +60,7 @@ helm install -n monitoring \
 | `image` | The logzio-fluentd docker image. | `logzio/logzio-fluentd` |
 | `imageTag` | The logzio-fluentd docker image tag. | `1.0.1` |
 | `nameOverride` | Overrides the Chart name for resources. | `""` |
-| `fullnameOverride` | Overrides the full name of the resources. | `fluentd` |
+| `fullnameOverride` | Overrides the full name of the resources. | `""` |
 | `apiVersions.daemonset` | Daemonset API version. | `apps/v1` |
 | `apiVersions.serviceAccount` | Service Account API version. | `v1` |
 | `apiVersions.clusterRole` | Cluster Role API version. | `rbac.authorization.k8s.io/v1` |
@@ -69,7 +69,7 @@ helm install -n monitoring \
 | `apiVersions.secret` | Secret API version. | `v1` |
 | `namespace` | Chart's namespace. | `monitoring` |
 | `isRBAC` | Specifies whether the Chart should be compatible to a RBAC cluster. If you're running on a non-RBAC cluster, set to `false`.  | `true` |
-| `serviceAccount.name` | Name of the service account. | `fluentd` |
+| `serviceAccount.name` | Name of the service account. | `""` |
 | `daemonset.tolerations` | Set [tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) for all DaemonSet pods. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
 | `daemonset.fluentdSystemdConf` | Controls whether Fluentd system messages will be enabled. | `disable` |
 | `daemonset.fluentdPrometheusConf` | Controls the launch of a prometheus plugin that monitors Fluentd. | `disable` |
@@ -131,5 +131,8 @@ helm uninstall -n monitoring logzio-fluentd
 ```
 
 ## Change log
+
+ - **0.0.2**:
+    - Fix templates name - allow dyncmically change it.
  - **0.0.1**:
     - Initial release.

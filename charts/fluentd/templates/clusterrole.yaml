@@ -2,7 +2,7 @@
 apiVersion: {{ .Values.apiVersions.clusterRole }}
 kind: ClusterRole
 metadata:
-  name: fluentd
-  namespace: monitoring
+  name: {{ include "fluentd.fullname" . }}
+  namespace: {{ .Values.namespace }}
 rules: {{ toYaml .Values.clusterRole.rules | nindent 2 -}}
 {{- end }}

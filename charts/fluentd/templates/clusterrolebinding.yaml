@@ -2,10 +2,10 @@
 apiVersion: {{ .Values.apiVersions.clusterRoleBinding }}
 kind: ClusterRoleBinding
 metadata:
-  name: fluentd
+  name: {{ include "fluentd.fullname" . }}
 roleRef:
   kind: ClusterRole
-  name: fluentd
+  name: {{ include "fluentd.fullname" . }}
   apiGroup: rbac.authorization.k8s.io
 subjects:
 - kind: ServiceAccount
