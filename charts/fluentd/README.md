@@ -132,6 +132,8 @@ helm uninstall -n monitoring logzio-fluentd
 
 ## Change log
 
+ - **0.0.3**:
+    - Edit configmap template name
  - **0.0.2**:
     - Fix templates name - allow dyncmically change it.
  - **0.0.1**:
