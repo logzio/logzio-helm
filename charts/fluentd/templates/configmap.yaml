@@ -1,10 +1,10 @@
 apiVersion: {{ .Values.apiVersions.configmap }}
 kind: ConfigMap
 metadata:
-  name: fluentd-config
+  name: {{ include "fluentd.fullname" . }}-config
   namespace: {{ .Values.namespace }}
   labels:
-    k8s-app: fluentd-logzio
+    k8s-app: {{ .Values.k8sApp }}
 data:
   fluent.conf: {{ toYaml .Values.configmap.fluent | indent 2 }}
   
