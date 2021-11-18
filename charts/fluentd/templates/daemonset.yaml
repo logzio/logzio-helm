@@ -114,7 +114,7 @@ spec:
           path: /var/lib/docker/containers
       - name: config-volume
         configMap:
-          name: {{ include "fluentd.fullname" . }}-config
+          name: {{ include "fluentd.fullname" . }}
       - name: fluentdconf
         emptyDir: {}
       {{- if .Values.daemonset.extraVolumes }}
