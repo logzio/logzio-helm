@@ -35,7 +35,7 @@ Replace `<<LISTENER-HOST>>` with your account's listener host. You can find your
 ```shell
 helm install -n monitoring \
 --set secrets.logzioShippingToken='<<LOG-SHIPPING-TOKEN>>' \
---set secrets.logzioListener='<<LISTENER-HOST>>:8071' \
+--set secrets.logzioListener='<<LISTENER-HOST>>' \
 logzio-fluentd logzio-helm/logzio-fluentd
 ```
 
