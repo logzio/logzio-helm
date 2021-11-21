@@ -76,7 +76,7 @@ helm install -n monitoring \
 | `daemonset.includeNamespace` | Use if you wish to send logs from specific k8s namespaces, space delimited. Should be in the following format: `kubernetes.var.log.containers.**_<<NAMESPACE-TO-INCLUDE>>_** kubernetes.var.log.containers.**_<<ANOTHER-NAMESPACE>>_**`. | `""` |
 | `daemonset.kubernetesVerifySsl` | Enables to validate SSL certificates. | `true` |
 | `daemonset.auditLogFormat` | Match Fluentd's format for kube-apiserver audit logs. Set to `audit-json` if your audit logs are in json format. | `audit` |
-| `daemonset.containerdRuntime` | Determines whether to use a configuration for a Containerd runtime. Set to `true` if your cluster uses Containerd as CRI. | `false` |
+| `daemonset.containerdRuntime` | Determines whether to use a configuration for a Containerd runtime. Set to `false` if your cluster doesn't use Containerd as CRI. | `true` |
 | `daemonset.logzioBufferType` | Specifies which plugin to use as the backend. | `file` |
 | `daemonset.logzioBufferPath` | Path of the buffer. | `/var/log/fluentd-buffers/stackdriver.buffer` |
 | `daemonset.logzioOverflowAction` | Controls the behavior when the queue becomes full. | `block` |
