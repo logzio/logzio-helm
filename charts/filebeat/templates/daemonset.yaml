@@ -14,6 +14,8 @@ spec:
       labels:
         k8s-app: filebeat
     spec:
+      nodeSelector:
+        kubernetes.io/os: linux
       serviceAccountName: {{ template "filebeat.serviceAccount" . }}
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriod }}
       hostNetwork: {{ .Values.hostNetwork }}
@@ -91,3 +93,182 @@ spec:
           defaultMode: {{ .configMap.defaultMode }}
           name: {{ .configMap.name }}
     {{- end }}
+---
+apiVersion: {{ .Values.apiVersions.daemonset }}
+kind: DaemonSet
+metadata:
+  name: winlogbeat
+  namespace: {{ .Release.Namespace }}
+  labels:
+    k8s-app: filebeat
+spec:
+  selector:
+    matchLabels:
+      k8s-app: filebeat
+  template:
+    metadata:
+      labels:
+        k8s-app: filebeat
+    spec:
+      nodeSelector:
+        kubernetes.io/os: windows
+      serviceAccountName: {{ template "filebeat.serviceAccount" . }}
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriod }}
+      hostNetwork: {{ .Values.windowsHostNetwork }}
+      dnsPolicy: {{ .Values.dnsPolicy }}
+      containers:
+      - name: winlogbeat
+        image: "{{ .Values.winlogbeatImage }}:{{ .Values.winlogbeatImageTag }}"
+        env:
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: LOGZIO_LOGS_SHIPPING_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: logzio-logs-secret
+              key: logzio-logs-shipping-token
+        - name: LOGZIO_LOGS_LISTENER_HOST
+          valueFrom:
+            secretKeyRef:
+              name: logzio-logs-secret
+              key: logzio-logs-listener
+        - name: CLUSTER_NAME
+          valueFrom:
+            secretKeyRef:
+              name: logzio-logs-secret
+              key: cluster-name
+        - name: IGNORE_OLDER
+          value: {{ .Values.winlogbeatDaemonset.ignoreOlder }}
+        - name: LOGZIO_CODEC
+          value: {{ .Values.winlogbeatDaemonset.logzioCodec }}
+        - name: LOGZIO_TYPE
+          value: {{ .Values.winlogbeatDaemonset.logzioType }}
+        - name: FIELDS_UNDER_ROOT
+          value: {{ quote .Values.winlogbeatDaemonset.fieldsUnderRoot }}
+        securityContext: {{ toYaml ( .Values.winlogbeatDaemonset.securityContext ) | nindent 10 }}
+        resources: {{ toYaml ( .Values.winlogbeatDaemonset.resources ) | nindent 10 }}
+        volumeMounts:
+        - name: data
+          mountPath: C:\winlogbeat-7.15.2-windows-x86_64\data
+        - name: varlog
+          mountPath: C:\var\log
+          readOnly: true
+      {{- range .Values.winlogbeatDaemonset.volumeMounts }}
+        - name: {{ .name }}
+          mountPath: {{ .mountPath }}
+          readOnly: {{ .readOnly }}
+          subPath: {{ .subPath }}
+      {{- end }}
+      {{- if .Values.winlogbeatDaemonset.tolerations }}
+      tolerations:
+{{ toYaml .Values.winlogbeatDaemonset.tolerations | indent 6 }}
+      {{- end }}
+      volumes:
+      - name: varlog
+        hostPath:
+          path: C:\var\log
+      - name: data
+        hostPath:
+          path: C:\var\lib\winlogbeat-data
+          type: DirectoryOrCreate
+    {{- range .Values.winlogbeatDaemonset.volumes }}
+      - name: {{ .name }}
+        configMap:
+          defaultMode: {{ .configMap.defaultMode }}
+          name: {{ .configMap.name }}
+    {{- end }}
+---
+apiVersion: {{ .Values.apiVersions.daemonset }}
+kind: DaemonSet
+metadata:
+  name: filebeat-win
+  namespace: {{ .Release.Namespace }}
+  labels:
+    k8s-app: filebeat
+spec:
+  selector:
+    matchLabels:
+      k8s-app: filebeat
+  template:
+    metadata:
+      labels:
+        k8s-app: filebeat
+    spec:
+      nodeSelector:
+        kubernetes.io/os: windows
+      serviceAccountName: {{ template "filebeat.serviceAccount" . }}
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriod }}
+      hostNetwork: {{ .Values.windowsHostNetwork }}
+      dnsPolicy: {{ .Values.dnsPolicy }}
+      containers:
+      - name: filebeat-win
+        image: "{{ .Values.filebeatWindowsImage }}:{{ .Values.filebeatWindowsImageTag }}"
+        env:
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: LOGZIO_LOGS_SHIPPING_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: logzio-logs-secret
+              key: logzio-logs-shipping-token
+        - name: LOGZIO_LOGS_LISTENER_HOST
+          valueFrom:
+            secretKeyRef:
+              name: logzio-logs-secret
+              key: logzio-logs-listener
+        - name: CLUSTER_NAME
+          valueFrom:
+            secretKeyRef:
+              name: logzio-logs-secret
+              key: cluster-name
+        - name: IGNORE_OLDER
+          value: {{ .Values.filebeatWindowsDaemonset.ignoreOlder }}
+        - name: LOGZIO_CODEC
+          value: {{ .Values.filebeatWindowsDaemonset.logzioCodec }}
+        - name: LOGZIO_TYPE
+          value: {{ .Values.filebeatWindowsDaemonset.logzioType }}
+        - name: FIELDS_UNDER_ROOT
+          value: {{ quote .Values.filebeatWindowsDaemonset.fieldsUnderRoot }}
+        securityContext: {{ toYaml ( .Values.filebeatWindowsDaemonset.securityContext ) | nindent 10 }}
+        resources: {{ toYaml ( .Values.filebeatWindowsDaemonset.resources ) | nindent 10 }}
+        volumeMounts:
+        - name: data
+          mountPath: C:\filebeat-7.15.2-windows-x86_64\data
+        - name: varlibdockercontainers
+          mountPath: C:\var\lib\docker\containers
+          readOnly: true
+        - name: varlog
+          mountPath: C:\var\log
+          readOnly: true
+      {{- range .Values.filebeatWindowsDaemonset.volumeMounts }}
+        - name: {{ .name }}
+          mountPath: {{ .mountPath }}
+          readOnly: {{ .readOnly }}
+          subPath: {{ .subPath }}
+      {{- end }}
+      {{- if .Values.filebeatWindowsDaemonset.tolerations }}
+      tolerations:
+{{ toYaml .Values.filebeatWindowsDaemonset.tolerations | indent 6 }}
+      {{- end }}
+      volumes:
+      - name: varlibdockercontainers
+        hostPath:
+          path: C:\ProgramData\docker\containers
+      - name: varlog
+        hostPath:
+          path: C:\var\log
+      - name: data
+        hostPath:
+          path: C:\filebeat-7.15.2-windows-x86_64\data
+          type: DirectoryOrCreate
+    {{- range .Values.filebeatWindowsDaemonset.volumes }}
+      - name: {{ .name }}
+        configMap:
+          defaultMode: {{ .configMap.defaultMode }}
+          name: {{ .configMap.name }}
+    {{- end }}
+#
