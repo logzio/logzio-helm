@@ -147,7 +147,6 @@ spec:
           value: {{ .Values.winlogbeatDaemonset.logzioType }}
         - name: FIELDS_UNDER_ROOT
           value: {{ quote .Values.winlogbeatDaemonset.fieldsUnderRoot }}
-        securityContext: {{ toYaml ( .Values.winlogbeatDaemonset.securityContext ) | nindent 10 }}
         resources: {{ toYaml ( .Values.winlogbeatDaemonset.resources ) | nindent 10 }}
         volumeMounts:
         - name: data
@@ -233,7 +232,6 @@ spec:
           value: {{ .Values.filebeatWindowsDaemonset.logzioType }}
         - name: FIELDS_UNDER_ROOT
           value: {{ quote .Values.filebeatWindowsDaemonset.fieldsUnderRoot }}
-        securityContext: {{ toYaml ( .Values.filebeatWindowsDaemonset.securityContext ) | nindent 10 }}
         resources: {{ toYaml ( .Values.filebeatWindowsDaemonset.resources ) | nindent 10 }}
         volumeMounts:
         - name: data
