@@ -3,6 +3,12 @@ imageTag: 7.8.1
 nameOverride: ""
 fullnameOverride: filebeat
 
+winlogbeatImage: docker.io/logzio/logzio-winlogbeat
+winlogbeatImageTag: 0.0.1
+
+filebeatWindowsImage: docker.io/logzio/logzio-filebeat-win
+filebeatWindowsImageTag: 0.0.1
+
 apiVersions:
   configMap: v1
   daemonset: apps/v1
@@ -18,6 +24,7 @@ clusterRoleRules:
   resources:
   - namespaces
   - pods
+  - nodes
   verbs:
   - get
   - watch
@@ -62,6 +69,8 @@ logzioCert:
     -----END CERTIFICATE-----
 
 configType: standard
+filebeatWindowsConfigType: standard
+winlogbeatConfigType: standard
 
 filebeatConfig:
   standardConfig:
@@ -120,12 +129,115 @@ filebeatConfig:
             certificate_authorities: ['/etc/pki/tls/certs/SectigoRSADomainValidationSecureServerCA.crt']
   autoCustomConfig: {}
 
+winlogbeatConfig:
+  standardConfig:
+    winlogbeat.yml: |-
+      winlogbeat.event_logs:
+        - name: Application
+          ignore_older: 72h
+        - name: Security
+        - name: System
+
+      fields:
+        logzio_codec: ${LOGZIO_CODEC}
+        token: ${LOGZIO_LOGS_SHIPPING_TOKEN}
+        type: ${LOGZIO_TYPE}
+      fields_under_root: ${FIELDS_UNDER_ROOT}
+
+      processors:
+        - rename:
+            fields:
+            - from: "agent"
+              to: "winlogbeat_agent"
+            ignore_missing: true
+        - rename:
+            fields:
+            - from: "log.file.path"
+              to: "source"
+            ignore_missing: true
+        - rename:
+            fields:
+            - from: "log"
+              to: "log_information"
+            ignore_missing: true
+
+      output.logstash:
+        hosts: ["${LOGZIO_LOGS_LISTENER_HOST}:5015"]
+        ssl:
+          certificate_authorities: ['C:\cert.crt']
+
+
+
+filebeatWindowsConfig:
+  standardConfig:
+    filebeat.yml: |-
+      filebeat.inputs:
+      - type: container
+        enabled: true
+        paths:
+          - c:\var\lib\docker\containers\*\*.log
+        fields:
+          logzio_codec: ${LOGZIO_CODEC}
+          token: ${LOGZIO_LOGS_SHIPPING_TOKEN}
+          type: ${LOGZIO_TYPE}
+        symlinks: true
+        fields_under_root: ${FIELDS_UNDER_ROOT}
+        encoding: utf-8
+        ignore_older: ${IGNORE_OLDER}
+      filebeat.config.modules:
+        path: ${path.config}/modules.d/*.yml
+        reload.enabled: false
+      output.logstash:
+        hosts: ["${LOGZIO_LOGS_LISTENER_HOST}:5015"]
+        ssl.certificate_authorities: ["C:\\cert.crt"]
+      processors:
+      - rename:
+          fields:
+          - from: "agent"
+            to: "filebeat_agent"
+          ignore_missing: true
+      - rename:
+          fields:
+          - from: "log.file.path"
+            to: "source"
+      - add_cloud_metadata: ~
+      loggin.json: true
+  autodiscoverConfig:
+    filebeat.yml: |-
+      filebeat.autodiscover:
+        providers:
+          - type: kubernetes
+            node: ${NODE_NAME}
+            hints.enabled: true
+            hints.default_config:
+              type: container
+              paths:
+                - c:\var\lib\docker\containers\${data.kubernetes.container.id}\*.log
+            include_annotations: '*'
+
+      processors:
+        - add_cloud_metadata: ~
+      fields:
+        logzio_codec: ${LOGZIO_CODEC}
+        token: ${LOGZIO_LOGS_SHIPPING_TOKEN}
+        cluster: ${CLUSTER_NAME}
+        type: ${LOGZIO_TYPE}
+      fields_under_root: ${FIELDS_UNDER_ROOT}
+      ignore_older: ${IGNORE_OLDER}
+      output:
+        logstash:
+          hosts: ["${LOGZIO_LOGS_LISTENER_HOST}:5015"]
+          ssl:
+            certificate_authorities: ['C:\\cert.crt']
+  autoCustomConfig: {}
+
 serviceAccount:
   create: true
   name: filebeat
 
 terminationGracePeriod: 30
 hostNetwork: true
+windowsHostNetwork: false
 dnsPolicy: ClusterFirstWithHostNet
 
 daemonset:
@@ -160,6 +272,56 @@ daemonset:
       mountPath: /etc/pki/tls/certs/SectigoRSADomainValidationSecureServerCA.crt
       readOnly: true
       subPath: SectigoRSADomainValidationSecureServerCA.crt
+
+winlogbeatDaemonset:
+  ignoreOlder: 3h
+  logzioCodec: json
+  logzioType: winlogbeat
+  fieldsUnderRoot: true
+  securityContext:
+    runAsUser: 0
+  tolerations: {}
+  volumes:
+    - name: cert
+      configMap:
+        defaultMode: 0600
+        name: logzio-logs-cert
+    - name: config
+      configMap:
+        defaultMode: 0640
+        name: winlogbeat-config
+  volumeMounts:
+    - name: config
+      mountPath: C:\winlogbeat-7.15.2-windows-x86_64\etc
+      readOnly: true
+
+filebeatWindowsDaemonset:
+  ignoreOlder: 3h
+  logzioCodec: json
+  logzioType: filebeat-win
+  fieldsUnderRoot: true
+  securityContext:
+    runAsUser: 0
+  resources:
+    limits:
+      memory: 200Mi
+    requests:
+      cpu: 100m
+      memory: 100Mi
+  tolerations: {}
+  volumes:
+    - name: cert
+      configMap:
+        defaultMode: 0600
+        name: logzio-logs-cert
+    - name: config
+      configMap:
+        defaultMode: 0640
+        name: filebeat-windows-config
+  volumeMounts:
+    - name: config
+      mountPath: C:\filebeat-7.15.2-windows-x86_64\etc
+      readOnly: true
 
 secrets:
   logzioShippingToken: ""
