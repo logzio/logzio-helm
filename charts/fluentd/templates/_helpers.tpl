@@ -30,7 +30,7 @@ Create the name of the service account to use
 
 
 {{/*
-Convert logzio region code to listener host
+Builds the full logzio listener host
 */}}
 {{- define "logzio.listenerHost" }}
 {{- if or ( eq $.Values.secrets.logzioListener "listener.logz.io" ) ( eq $.Values.secrets.logzioListener " " ) -}}
@@ -38,4 +38,18 @@ Convert logzio region code to listener host
 {{- else }}
 {{- printf "https://%s:8071" .Values.secrets.logzioListener -}}
 {{- end -}}
+{{- end -}}
+
+{{/*
+Builds the fluent.conf with all the includes
+*/}}
+{{- define "logzio.includes" }}
+{{- printf .Values.configMapIncludes }}
+{{- if .Values.configmap.extraConfig -}}
+{{- range $key, $value := fromYaml .Values.configmap.extraConfig }}
+{{- printf "@include %s" $key }}
+{{- end -}}
+{{- end -}}
+{{- printf "\n" }}
+{{- printf "%s" .Values.configmap.fluent }}
 {{- end -}}
