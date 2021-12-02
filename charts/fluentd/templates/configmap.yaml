@@ -6,7 +6,7 @@ metadata:
   labels:
     k8s-app: {{ .Values.k8sApp }}
 data:
-  fluent.conf: {{ toYaml .Values.configmap.fluent | indent 2 }}
+  fluent.conf: {{ include "logzio.includes" . | toYaml | indent 2 }}
   
   kubernetes.conf: {{ toYaml .Values.configmap.kubernetes | indent 2 }}
 
