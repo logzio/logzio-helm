@@ -77,7 +77,8 @@ helm install -n monitoring \
 | `daemonset.includeNamespace` | Use if you wish to send logs from specific k8s namespaces, space delimited. Should be in the following format: `kubernetes.var.log.containers.**_<<NAMESPACE-TO-INCLUDE>>_** kubernetes.var.log.containers.**_<<ANOTHER-NAMESPACE>>_**`. | `""` |
 | `daemonset.kubernetesVerifySsl` | Enables to validate SSL certificates. | `true` |
 | `daemonset.auditLogFormat` | Match Fluentd's format for kube-apiserver audit logs. Set to `audit-json` if your audit logs are in json format. | `audit` |
-| `daemonset.containerdRuntime` | Determines whether to use a configuration for a Containerd runtime. Set to `false` if your cluster doesn't use Containerd as CRI. | `true` |
+| `daemonset.containerdRuntime` | **Deprecated from chart version 0.1.0.** Determines whether to use a configuration for a Containerd runtime. Set to `false` if your cluster doesn't use Containerd as CRI. | `true` |
+| `daemonset.cri` | Container runtime interface of the cluster. Used to determine which configuration to use when concatenating partial logs. Valid options are: `docker`, `containerd`. | `containerd` |
 | `daemonset.logzioBufferType` | Specifies which plugin to use as the backend. | `file` |
 | `daemonset.logzioBufferPath` | Path of the buffer. | `/var/log/fluentd-buffers/stackdriver.buffer` |
 | `daemonset.logzioOverflowAction` | Controls the behavior when the queue becomes full. | `block` |
@@ -103,7 +104,9 @@ helm install -n monitoring \
 | `configmap.kubernetes` | Configuration for `kubernetes.conf`. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
 | `configmap.system` | Configuration for `system.conf`. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
 | `configmap.systemd` | Configuration for `systemd.conf`. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
-| `configmap.kubernetesContainerd` | Configuration for `kubernetes-containerd.conf`. This is the configuration that's being used when `daemonset.containerdRuntime` is set to `true` | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
+| `configmap.kubernetesContainerd` | **Deprecated from chart version 0.1.0.** Configuration for `kubernetes-containerd.conf`. This is the configuration that's being used when `daemonset.containerdRuntime` is set to `true` | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
+| `configmap.partialDocker` | Configuration for `partial-docker.conf`. Used to concatenate partial logs that split due to large size, for docker cri. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
+| `configmap.partialContainerd` | Configuration for `partial-containerd.conf`. Used to concatenate partial logs that split due to large size, for containerd cri. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
 | `configmap.audit` | Configuration for `audit.conf`. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
 | `configmap.auditJson` | Configuration for `audit-json.conf`. This is the configuration that's being used when `daemonset.auditLogFormat` is set to `audit-json` | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
 
@@ -170,6 +173,11 @@ For the above example, we could use the following regex expressions to demarcate
 
 ## Change log
 
+ - **0.1.0**:
+    - Upgrade default image version to `logzio/logzio-fluentd:1.0.2` which also supports ARM architecture.
+    - Deprecated variables: `daemonset.containerdRuntime`, `configmap.kubernetesContainerd`.
+    - Added `configmap.partialDocker`, `configmap.partialContainerd` that concatenate logs that split due to large size (over 16k). To learn more go to the [configuration table](https://github.com/logzio/logzio-helm/tree/master/charts/fluentd#configuration).
+    - Added `daemonset.cri` to match the partial log config to the cluster's CRI. To learn more go to the [configuration table](https://github.com/logzio/logzio-helm/tree/master/charts/fluentd#configuration).
  - **0.0.4**:
     - Refactor configmaps
  - **0.0.3**:

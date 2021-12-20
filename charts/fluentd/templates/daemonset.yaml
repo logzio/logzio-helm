@@ -83,10 +83,8 @@ spec:
           value: {{ .Values.daemonset.kubernetesVerifySsl | quote }}
         - name: AUDIT_LOG_FORMAT
           value: {{ .Values.daemonset.auditLogFormat }}
-        {{- if .Values.daemonset.containerdRuntime }}
-        - name: FLUENTD_KUBERNETES_CONTAINERD_CONF
-          value: "kubernetes-containerd"
-        {{- end }}
+        - name: CRI
+          value: {{ .Values.daemonset.cri | quote }}
         {{- if .Values.daemonset.extraEnv }}
 {{ toYaml .Values.daemonset.extraEnv | indent 8 }}
         {{- end }}

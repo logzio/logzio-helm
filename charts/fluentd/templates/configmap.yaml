@@ -14,11 +14,13 @@ data:
 
   systemd.conf: {{ toYaml .Values.configmap.systemd | indent 2 }}
 
-  kubernetes-containerd.conf: {{ toYaml .Values.configmap.kubernetesContainerd | indent 2 }}
-
   audit.conf: {{ toYaml .Values.configmap.audit | indent 2 }}
 
   audit-json.conf: {{ toYaml .Values.configmap.auditJson | indent 2 }}
+
+  partial-docker.conf: {{ toYaml .Values.configmap.partialDocker | indent 2 }}
+
+  partial-containerd.conf: {{ toYaml .Values.configmap.partialContainerd | indent 2 }}
 
 {{- if .Values.configmap.extraConfig }}
 {{- range $key, $value := fromYaml .Values.configmap.extraConfig }}
