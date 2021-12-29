@@ -25,3 +25,50 @@ spec:
       {{- $podData := dict "Values" $podValues "configmapSuffix" "-agent" "isAgent" true }}
       {{- include "opentelemetry-collector.pod" ($podData | mustMergeOverwrite (deepCopy .)) | nindent 6 }}
 {{- end }}
+
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: nginx-win-node-proxy
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "opentelemetry-collector.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "opentelemetry-collector.selectorLabels" . | nindent 8 }}
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        {{- include "opentelemetry-collector.selectorLabels" . | nindent 8 }}
+      annotations:
+        prometheus_io_scrape: 'true'
+        prometheus_io_port: '9100'
+    spec:
+      hostNetwork: false
+      containers:
+        - name: windows-metric-proxy
+          image:  tamirmich/nginx-reverse-proxy-win
+          imagePullPolicy: Always
+          ports:
+            - name: metrics
+              containerPort: 9100
+              protocol: TCP
+          env:
+            - name: PROXY_HOSTIP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: PROXY_PORT
+              value: '9100'
+            - name: PROXY_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName            
+      securityContext:
+        runAsNonRoot: false
+      nodeSelector:
+        kubernetes.io/os: windows

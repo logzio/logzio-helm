@@ -121,7 +121,7 @@ volumes:
     hostPath:
       path: /var/lib/docker/containers
   {{- end }}
-{{- with .Values.nodeSelector }}
+{{- with .Values.linuxNodeSelector }}
 nodeSelector:
   {{- toYaml . | nindent 2 }}
 {{- end }}
