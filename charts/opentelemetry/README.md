@@ -44,11 +44,11 @@ logzio-otel-k8s-metrics logzio-helm/logzio-otel-k8s-metrics
 ```
 
 #### For clusters with Windows Nodes:
-In order to extract and scrape metrics from Windows Nodes, a Windows Exporter service must first be installed on the node host itself. We do this by authenticating with username and password using SSH connection to the node.
+In order to extract and scrape metrics from Windows Nodes, a Windows Exporter service must first be installed on the node host itself. We will do this by authenticating with username and password using SSH connection to the node.
 The default username for windows Node pool is: azureuser.
 
 Note: If your Windows Nodepool does not share the same username and password, you will need to run the windows-exporter-installer job for each Node pool with the relevant credentials.
-You can change your Windows Node pool password in AKS cluster with the following command (Will only effect  windows node pools):
+You can change your Windows Node pool password in AKS cluster with the following command (will only effect windows node pools):
 
 ```
     az aks update \
