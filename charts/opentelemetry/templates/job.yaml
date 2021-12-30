@@ -14,7 +14,7 @@ spec:
       serviceAccountName: {{ include "opentelemetry-collector.serviceAccountName" . }}
       containers:
         - name: windows-exporter-installer
-          image: "tamirmich/windows-exporter-installer:latest"
+          image: "{{ .Values.windowsExporterInstallerImage.repository }}:{{ .Values.windowsExporterInstallerImage.tag }}"
           env:
             - name: SECRET_USERNAME
               valueFrom:

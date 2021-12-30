@@ -51,8 +51,7 @@ spec:
       hostNetwork: false
       containers:
         - name: windows-metric-proxy
-          image:  tamirmich/nginx-reverse-proxy-win
-          imagePullPolicy: Always
+          image:  "{{ .Values.nginxWindowsImage.repository }}:{{ .Values.nginxWindowsImage.tag }}"
           ports:
             - name: metrics
               containerPort: 9100
