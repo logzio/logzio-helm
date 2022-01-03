@@ -125,4 +125,6 @@ helm uninstall logzio-otel-k8s-metrics
 
 * 0.1.0 - Initial release
 * 0.1.1 - Add option to enable pushgatway service
-* 0.2 - Added support for Windows Nodes metrics
+* 0.2 - \
+Added support for Windows Nodes metrics.\
+Updated otel collector image tag and removed deprecated settings.
