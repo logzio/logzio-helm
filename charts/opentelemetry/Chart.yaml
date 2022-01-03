@@ -10,7 +10,7 @@ sources:
 dependencies:
   - name: kube-state-metrics
     version: "2.13.2"
-    repository: https://kubernetes.github.io/kube-state-metrics
+    repository: "https://prometheus-community.github.io/helm-charts"
     condition: kubeStateMetrics.enabled
   - name: prometheus-node-exporter
     version: "1.18.0"
@@ -23,7 +23,7 @@ dependencies:
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 0.1.1
+version: 0.2.0
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to
@@ -33,3 +33,5 @@ appVersion: 0.24.0
 maintainers:
 - name: yotamloe
   email: yotam.loewenbach@logz.io
+- name: tamirmich
+  email: tamir.michaeli@logz.io

@@ -9,6 +9,9 @@ secrets:
   MetricsToken: ""
   ListenerHost: ""
   p8s_logzio_name: ""
+  windowsNodeUsername: "''"
+  windowsNodePassword: "''"
+
 
 managedServiceAccount: true
 
@@ -85,6 +88,8 @@ pushGateway:
 prometheus-pushgateway:
   serviceAnnotations:
     prometheus.io/scrape: "true"
+  nodeSelector:
+    kubernetes.io/os: linux
 
 nodeExporter:
   ## If false, node-exporter will not be installed
@@ -115,13 +120,24 @@ config:
           scrape_timeout: 10s
           evaluation_interval: 10s
         scrape_configs:
+        - job_name: windows-metrics
+          honor_timestamps: true
+          honor_labels: true
+          metrics_path: /metrics
+          scheme: http
+          kubernetes_sd_configs:
+          - role: pod
+          relabel_configs:
+            - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+              action: keep
+              regex: true|"true"
         - job_name: kubernetes-service-endpoints
           honor_timestamps: true
           honor_labels: true
           metrics_path: /metrics
           scheme: http
           kubernetes_sd_configs:
-            - role: endpoints
+          - role: endpoints
           relabel_configs:
             - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scrape]
               action: keep
@@ -153,7 +169,6 @@ config:
             - source_labels: [__meta_kubernetes_pod_node_name]
               action: replace
               target_label: kubernetes_node
-
         - job_name: 'kubernetes-cadvisor'
           scheme: https
           metrics_path: /metrics/cadvisor
@@ -161,7 +176,6 @@ config:
             ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
             insecure_skip_verify: true
           bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
-
           kubernetes_sd_configs:
           - role: node
           relabel_configs:
@@ -190,7 +204,19 @@ image:
   repository: otel/opentelemetry-collector
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  tag: "0.41.0"
+nginxWindowsImage:
+  # Reverse proxy image to enable metrics scraping from windows nodes
+  repository: logzio/logzio-windows-node-reverse-proxy
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "0.0.1"
+windowsExporterInstallerImage:
+  # Job image to install windows exporter on windows nodes
+  repository: logzio/logzio-windows-exporter-installer
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose defau lt is the chart appVersion.
+  tag: "0.0.1"
 imagePullSecrets: []
 
 # OpenTelemetry Collector executable
@@ -211,6 +237,10 @@ podSecurityContext: {}
 securityContext: {}
 
 nodeSelector: {}
+linuxNodeSelector: {
+  "kubernetes.io/os": linux
+}
+
 tolerations: []
 affinity: {}
 
@@ -227,6 +257,7 @@ ports:
     servicePort: 9411
     hostPort: 9411
     protocol: TCP
+
 
 # Configuration for agent OpenTelemetry Collector daemonset, disabled by default
 agentCollector:
@@ -269,3 +300,11 @@ autoscaling:
   maxReplicas: 10
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
+
+kube-state-metrics:
+  nodeSelector:
+    kubernetes.io/os: linux
+
+prometheus-node-exporter:
+  nodeSelector:
+    kubernetes.io/os: linux

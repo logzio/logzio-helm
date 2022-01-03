@@ -33,13 +33,46 @@ Replace `<<LISTENER-HOST>>` with your region’s listener host (for example, `ht
 
 Replace `<<ENV-TAG>>` with the name for the environment's metrics, to easily identify the metrics for each environment.
 
-###### Run the Helm deployment code
+###### Run the Helm deployment code for clusters with no Windows Nodes
 
 ```
 helm install  \
 --set secrets.MetricsToken=<<PROMETHEUS-METRICS-SHIPPING-TOKEN>> \
 --set secrets.ListenerHost=<<LISTENER-HOST>> \
 --set secrets.p8s_logzio_name=<<ENV-TAG>> \
+logzio-otel-k8s-metrics logzio-helm/logzio-otel-k8s-metrics
+```
+
+#### For clusters with Windows Nodes:
+In order to extract and scrape metrics from Windows Nodes, a Windows Exporter service must first be installed on the node host itself. We will do this by authenticating with username and password using SSH connection to the node.
+The default username for windows Node pool is: azureuser.
+
+Note: If your Windows Nodepool does not share the same username and password, you will need to run the windows-exporter-installer job for each Node pool with the relevant credentials.
+You can change your Windows Node pool password in AKS cluster with the following command (will only effect windows node pools):
+
+```
+    az aks update \
+    --resource-group $RESOURCE_GROUP \
+    --name $CLUSTER_NAME \
+    --windows-admin-password $NEW_PW
+```
+
+You can read more information on https://docs.microsoft.com/en-us/azure/aks/windows-faq,
+under `How do I change the administrator password for Windows Server nodes on my cluster?` section.
+
+Replace `<<WINDOWS-NODE-USERNAME>>` with the username for the Node pool you want the Windows exporter to be installed on.
+Replace `<<WINDOWS-NODE-PASSWORD>>` with the username for the Node pool you want the Windows exporter to be installed on.
+
+
+###### Run the Helm deployment code for clusters with Windows Nodes:
+
+```
+helm install  \
+--set secrets.MetricsToken=<<PROMETHEUS-METRICS-SHIPPING-TOKEN>> \
+--set secrets.ListenerHost=<<LISTENER-HOST>> \
+--set secrets.p8s_logzio_name=<<ENV-TAG>> \
+--set secrets.windowsNodeUsername=<<WINDOWS-NODE-USERNAME>> \
+--set secrets.windowsNodePassword=<<WINDOWS-NODE-PASSWORD>> \
 logzio-otel-k8s-metrics logzio-helm/logzio-otel-k8s-metrics
 ```
 
@@ -90,5 +123,8 @@ helm uninstall logzio-otel-k8s-metrics
 
 ## Change log
 
-* 0.1.0 - Initial realese
-* 0.1.1 - Add option to enble pushgatway service
+* 0.1.0 - Initial release
+* 0.1.1 - Add option to enable pushgatway service
+* 0.2 - \
+Added support for Windows Nodes metrics.\
+Updated otel collector image tag and removed deprecated settings.

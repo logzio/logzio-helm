@@ -12,7 +12,6 @@ containers:
       - /{{ .Values.command.name }}
       - --config=/conf/relay.yaml
       - --metrics-addr=0.0.0.0:8888
-      - --mem-ballast-size-mib={{ template "opentelemetry-collector.getMemBallastSizeMib" .Values.resources.limits.memory }}
       {{- range .Values.command.extraArgs }}
       - {{ . }}
       {{- end }}
@@ -121,7 +120,7 @@ volumes:
     hostPath:
       path: /var/lib/docker/containers
   {{- end }}
-{{- with .Values.nodeSelector }}
+{{- with .Values.linuxNodeSelector }}
 nodeSelector:
   {{- toYaml . | nindent 2 }}
 {{- end }}
