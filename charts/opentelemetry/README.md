@@ -43,12 +43,12 @@ helm install  \
 logzio-otel-k8s-metrics logzio-helm/logzio-otel-k8s-metrics
 ```
 
-#### For clusters with Windows Nodes:
+#### For clusters with Windows Nodes
+
 In order to extract and scrape metrics from Windows Nodes, a Windows Exporter service must first be installed on the node host itself. We will do this by authenticating with username and password using SSH connection to the node.
 The default username for windows Node pool is: azureuser.
 
-Note: If your Windows Nodepool does not share the same username and password, you will need to run the windows-exporter-installer job for each Node pool with the relevant credentials.
-You can change your Windows Node pool password in AKS cluster with the following command (will only effect windows node pools):
+If your Windows node pool does not share the same username and password across the nodes, you will need to run the `windows-exporter-installer` job for each node pool using the relevant credentials. You can change your Windows node pool password in AKS cluster with the following command (will only affect Windows node pools):
 
 ```
     az aks update \
@@ -59,9 +59,6 @@ You can change your Windows Node pool password in AKS cluster with the following
 
 You can read more information on https://docs.microsoft.com/en-us/azure/aks/windows-faq,
 under `How do I change the administrator password for Windows Server nodes on my cluster?` section.
-
-Replace `<<WINDOWS-NODE-USERNAME>>` with the username for the Node pool you want the Windows exporter to be installed on.
-Replace `<<WINDOWS-NODE-PASSWORD>>` with the username for the Node pool you want the Windows exporter to be installed on.
 
 
 ###### Run the Helm deployment code for clusters with Windows Nodes:
@@ -75,6 +72,10 @@ helm install  \
 --set secrets.windowsNodePassword=<<WINDOWS-NODE-PASSWORD>> \
 logzio-otel-k8s-metrics logzio-helm/logzio-otel-k8s-metrics
 ```
+
+* Replace `<<WINDOWS-NODE-USERNAME>>` with the username for the Node pool you want the Windows exporter to be installed on.
+
+* Replace `<<WINDOWS-NODE-PASSWORD>>` with the password for the Node pool you want the Windows exporter to be installed on.
 
 ##### Check Logz.io for your metrics
 
