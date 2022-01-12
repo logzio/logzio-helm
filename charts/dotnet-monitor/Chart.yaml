@@ -1,0 +1,8 @@
+apiVersion: v2
+name: logzio-dotnet-monitor
+description: A Helm chart for shipping dotnet app runtime metrics using dotnet monitor and OTEL.
+version: 0.0.1
+appVersion: 1.0.0
+maintainers:
+  - name: Shiran Avidov
+    email: shiran.avidov@logz.io

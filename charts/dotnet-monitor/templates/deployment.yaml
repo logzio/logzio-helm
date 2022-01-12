@@ -1,0 +1,115 @@
+apiVersion: {{ .Values.apiVersions.deployment }}
+kind: Deployment
+metadata:
+  name: {{ include "logzio-dotnet-monitor.fullname" . }}
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "logzio-dotnet-monitor.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "logzio-dotnet-monitor.name" . }}
+        {{- if .Values.labels }}
+          {{- toYaml .Values.labels | nindent 8 }}
+        {{- end }}
+      {{- if .Values.annotations }}
+      annotations: {{- toYaml .Values.annotations | nindent 8 }}
+      {{- end }}
+    spec:
+      initContainers:
+        # init container that updates the opentelemetry config with pod's labels and annotations
+        ########################################################################################
+        - name: opentelmetry-config-updater
+          image: busybox:latest
+          command: ["sh", "-c"]
+          args:
+            - >-
+              cp /opentelemetry/config.yaml /etc/opentelemetry;
+              labels=$(cat /etc/pod-info/labels | sed s/' '/\\n/g | sed s/=/': '/g);
+              echo "$labels" | while read line;
+              do sed -i "/external_labels:/a \     \ $line" /etc/opentelemetry/config.yaml;
+              done;
+              annotations=$(cat /etc/pod-info/labels | sed s/' '/\\n/g | sed s/=/': '/g);
+              echo "$annotations" | while read line;
+              do sed -i "/external_labels:/a \     \ $line" /etc/opentelemetry/config.yaml;
+              done;
+          volumeMounts:
+            - mountPath: /opentelemetry
+              name: opentelemetry-tmp-config
+            - mountPath: /etc/opentelemetry
+              name: opentelemetry-config
+            - mountPath: /etc/pod-info
+              name: pod-info
+        ########################################################################################
+      containers:
+        # replace this container with your dotnet app container (keep diagnostics volumeMount)
+        ###############################################################################
+        - name: dotnet-app
+          image: mcr.microsoft.com/dotnet/core/samples:aspnetapp
+          ports:
+            - containerPort: 8000
+          volumeMounts:
+            # keep this volumeMount
+            - mountPath: /tmp
+              name: diagnostics
+        ###############################################################################
+        # logzio-dotnet-monitor container (sidecar)
+        ###########################################
+        {{- with .Values.logzioDotnetMonitor }}
+        - name: {{ .name }}
+          image: {{ .image.name }}:{{ .image.tag }}
+          {{- if .ports }}
+          ports:
+            {{- range .ports }}
+            - containerPort: {{.}}
+            {{- end }}
+          {{- end }}
+          env:
+            - name: LOGZIO_URL
+              valueFrom:
+                secretKeyRef:
+                  name: logzio-secrets
+                  key: logzioURL
+            - name: LOGZIO_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: logzio-secrets
+                  key: logzioToken
+          volumeMounts:
+            - mountPath: /tmp
+              name: diagnostics
+            - mountPath: /etc/dotnet-monitor
+              name: dotnet-monitor-config
+            - mountPath: /etc/opentelemetry
+              name: opentelemetry-config
+        {{- end }}
+        ###########################################
+      volumes:
+        - name: diagnostics
+          emptyDir: {}
+        - name: dotnet-monitor-config
+          configMap:
+            name: config
+            items:
+              - key: settings.json
+                path: settings.json
+        - name: opentelemetry-tmp-config
+          configMap:
+            name: config
+            items:
+              - key: config.yaml
+                path: config.yaml
+        - name: opentelemetry-config
+          emptyDir: {}
+        - name: pod-info
+          downwardAPI:
+            items:
+              - path: labels
+                fieldRef:
+                  fieldPath: metadata.labels
+              - path: annotations
+                fieldRef:
+                  fieldPath: metadata.annotations
