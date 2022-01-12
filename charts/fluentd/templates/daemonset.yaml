@@ -23,6 +23,8 @@ spec:
       {{- if .Values.daemonset.tolerations }}
       tolerations:
 {{ toYaml .Values.daemonset.tolerations | indent 6 }}
+      {{- end }}
+      {{- if .Values.daemonset.nodeSelector }}
       nodeSelector:
 {{ toYaml .Values.daemonset.nodeSelector | indent 8 }}
       {{- end }}
