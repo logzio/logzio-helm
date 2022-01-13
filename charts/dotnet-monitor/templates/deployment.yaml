@@ -32,7 +32,7 @@ spec:
               echo "$labels" | while read line;
               do sed -i "/external_labels:/a \     \ $line" /etc/opentelemetry/config.yaml;
               done;
-              annotations=$(cat /etc/pod-info/labels | sed s/' '/\\n/g | sed s/=/': '/g);
+              annotations=$(cat /etc/pod-info/annotations | sed s/' '/\\n/g | sed s/=/': '/g);
               echo "$annotations" | while read line;
               do sed -i "/external_labels:/a \     \ $line" /etc/opentelemetry/config.yaml;
               done;
