@@ -174,7 +174,7 @@ For the above example, we could use the following regex expressions to demarcate
 
 ## Change log
 
- - **0.1.1**:
+ - **0.2.0**:
     - Added `daemonset.nodeSelector`.
  - **0.1.0**:
     - Upgrade default image version to `logzio/logzio-fluentd:1.0.2` which also supports ARM architecture.
