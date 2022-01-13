@@ -8,18 +8,52 @@ logzio-dotnet-monitor runs as a sidecar in the same pod as the .Net application.
 
 ## Deploying The Chart:
 
-### Add Your .Net Application Container to Deployment Config
+### Create a Namespace
 
-Replace the **dotnet-app** container with your .Net application container in deployment.yaml.
-Make sure to keep the diagnostics volumeMount:
+Your Deployment will be deployed under the namespace you set in values.yaml (the default is `default`).
+Replace `<<NAMESPACE>>` to your namespace and run this command:
 
-```yaml
-volumeMounts:
-  - mountPath: /tmp
-    name: diagnostics
+```shell
+kubectl create namespace <<NAMESPACE>>
 ```
 
-### Configuration
+### Add logzio-dotnet-monitor Repo to Your Helm Repo List
+
+```shell
+helm repo add logzio-helm https://logzio.github.io/logzio-helm
+```
+
+### Deploy
+
+The following command will install the Chart with the default values.
+If you wish to change some values, use the `--set` or `--set-file` flags.
+
+- Replace `<<NAMESPACE>>` with your namespace.
+- Replace `<<LOGZIO_URL>>` with your Logz.io url.
+- Replace `<<LOGZIO_TOKEN>>` with your Logz.io metrics token.
+- Replace `<<DOTNET_APP_CONTAINERS_FILE>>` with your .Net application containers file.
+  Make sure your **main** .Net application container has the following volumeMount:
+
+  ```yaml
+  volumeMounts:
+    - mountPath: /tmp
+      name: diagnostics
+  ```
+
+```shell
+helm install -n <<NAMESPACE>> \
+--set secrets.logzioURL='<<LOGZIO_URL>>' \
+--set secrets.logzioToken='<<LOGZIO_TOKEN>>' \
+--set-file dotnetAppContainers='<<DOTNET_APP_CONTAINERS_FILE>>' \
+logzio-dotnet-monitor logzio-helm/logzio-dotnet-monitor
+```
+
+### Check Logz.io for Your Metrics
+
+Give your metrics some time to get from your system to Logz.io.
+You can search for your metrics in Logz.io by searching `{job="dotnet-monitor-collector"}`
+
+## Configuration
 
 This table contains all the parameters in values.yaml:
 
@@ -34,10 +68,14 @@ This table contains all the parameters in values.yaml:
 | `replicaCount` | The number of replicated pods, the deployment creates. | `1` |
 | `labels` | Pod's labels. | `{}` |
 | `annotations` | Pod's annotations. | `{}` |
+| `customSpecs` | Custom spec fields to add to the deployment. | `{}` |
+| `dotnetAppContainers` | Your .Net application containers to add the deployment. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/dotnet-monitor/values.yaml). |
 | `logzioDotnetMonitor.name` | The name of the container that collects and ships diagnostic metrics of your .Net application to Logz.io (sidecar) | `logzio-dotnet-monitor` |
 | `logzioDotnetMonitor.image.name` | The image name that is going to run in `logzioDotnetMonitor.name` container | `logzio/logzio-dotnet-monitor` |
 | `logzioDotnetMonitor.image.tag` | The tag of the image that is going to run in `logzioDotnetMonitor.name` container | `latest` |
 | `logzioDotnetMonitor.ports` | List of ports the `logzioDotnetMonitor.name` container exposes | `52325` |
+| `customVolumes` | Custom volumes to add to deployment. | `{}` |
+| `customResources` | Custom resources to add to helm chart deployment. | `{}` |
 | `secrets.logzioURL` | Secret with your logzio url. | `https://listener.logz.io:8053` |
 | `secrets.logzioToken` | Secret with your logzio metrics token. | `""` |
 | `configMap.dotnetMonitor` | The dotnet-monitor configuration. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/dotnet-monitor/values.yaml). |
@@ -45,17 +83,3 @@ This table contains all the parameters in values.yaml:
 
 - Use this [link](https://github.com/dotnet/dotnet-monitor/blob/main/documentation/configuration.md#metrics-configuration) to get additional information about dotnet-monitor configuration.
 - Use this [link](https://docs.microsoft.com/en-us/dotnet/core/diagnostics/available-counters) to see well-known providers and their counters.
-
-### Deploy
-
-Run the following command to install the Chart. Change `<<CHART_FILE_LOCATION>>` to the path to Chart.yaml.
-(Make sure to set your `secrets.logzioURL` and `secrets.logzioToken` before installing the Chart)
-
-```shell
-helm install logzio-dotnet-monitor <<CHART_FILE_LOCATION>>
-```
-
-### Check Logz.io for Your Metrics
-
-Give your metrics some time to get from your system to Logz.io.
-You can search for your metrics in Logz.io by searching `{job="dotnet-monitor-collector"}`

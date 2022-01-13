@@ -13,12 +13,15 @@ spec:
       labels:
         app: {{ include "logzio-dotnet-monitor.name" . }}
         {{- if .Values.labels }}
-          {{- toYaml .Values.labels | nindent 8 }}
+        {{- toYaml .Values.labels | nindent 8 }}
         {{- end }}
       {{- if .Values.annotations }}
       annotations: {{- toYaml .Values.annotations | nindent 8 }}
       {{- end }}
     spec:
+      {{- if .Values.customSpecs }}
+      {{- toYaml .Values.customSpecs | nindent 6 }}
+      {{- end }}
       initContainers:
         # init container that updates the opentelemetry config with pod's labels and annotations
         ########################################################################################
@@ -45,17 +48,12 @@ spec:
               name: pod-info
         ########################################################################################
       containers:
-        # replace this container with your dotnet app container (keep diagnostics volumeMount)
-        ###############################################################################
-        - name: dotnet-app
-          image: mcr.microsoft.com/dotnet/core/samples:aspnetapp
-          ports:
-            - containerPort: 8000
-          volumeMounts:
-            # keep this volumeMount
-            - mountPath: /tmp
-              name: diagnostics
-        ###############################################################################
+        # your dotnet app containers
+        ############################
+        {{- range .Values.dotnetAppContainers }}
+        - {{- toYaml . | nindent 10 }}
+        {{- end }}
+        ############################
         # logzio-dotnet-monitor container (sidecar)
         ###########################################
         {{- with .Values.logzioDotnetMonitor }}
@@ -113,3 +111,8 @@ spec:
               - path: annotations
                 fieldRef:
                   fieldPath: metadata.annotations
+        {{- if .Values.customVolumes }}
+        {{- range .Values.customVolumes }}
+        - {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- end }}

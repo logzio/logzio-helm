@@ -14,6 +14,17 @@ labels: {}
 
 annotations: {}
 
+customSpecs: {}
+
+dotnetAppContainers:
+  - name: dotnet-app
+    image: mcr.microsoft.com/dotnet/core/samples:aspnetapp
+    ports:
+      - containerPort: 8000
+    volumeMounts:
+      - mountPath: /tmp
+        name: diagnostics
+
 logzioDotnetMonitor:
   name: logzio-dotnet-monitor
   image:
@@ -21,6 +32,10 @@ logzioDotnetMonitor:
     tag: latest
   ports:
     - 52325
+
+customVolumes: {}
+
+customResources: {}
 
 secrets:
   logzioURL: https://listener.logz.io:8053
