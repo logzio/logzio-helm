@@ -24,6 +24,7 @@ daemonset:
   tolerations:
   - key: node-role.kubernetes.io/master
     effect: NoSchedule
+  nodeSelector: {}
   fluentdSystemdConf: disable
   fluentdPrometheusConf: disable
   includeNamespace: ""

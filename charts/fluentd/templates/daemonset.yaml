@@ -24,6 +24,10 @@ spec:
       tolerations:
 {{ toYaml .Values.daemonset.tolerations | indent 6 }}
       {{- end }}
+      {{- if .Values.daemonset.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.daemonset.nodeSelector | indent 8 }}
+      {{- end }}
       # Because the image's entrypoint requires to write on /fluentd/etc but we mount configmap there which is read-only,
       # this initContainers workaround or other is needed.
       # See https://github.com/fluent/fluentd-kubernetes-daemonset/issues/90
