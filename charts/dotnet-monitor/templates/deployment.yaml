@@ -20,7 +20,7 @@ spec:
       {{- end }}
     spec:
       {{- if .Values.customSpecs }}
-      {{ .Values.customSpecs | nindent 6 }}
+      {{ .Values.customSpecs | nindent 6 | trim }}
       {{- end }}
       initContainers:
         # init container that updates the opentelemetry config with pod's labels and annotations
