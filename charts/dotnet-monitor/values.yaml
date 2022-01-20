@@ -6,7 +6,7 @@ apiVersions:
   configmap: v1
   secret: v1
 
-namespace: default
+namespace: logzio-dotnet-monitor
 
 replicaCount: 1
 
@@ -17,13 +17,6 @@ annotations: {}
 customSpecs: {}
 
 dotnetAppContainers:
-  - name: dotnet-app
-    image: mcr.microsoft.com/dotnet/core/samples:aspnetapp
-    ports:
-      - containerPort: 8000
-    volumeMounts:
-      - mountPath: /tmp
-        name: diagnostics
 
 logzioDotnetMonitor:
   name: logzio-dotnet-monitor
@@ -33,7 +26,7 @@ logzioDotnetMonitor:
   ports:
     - 52325
 
-customVolumes: {}
+customVolumes: []
 
 customResources: {}
 
@@ -53,13 +46,30 @@ configMap:
         "MetricCount": 3,
         "Providers": [
           {
-            "ProviderName": "Microsoft-AspNetCore-Server-Kestrel",
-            "CounterNames": [
-              "connections-per-second",
-              "total-connections"
-            ]
+            "ProviderName": "System.Runtime"
+          },
+          {
+            "ProviderName": "Microsoft.AspNetCore.Hosting"
+          },
+          {
+            "ProviderName": "Microsoft.AspNetCore.Http.Connections"
+          },
+          {
+            "ProviderName": "Microsoft-AspNetCore-Server-Kestrel"
+          },
+          {
+            "ProviderName": "System.Net.Http"
+          },
+          {
+            "ProviderName": "System.Net.NameResolution"
+          },
+          {
+            "ProviderName": "System.Net.Security"
+          },
+          {
+            "ProviderName": "System.Net.Sockets"
           }
-        ]
+        ]   
       }
     }
   opentelemetry: |

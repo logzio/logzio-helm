@@ -1,6 +1,3 @@
 {{- if .Values.customResources }}
-{{- range .Values.customResources }}
----
-{{- toYaml . }}
-{{- end }}
+{{ .Values.customResources }}
 {{- end }}

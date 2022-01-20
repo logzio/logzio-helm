@@ -13,14 +13,14 @@ spec:
       labels:
         app: {{ include "logzio-dotnet-monitor.name" . }}
         {{- if .Values.labels }}
-        {{- toYaml .Values.labels | nindent 8 }}
+        {{ .Values.labels | nindent 8 | trim }}
         {{- end }}
       {{- if .Values.annotations }}
-      annotations: {{- toYaml .Values.annotations | nindent 8 }}
+      annotations: {{ .Values.annotations | nindent 8 }}
       {{- end }}
     spec:
       {{- if .Values.customSpecs }}
-      {{- toYaml .Values.customSpecs | nindent 6 }}
+      {{ .Values.customSpecs | nindent 6 }}
       {{- end }}
       initContainers:
         # init container that updates the opentelemetry config with pod's labels and annotations
@@ -50,9 +50,10 @@ spec:
       containers:
         # your dotnet app containers
         ############################
-        {{- range .Values.dotnetAppContainers }}
-        - {{- toYaml . | nindent 10 }}
+        {{- if not .Values.dotnetAppContainers }}
+        {{- required ".NET application container/s is/are required!" .Values.dotnetAppContainers }}
         {{- end }}
+        {{ .Values.dotnetAppContainers | nindent 8 | trim }}
         ############################
         # logzio-dotnet-monitor container (sidecar)
         ###########################################
@@ -112,7 +113,5 @@ spec:
                 fieldRef:
                   fieldPath: metadata.annotations
         {{- if .Values.customVolumes }}
-        {{- range .Values.customVolumes }}
-        - {{- toYaml . | nindent 10 }}
-        {{- end }}
+        {{ .Values.customVolumes | nindent 8 | trim }}
         {{- end }}
