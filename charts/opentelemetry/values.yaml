@@ -306,6 +306,7 @@ windowsExporterInstallerJob:
   interval: "*/10 * * * *"
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 1
+  ttlSecondsAfterFinished: 6000        # First job only (Not CronJob)   
 
 kube-state-metrics:
   nodeSelector:

@@ -4,6 +4,7 @@ metadata:
   name: windows-exporter-installer
   namespace: {{ .Release.Namespace }}
 spec:
+  ttlSecondsAfterFinished: {{ .Values.windowsExporterInstallerJob.ttlSecondsAfterFinished }}
   template:
     metadata:
       annotations:
