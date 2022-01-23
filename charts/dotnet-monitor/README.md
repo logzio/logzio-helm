@@ -6,6 +6,15 @@ using dotnet-monitor and OTEL.
 
 logzio-dotnet-monitor runs as a sidecar in the same pod as the .NET application.
 
+## Tolerations
+
+If your node uses tolerations, make sure to add them when deploying the chart.
+If you are not sure your node uses tolerations, please run this command:
+
+```shell
+kubectl get nodes -o json | jq '"\(.items[].metadata.name) \(.items[].spec.taints)"'
+```
+
 ## Deploying The Chart:
 
 ### Create a Namespace
@@ -69,12 +78,13 @@ This table contains all the parameters in values.yaml:
 | `labels` | Pod's labels. | `{}` |
 | `annotations` | Pod's annotations. | `{}` |
 | `customSpecs` | Custom spec fields to add to the deployment. | `{}` |
-| `dotnetAppContainers` | Your .NET application containers to add the deployment. | `[]` |
+| `dotnetAppContainers` | List of your .NET application containers to add to the pod. | `[]` |
 | `logzioDotnetMonitor.name` | The name of the container that collects and ships diagnostic metrics of your .NET application to Logz.io (sidecar) | `logzio-dotnet-monitor` |
 | `logzioDotnetMonitor.image.name` | The image name that is going to run in `logzioDotnetMonitor.name` container | `logzio/logzio-dotnet-monitor` |
 | `logzioDotnetMonitor.image.tag` | The tag of the image that is going to run in `logzioDotnetMonitor.name` container | `latest` |
 | `logzioDotnetMonitor.ports` | List of ports the `logzioDotnetMonitor.name` container exposes | `52325` |
-| `customVolumes` | Custom volumes to add to deployment. | `[]` |
+| `tolerations` | List of tolerations to applied to the pod. | `[]` | 
+| `customVolumes` | List of custom volumes to add to deployment. | `[]` |
 | `customResources` | Custom resources to add to helm chart deployment (make sure to separate each resource with `---`). | `{}` |
 | `secrets.logzioURL` | Secret with your logzio url. | `https://listener.logz.io:8053` |
 | `secrets.logzioToken` | Secret with your logzio metrics token. | `""` |

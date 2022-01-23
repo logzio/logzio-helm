@@ -86,6 +86,10 @@ spec:
               name: opentelemetry-config
         {{- end }}
         ###########################################
+      {{- if .Values.tolerations }}
+      tolerations:
+        {{ .Values.tolerations | nindent 8 | trim }}
+      {{- end }}
       volumes:
         - name: diagnostics
           emptyDir: {}

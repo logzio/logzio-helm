@@ -26,6 +26,8 @@ logzioDotnetMonitor:
   ports:
     - 52325
 
+tolerations: []
+
 customVolumes: []
 
 customResources: {}
