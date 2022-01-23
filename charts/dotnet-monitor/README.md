@@ -8,7 +8,7 @@ logzio-dotnet-monitor runs as a sidecar in the same pod as the .NET application.
 
 ## Taints and Tolerations
 
-If your node uses taints, make sure to add set tolerations when deploying the chart.
+If your node uses taints, make sure to set tolerations when deploying the chart.
 If you are not sure your node uses taints, please run this command (it will show all your nodes and their taints):
 
 ```shell
