@@ -6,10 +6,10 @@ using dotnet-monitor and OTEL.
 
 logzio-dotnet-monitor runs as a sidecar in the same pod as the .NET application.
 
-## Tolerations
+## Taints and Tolerations
 
-If your node uses tolerations, make sure to add them when deploying the chart.
-If you are not sure your node uses tolerations, please run this command:
+If your node uses taints, make sure to add set tolerations when deploying the chart.
+If you are not sure your node uses taints, please run this command (it will show all your nodes and their taints):
 
 ```shell
 kubectl get nodes -o json | jq '"\(.items[].metadata.name) \(.items[].spec.taints)"'
