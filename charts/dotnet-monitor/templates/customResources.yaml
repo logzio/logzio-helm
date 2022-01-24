@@ -1,0 +1,3 @@
+{{- if .Values.customResources }}
+{{ .Values.customResources }}
+{{- end }}

@@ -7,6 +7,7 @@ This repo contains Helm charts for shipping metrics to Logz.io.
 
 Please look in the chart directories for the documentation for each chart.
 
+* [Dotnet_Monitor](https://github.com/logzio/logzio-helm/tree/master/charts/dotnet-monitor)
 * [Filebeat](https://github.com/logzio/logzio-helm/tree/master/charts/filebeat)
 * [Fluentbit](https://github.com/logzio/logzio-helm/tree/master/charts/fluentbit)
 * [Fluentd](https://github.com/logzio/logzio-helm/tree/master/charts/fluentd)

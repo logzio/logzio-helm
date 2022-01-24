@@ -1,0 +1,7 @@
+From mcr.microsoft.com/dotnet/monitor:6.0
+WORKDIR /app
+ADD https://github.com/open-telemetry/opentelemetry-collector-contrib/releases/download/v0.42.0/otelcontribcol_linux_amd64 .
+RUN chmod +x otelcontribcol_linux_amd64
+COPY run.sh /app
+RUN chmod +x run.sh
+ENTRYPOINT ["run.sh"]

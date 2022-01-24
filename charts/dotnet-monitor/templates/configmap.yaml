@@ -1,0 +1,8 @@
+apiVersion: {{ .Values.apiVersions.configmap }}
+kind: ConfigMap
+metadata:
+  name: config
+  namespace: {{ .Values.namespace }}
+data:
+  settings.json: {{ toYaml .Values.configMap.dotnetMonitor | indent 2 }}
+  config.yaml: {{ toYaml .Values.configMap.opentelemetry | indent 2 }}

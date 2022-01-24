@@ -1,0 +1,96 @@
+nameOverride: ""
+fullnameOverride: ""
+
+apiVersions:
+  deployment: apps/v1
+  configmap: v1
+  secret: v1
+
+namespace: logzio-dotnet-monitor
+
+replicaCount: 1
+
+labels: {}
+
+annotations: {}
+
+customSpecs: {}
+
+dotnetAppContainers:
+
+logzioDotnetMonitor:
+  name: logzio-dotnet-monitor
+  image:
+    name: logzio/logzio-dotnet-monitor
+    tag: latest
+  ports:
+    - 52325
+
+tolerations: []
+
+customVolumes: []
+
+customResources: {}
+
+secrets:
+  logzioURL: https://listener.logz.io:8053
+  logzioToken: ""
+
+configMap:
+  dotnetMonitor: |
+    {
+      "GlobalCounter": {
+        "IntervalSeconds": 5
+      },
+      "Metrics": {
+        "Endpoints": "http://localhost:52325",
+        "IncludeDefaultProviders": true,
+        "MetricCount": 3,
+        "Providers": [
+          {
+            "ProviderName": "System.Runtime"
+          },
+          {
+            "ProviderName": "Microsoft.AspNetCore.Hosting"
+          },
+          {
+            "ProviderName": "Microsoft.AspNetCore.Http.Connections"
+          },
+          {
+            "ProviderName": "Microsoft-AspNetCore-Server-Kestrel"
+          },
+          {
+            "ProviderName": "System.Net.Http"
+          },
+          {
+            "ProviderName": "System.Net.NameResolution"
+          },
+          {
+            "ProviderName": "System.Net.Security"
+          },
+          {
+            "ProviderName": "System.Net.Sockets"
+          }
+        ]   
+      }
+    }
+  opentelemetry: |
+    receivers:
+      prometheus:
+        config:
+          scrape_configs:
+            - job_name: 'dotnet-monitor-collector'
+              scrape_interval: 15s
+              static_configs:
+                - targets: ['127.0.0.1:52325']
+    exporters:
+      prometheusremotewrite:
+        endpoint: ${LOGZIO_URL}
+        headers:
+          Authorization: "Bearer ${LOGZIO_TOKEN}"
+        external_labels:
+    service:
+      pipelines:
+        metrics:
+          receivers: [prometheus]
+          exporters: [prometheusremotewrite]
