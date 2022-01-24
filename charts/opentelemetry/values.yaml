@@ -242,6 +242,7 @@ linuxNodeSelector: {
 }
 
 tolerations: []
+
 affinity: {}
 
 extraEnvs: []
@@ -300,6 +301,12 @@ autoscaling:
   maxReplicas: 10
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
+
+windowsExporterInstallerJob:
+  interval: "*/10 * * * *"
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  ttlSecondsAfterFinished: 6000        # First job only (Not CronJob)   
 
 kube-state-metrics:
   nodeSelector:

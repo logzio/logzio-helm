@@ -12,6 +12,15 @@ The Helm tool is used to manage packages of pre-configured Kubernetes resources 
 It is also dependent on the [kube-state-metrics](https://github.com/kubernetes/kube-state-metrics/tree/master/charts/kube-state-metrics) and [prometheus-node-exporter](https://github.com/helm/charts/tree/master/stable/prometheus-node-exporter) charts, which are installed by default. 
 To disable the dependency during installation, set `kubeStateMetrics.enabled` and `nodeExporter` to `false`.
 
+#### Before installing the chart
+Check if you have any taints on your nodes:
+
+```
+kubectl get nodes -o json | jq '"\(.items[].metadata.name) \(.items[].spec.taints)"'
+```
+if you do, please add them as tolerations in values.yaml tolerations.
+
+
 #### Standard configuration
 
 
@@ -45,10 +54,20 @@ logzio-otel-k8s-metrics logzio-helm/logzio-otel-k8s-metrics
 
 #### For clusters with Windows Nodes
 
-In order to extract and scrape metrics from Windows Nodes, a Windows Exporter service must first be installed on the node host itself. We will do this by authenticating with username and password using SSH connection to the node.
-The default username for windows Node pool is: azureuser.
+In order to extract and scrape metrics from Windows Nodes, a Windows Exporter service must first be installed on the node host itself. We will do this by authenticating with username and password using SSH connection to the node through a job.
 
-If your Windows node pool does not share the same username and password across the nodes, you will need to run the `windows-exporter-installer` job for each node pool using the relevant credentials. You can change your Windows node pool password in AKS cluster with the following command (will only affect Windows node pools):
+By default, the Windows installer job will run on deployment and every 10 minutes, and will keep the most recent failed and successful pods.
+You can change these setting in values.yaml:
+```
+windowsExporterInstallerJob:
+  interval: "*/10 * * * *"           #In CronJob format
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+```
+
+The default username for windows Node pools is: azureuser. (Username and password are shared across all windows nodepools)
+
+You can change your Windows node pool password in AKS cluster with the following command (will only affect Windows node pools):
 
 ```
     az aks update \
@@ -57,7 +76,7 @@ If your Windows node pool does not share the same username and password across t
     --windows-admin-password $NEW_PW
 ```
 
-You can read more information on https://docs.microsoft.com/en-us/azure/aks/windows-faq,
+You can read more information at https://docs.microsoft.com/en-us/azure/aks/windows-faq,
 under `How do I change the administrator password for Windows Server nodes on my cluster?` section.
 
 
@@ -123,9 +142,17 @@ helm uninstall logzio-otel-k8s-metrics
 
 
 ## Change log
+* 0.2.1 - Added Windows exporter installer as a scheduled job. 
 
-* 0.1.0 - Initial release
-* 0.1.1 - Add option to enable pushgatway service
 * 0.2 - \
 Added support for Windows Nodes metrics.\
 Updated otel collector image tag and removed deprecated settings.
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
+* 0.1.1 - Add option to enable pushgatway service
+* 0.1.0 - Initial release
+
+</details>
+
