@@ -17,19 +17,18 @@ config:
         thrift_http:
           endpoint: "0.0.0.0:14268"
     opencensus:
-      endpoint: "0.0.0.0:55678"
     otlp:
       protocols:
         grpc:
           endpoint: "0.0.0.0:4317"
         http:
-          endpoint: "0.0.0.0:55681"
+          endpoint: "0.0.0.0:4318"
     zipkin:
       endpoint: "0.0.0.0:9411"
   exporters:
     logzio:
       region: us
-      account_token:
+      account_token: 
     logging:
   processors:
     batch:
@@ -38,14 +37,16 @@ config:
       endpoint: :1777
     zpages:
       endpoint: :55679
-    health_check:
   service:
-    extensions: [health_check, pprof, zpages]
+    extensions: [pprof, zpages]
     pipelines:
       traces:
         receivers: [opencensus, jaeger, zipkin, otlp]
         processors: [batch]
         exporters: [logging, logzio]
+    telemetry:
+      logs:
+        level: "debug"
 
 # Shared params for agentCollector daemonset and standaloneCollector deployment pods.
 # Can be overridden here or for any component independently using the same keys.
@@ -55,13 +56,13 @@ image:
   repository: otel/opentelemetry-collector-contrib
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.35.0"
+  tag: "0.42.0"
 imagePullSecrets: []
 
 # OpenTelemetry Collector executable
 command:
-  name: otelcontribcol
-  extraArgs: ["--log-level=DEBUG"]
+  name: otelcol-contrib
+  extraArgs: []
 
 serviceAccount:
   # Specifies whether a service account should be created

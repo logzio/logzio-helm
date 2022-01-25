@@ -10,9 +10,6 @@ limit_mib: {{ include "opentelemetry-collector.getMemLimitMib" .Values.resources
 
 # By default spike_limit_mib is set to 25% of ".Values.resources.limits.memory"
 spike_limit_mib: {{ include "opentelemetry-collector.getMemSpikeLimitMib" .Values.resources.limits.memory }}
-
-# By default ballast_size_mib is set to 40% of ".Values.resources.limits.memory"
-ballast_size_mib: {{ include "opentelemetry-collector.getMemBallastSizeMib" .Values.resources.limits.memory }}
 {{- end }}
 
 {{/*
@@ -27,12 +24,25 @@ Merge user supplied top-level (not particular to standalone or agent) config int
 {{- end }}
 
 {{/*
+Merge user supplied top-level (not particular to standalone or agent) config into memory ballast config.
+*/}}
+{{- define "opentelemetry-collector.ballastConfig" -}}
+{{- $memoryBallastConfig := get .Values.config.extensions "memory_ballast" }}
+{{- if or (not $memoryBallastConfig) (not $memoryBallastConfig.size_mib) }}
+{{- $_ := set $memoryBallastConfig "size_mib" (include "opentelemetry-collector.getMemBallastSizeMib" .Values.resources.limits.memory) }}
+{{- end }}
+{{- .Values.config | toYaml }}
+{{- end }}
+
+
+{{/*
 Build config file for agent OpenTelemetry Collector
 */}}
 {{- define "opentelemetry-collector.agentCollectorConfig" -}}
 {{- $values := deepCopy .Values.agentCollector | mustMergeOverwrite (deepCopy .Values)  }}
 {{- $data := dict "Values" $values | mustMergeOverwrite (deepCopy .) }}
 {{- $config := include "opentelemetry-collector.baseConfig" $data | fromYaml }}
+{{- $config := include "opentelemetry-collector.ballastConfig" $data | fromYaml | mustMergeOverwrite $config }}
 {{- $config := include "opentelemetry-collector.agent.containerLogsConfig" $data | fromYaml | mustMergeOverwrite $config }}
 {{- $config := include "opentelemetry-collector.agentConfigOverride" $data | fromYaml | mustMergeOverwrite $config }}
 {{- .Values.agentCollector.configOverride | mustMergeOverwrite $config | toYaml }}
@@ -47,6 +57,7 @@ Build config file for standalone OpenTelemetry Collector
 {{- $config := include "opentelemetry-collector.baseConfig" $data | fromYaml }}
 {{- .Values.standaloneCollector.configOverride | mustMergeOverwrite $config | toYaml }}
 {{- end }}
+
 
 {{/*
 Convert memory value from resources.limit to numeric value in MiB to be used by otel memory_limiter processor.
