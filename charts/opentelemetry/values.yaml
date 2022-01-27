@@ -9,8 +9,8 @@ secrets:
   MetricsToken: ""
   ListenerHost: ""
   p8s_logzio_name: ""
-  windowsNodeUsername: "''"
-  windowsNodePassword: "''"
+  windowsNodeUsername: ""
+  windowsNodePassword: ""
 
 
 managedServiceAccount: true
@@ -181,7 +181,6 @@ config:
           relabel_configs:
           - action: labelmap
             regex: __meta_kubernetes_node_label_(.+)
-
   service:
     extensions:
       - health_check
@@ -304,9 +303,10 @@ autoscaling:
 
 windowsExporterInstallerJob:
   interval: "*/10 * * * *"
+  concurrencyPolicy: Forbid            # Future cronjob will run only after current job is finished
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 1
-  ttlSecondsAfterFinished: 6000        # First job only (Not CronJob)   
+  ttlSecondsAfterFinished: 3600        # First job only (Not CronJob)   
 
 kube-state-metrics:
   nodeSelector:

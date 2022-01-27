@@ -1,3 +1,5 @@
+{{- if .Values.secrets.windowsNodeUsername }}
+{{- if .Values.secrets.windowsNodePassword }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -21,13 +23,13 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: logzio-windows-exporter-installer-secrets
-                  key: windowsNodeUsername
+                  key: username
                   optional: true
             - name: SECRET_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: logzio-windows-exporter-installer-secrets
-                  key: windowsNodePassword
+                  key: password
                   optional: true
           args:  ["$(SECRET_USERNAME)",
                  "$(SECRET_PASSWORD)"]
@@ -50,6 +52,7 @@ spec:
   schedule: "{{ .Values.windowsExporterInstallerJob.interval }}"
   successfulJobsHistoryLimit: {{ .Values.windowsExporterInstallerJob.successfulJobsHistoryLimit }}
   failedJobsHistoryLimit: {{ .Values.windowsExporterInstallerJob.failedJobsHistoryLimit }}
+  concurrencyPolicy: "{{ .Values.windowsExporterInstallerJob.concurrencyPolicy }}"
   jobTemplate:
     spec:
       template:
@@ -68,13 +71,13 @@ spec:
                   valueFrom:
                     secretKeyRef:
                       name: logzio-windows-exporter-installer-secrets
-                      key: windowsNodeUsername
+                      key: username
                       optional: true
                 - name: SECRET_PASSWORD
                   valueFrom:
                     secretKeyRef:
                       name: logzio-windows-exporter-installer-secrets
-                      key: windowsNodePassword
+                      key: password
                       optional: true
               args:  ["$(SECRET_USERNAME)",
                      "$(SECRET_PASSWORD)"]
@@ -85,3 +88,5 @@ spec:
           {{- if .Values.tolerations }}
           tolerations: {{- .Values.tolerations | toYaml | trim | nindent 12 }}
           {{- end }}
+{{- end }}
+{{- end }}

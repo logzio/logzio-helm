@@ -58,9 +58,11 @@ In order to extract and scrape metrics from Windows Nodes, a Windows Exporter se
 
 By default, the Windows installer job will run on deployment and every 10 minutes, and will keep the most recent failed and successful pods.
 You can change these setting in values.yaml:
+
 ```
 windowsExporterInstallerJob:
   interval: "*/10 * * * *"           #In CronJob format
+  concurrencyPolicy: Forbid          # Future cronjob will run only after current job is finished
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 1
 ```
@@ -159,15 +161,18 @@ kubectl get nodes -o json | jq ".items[]|{name:.metadata.name, taints:.spec.tain
 ```
 
 ## Change log
-* 0.2.1 - Added Windows exporter installer as a scheduled job. 
+* 0.2.2 - Windows exporter installer jobs will now run only when username and password are provided.
 
-* 0.2 - \
-Added support for Windows Nodes metrics.\
-Updated otel collector image tag and removed deprecated settings.
+* 0.2.1 - Added Windows exporter installer as a scheduled job. 
 
 <details>
   <summary markdown="span"> Expand to check old versions </summary>
 
+* 0.2.0 -
+  <ul>
+  <li>Added support for Windows Nodes metrics. </li>
+  <li>Updated otel collector image tag and removed deprecated settings. </li>
+  </ul>
 * 0.1.1 - Add option to enable pushgatway service
 * 0.1.0 - Initial release
 
