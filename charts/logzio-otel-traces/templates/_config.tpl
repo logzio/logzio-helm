@@ -58,7 +58,6 @@ Build config file for standalone OpenTelemetry Collector
 {{- .Values.standaloneCollector.configOverride | mustMergeOverwrite $config | toYaml }}
 {{- end }}
 
-
 {{/*
 Convert memory value from resources.limit to numeric value in MiB to be used by otel memory_limiter processor.
 */}}
@@ -122,7 +121,8 @@ Default config override for agent collector deamonset
 exporters:
   otlp:
     endpoint: {{ include "opentelemetry-collector.fullname" . }}:4317
-    insecure: true
+    tls:
+      insecure: true
 {{- end }}
 
 {{- if .Values.standaloneCollector.enabled }}
@@ -185,11 +185,11 @@ receivers:
       # Extract metadata from file path
       - type: regex_parser
         id: extract_metadata_from_filepath
-        regex: '^.*\/(?P<namespace>[^_]+)_(?P<pod_name>[^_]+)_(?P<uid>[a-f0-9\-]{36})\/(?P<container_name>[^\._]+)\/(?P<run_id>\d+)\.log$'
-        parse_from: $$attributes.file_path
+        regex: '^.*\/(?P<namespace>[^_]+)_(?P<pod_name>[^_]+)_(?P<uid>[a-f0-9\-]+)\/(?P<container_name>[^\._]+)\/(?P<run_id>\d+)\.log$'
+        parse_from: $$attributes["file.path"]
       # Move out attributes to Attributes
       - type: metadata
-        labels:
+        attributes:
           stream: 'EXPR($.stream)'
           k8s.container.name: 'EXPR($.container_name)'
           k8s.namespace.name: 'EXPR($.namespace)'
@@ -209,5 +209,21 @@ service:
       receivers:
         - filelog
         - otlp
+{{- end }}
+{{- end }}
+
+{{/* Build the list of port for standalone service */}}
+{{- define "opentelemetry-collector.standalonePortsConfig" -}}
+{{- $ports := deepCopy .Values.ports }}
+{{- if .Values.standaloneCollector.ports  }}
+{{- $ports = deepCopy .Values.standaloneCollector.ports | mustMergeOverwrite (deepCopy .Values.ports) }}
+{{- end }}
+{{- range $key, $port := $ports }}
+{{- if $port.enabled }}
+- name: {{ $key }}
+  port: {{ $port.servicePort }}
+  targetPort: {{ $key }}
+  protocol: {{ $port.protocol }}
+{{- end }}
 {{- end }}
 {{- end }}
