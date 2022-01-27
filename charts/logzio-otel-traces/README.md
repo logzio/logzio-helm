@@ -96,4 +96,12 @@ kubectl get nodes -o json | jq ".items[]|{name:.metadata.name, taints:.spec.tain
 
 ## Change log
 
+* 0.0.2 - 
+  <ul>
+  <li>Updated otel version to 0.42</li>
+  <li>Updated otlp http port</li>
+  <li>update memory limiter script</li>
+  </ul>
+
 * 0.0.1 - Initial realese
+
