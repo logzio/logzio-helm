@@ -44,7 +44,7 @@ Give your traces some time to get from your system to ours, then open [Logz.io](
 ## Example usage
 
 * Go to `hotrod.yml` file inside this directory.
-* Change the `<<otel-cluster-ip>>` parameter to the cluster-ip address of your opentelemetry collector service.
+* Change the `<<otel-cluster-ip>>` parameter to the cluster-ip address of your opentelemetry collector **service** on port `14268`
 * Deploy the `hotrod.yml` to your kubernetes cluster (example: `kubectl apply -f hotrod.yml`).
 * Access the hotrod pod on port 8080 and start sending traces.
 
@@ -96,4 +96,12 @@ kubectl get nodes -o json | jq ".items[]|{name:.metadata.name, taints:.spec.tain
 
 ## Change log
 
+* 0.0.2 - 
+  <ul>
+  <li>Updated otel version to 0.42</li>
+  <li>Updated otlp http port</li>
+  <li>update memory limiter script</li>
+  </ul>
+
 * 0.0.1 - Initial realese
+
