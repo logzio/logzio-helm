@@ -85,9 +85,9 @@ This table contains all the parameters in values.yaml:
 - Use this [link](https://github.com/dotnet/dotnet-monitor/blob/main/documentation/configuration.md#metrics-configuration) to get additional information about dotnet-monitor configuration.
 - Use this [link](https://docs.microsoft.com/en-us/dotnet/core/diagnostics/available-counters) to see well-known providers and their counters.
 
-## Sending logs from nodes with taints
+## Sending metrics from nodes with taints
 
-If you want to ship logs from any of the nodes that have a taint, make sure that the taint key values are listed in your in your deployment configuration as follows:
+If you want to ship metrics from any of the nodes that have a taint, make sure that the taint key values are listed in your in your deployment configuration as follows:
 
 ```yaml
 tolerations:
