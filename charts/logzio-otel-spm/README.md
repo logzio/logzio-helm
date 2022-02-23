@@ -1,5 +1,5 @@
 
-# Logzio-otel-spm
+# Logzio otel spm
 
 ##  Overview
 
@@ -50,7 +50,7 @@ logzio-otel-traces logzio-helm/logzio-otel-traces
 
 Give your traces and metrics some time to get from your system to ours, then open [Logz.io](https://app.logz.io/).
 
-## Example usage
+### Example usage
 
 * Go to `hotrod.yml` file inside this directory.
 * Change the `<<otel-cluster-ip>>` parameter to the cluster-ip address of your opentelemetry collector **service** on port `14268`
@@ -71,7 +71,7 @@ You can use the following options to update the Helm chart parameters:
 ###### Example:
 
 ```
-helm install logzio-otel-traces logzio-helm/logzio-otel-spm -f my_values.yaml 
+helm install logzio-otel-spm logzio-helm/logzio-otel-spm -f my_values.yaml 
 ```
 ##### Span metrics configuration:
 
@@ -91,7 +91,7 @@ The uninstall command is used to remove all the Kubernetes components associated
 To uninstall the `logzio-otel-spm` deployment, use the following command:
 
 ```shell
-helm uninstall logzio-otel-traces
+helm uninstall logzio-otel-spm
 ```
 
 ## Sending data from nodes with taints

@@ -11,7 +11,6 @@ containers:
     command:
       - /{{ .Values.command.name }}
       - --config=/conf/relay.yaml
-      - --metrics-addr=0.0.0.0:8888
       {{- range .Values.command.extraArgs }}
       - {{ . }}
       {{- end }}
@@ -42,8 +41,13 @@ containers:
         value: {{.Values.logzio.tracing_token}}
       - name: LOGZIO_REGION
         value: {{.Values.logzio.region}}
+      {{ if eq .Values.logzio.region "us"}}
       - name: LOGZIO_LISTENER_URL
-        {{include "logzio-listener" .}}
+        value: "https://listener.logz.io:8053"
+      {{else}}
+      - name: LOGZIO_LISTENER_URL
+        value: {{ printf "https://listener-%s.logz.io:8053" .Values.logzio.region }}
+      {{ end }}
       {{- with .Values.extraEnvs }}
       {{- . | toYaml | nindent 6 }}
       {{- end }}
