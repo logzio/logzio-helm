@@ -43,7 +43,7 @@ helm install  \
 --set logzio.region=<<logzio-region>> \
 --set logzio.tracing_token=<<tracing-token>> \
 --set logzio.metrics_token=<<metrics-token>> \
-logzio-otel-traces logzio-helm/logzio-otel-traces
+logzio-otel-spm logzio-helm/logzio-otel-spm
 ```
 
 ##### Check Logz.io for your traces
