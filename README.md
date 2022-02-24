@@ -13,3 +13,5 @@ Please look in the chart directories for the documentation for each chart.
 * [Fluentd](https://github.com/logzio/logzio-helm/tree/master/charts/fluentd)
 * [Opentelemetry for metrics](https://github.com/logzio/logzio-helm/tree/master/charts/opentelemetry)
 * [Opentelemetry for traces](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-otel-traces)
+* [Opentelemetry for spm](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-otel-spm)
+
