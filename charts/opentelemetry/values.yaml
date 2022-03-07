@@ -311,7 +311,11 @@ windowsExporterInstallerJob:
 kube-state-metrics:
   nodeSelector:
     kubernetes.io/os: linux
+  podSecurityPolicy:
+    enabled: false
 
 prometheus-node-exporter:
   nodeSelector:
     kubernetes.io/os: linux
+  rbac:
+    pspEnabled: false

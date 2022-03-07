@@ -161,12 +161,21 @@ kubectl get nodes -o json | jq ".items[]|{name:.metadata.name, taints:.spec.tain
 ```
 
 ## Change log
-* 0.2.2 - Windows exporter installer jobs will now run only when username and password are provided.
+* 0.2.3 - 
+  <ul>
+  <li>Fixed an issue where the windows reverse proxy daemonset is listed as a resource when there are no windows nodes. </li>
+  <li>Disabled the usage of the depracted PodSecurityPolicy (psp).</li>
+  <li>Node exporter chart version bump to 2.0.4.</li>
+  <li>Kube state metrics chart version bump to 4.7.0.</li>
+  <li>Prometheus push gateway chart version bump to 1.16.1.</li>
+  </ul>
 
-* 0.2.1 - Added Windows exporter installer as a scheduled job. 
+* 0.2.2 - Windows exporter installer jobs will now run only when username and password are provided.
 
 <details>
   <summary markdown="span"> Expand to check old versions </summary>
+
+* 0.2.1 - Added Windows exporter installer as a scheduled job.
 
 * 0.2.0 -
   <ul>
