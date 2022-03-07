@@ -27,6 +27,8 @@ spec:
 {{- end }}
 
 ---
+{{- if .Values.secrets.windowsNodeUsername }}
+{{- if .Values.secrets.windowsNodePassword }}
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -74,3 +76,5 @@ spec:
         runAsNonRoot: false
       nodeSelector:
         kubernetes.io/os: windows
+{{- end }}
+{{- end }}
