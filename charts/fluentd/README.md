@@ -90,6 +90,8 @@ helm install -n monitoring \
 | `daemonset.logzioRetryForever` | If true, plugin will retry flushing forever | `true` |
 | `daemonset.logzioFlushThreadCount` | Number of threads to flush the buffer. | `2` |
 | `daemonset.logzioLogLevel` | The log level for this container. | `info` |
+| `daemonset.excludeFluentdPath` | Path to fluentd logs, to exclude them from the logs that Fluent tails. | `/var/log/containers/*fluentd*.log` |
+| `daemonset.extraExclude` | More paths to exclude from the Fluentd source that tails containers logs. | `""` |
 | `daemonset.extraEnv` | If needed, more env vars can be added with this field. | `[]` |
 | `daemonset.resources` | Allows you to set the resources for Fluentd Daemonset. |  See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
 | `daemonset.extraVolumeMounts` | If needed, more volume mounts can be added with this field. | `[]` |
@@ -110,6 +112,8 @@ helm install -n monitoring \
 | `configmap.partialContainerd` | Configuration for `partial-containerd.conf`. Used to concatenate partial logs that split due to large size, for containerd cri. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
 | `configmap.audit` | Configuration for `audit.conf`. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
 | `configmap.auditJson` | Configuration for `audit-json.conf`. This is the configuration that's being used when `daemonset.auditLogFormat` is set to `audit-json` | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
+| `configmap.customSources` | Add sources to the Fluentd configuration | `""` |
+| `configmap.customFilters` | Add filters to the Fluentd configuration | `""` |
 
 **Note:** If you're adding your own configuration file via `configmap.extraConfig`:
 - Add a `--set-file` flag to your `helm install` command, as seen in the [example above](https://github.com/logzio/logzio-helm/tree/master/charts/fluentd#configuration).
@@ -193,6 +197,8 @@ kubectl get nodes -o json | jq ".items[]|{name:.metadata.name, taints:.spec.tain
 
 ## Change log
 
+ - **0.3.0**:
+    - Added new value fields: `daemonset.excludeFluentdPath`, `daemonset.extraExclude`, `configmap.customSources`, `configmap.customFilters`.
  - **0.2.0**:
     - Added `daemonset.nodeSelector`.
  - **0.1.0**:

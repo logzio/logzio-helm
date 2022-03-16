@@ -22,6 +22,10 @@ data:
 
   partial-containerd.conf: {{ toYaml .Values.configmap.partialContainerd | indent 2 }}
 
+  custom-sources.conf : {{ toYaml .Values.configmap.customSources | indent 2 }}
+
+  custom-filters.conf : {{ toYaml .Values.configmap.customFilters | indent 2 }}
+
 {{- if .Values.configmap.extraConfig }}
 {{- range $key, $value := fromYaml .Values.configmap.extraConfig }}
   {{ $key }}: |-

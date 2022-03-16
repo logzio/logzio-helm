@@ -89,6 +89,8 @@ spec:
           value: {{ .Values.daemonset.auditLogFormat }}
         - name: CRI
           value: {{ .Values.daemonset.cri | quote }}
+        - name: EXCLUDE_PATH
+          value: {{ include "logzio.excludePath" . | quote }}
         {{- if .Values.daemonset.extraEnv }}
 {{ toYaml .Values.daemonset.extraEnv | indent 8 }}
         {{- end }}
