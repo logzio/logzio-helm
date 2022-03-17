@@ -91,6 +91,8 @@ spec:
           value: {{ .Values.daemonset.cri | quote }}
         - name: EXCLUDE_PATH
           value: {{ include "logzio.excludePath" . | quote }}
+        - name: CONTAINERS_PATH
+          value: {{ .Values.daemonset.containersPath | quote }}
         {{- if .Values.daemonset.extraEnv }}
 {{ toYaml .Values.daemonset.extraEnv | indent 8 }}
         {{- end }}

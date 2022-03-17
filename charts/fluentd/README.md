@@ -92,6 +92,7 @@ helm install -n monitoring \
 | `daemonset.logzioLogLevel` | The log level for this container. | `info` |
 | `daemonset.excludeFluentdPath` | Path to fluentd logs, to exclude them from the logs that Fluent tails. | `/var/log/containers/*fluentd*.log` |
 | `daemonset.extraExclude` | More paths to exclude from the Fluentd source that tails containers logs. | `""` |
+| `daemonset.containersPath` | Path for containers logs. | `"/var/log/containers/*.log"` |
 | `daemonset.extraEnv` | If needed, more env vars can be added with this field. | `[]` |
 | `daemonset.resources` | Allows you to set the resources for Fluentd Daemonset. |  See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
 | `daemonset.extraVolumeMounts` | If needed, more volume mounts can be added with this field. | `[]` |
@@ -198,7 +199,7 @@ kubectl get nodes -o json | jq ".items[]|{name:.metadata.name, taints:.spec.tain
 ## Change log
 
  - **0.3.0**:
-    - Added new value fields: `daemonset.excludeFluentdPath`, `daemonset.extraExclude`, `configmap.customSources`, `configmap.customFilters`.
+    - Added new value fields: `daemonset.excludeFluentdPath`, `daemonset.extraExclude`, `containersPath`, `configmap.customSources`, `configmap.customFilters`.
  - **0.2.0**:
     - Added `daemonset.nodeSelector`.
  - **0.1.0**:

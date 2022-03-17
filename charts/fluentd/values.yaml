@@ -43,6 +43,7 @@ daemonset:
   logzioLogLevel: info
   excludeFluentdPath: "/var/log/containers/*fluentd*.log"
   extraExclude: ""
+  containersPath: "/var/log/containers/*.log"
   extraEnv: []
   resources:
     limits:
@@ -124,7 +125,7 @@ configmap:
     <source>
       @type tail
       @id in_tail_container_logs
-      path /var/log/containers/*.log
+      path "#{ENV['CONTAINERS_PATH']}"
       pos_file /var/log/fluentd-containers.log.pos
       # The following line removes fluentd containers logs:
       exclude_path "#{ENV['EXCLUDE_PATH'].split(',')}"
