@@ -199,7 +199,7 @@ kubectl get nodes -o json | jq ".items[]|{name:.metadata.name, taints:.spec.tain
 ## Change log
 
  - **0.3.0**:
-    - Added new value fields: `daemonset.excludeFluentdPath`, `daemonset.extraExclude`, `containersPath`, `configmap.customSources`, `configmap.customFilters`.
+    - Added new value fields: `daemonset.excludeFluentdPath`, `daemonset.extraExclude`, `daemonset.containersPath`, `configmap.customSources`, `configmap.customFilters`.
  - **0.2.0**:
     - Added `daemonset.nodeSelector`.
  - **0.1.0**:
