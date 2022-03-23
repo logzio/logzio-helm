@@ -1,0 +1,94 @@
+{{- if .Values.metrics.enabled }}
+{{- if .Values.secrets.windowsNodeUsername }}
+{{- if .Values.secrets.windowsNodePassword }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: windows-exporter-installer
+  namespace: {{ .Release.Namespace }}
+spec:
+  ttlSecondsAfterFinished: {{ .Values.windowsExporterInstallerJob.ttlSecondsAfterFinished }}
+  template:
+    metadata:
+      annotations:
+      labels:
+        {{- include "opentelemetry-collector.selectorLabels" . | nindent 8 }}
+    spec:
+      restartPolicy: Never
+      serviceAccountName: {{ include "opentelemetry-collector.serviceAccountName" . }}
+      containers:
+        - name: windows-exporter-installer
+          image: "{{ .Values.windowsExporterInstallerImage.repository }}:{{ .Values.windowsExporterInstallerImage.tag }}"
+          env:
+            - name: SECRET_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: logzio-windows-exporter-installer-secrets
+                  key: username
+                  optional: true
+            - name: SECRET_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: logzio-windows-exporter-installer-secrets
+                  key: password
+                  optional: true
+          args:  ["$(SECRET_USERNAME)",
+                 "$(SECRET_PASSWORD)"]
+          securityContext:
+            privileged: true
+      nodeSelector:
+        kubernetes.io/os: linux
+      {{- if .Values.tolerations }}
+      tolerations: {{- .Values.tolerations | toYaml | trim | nindent 8 }}
+      {{- end }}
+
+---
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: windows-exporter-installer-scheduled
+  namespace: {{ .Release.Namespace }}
+spec:
+  schedule: "{{ .Values.windowsExporterInstallerJob.interval }}"
+  successfulJobsHistoryLimit: {{ .Values.windowsExporterInstallerJob.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ .Values.windowsExporterInstallerJob.failedJobsHistoryLimit }}
+  concurrencyPolicy: "{{ .Values.windowsExporterInstallerJob.concurrencyPolicy }}"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          annotations:
+          labels:
+            {{- include "opentelemetry-collector.selectorLabels" . | nindent 12 }}
+        spec:
+          restartPolicy: Never
+          serviceAccountName: {{ include "opentelemetry-collector.serviceAccountName" . }}
+          containers:
+            - name: windows-exporter-installer
+              image: "{{ .Values.windowsExporterInstallerImage.repository }}:{{ .Values.windowsExporterInstallerImage.tag }}"
+              env:
+                - name: SECRET_USERNAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: logzio-windows-exporter-installer-secrets
+                      key: username
+                      optional: true
+                - name: SECRET_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: logzio-windows-exporter-installer-secrets
+                      key: password
+                      optional: true
+              args:  ["$(SECRET_USERNAME)",
+                     "$(SECRET_PASSWORD)"]
+              securityContext:
+                privileged: true
+          nodeSelector:
+            kubernetes.io/os: linux
+          {{- if .Values.tolerations }}
+          tolerations: {{- .Values.tolerations | toYaml | trim | nindent 12 }}
+          {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
