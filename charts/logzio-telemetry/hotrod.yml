@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: hotrod
+    app.kubernetes.io/instance: jaeger
+  name: jaeger-hotrod
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: hotrod
+      app.kubernetes.io/instance: jaeger
+      app.kubernetes.io/name: jaeger
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: hotrod
+        app.kubernetes.io/instance: jaeger
+        app.kubernetes.io/name: jaeger
+    spec:
+      containers:
+      - env:
+        - name: JAEGER_ENDPOINT
+          value: http://<<otel-cluster-ip>>:14268/api/traces
+        image: jaegertracing/example-hotrod:latest
+        imagePullPolicy: Always
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+        name: jaeger-hotrod
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+
+
+

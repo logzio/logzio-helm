@@ -136,6 +136,13 @@ logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry
 
 Give your metrics some time to get from your system to ours, then open [Logz.io](https://app.logz.io/).
 
+## Example usage - traces 
+
+* Go to `hotrod.yml` file inside this directory.
+* Change the `<<otel-cluster-ip>>` parameter to the cluster-ip address of your opentelemetry collector **service** on port `14268`
+* Deploy the `hotrod.yml` to your kubernetes cluster (example: `kubectl apply -f hotrod.yml`).
+* Access the hotrod pod on port 8080 and start sending traces.
+
 
 ####  Customizing Helm chart parameters
 
