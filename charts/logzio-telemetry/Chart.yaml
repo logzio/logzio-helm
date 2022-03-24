@@ -1,6 +1,6 @@
 apiVersion: v2
-name: logzio-unified-otel
-description: logzio-unified-otel allows you to ship metrics and traces from your Kubernetes cluster using the OpenTelemetry collector.
+name: logzio-k8s-telemetry
+description: logzio-k8s-telemetry allows you to ship metrics and traces from your Kubernetes cluster using the OpenTelemetry collector.
 
 type: application
 
@@ -11,15 +11,15 @@ dependencies:
   - name: kube-state-metrics
     version: "4.7.0"
     repository: "https://prometheus-community.github.io/helm-charts"
-    condition: kubeStateMetrics.enabled
+    condition: metrics.enabled, kubeStateMetrics.enabled
   - name: prometheus-node-exporter
     version: "2.0.4"
     repository: "https://prometheus-community.github.io/helm-charts"
-    condition: nodeExporter.enabled
+    condition: metrics.enabled, nodeExporter.enabled
   - name: prometheus-pushgateway
     version: "1.16.1"
     repository: "https://prometheus-community.github.io/helm-charts"
-    condition: pushGateway.enabled
+    condition: metrics.enabled, pushGateway.enabled
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
