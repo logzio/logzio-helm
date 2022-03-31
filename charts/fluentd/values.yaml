@@ -1,6 +1,10 @@
 image: logzio/logzio-fluentd
 imageTag: 1.0.2
 
+windowsImage: logzio/fluentd-windows
+windowsImageTag: 0.0.1
+
+
 nameOverride: ""
 fullnameOverride: ""
 
@@ -24,7 +28,8 @@ daemonset:
   tolerations:
   - key: node-role.kubernetes.io/master
     effect: NoSchedule
-  nodeSelector: {}
+  nodeSelector:
+    os: linux
   fluentdSystemdConf: disable
   fluentdPrometheusConf: disable
   includeNamespace: ""
@@ -33,6 +38,7 @@ daemonset:
   cri: containerd
   logzioBufferType: file
   logzioBufferPath: /var/log/fluentd-buffers/stackdriver.buffer
+  logzioWindowsBufferPath: C:\var\log\fluentd-buffers\stackdriver.buffer
   logzioOverflowAction: block
   logzioChunkLimitSize: 2M
   logzioQueueLimitLength: 6
@@ -54,6 +60,39 @@ daemonset:
   init:
     extraVolumeMounts: []
 
+windowsDaemonset:
+  tolerations:
+  - key: node-role.kubernetes.io/master
+    effect: NoSchedule
+  nodeSelector:
+    os: windows
+  fluentdSystemdConf: disable
+  fluentdPrometheusConf: disable
+  includeNamespace: ""
+  kubernetesVerifySsl: true
+  auditLogFormat: audit
+  cri: containerd
+  logzioBufferType: file
+  logzioBufferPath: C:\var\log\fluentd-buffers\stackdriver.buffer
+  logzioOverflowAction: block
+  logzioChunkLimitSize: 2M
+  logzioQueueLimitLength: 6
+  logzioFlushInterval: 5s
+  logzioRetryMaxInterval: 30
+  logzioRetryForever: true
+  logzioFlushThreadCount: 2
+  logzioLogLevel: info
+  extraEnv: []
+  resources:
+    limits:
+      memory: 500Mi
+    requests:
+      cpu: 100m
+      memory: 200Mi
+  extraVolumeMounts: []
+  terminationGracePeriodSeconds: 30
+  extraVolumes: []
+
 clusterRole:
   rules:
   - apiGroups:
@@ -68,7 +107,7 @@ clusterRole:
 
 secrets:
   logzioShippingToken: ""
-  logzioListener: " "
+  logzioListener: ""
 
 configMapIncludes: |
   @include "#{ENV['FLUENTD_SYSTEMD_CONF'] || 'systemd'}.conf"
