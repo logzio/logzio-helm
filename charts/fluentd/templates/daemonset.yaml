@@ -228,7 +228,7 @@ spec:
           path: C:\ProgramData\docker\containers
       - name: config-volume
         configMap:
-          name: {{ include "fluentd.fullname" . }}-windows
+          name: {{ include "fluentd.fullname" . }}
       {{- if .Values.windowsDaemonset.extraVolumes }}
 {{ toYaml .Values.windowsDaemonset.extraVolumes | indent 6 }}
       {{- end }}

@@ -28,37 +28,3 @@ data:
 {{ $value | indent 4 -}}
 {{- end -}}
 {{- end }}
-
-
----
-
-apiVersion: {{ .Values.apiVersions.configmap }}
-kind: ConfigMap
-metadata:
-  name: {{ include "fluentd.fullname" . }}-windows
-  namespace: {{ .Values.namespace }}
-  labels:
-    k8s-app: {{ .Values.k8sApp }}
-data:
-  fluent.conf: {{ include "logzio.includes" . | toYaml | indent 2 }}
-  
-  kubernetes.conf: {{ toYaml .Values.configmap.kubernetes | indent 2 }}
-
-  system.conf: {{ toYaml .Values.configmap.system | indent 2 }}
-
-  systemd.conf: {{ toYaml .Values.configmap.systemd | indent 2 }}
-
-  audit.conf: {{ toYaml .Values.configmap.audit | indent 2 }}
-
-  audit-json.conf: {{ toYaml .Values.configmap.auditJson | indent 2 }}
-
-  partial-docker.conf: {{ toYaml .Values.configmap.partialDocker | indent 2 }}
-
-  partial-containerd.conf: {{ toYaml .Values.configmap.partialContainerd | indent 2 }}
-
-{{- if .Values.configmap.extraConfig }}
-{{- range $key, $value := fromYaml .Values.configmap.extraConfig }}
-  {{ $key }}: |-
-{{ $value | indent 4 -}}
-{{- end -}}
-{{- end }}
