@@ -38,7 +38,6 @@ daemonset:
   cri: containerd
   logzioBufferType: file
   logzioBufferPath: /var/log/fluentd-buffers/stackdriver.buffer
-  logzioWindowsBufferPath: C:\var\log\fluentd-buffers\stackdriver.buffer
   logzioOverflowAction: block
   logzioChunkLimitSize: 2M
   logzioQueueLimitLength: 6
