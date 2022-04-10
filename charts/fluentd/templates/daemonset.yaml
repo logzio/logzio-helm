@@ -87,6 +87,10 @@ spec:
           value: {{ .Values.daemonset.auditLogFormat }}
         - name: CRI
           value: {{ .Values.daemonset.cri | quote }}
+        - name: EXCLUDE_PATH
+          value: {{ include "logzio.excludePath" . | quote }}
+        - name: CONTAINERS_PATH
+          value: {{ .Values.daemonset.containersPath | quote }}
         {{- if .Values.daemonset.extraEnv }}
 {{ toYaml .Values.daemonset.extraEnv | indent 8 }}
         {{- end }}
@@ -201,7 +205,10 @@ spec:
           value: {{ .Values.windowsDaemonset.auditLogFormat }}
         - name: CRI
           value: {{ .Values.windowsDaemonset.cri | quote }}
-
+        - name: EXCLUDE_PATH
+          value: {{ include "logzio.windowsExcludePath" . | quote }}
+        - name: CONTAINERS_PATH
+          value: {{ .Values.windowsDaemonset.containersPath | quote }}
         {{- if .Values.windowsDaemonset.extraEnv }}
 {{ toYaml .Values.windowsDaemonset.extraEnv | indent 8 }}
         {{- end }}
