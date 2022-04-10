@@ -41,6 +41,9 @@ daemonset:
   logzioRetryForever: true
   logzioFlushThreadCount: 2
   logzioLogLevel: info
+  excludeFluentdPath: "/var/log/containers/*fluentd*.log"
+  extraExclude: ""
+  containersPath: "/var/log/containers/*.log"
   extraEnv: []
   resources:
     limits:
@@ -117,13 +120,15 @@ configmap:
       </match>
     </label>
 
+    @include custom-sources.conf
+
     <source>
       @type tail
       @id in_tail_container_logs
-      path /var/log/containers/*.log
+      path "#{ENV['CONTAINERS_PATH']}"
       pos_file /var/log/fluentd-containers.log.pos
       # The following line removes fluentd containers logs:
-      exclude_path /var/log/containers/*fluentd*.log
+      exclude_path "#{ENV['EXCLUDE_PATH'].split(',')}"
       tag logzio.kubernetes.*
       read_from_head true
       <parse>
@@ -290,6 +295,8 @@ configmap:
 
     @include "#{ENV['AUDIT_LOG_FORMAT'] || 'audit'}.conf"
 
+    @include custom-filters.conf
+
     # This handles multiline exceptions automatically: https://github.com/GoogleCloudPlatform/fluent-plugin-detect-exceptions
     <match logzio.**>
       @type detect_exceptions
@@ -407,7 +414,6 @@ configmap:
       </parse>
     </source>
 
-
   partialDocker: |
     # Concat docker cri partial log
     # https://github.com/fluent-plugins-nursery/fluent-plugin-concat
@@ -431,3 +437,6 @@ configmap:
       partial_value P
       separator ""
     </filter>
+
+  customSources: ""
+  customFilters: ""

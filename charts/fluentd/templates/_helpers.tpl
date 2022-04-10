@@ -53,3 +53,15 @@ Builds the fluent.conf with all the includes
 {{- printf "\n" }}
 {{- printf "%s" .Values.configmap.fluent }}
 {{- end -}}
+
+
+{{/*
+Builds the list for exclude paths in the tail for the containers
+*/}}
+{{- define "logzio.excludePath" }}
+{{- if .Values.daemonset.extraExclude }}
+{{- cat .Values.daemonset.excludeFluentdPath "," .Values.daemonset.extraExclude | nospace }}
+{{- else }}
+{{- print .Values.daemonset.excludeFluentdPath }}
+{{- end -}}
+{{- end -}}
