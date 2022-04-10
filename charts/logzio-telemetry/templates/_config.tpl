@@ -39,7 +39,7 @@ Build config file for agent OpenTelemetry Collector
 Build config file for standalone OpenTelemetry Collector
 */}}
 {{- define "opentelemetry-collector.standaloneCollectorConfig" -}}
-{{- $configData := interface }}
+{{- $configData := .Values.emptyConfig }}
 {{- $metricsConfig := deepCopy .Values.metricsConfig | mustMergeOverwrite  }}
 {{- $tracesConfig := deepCopy .Values.tracesConfig | mustMergeOverwrite }}
 {{- $values := deepCopy .Values.standaloneCollector | mustMergeOverwrite (deepCopy .Values) }}

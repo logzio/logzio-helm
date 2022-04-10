@@ -111,14 +111,6 @@ containers:
         subPath: {{ .subPath }}
         {{- end }}
       {{- end }}
-      {{- if and $.isAgent .Values.agentCollector.containerLogs.enabled }}
-      - name: varlogpods
-        mountPath: /var/log/pods
-        readOnly: true
-      - name: varlibdockercontainers
-        mountPath: /var/lib/docker/containers
-        readOnly: true
-      {{- end }}
 {{- if .Values.priorityClassName }}
 priorityClassName: {{ .Values.priorityClassName | quote }}
 {{- end }}
@@ -143,14 +135,6 @@ volumes:
   - name: {{ .name }}
     secret:
       secretName: {{ .secretName }}
-  {{- end }}
-  {{- if and $.isAgent .Values.agentCollector.containerLogs.enabled }}
-  - name: varlogpods
-    hostPath:
-      path: /var/log/pods
-  - name: varlibdockercontainers
-    hostPath:
-      path: /var/lib/docker/containers
   {{- end }}
 {{- with .Values.linuxNodeSelector }}
 nodeSelector:
