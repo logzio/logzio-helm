@@ -113,9 +113,9 @@ helm install -n monitoring \
 | `windowsDaemonset.logzioRetryForever` | If true, plugin will retry flushing forever (windows) | `true` |
 | `windowsDaemonset.logzioFlushThreadCount` | Number of threads to flush the buffer. (windows) | `2` |
 | `windowsDaemonset.logzioLogLevel` | The log level for this container. (windows) | `info` |
-| `daemonset.excludeFluentdPath` | Path to fluentd logs file, to exclude them from the logs that Fluent tails. | `/var/log/containers/*fluentd*.log` |
-| `daemonset.extraExclude` | A comma-seperated list (no spaces), of more paths to exclude from the Fluentd source that tails containers logs. For example - /path/one.log,/path/two.log | `""` |
-| `daemonset.containersPath` | Path for containers logs. | `"/var/log/containers/*.log"` |
+| `windowsDaemonset.excludeFluentdPath` | Path to fluentd logs file, to exclude them from the logs that Fluent tails. | `/var/log/containers/*fluentd*.log` |
+| `windowsDaemonset.extraExclude` | A comma-seperated list (no spaces), of more paths to exclude from the Fluentd source that tails containers logs. For example - /path/one.log,/path/two.log | `""` |
+| `windowsDaemonset.containersPath` | Path for containers logs. | `"/var/log/containers/*.log"` |
 | `windowsDaemonset.extraEnv` | If needed, more env vars can be added with this field. (windows) | `[]` |
 | `windowsDaemonset.resources` | Allows you to set the resources for Fluentd Daemonset. (windows) |  See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
 | `windowsDaemonset.extraVolumeMounts` | If needed, more volume mounts can be added with this field. (windows) | `[]` |
