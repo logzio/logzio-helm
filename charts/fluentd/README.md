@@ -90,8 +90,8 @@ helm install -n monitoring \
 | `daemonset.logzioRetryForever` | If true, plugin will retry flushing forever | `true` |
 | `daemonset.logzioFlushThreadCount` | Number of threads to flush the buffer. | `2` |
 | `daemonset.logzioLogLevel` | The log level for this container. | `info` |
-| `daemonset.excludeFluentdPath` | Path to fluentd logs, to exclude them from the logs that Fluent tails. | `/var/log/containers/*fluentd*.log` |
-| `daemonset.extraExclude` | More paths to exclude from the Fluentd source that tails containers logs. | `""` |
+| `daemonset.excludeFluentdPath` | Path to fluentd logs file, to exclude them from the logs that Fluent tails. | `/var/log/containers/*fluentd*.log` |
+| `daemonset.extraExclude` | A comma-seperated list (no spaces), of more paths to exclude from the Fluentd source that tails containers logs. For example - /path/one.log,/path/two.log | `""` |
 | `daemonset.containersPath` | Path for containers logs. | `"/var/log/containers/*.log"` |
 | `daemonset.extraEnv` | If needed, more env vars can be added with this field. | `[]` |
 | `daemonset.resources` | Allows you to set the resources for Fluentd Daemonset. |  See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
