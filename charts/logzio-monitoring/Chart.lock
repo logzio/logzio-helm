@@ -1,9 +1,0 @@
-dependencies:
-- name: logzio-fluentd
-  repository: https://logzio.github.io/logzio-helm/
-  version: 0.3.0
-- name: logzio-k8s-telemetry
-  repository: https://logzio.github.io/logzio-helm/
-  version: 0.0.1
-digest: sha256:ec8bd7370e40a4292e50308ec1cc68002de66fc4bf03ed1bf21b992f4d7d51e5
-generated: "2022-04-11T15:52:26.948199+03:00"
