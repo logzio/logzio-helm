@@ -99,6 +99,28 @@ helm install -n monitoring \
 | `daemonset.terminationGracePeriodSeconds` | Termination period (in seconds) to wait before killing Fluentd pod process on pod shutdown. | `30` |
 | `daemonset.extraVolumes` | If needed, more volumes can be added with this field. | `[]` |
 | `daemonset.init.extraVolumeMounts` | If needed, more volume mounts to the init container can be added with this field. | `[]` |
+| `windowsDaemonset.kubernetesVerifySsl` | Enables to validate SSL certificates (windows). | `true` |
+| `windowsDaemonset.auditLogFormat` | Match Fluentd's format for kube-apiserver audit logs. Set to `audit-json` if your audit logs are in json format. (windows) | `audit` |
+| `windowsDaemonset.containerdRuntime` | **Deprecated from chart version 0.1.0.** Determines whether to use a configuration for a Containerd runtime. Set to `false` if your cluster doesn't use Containerd as CRI. (windows) | `true` |
+| `windowsDaemonset.cri` | Container runtime interface of the cluster. Used to determine which configuration to use when concatenating partial logs (windows). Valid options are: `docker`, `containerd`. | `containerd` |
+| `windowsDaemonset.logzioBufferType` | Specifies which plugin to use as the backend. | `file` |
+| `windowsDaemonset.logzioBufferPath` | Path of the buffer. (windows) | `/var/log/fluentd-buffers/stackdriver.buffer` |
+| `windowsDaemonset.logzioOverflowAction` | Controls the behavior when the queue becomes full. (windows) | `block` |
+| `windowsDaemonset.logzioChunkLimitSize` | Maximum size of a chunk allowed. (windows) | `2M` |
+| `windowsDaemonset.logzioQueueLimitLength` | Maximum length of the output queue. (windows) | `6` |
+| `windowsDaemonset.logzioFlushInterval` | Interval, in seconds, to wait before invoking the next buffer flush. (windows) | `5s` |
+| `windowsDaemonset.logzioRetryMaxInterval` | Maximum interval, in seconds, to wait between retries. (windows) | `30` |
+| `windowsDaemonset.logzioRetryForever` | If true, plugin will retry flushing forever (windows) | `true` |
+| `windowsDaemonset.logzioFlushThreadCount` | Number of threads to flush the buffer. (windows) | `2` |
+| `windowsDaemonset.logzioLogLevel` | The log level for this container. (windows) | `info` |
+| `windowsDaemonset.excludeFluentdPath` | Path to fluentd logs file, to exclude them from the logs that Fluent tails. | `/var/log/containers/*fluentd*.log` |
+| `windowsDaemonset.extraExclude` | A comma-seperated list (no spaces), of more paths to exclude from the Fluentd source that tails containers logs. For example - /path/one.log,/path/two.log | `""` |
+| `windowsDaemonset.containersPath` | Path for containers logs. | `"/var/log/containers/*.log"` |
+| `windowsDaemonset.extraEnv` | If needed, more env vars can be added with this field. (windows) | `[]` |
+| `windowsDaemonset.resources` | Allows you to set the resources for Fluentd Daemonset. (windows) |  See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
+| `windowsDaemonset.extraVolumeMounts` | If needed, more volume mounts can be added with this field. (windows) | `[]` |
+| `daemonset.terminationGracePeriodSeconds` | Termination period (in seconds) to wait before killing Fluentd pod process on pod shutdown. | `30` |
+| `windowsDaemonset.extraVolumes` | If needed, more volumes can be added with this field. (windows) | `[]` |
 | `clusterRole.rules` | Configurable [cluster role rules](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#role-and-clusterrole) that Fluentd uses to access Kubernetes resources. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
 | `secrets.logzioShippingToken` | Secret with your [logzio shipping token](https://app.logz.io/#/dashboard/settings/general). | `""` |
 | `secrets.logzioListener` | Secret with your logzio listener host. `listener.logz.io`. | `" "` |
@@ -200,6 +222,7 @@ kubectl get nodes -o json | jq ".items[]|{name:.metadata.name, taints:.spec.tain
 
  - **0.3.0**:
     - Added new value fields: `daemonset.excludeFluentdPath`, `daemonset.extraExclude`, `daemonset.containersPath`, `configmap.customSources`, `configmap.customFilters`.
+    - Added support for windows containers.
  - **0.2.0**:
     - Added `daemonset.nodeSelector`.
  - **0.1.0**:
