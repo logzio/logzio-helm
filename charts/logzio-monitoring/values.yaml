@@ -1,0 +1,4 @@
+logs:
+  enabled: false
+metricsOrTraces:
+  enabled: false

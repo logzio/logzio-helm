@@ -1,0 +1,30 @@
+apiVersion: v2
+name: logzio-monitoring
+description: logzio-monitoring allows you to ship logs, metrics and traces from your Kubernetes cluster using the OpenTelemetry collector for metrics and traces, and Fluentd for logs.
+type: application
+version: 0.0.1
+
+sources:
+  - https://github.com/logzio/logzio-helm
+dependencies:
+  - name: logzio-fluentd
+    version: "0.3.0"
+    repository: "https://logzio.github.io/logzio-helm/"
+    condition: logs.enabled
+  - name: logzio-k8s-telemetry
+    version: "0.0.1"
+    repository: "https://logzio.github.io/logzio-helm/"
+    condition: metricsOrTraces.enabled
+
+maintainers:
+- name: yotamloe
+  email: yotam.loewenbach@logz.io
+- name: tamirmich
+  email: tamir.michaeli@logz.io
+- name: miriig
+  email: miri.ignatiev@logz.io
+# This is the version number of the application being deployed. This version number should be
+# incremented each time you make changes to the application. Versions are not expected to
+# follow Semantic Versioning. They should reflect the version the application is using.
+# It is recommended to use it with quotes.
+# appVersion: "1.16.0"
