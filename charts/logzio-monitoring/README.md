@@ -86,12 +86,12 @@ For example, if in `logzio-fluentd`'s `values.yaml` file there's a parameter nam
 
 You can see a full list of the possible configuration values in the [logzio-telemetry Chart folder](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-telemetry).
 
-If you want to modify one of the values mentioned in the `logzio-telemetry` folder, add it with the `--set` flag, and the `logzio-telemetry` prefix.
+If you want to modify one of the values mentioned in the `logzio-telemetry` folder, add it with the `--set` flag, and the `logzio-k8s-telemetry` prefix.
 
 For example, if in `logzio-telemetry`'s `values.yaml` file there's a parameter named `someField`, to set it we'll add the following to the `helm install` command:
 
 ```sh
---set logzio-telemetry.someField="my new value"
+--set logzio-k8s-telemetry.someField="my new value"
 ```
 
 ## Changelog
