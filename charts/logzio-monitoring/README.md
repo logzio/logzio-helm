@@ -19,7 +19,7 @@ Check if you have any taints on your nodes:
 kubectl get nodes -o json | jq '"\(.items[].metadata.name) \(.items[].spec.taints)"'
 ```
 
-if you do, please add them as tolerations.
+if you do, please add them as tolerations. For further explenation about modifying the chart, see the [further configuration section](#Further-configuration).
 
 
 ### 1. Add the Helm Chart:
