@@ -91,7 +91,7 @@ jobs:
         run: python tests-logs.py
         working-directory: ./tests
       - name: Terraform Destroy
-        id: plan
+        id: destroy
         env:
           TF_VAR_client_id: ${{ secrets.ARM_CLIENT_ID }}
           TF_VAR_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
