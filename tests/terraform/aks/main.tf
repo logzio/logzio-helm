@@ -367,7 +367,7 @@ resource "helm_release" "logzio-monitoring" {
   depends_on = [kubernetes_namespace.ns_monitoring]
   name       = "logzio-monitoring"
   namespace = "monitoring"
-  chart      = "./logzio-helm/charts/logzio-monitoring"
+  chart      = "../../../logzio-helm/charts/logzio-monitoring"
   dependency_update = true
 
   set_sensitive {
