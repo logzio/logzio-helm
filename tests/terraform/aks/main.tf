@@ -1,4 +1,12 @@
 terraform {
+  cloud {
+    organization = "logzio-testing"
+
+    workspaces {
+      name = "logzio-monitoring-tests"
+    }
+  }
+  
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
