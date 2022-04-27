@@ -38,8 +38,8 @@ class TestHelmLogsIntegration(unittest.TestCase):
         }
         response = requests.post(url=api_url, json=api_query, headers=headers)
         log_count = int(json.loads(response.text)['hits']['total'])
-        print(f'api_token: {api_token}')
-        print(f'Query: {query}')
+        print(f'api_token: {self.api_token}')
+        print(f'Query: {self.query}')
         print(response.request.body)
         valid_count = 50
         self.assertTrue(log_count > 1, f"Should have at least one log!")
