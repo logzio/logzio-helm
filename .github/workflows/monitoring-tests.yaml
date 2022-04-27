@@ -32,6 +32,7 @@ jobs:
       
       - name: Add Helm local index
         run: |
+          mkdir -p ~/.cache/helm/repository
           echo "apiVersion: v1
           entries: {}
           generated: "2020-07-14T18:21:24.471657624+01:00"" >> ~/.cache/helm/repository/local-index.yaml
