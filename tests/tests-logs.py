@@ -19,7 +19,7 @@ class TestHelmLogsIntegration(unittest.TestCase):
                 "bool": {
                     "must": [{
                         "query_string": {
-                            "query": query
+                            "query": self.query
                         }
                     },
                         {
