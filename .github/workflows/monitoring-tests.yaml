@@ -94,7 +94,12 @@ jobs:
           TF_VAR_logzio_traces_shipping_token: ${{ secrets.LOGZIO_TRACES_TOKEN }}
           TF_VAR_logzio_region: ${{ secrets.LOGZIO_REGION }}
           TF_VAR_jaeger_endpoint: ${{ secrets.JAEGER_ENDPOINT }}
-        run: terraform apply -auto-approve
+        run: |
+          echo "==================================================================="
+          ls ../../..
+          ls ../../../charts/logzio-monitoring
+          echo "==================================================================="
+          terraform apply -auto-approve
       - name: Sleep for 15 minutes
         run: sleep 15m
         shell: bash
