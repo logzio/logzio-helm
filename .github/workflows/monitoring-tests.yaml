@@ -31,7 +31,7 @@ jobs:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
       
       - name: Install Helm
-        uses: azure/setup-helm@v2
+        uses: azure/setup-helm@v1
         id: install_helm
       
       - name: Package Chart
