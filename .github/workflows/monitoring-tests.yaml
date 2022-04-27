@@ -114,7 +114,7 @@ jobs:
         run: pip install requests
       - name: Run logs tests
         env:
-          TEST_API_TOKEN: ${{ secrets.TEST_LOGS_API_TOKEN }}
+          TEST_LOGS_API_TOKEN: ${{ secrets.TEST_LOGS_API_TOKEN }}
         run: python tests-logs.py
         working-directory: ./tests
       - name: Terraform Destroy
