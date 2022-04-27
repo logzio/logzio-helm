@@ -25,7 +25,7 @@ jobs:
       - name: Search
         run: |
           echo "================================================="
-          ls -la ~
+          ls -la ~/work
 
       # # Install the preferred version of Terraform CLI 
       # - name: Setup Terraform
