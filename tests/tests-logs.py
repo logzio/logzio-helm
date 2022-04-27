@@ -8,7 +8,6 @@ class TestHelmLogsIntegration(unittest.TestCase):
     api_token = os.environ["TEST_LOGS_API_TOKEN"]
     query = None
     def test_integration(self):
-        logzio_type = self.logzio_type
         api_url = 'https://api.logz.io/v1/search'
         api_token = self.api_token
         headers = {
