@@ -1,6 +1,9 @@
 name: 'Test'
 
-on: [pull_request]
+on:
+  pull_request:
+    paths:
+      - 'charts/logzio-monitoring/**'
 
 env:
   TF_LOG: INFO
@@ -91,7 +94,11 @@ jobs:
           TF_VAR_logzio_traces_shipping_token: ${{ secrets.LOGZIO_TRACES_TOKEN }}
           TF_VAR_logzio_region: ${{ secrets.LOGZIO_REGION }}
           TF_VAR_jaeger_endpoint: ${{ secrets.JAEGER_ENDPOINT }}
-        run: terraform apply -auto-approve
+        run: |
+          echo "==================================================================="
+          pwd
+          echo "==================================================================="
+          terraform apply -auto-approve
       - name: Sleep for 15 minutes
         run: sleep 15m
         shell: bash
