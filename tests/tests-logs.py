@@ -54,5 +54,5 @@ if __name__ == '__main__':
     ]
 
     for host_query in queries:
-        TestFluentdIntegration.query = host_query
+        TestHelmLogsIntegration.query = host_query
 unittest.main()
