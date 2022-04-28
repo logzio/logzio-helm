@@ -34,7 +34,16 @@ config:
       protocols:
         grpc:
           endpoint: "0.0.0.0:12345"
+    prometheus/spanmetrics:
+      config:
+        scrape_configs:
+          - job_name: 'spm-metrics'
+            scrape_interval: 15s
+            static_configs:
+              - targets: ['0.0.0.0:5002']
   exporters:
+    prometheus/spanmetrics:
+      endpoint: "0.0.0.0:5002"
     logzio:
       region: ${LOGZIO_REGION}
       account_token: ${TRACING_TOKEN}
@@ -47,7 +56,7 @@ config:
     batch:
     memory_limiter: null
     spanmetrics:
-      metrics_exporter: prometheusremotewrite
+      metrics_exporter: prometheus/spanmetrics
       latency_histogram_buckets: [2ms, 8ms, 50ms, 100ms, 200ms, 500ms, 1s, 5s, 10s]
       dimensions_cache_size: 100000
       aggregation_temporality: AGGREGATION_TEMPORALITY_CUMULATIVE
@@ -69,6 +78,9 @@ config:
         exporters: [logging, logzio]
       metrics/spanmetrics:
         receivers: [otlp/spanmetrics]
+        exporters: [prometheus/spanmetrics]
+      metrics/logzio:
+        receivers: [prometheus/spanmetrics]
         exporters: [prometheusremotewrite]
     telemetry:
       logs:
@@ -84,7 +96,7 @@ image:
   repository: otel/opentelemetry-collector-contrib
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.44.0"
+  tag: "0.48.0"
 imagePullSecrets: []
 
 # OpenTelemetry Collector executable
