@@ -115,7 +115,7 @@ jobs:
       - name: Run logs tests
         env:
           TEST_LOGS_API_TOKEN: ${{ secrets.TEST_LOGS_API_TOKEN }}
-        run: python tests-logs.py
+        run: python tests.py
         working-directory: ./tests
       - name: Terraform Destroy
         id: destroy
