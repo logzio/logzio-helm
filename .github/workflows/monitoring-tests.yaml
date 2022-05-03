@@ -1,0 +1,138 @@
+name: 'Test'
+
+on:
+  pull_request:
+    paths:
+      - 'charts/logzio-monitoring/**'
+
+env:
+  TF_LOG: INFO
+
+jobs:
+  test:
+    name: 'test-logzio-monitoring'
+    runs-on: ubuntu-latest
+    # Set the working directory to main for the config files
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./tests/terraform/aks
+
+    steps:
+      # Checkout the repository to the GitHub Actions runner
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # Install the preferred version of Terraform CLI 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.1.7
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+      
+      - name: Install Helm
+        uses: azure/setup-helm@v1
+        id: install_helm
+      
+      - name: Package Chart
+        run: |
+          helm package /home/runner/work/logzio-helm/logzio-helm/charts/logzio-monitoring --dependency-update --version "0.0.0"
+
+      - name: Terraform Init
+        id: init
+        run: terraform init
+
+      - name: Terraform Plan
+        id: plan
+        env:
+          TF_VAR_client_id: ${{ secrets.ARM_CLIENT_ID }}
+          TF_VAR_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+          TF_VAR_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
+          TF_VAR_tenant_id: ${{ secrets.ARM_TENANT_ID }}
+          TF_VAR_logzio_logs_shipping_token: ${{ secrets.LOGZIO_LOGS_TOKEN }}
+          TF_VAR_logzio_listener: ${{ secrets.LOGZIO_LISTENER }}
+          TF_VAR_win_user: ${{ secrets.WIN_USER }}
+          TF_VAR_win_password: ${{ secrets.WIN_PASSWORD }}
+          TF_VAR_logzio_metrics_shipping_token: ${{ secrets.LOGZIO_METRICS_TOKEN }}
+          TF_VAR_logzio_metrics_listener: ${{ secrets.LOGZIO_METRICS_LISTENER }}
+          TF_VAR_p8s_logzio_name: ${{ secrets.P8S_LOGZIO_NAME }}
+          TF_VAR_logzio_traces_shipping_token: ${{ secrets.LOGZIO_TRACES_TOKEN }}
+          TF_VAR_logzio_region: ${{ secrets.LOGZIO_REGION }}
+          TF_VAR_jaeger_endpoint: ${{ secrets.JAEGER_ENDPOINT }}
+        run: terraform plan -no-color
+      - name: add-plan-comment
+        id: comment
+        uses: actions/github-script@v3
+        env:
+          PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+              const output = `#### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+              #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+          
+              <details><summary>Show Plan</summary>
+              
+              \`\`\`${process.env.PLAN}\`\`\`
+              
+              </details>
+              
+              *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;
+                
+              github.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: output
+              })
+      - name: Terraform Apply
+        id: apply
+        env:
+          TF_VAR_client_id: ${{ secrets.ARM_CLIENT_ID }}
+          TF_VAR_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+          TF_VAR_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
+          TF_VAR_tenant_id: ${{ secrets.ARM_TENANT_ID }}
+          TF_VAR_logzio_logs_shipping_token: ${{ secrets.LOGZIO_LOGS_TOKEN }}
+          TF_VAR_logzio_listener: ${{ secrets.LOGZIO_LISTENER }}
+          TF_VAR_win_user: ${{ secrets.WIN_USER }}
+          TF_VAR_win_password: ${{ secrets.WIN_PASSWORD }}
+          TF_VAR_logzio_metrics_shipping_token: ${{ secrets.LOGZIO_METRICS_TOKEN }}
+          TF_VAR_logzio_metrics_listener: ${{ secrets.LOGZIO_METRICS_LISTENER }}
+          TF_VAR_p8s_logzio_name: ${{ secrets.P8S_LOGZIO_NAME }}
+          TF_VAR_logzio_traces_shipping_token: ${{ secrets.LOGZIO_TRACES_TOKEN }}
+          TF_VAR_logzio_region: ${{ secrets.LOGZIO_REGION }}
+          TF_VAR_jaeger_endpoint: ${{ secrets.JAEGER_ENDPOINT }}
+        run: terraform apply -auto-approve
+      - name: Sleep for 15 minutes
+        run: sleep 15m
+        shell: bash
+      - name: Install python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9' # Version range or exact version of a Python version to use, using SemVer's version range syntax
+      - name: Install requests python lib
+        run: pip install requests
+      - name: Run logs tests
+        env:
+          TEST_LOGS_API_TOKEN: ${{ secrets.TEST_LOGS_API_TOKEN }}
+        run: python tests.py
+        working-directory: ./tests
+      - name: Terraform Destroy
+        id: destroy
+        env:
+          TF_VAR_client_id: ${{ secrets.ARM_CLIENT_ID }}
+          TF_VAR_subscription_id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+          TF_VAR_client_secret: ${{ secrets.ARM_CLIENT_SECRET }}
+          TF_VAR_tenant_id: ${{ secrets.ARM_TENANT_ID }}
+          TF_VAR_logzio_logs_shipping_token: ${{ secrets.LOGZIO_LOGS_TOKEN }}
+          TF_VAR_logzio_listener: ${{ secrets.LOGZIO_LISTENER }}
+          TF_VAR_win_user: ${{ secrets.WIN_USER }}
+          TF_VAR_win_password: ${{ secrets.WIN_PASSWORD }}
+          TF_VAR_logzio_metrics_shipping_token: ${{ secrets.LOGZIO_METRICS_TOKEN }}
+          TF_VAR_logzio_metrics_listener: ${{ secrets.LOGZIO_METRICS_LISTENER }}
+          TF_VAR_p8s_logzio_name: ${{ secrets.P8S_LOGZIO_NAME }}
+          TF_VAR_logzio_traces_shipping_token: ${{ secrets.LOGZIO_TRACES_TOKEN }}
+          TF_VAR_logzio_region: ${{ secrets.LOGZIO_REGION }}
+          TF_VAR_jaeger_endpoint: ${{ secrets.JAEGER_ENDPOINT }}
+        run: terraform destroy -auto-approve
+        
