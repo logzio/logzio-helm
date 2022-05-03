@@ -1,9 +1,9 @@
 name: 'Test'
 
-on: [pull_request]
-  # pull_request:
-  #   paths:
-  #     - 'charts/logzio-monitoring/**'
+on:
+  pull_request:
+    paths:
+      - 'charts/logzio-monitoring/**'
 
 env:
   TF_LOG: INFO
