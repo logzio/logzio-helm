@@ -6,7 +6,6 @@ import json
 
 class TestHelmIntegration(unittest.TestCase):
     api_token_logs = os.environ["TEST_LOGS_API_TOKEN"]
-    api_token_metrics = os.environ["TEST_METRICS_API_TOKEN"]
     logs_queries = []
     metrics_queries = []
     def test_integration_logs(self):
