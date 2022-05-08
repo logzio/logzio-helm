@@ -40,6 +40,7 @@ class TestHelmIntegration(unittest.TestCase):
                 "size": 50,
                 "from": 0
             }
+            print(f'Logs - now checking query: {query}')
             response = requests.post(url=api_url, json=api_query, headers=headers)
             log_count = int(json.loads(response.text)['hits']['total'])
             valid_count = 50
@@ -56,6 +57,7 @@ class TestHelmIntegration(unittest.TestCase):
                 'X-API-TOKEN': self.api_token_metrics,
                 'Content-Type': 'application/json'
             }
+            print(f'Metrics - now checking query: {query}')
             response = requests.get(url=api_url, headers=headers)
             response_body = json.loads(response.text)
             self.assertTrue(response_body['status'] == 'success', f"Status should be success")
