@@ -4,6 +4,8 @@ on:
   pull_request:
     paths:
       - 'charts/logzio-monitoring/**'
+      - '.github/workflow/monitoring-tests.yaml'
+      - 'tests/*'
 
 env:
   TF_LOG: INFO
