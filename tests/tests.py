@@ -10,7 +10,7 @@ class TestHelmIntegration(unittest.TestCase):
     api_token_metrics = os.environ["TEST_METRICS_API_TOKEN"]
     logs_queries = []
     metrics_queries = []
-    
+
     def test_integration_logs(self):
         for query in self.logs_queries:
             api_url = 'https://api.logz.io/v1/search'
@@ -44,12 +44,14 @@ class TestHelmIntegration(unittest.TestCase):
             log_count = int(json.loads(response.text)['hits']['total'])
             valid_count = 50
             self.assertTrue(log_count > 1, f"Should have at least one log!")
-    
+
     def test_integration_metrics(self):
-        start = datetime.datetime.now().replace(microsecond=0, second=0, minute=0)
-        end = (start - datetime.timedelta(minutes=15)).replace(microsecond=0, second=0, minute=0)
+        end_datetime = datetime.datetime.now().replace(microsecond=0, second=0, minute=0)
+        end = int(end_datetime.timestamp())
+        start_datetime = (end_datetime - datetime.timedelta(minutes=15)).replace(microsecond=0, second=0, minute=0).timestamp()
+        start = int(start_datetime)
         for query in self.metrics_queries:
-            api_url = f'https://api.logz.io/v1/metrics/prometheus/api/v1/query_range?query=kube_node_info{query}&start={int(start.timestamp())}&end={int(end.timestamp())}&step=15'
+            api_url = f'https://api.logz.io/v1/metrics/prometheus/api/v1/query_range?query=kube_node_info{query}&start={start}&end={end}&step=15'
             headers = {
                 'X-API-TOKEN': self.api_token_metrics,
                 'Content-Type': 'application/json'
@@ -60,14 +62,12 @@ class TestHelmIntegration(unittest.TestCase):
             metrics_count = len(response_body['data']['result'])
             self.assertTrue(metrics_count > 1, f"Should have at least one metric!")
 
-    
-
 
 if __name__ == '__main__':
     TestHelmIntegration.logs_queries = [
-        "kubernetes.host:aks-taintnp*", # Verify nodepool with taints
-        "kubernetes.host:akswinnp*", # Verify windows nodepool
-        "kubernetes.host:aks-default-*" # Regular node
+        "kubernetes.host:aks-taintnp*",  # Verify nodepool with taints
+        "kubernetes.host:akswinnp*",  # Verify windows nodepool
+        "kubernetes.host:aks-default-*"  # Regular node
     ]
 
     TestHelmIntegration.metrics_queries = [
