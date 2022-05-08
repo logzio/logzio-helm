@@ -91,4 +91,5 @@ kubectl get nodes -o json | jq ".items[]|{name:.metadata.name, taints:.spec.tain
 
 ## Change log
 
+* 0.0.2 - Upgrade docker image to v0.1.2.
 * 0.0.1 - Initial realese
