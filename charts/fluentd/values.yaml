@@ -49,6 +49,7 @@ daemonset:
   excludeFluentdPath: "/var/log/containers/*fluentd*.log"
   extraExclude: ""
   containersPath: "/var/log/containers/*.log"
+  logType: "k8s"
   extraEnv: []
   resources:
     limits:
@@ -353,7 +354,7 @@ configmap:
     <filter **>
       @type record_modifier
       <record>
-        type  k8s
+        type "#{ENV['LOG_TYPE'] || 'k8s'}"
         message ${record["log"]}
       </record>
       remove_keys log
