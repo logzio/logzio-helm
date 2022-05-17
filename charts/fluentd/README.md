@@ -93,6 +93,7 @@ helm install -n monitoring \
 | `daemonset.excludeFluentdPath` | Path to fluentd logs file, to exclude them from the logs that Fluent tails. | `/var/log/containers/*fluentd*.log` |
 | `daemonset.extraExclude` | A comma-seperated list (no spaces), of more paths to exclude from the Fluentd source that tails containers logs. For example - /path/one.log,/path/two.log | `""` |
 | `daemonset.containersPath` | Path for containers logs. | `"/var/log/containers/*.log"` |
+| `daemonset.logType` | Set log type for the logs. | `"k8s"` |
 | `daemonset.extraEnv` | If needed, more env vars can be added with this field. | `[]` |
 | `daemonset.resources` | Allows you to set the resources for Fluentd Daemonset. |  See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
 | `daemonset.extraVolumeMounts` | If needed, more volume mounts can be added with this field. | `[]` |
@@ -217,9 +218,9 @@ kubectl get nodes -o json | jq ".items[]|{name:.metadata.name, taints:.spec.tain
 ```
 
 
-
 ## Change log
-
+ - **0.4.0**:
+    - Allow dynamically set the log type for the logs.
  - **0.3.0**:
     - Added new value fields: `daemonset.excludeFluentdPath`, `daemonset.extraExclude`, `daemonset.containersPath`, `configmap.customSources`, `configmap.customFilters`.
     - Added support for windows containers.
