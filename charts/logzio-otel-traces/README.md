@@ -95,7 +95,11 @@ kubectl get nodes -o json | jq ".items[]|{name:.metadata.name, taints:.spec.tain
 ```
 
 ## Change log
-
+* 0.0.3 - 
+  <ul>
+  <li>Updated otel version to 0.52.0</li>
+  <li>Remove `--metrics-addr` flag</li>
+  </ul>
 * 0.0.2 - 
   <ul>
   <li>Updated otel version to 0.42</li>
