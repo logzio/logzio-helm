@@ -59,7 +59,7 @@ helm install -n monitoring \
 | Parameter | Description | Default |
 |---|---|---|
 | `image` | The logzio-fluentd docker image. | `logzio/logzio-fluentd` |
-| `imageTag` | The logzio-fluentd docker image tag. | `1.0.1` |
+| `imageTag` | The logzio-fluentd docker image tag. | `1.1.1` |
 | `nameOverride` | Overrides the Chart name for resources. | `""` |
 | `fullnameOverride` | Overrides the full name of the resources. | `""` |
 | `apiVersions.daemonset` | Daemonset API version. | `apps/v1` |
@@ -219,6 +219,8 @@ kubectl get nodes -o json | jq ".items[]|{name:.metadata.name, taints:.spec.tain
 
 
 ## Change log
+ - **0.4.1**:
+   - Upgrade default image version to `logzio/logzio-fluentd:1.1.1`.
  - **0.4.0**:
     - Allow dynamically set the log type for the logs.
  - **0.3.0**:
