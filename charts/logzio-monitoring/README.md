@@ -96,7 +96,7 @@ For example, if in `logzio-telemetry`'s `values.yaml` file there's a parameter n
 
 ## Changelog
 
-- **0.0.2**:
+- **0.0.3**:
 	- Upgrade `logzio-fluentd` Chart to `0.4.1`.
 - **0.0.2**:
 	- Upgrade `logzio-fluentd` Chart to `0.4.0`.
