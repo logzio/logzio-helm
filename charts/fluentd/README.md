@@ -219,6 +219,8 @@ kubectl get nodes -o json | jq ".items[]|{name:.metadata.name, taints:.spec.tain
 
 
 ## Change log
+ - **0.4.1**:
+   - Upgrade default image version to `logzio/logzio-fluentd:1.1.1`.
  - **0.4.0**:
     - Allow dynamically set the log type for the logs.
  - **0.3.0**:
