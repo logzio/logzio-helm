@@ -324,6 +324,7 @@ filebeatWindowsDaemonset:
       readOnly: true
 
 secrets:
+  create: true
   logzioShippingToken: ""
   logzioRegion: " "
   clusterName: ""
