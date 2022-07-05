@@ -1,0 +1,25 @@
+apiVersion: opentelemetry.io/v1alpha1
+kind: Instrumentation
+metadata:
+  name: {{ template "opentelemetry-operator.name" ".Subcharts.opentelemetry-operator" }}-instrumentation
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{ template "opentelemetry-operator.labels" ".Subcharts.opentelemetry-operator" | nindent 4 }}
+    "app.kubernetes.io/managed-by": "opentelemetry-operator"
+  annotations:
+    "helm.sh/hook": "post-install,post-upgrade"
+    "helm.sh/hook-delete-policy": hook-failed, before-hook-creation
+    "helm.sh/hook-weight": "5"
+spec:
+  exporter:
+    endpoint: "http://otel-collector-collector:4317"
+  propagators:
+    - tracecontext
+    - baggage
+    - b3
+  resource:
+    addK8sUIDAttributes: false
+  sampler:
+    type: always_on
+
+

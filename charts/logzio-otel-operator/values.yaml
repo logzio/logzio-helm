@@ -1,0 +1,13 @@
+collector:
+  deploy: true
+  image:
+    repository: docker.io/otel/opentelemetry-collector-contrib
+    tag: 0.52.0
+    pullPolicy: Always
+  name: "otel-collector"
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+
+logzio:
+  region: us
+  account_token: ""
