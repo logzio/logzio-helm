@@ -8,7 +8,7 @@ At this point, it has [OpenTelemetry Collector](https://github.com/open-telemetr
 
 ## logzio-otel-operator
 
-Allows you to use auto instrumentation so you can easly send traces from your kubernetes cluster.
+Allows you to use open telemetry auto instrumentation so you can easly send traces from your kubernetes cluster.
 
 ## Prerequisites
 
@@ -77,10 +77,13 @@ Replace `<<logzio-region>>` with the name of your Logz.io region e.g `us`,`eu`.
 
 ```
 helm install  \
---set logzio.region=<<logzio-region>> \
---set logzio.account_token=<<traces-token>> \
-logzio-otel-operator logzio-helm/logzio-otel-operator
+--set collector.config.exporters.logzio.region=<<logzio-region>> \
+--set collector.config.exporters.logzio.account_token=<<traces-token>> \
+logzio-otel-operator logzio-helm/logzio-otel-operator --wait
 ```
+
+The ```--wait``` flag is mandatory for this chart to run properly.
+
 ## Uninstall Chart
 
 The following command uninstalls the chart whose release name is my-opentelemetry-operator.
@@ -118,16 +121,48 @@ After the chart is successfully deployed, we can inject auto instrumentation to 
 
 ## Injecting auto instrumentation
 
-Namespaces injection:
+Instrumentation can be injected using pod annotations:
 
-Pod injections:
+Java:
+```
+instrumentation.opentelemetry.io/inject-java: "true"
+```
+
+NodeJS:
+```
+instrumentation.opentelemetry.io/inject-nodejs: "true"
+```
+
+Python:
+```
+instrumentation.opentelemetry.io/inject-python: "true"
+```
+
+The possible values for the annotation:
+
+```"true"``` - inject and Instrumentation resource from the namespace.
+
+```"my-instrumentation"``` - name of Instrumentation CR instance in the current namespace.
+
+```"my-other-namespace/my-instrumentation"``` - name and namespace of Instrumentation CR instance in another namespace.
+
+```"false"``` - do not inject
+
+Namespaces injection:
+```
+kubectl annotate namespace my-namespace instrumentation.opentelemetry.io/inject-java="true"
+```
 
 Pod with multi container injection:
-
+```
+annotations:
+  instrumentation.opentelemetry.io/inject-java: "true"
+  instrumentation.opentelemetry.io/container-names: "myapp,myapp2"
+```
 
 ## Opentelemetry collector deployment modes
 
 The opentelemetry collector supports multiple modes of deployment.
 In this chart we use the 'deployment' method as the default.
 For additional information about the other methods (daemonset, sidecar, statefulset), please visit:
-
+[OpenTelemetry Operator Helm Chart](https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-operator)
