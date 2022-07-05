@@ -2,66 +2,20 @@
 apiVersion: opentelemetry.io/v1alpha1
 kind: OpenTelemetryCollector
 metadata:
-  name: otel-collector
+  name: {{ .Values.collector.name }}
   namespace: {{ .Release.Namespace }}
   annotations:
     "helm.sh/hook": "pre-install,pre-upgrade"
     "helm.sh/hook-delete-policy": hook-failed, before-hook-creation
-    "helm.sh/hook-weight": "1"
   labels:
-    {{- include "opentelemetry-operator.labels" (index .Subcharts "opentelemetry-operator") | nindent 4 }}
+    {{- include "logzio-otel-operator.labels" . | nindent 4 }}
     "app.kubernetes.io/managed-by": "opentelemetry-operator"
 spec:
+  nodeSelector: 
+  {{ .Values.collector.nodeSelector | toYaml | nindent 4}}
   image: "{{ .Values.collector.image.repository}}:{{ .Values.collector.image.tag}}"
-  imagePullPolicy: Always
-  upgradeStrategy: none
+  imagePullPolicy: {{ .Values.collector.image.pullPolicy }}
+  upgradeStrategy: {{ .Values.collector.upgradeStrategy }}
   mode: deployment # This configuration is omittable.
-  config: |
-    processors:
-      batch: {}
-      memory_limiter: 
-        check_interval: 1s
-        limit_percentage: 50
-        spike_limit_percentage: 30
-    exporters:
-      logzio:
-        region: {{ .Values.logzio.region }}
-        account_token: {{ .Values.logzio.account_token }}
-      logging:
-        loglevel: info
-    extensions:
-      pprof:
-        endpoint: :1777
-      zpages:
-        endpoint: :55679
-    receivers:
-      jaeger:
-        protocols:
-          thrift_compact:
-            endpoint: "0.0.0.0:6831"
-          thrift_binary:
-            endpoint: "0.0.0.0:6832"
-          grpc:
-            endpoint: "0.0.0.0:14250"
-          thrift_http:
-            endpoint: "0.0.0.0:14268"
-      otlp:
-        protocols:
-          grpc:
-            endpoint: "0.0.0.0:4317"
-          http:
-            endpoint: "0.0.0.0:4318"
-      zipkin:
-        endpoint: "0.0.0.0:9411"
-    service:
-      extensions:
-        - pprof
-        - zpages
-      pipelines:
-        traces:
-          receivers: [jaeger, zipkin, otlp]
-          processors: [batch, memory_limiter]
-          exporters: [logging, logzio]
-      telemetry:
-        logs:
-          level: "info"  
+  config: 
+    {{- include "logzio-otel-operator.collector-config" . | toYaml | nindent 4 -}}

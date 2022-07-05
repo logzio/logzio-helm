@@ -1,3 +1,6 @@
+# Chart name override
+nameOverride: ""
+
 collector:
   deploy: true
   image:
@@ -5,9 +8,56 @@ collector:
     tag: 0.52.0
     pullPolicy: Always
   name: "otel-collector"
-  annotations:
-    "helm.sh/hook": pre-install,pre-upgrade
-
-logzio:
-  region: us
-  account_token: ""
+  upgradeStrategy: none
+  nodeSelector:
+    kubernetes.io/os: linux
+  
+  config: 
+    processors:
+      batch: {}
+      memory_limiter: 
+        check_interval: 1s
+        limit_percentage: 50
+        spike_limit_percentage: 30
+    exporters:
+      logzio:
+        region: us
+        account_token: ""
+      logging:
+        loglevel: info
+    extensions:
+      pprof:
+        endpoint: :1777
+      zpages:
+        endpoint: :55679
+    receivers:
+      jaeger:
+        protocols:
+          thrift_compact:
+            endpoint: "0.0.0.0:6831"
+          thrift_binary:
+            endpoint: "0.0.0.0:6832"
+          grpc:
+            endpoint: "0.0.0.0:14250"
+          thrift_http:
+            endpoint: "0.0.0.0:14268"
+      otlp:
+        protocols:
+          grpc:
+            endpoint: "0.0.0.0:4317"
+          http:
+            endpoint: "0.0.0.0:4318"
+      zipkin:
+        endpoint: "0.0.0.0:9411"
+    service:
+      extensions:
+        - pprof
+        - zpages
+      pipelines:
+        traces:
+          receivers: [jaeger, zipkin, otlp]
+          processors: [batch, memory_limiter]
+          exporters: [logging, logzio]
+      telemetry:
+        logs:
+          level: "info"
