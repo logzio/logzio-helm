@@ -43,6 +43,28 @@ Build config file for standalone OpenTelemetry Collector
 {{- $values := deepCopy .Values.standaloneCollector | mustMergeOverwrite (deepCopy .Values)  }}
 {{- $data := dict "Values" $values | mustMergeOverwrite (deepCopy .) }}
 {{- $config := include "opentelemetry-collector.baseConfig" $data | fromYaml }}
+
+{{/*
+Add windows
+*/}}
+
+
+
+{{/*
+Use metrics filter configuration
+*/}}
+{{- if or .Values.enableMetricsFilter.eks .Values.enableMetricsFilter.aks .Values.enableMetricsFilter.gke}}
+{{- range $job := $config.receivers.prometheus.config.scrape_configs}}
+{{- if $.Values.enableMetricsFilter.eks}}
+{{- $_ := set $job ("metric_relabel_configs" | toYaml)  ($.Files.Get "metrics_filter/eks_filter.toml" | fromYaml | list ) }}
+{{- else if $.Values.enableMetricsFilter.aks}}
+{{- $_ := set $job ("metric_relabel_configs" | toYaml)  ($.Files.Get "metrics_filter/aks_filter.toml" | fromYaml | list ) }}
+{{- else if $.Values.enableMetricsFilter.gke}}
+{{- $_ := set $job ("metric_relabel_configs" | toYaml)  ($.Files.Get "metrics_filter/gke_filter.toml" | fromYaml | list ) }}
+{{- end }}
+{{- end }}
+{{- end }}
+
 {{- .Values.standaloneCollector.configOverride | mustMergeOverwrite $config | toYaml }}
 {{- end }}
 

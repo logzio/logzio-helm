@@ -128,7 +128,7 @@ config:
           kubernetes_sd_configs:
           - role: pod
           relabel_configs:
-            - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            - source_labels: [__meta_kubernetes_pod_annotation_prometheus_windows_io_scrape]
               action: keep
               regex: true|"true"
         - job_name: kubernetes-service-endpoints
@@ -319,3 +319,9 @@ prometheus-node-exporter:
     kubernetes.io/os: linux
   rbac:
     pspEnabled: false
+
+
+enableMetricsFilter:
+  gke: false
+  eks: false
+  aks: false

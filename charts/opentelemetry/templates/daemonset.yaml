@@ -47,7 +47,7 @@ spec:
       labels:
         {{- include "opentelemetry-collector.selectorLabels" . | nindent 8 }}
       annotations:
-        prometheus_io_scrape: 'true'
+        prometheus_windows_io_scrape: 'true'
         prometheus_io_port: '9100'
     spec:
       hostNetwork: false
