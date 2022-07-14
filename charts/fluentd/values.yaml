@@ -62,6 +62,7 @@ daemonset:
   extraVolumes: []
   init:
     extraVolumeMounts: []
+  priorityClassName: ""
 
 windowsDaemonset:
   tolerations:
@@ -98,6 +99,7 @@ windowsDaemonset:
   extraVolumeMounts: []
   terminationGracePeriodSeconds: 30
   extraVolumes: []
+  priorityClassName: ""
 
 clusterRole:
   rules:
