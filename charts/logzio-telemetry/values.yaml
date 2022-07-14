@@ -586,6 +586,14 @@ kube-state-metrics:
 prometheus-node-exporter:
   nodeSelector:
     kubernetes.io/os: linux
+  # Prevent node exporter deamonset deploymment on fargate nodes
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: eks.amazonaws.com/compute-type
+                operator: DoesNotExist
   rbac:
     pspEnabled: false
 

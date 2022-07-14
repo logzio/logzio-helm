@@ -186,4 +186,6 @@ helm uninstall logzio-k8s-telemetry
 
 
 ## Change log
+* 0.0.2
+  - Add default `nodeAffinity` to prevent node exporter deamonset deploymment on fargate nodes
 * 0.0.1 - Initial release

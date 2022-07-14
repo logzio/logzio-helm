@@ -69,10 +69,12 @@ helm install -n monitoring \
 | `apiVersions.configmap` | Configmap API version. | `v1` |
 | `apiVersions.secret` | Secret API version. | `v1` |
 | `namespace` | Chart's namespace. | `monitoring` |
+| `fargateLogRouter.enabled` | Boolen to decide if to configure fargate log router | `false` |
 | `isRBAC` | Specifies whether the Chart should be compatible to a RBAC cluster. If you're running on a non-RBAC cluster, set to `false`.  | `true` |
 | `serviceAccount.name` | Name of the service account. | `""` |
 | `daemonset.tolerations` | Set [tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) for all DaemonSet pods. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
 | `daemonset.nodeSelector` | Set [nodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) for all DaemonSet pods. | `{}` |
+| `daemonset.affinity` | Set [affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity) for all DaemonSet pods. |  |
 | `daemonset.fluentdSystemdConf` | Controls whether Fluentd system messages will be enabled. | `disable` |
 | `daemonset.fluentdPrometheusConf` | Controls the launch of a prometheus plugin that monitors Fluentd. | `disable` |
 | `daemonset.includeNamespace` | Use if you wish to send logs from specific k8s namespaces, space delimited. Should be in the following format: `kubernetes.var.log.containers.**_<<NAMESPACE-TO-INCLUDE>>_** kubernetes.var.log.containers.**_<<ANOTHER-NAMESPACE>>_**`. | `""` |
@@ -217,8 +219,23 @@ To determine if a node uses taints as well as to display the taint keys, run:
 kubectl get nodes -o json | jq ".items[]|{name:.metadata.name, taints:.spec.taints}"
 ```
 
+## Sending logs from eks on fargate
+
+If you want to ship logs from pods that are running on fargate set the `fargateLogRouter.enabled` value to true, the follwing will deploy a dedicated `aws-observability` namespace and a `configmap` for fargate log router. More information about eks fargate logging can be found [here](https://docs.aws.amazon.com/eks/latest/userguide/fargate-logging.html)
+```
+helm install \
+--set fargateLogRouter.enabled=true \
+--set secrets.logzioShippingToken='<<LOG-SHIPPING-TOKEN>>' \
+--set secrets.logzioListener='<<LISTENER-HOST>>' \
+logzio-fluentd logzio-helm/logzio-fluentd
+```
+
+
 
 ## Change log
+ - **0.4.2**:
+   - Add support for `daemonset.affinity` value.
+   - Add support for fargate logging.
  - **0.4.1**:
    - Upgrade default image version to `logzio/logzio-fluentd:1.1.1`.
  - **0.4.0**:

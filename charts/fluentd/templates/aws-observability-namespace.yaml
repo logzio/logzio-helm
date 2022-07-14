@@ -1,0 +1,8 @@
+{{- if .Values.fargateLogRouter.enabled }}
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: aws-observability
+  labels:
+    aws-observability: enabled
+{{- end }}
