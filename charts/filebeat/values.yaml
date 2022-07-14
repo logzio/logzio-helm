@@ -9,9 +9,7 @@ winlogbeatImageTag: 0.0.1
 filebeatWindowsImage: docker.io/logzio/logzio-filebeat-win
 filebeatWindowsImageTag: 0.0.1
 
-extraEnvFrom:
-- secretRef:
-     name: test
+extraEnvFrom: []
 
 apiVersions:
   configMap: v1
