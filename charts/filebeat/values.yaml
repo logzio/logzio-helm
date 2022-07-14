@@ -9,6 +9,10 @@ winlogbeatImageTag: 0.0.1
 filebeatWindowsImage: docker.io/logzio/logzio-filebeat-win
 filebeatWindowsImageTag: 0.0.1
 
+extraEnvFrom:
+- secretRef:
+     name: test
+
 apiVersions:
   configMap: v1
   daemonset: apps/v1
@@ -324,7 +328,8 @@ filebeatWindowsDaemonset:
       readOnly: true
 
 secrets:
-  create: true
+  create: false
   logzioShippingToken: ""
   logzioRegion: " "
   clusterName: ""
+  name: logzio-logs-secret

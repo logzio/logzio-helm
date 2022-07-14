@@ -32,21 +32,6 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
-        - name: LOGZIO_LOGS_SHIPPING_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: logzio-logs-secret
-              key: logzio-logs-shipping-token
-        - name: LOGZIO_LOGS_LISTENER_HOST
-          valueFrom:
-            secretKeyRef:
-              name: logzio-logs-secret
-              key: logzio-logs-listener
-        - name: CLUSTER_NAME
-          valueFrom:
-            secretKeyRef:
-              name: logzio-logs-secret
-              key: cluster-name
         - name: IGNORE_OLDER
           value: {{ .Values.daemonset.ignoreOlder }}
         - name: LOGZIO_CODEC
@@ -55,6 +40,12 @@ spec:
           value: {{ .Values.daemonset.logzioType }}
         - name: FIELDS_UNDER_ROOT
           value: {{ quote .Values.daemonset.fieldsUnderRoot }}
+        envFrom:
+        - secretRef:
+             name: {{ .Values.secrets.name }}
+{{- if .Values.extraEnvFrom }}
+{{- toYaml .Values.extraEnvFrom | nindent 8 }}
+{{- end }}
         securityContext: {{ toYaml ( .Values.daemonset.securityContext ) | nindent 10 }}
         resources: {{ toYaml ( .Values.daemonset.resources ) | nindent 10 }}
         volumeMounts:
@@ -124,21 +115,6 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
-        - name: LOGZIO_LOGS_SHIPPING_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: logzio-logs-secret
-              key: logzio-logs-shipping-token
-        - name: LOGZIO_LOGS_LISTENER_HOST
-          valueFrom:
-            secretKeyRef:
-              name: logzio-logs-secret
-              key: logzio-logs-listener
-        - name: CLUSTER_NAME
-          valueFrom:
-            secretKeyRef:
-              name: logzio-logs-secret
-              key: cluster-name
         - name: IGNORE_OLDER
           value: {{ .Values.winlogbeatDaemonset.ignoreOlder }}
         - name: LOGZIO_CODEC
@@ -147,6 +123,12 @@ spec:
           value: {{ .Values.winlogbeatDaemonset.logzioType }}
         - name: FIELDS_UNDER_ROOT
           value: {{ quote .Values.winlogbeatDaemonset.fieldsUnderRoot }}
+        envFrom:
+        - secretRef:
+             name: {{ .Values.secrets.name }}
+{{- if .Values.extraEnvFrom }}
+{{- toYaml .Values.extraEnvFrom | nindent 8 }}
+{{- end }}
         resources: {{ toYaml ( .Values.winlogbeatDaemonset.resources ) | nindent 10 }}
         volumeMounts:
         - name: data
@@ -209,21 +191,6 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
-        - name: LOGZIO_LOGS_SHIPPING_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: logzio-logs-secret
-              key: logzio-logs-shipping-token
-        - name: LOGZIO_LOGS_LISTENER_HOST
-          valueFrom:
-            secretKeyRef:
-              name: logzio-logs-secret
-              key: logzio-logs-listener
-        - name: CLUSTER_NAME
-          valueFrom:
-            secretKeyRef:
-              name: logzio-logs-secret
-              key: cluster-name
         - name: IGNORE_OLDER
           value: {{ .Values.filebeatWindowsDaemonset.ignoreOlder }}
         - name: LOGZIO_CODEC
@@ -232,6 +199,12 @@ spec:
           value: {{ .Values.filebeatWindowsDaemonset.logzioType }}
         - name: FIELDS_UNDER_ROOT
           value: {{ quote .Values.filebeatWindowsDaemonset.fieldsUnderRoot }}
+        envFrom:
+        - secretRef:
+             name: {{ .Values.secrets.name }}
+{{- if .Values.extraEnvFrom }}
+{{- toYaml .Values.extraEnvFrom | nindent 8 }}
+{{- end }}
         resources: {{ toYaml ( .Values.filebeatWindowsDaemonset.resources ) | nindent 10 }}
         volumeMounts:
         - name: data
