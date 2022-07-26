@@ -233,7 +233,7 @@ logzio-fluentd logzio-helm/logzio-fluentd
 
 
 ## Change log
- - **0.4.2**:
+ - **0.5.0**:
    - Add support for `daemonset.affinity` value.
    - Add support for fargate logging.
  - **0.4.1**:
