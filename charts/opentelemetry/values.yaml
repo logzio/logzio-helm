@@ -325,3 +325,5 @@ enableMetricsFilter:
   gke: false
   eks: false
   aks: false
+
+disableKubeDnsScraping: false
