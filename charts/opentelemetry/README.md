@@ -189,7 +189,7 @@ kubectl get nodes -o json | jq ".items[]|{name:.metadata.name, taints:.spec.tain
 ```
 
 ## Change log
-* 0.2.4 -
+* 0.2.5 -
   <ul>
   <li> Added basic metrics filtering for gke,aks and eks clusters (via "enableMetricsFilter" parameter).
   </li>
@@ -197,6 +197,9 @@ kubectl get nodes -o json | jq ".items[]|{name:.metadata.name, taints:.spec.tain
   </li>
     <li> Added an option to disable kube-dns service scraping on eks (via "disableKubeDnsScraping" parameter), to prevent contiunous warning logs.
   </li>
+  <li>Node exporter chart version bump to 3.3.0.</li>
+  <li>Kube state metrics chart version bump to 4.13.0.</li>
+  <li>Prometheus push gateway chart version bump to 1.18.2.</li>
   </ul>
 
 * 0.2.4 -
