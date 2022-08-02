@@ -130,6 +130,7 @@ Give your logs some time to get from your system to ours, and then open [Logz.io
 | `winglogbeatImageTag` | The winlogbeat docker image tag. | `0.0.1` |
 | `nameOverride` | Overrides the Chart name for resources. | `""` |
 | `fullnameOverride` | Overrides the full name of the resources. | `filebeat` |
+| `namespaceOverride` | Overrides the namespace of the resources. | `.Release.Namespace` |
 | `apiVersions.configMap` | ConfigMap API version. | `v1` |
 | `apiVersions.daemonset` | Daemonset API version. | `apps/v1` |
 | `apiVersions.clusterRoleBinding` | ClusterRoleBinding API version. | `rbac.authorization.k8s.io/v1` |
@@ -229,6 +230,8 @@ kubectl get nodes -o json | jq ".items[]|{name:.metadata.name, taints:.spec.tain
 
 
 ## Change log
+ - **0.0.6**:
+    - Added namespace override support, with new parameter `namespaceOverride`.
  - **0.0.5**:
     - Allow ability to toggle secrets creation, with new parameter `secrets.create`.
  - **0.0.4**:

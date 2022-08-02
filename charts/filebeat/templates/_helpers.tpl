@@ -38,3 +38,10 @@ Convert logzio region code to listener host
 {{- printf "listener-%s.logz.io" .Values.secrets.logzioRegion -}}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Create the namespace name
+*/}}
+{{- define "filebeat.namespace" -}}
+{{ .Values.namespaceOverride | default .Release.Namespace }}
+{{- end -}}
