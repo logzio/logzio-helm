@@ -192,8 +192,6 @@ tracesConfig:
       logs:
         level: "info"  
 
-
-
 metricsConfig:
   extensions:
     health_check: {}
@@ -289,10 +287,7 @@ metricsConfig:
         receivers:
           - prometheus
 
-
-
 config:
-
   extensions:
     health_check: {}
     pprof:
@@ -305,6 +300,7 @@ config:
     memory_limiter: null
   receivers:
     prometheus:
+      disable_start_time: true
       config:
         global:
           scrape_interval: 15s
@@ -389,7 +385,7 @@ config:
         http:
           endpoint: "0.0.0.0:4318"
     zipkin:
-      endpoint: "0.0.0.0:9411"        
+      endpoint: "0.0.0.0:9411"
   service:
     extensions:
       - pprof
@@ -418,10 +414,10 @@ config:
 
 image:
   # If you want to use the contrib image `otel/opentelemetry-collector-contrib`, you also need to change `command.name` value to `otelcontribcol`.
-  repository: otel/opentelemetry-collector-contrib
+  repository: logzio/otel-collector-distro
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.42.0"
+  tag: "v0.56.0"
 nginxWindowsImage:
   # Reverse proxy image to enable metrics scraping from windows nodes
   repository: logzio/logzio-windows-node-reverse-proxy
@@ -438,7 +434,7 @@ imagePullSecrets: []
 
 # OpenTelemetry Collector executable
 command:
-  name: otelcol-contrib
+  name: otelcol-logzio
   extraArgs: []
 
 serviceAccount:
