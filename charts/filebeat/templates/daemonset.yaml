@@ -2,7 +2,7 @@ apiVersion: {{ .Values.apiVersions.daemonset }}
 kind: DaemonSet
 metadata:
   name: filebeat
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ template "filebeat.namespace" . }}
   labels:
     k8s-app: filebeat
 spec:
@@ -98,7 +98,7 @@ apiVersion: {{ .Values.apiVersions.daemonset }}
 kind: DaemonSet
 metadata:
   name: winlogbeat
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ template "filebeat.namespace" . }}
   labels:
     k8s-app: filebeat
 spec:
@@ -183,7 +183,7 @@ apiVersion: {{ .Values.apiVersions.daemonset }}
 kind: DaemonSet
 metadata:
   name: filebeat-win
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ template "filebeat.namespace" . }}
   labels:
     k8s-app: filebeat
 spec:
