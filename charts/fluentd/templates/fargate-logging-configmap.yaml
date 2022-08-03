@@ -1,0 +1,29 @@
+{{ if .Values.fargateLogRouter.enabled }}
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: aws-logging
+  namespace: aws-observability
+data:
+  filters.conf: |
+    [FILTER]
+      Name modify
+      Match *
+      Add token {{ .Values.secrets.logzioShippingToken }}
+      Add type {{ .Values.daemonset.logType }}
+      Rename log message
+    [FILTER]
+      Name kubernetes
+      Match kube.*
+      Merge_Log On
+      Keep_Log Off
+      K8S-Logging.Parser On
+      K8S-Logging.Exclude On
+  output.conf: |
+    [OUTPUT]
+      Name  es
+      Match *
+      Host  {{ .Values.secrets.logzioListener }}
+      Port  5050
+      Index logzioCustomerIndex
+{{ end }}
