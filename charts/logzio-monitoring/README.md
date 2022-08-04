@@ -94,8 +94,31 @@ For example, if in `logzio-telemetry`'s `values.yaml` file there's a parameter n
 --set logzio-k8s-telemetry.someField="my new value"
 ```
 
-## Changelog
+### Sending telemetry data from eks on fargate
 
+If you want to ship logs from pods that are running on fargate set the `fargateLogRouter.enabled` value to true, the follwing will deploy a dedicated `aws-observability` namespace and a `configmap` for fargate log router. More information about eks fargate logging can be found [here](https://docs.aws.amazon.com/eks/latest/userguide/fargate-logging.html)
+```sh
+helm install -n monitoring \
+--set logs.enabled=true \
+--set logzio-fluentd.fargateLogRouter.enabled=true \
+--set logzio-fluentd.secrets.logzioShippingToken="<<LOG-SHIPPING-TOKEN>>" \
+--set logzio-fluentd.secrets.logzioListener="<<LISTENER-HOST>>" \
+--set metricsOrTraces.enabled=true \
+--set logzio-k8s-telemetry.metrics.enabled=true \
+--set logzio-k8s-telemetry.secrets.MetricsToken="<<PROMETHEUS-METRICS-SHIPPING-TOKEN>>" \
+--set logzio-k8s-telemetry.secrets.ListenerHost="https://<<LISTENER-HOST>>:8053" \
+--set logzio-k8s-telemetry.secrets.p8s_logzio_name="<<ENV-TAG>>" \
+--set logzio-k8s-telemetry.traces.enabled=true \
+--set logzio-k8s-telemetry.secrets.TracesToken="<<TRACES-SHIPPING-TOKEN>>" \
+--set logzio-k8s-telemetry.secrets.LogzioRegion="<<LOGZIO-REGION>>" \
+logzio-monitoring logzio-helm/logzio-monitoring
+```
+
+## Changelog
+- **0.1.0**:
+	- Add support for fargate logging
+	- Upgrade `logzio-fluentd` Chart to `0.5.0`.
+	- Upgrade `logzio-telemetry` Chart to `0.0.2`.
 - **0.0.3**:
 	- Upgrade `logzio-fluentd` Chart to `0.4.1`.
 - **0.0.2**:

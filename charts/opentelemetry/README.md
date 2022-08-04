@@ -131,6 +131,34 @@ The default configuration uses the Prometheus receiver with the following scrape
 
 To customize your configuration, edit the `config` section in the `values.yaml` file.
 
+#### Using Out of the box metrics filters for Logzio dashboards
+
+In order to prevent unnecessary metrics being sent to Logzio and reduce usage cost,
+you can use predefined metrics filters. These filters will send only the metrics that are being used in Logzio's Kubernetes dashboard: Cluster Componenets, Cluster Summary, Pods and Nodes.
+
+To enable metrics filtering, set the following flag when deploying the chart, replace: ```<<cloud-service>>``` with `eks`, `gke` or `aks`.
+```
+--set enableMetricsFilter.<<cloud-service>>=true
+```
+
+
+#### Disabling kube-dns scraping for EKS clusters
+Currently on EKS, kube-dns metrics cannot be scraped from the kube-dns system service - the port used for scraping is already in use, resulting in a warning in the collector pod logs:
+```
+	Failed to scrape Prometheus endpoint	{"kind": "receiver", "name": "prometheus", "pipeline": "metrics", "scrape_timestamp": 1659031329447, "target_labels": "map[__name__:up eks_amazonaws_com_component:kube-dns instance:: job:kubernetes-service-endpoints k8s_app:kube-dns kubernetes_io_cluster_service:true kubernetes_io_name:CoreDNS kubernetes_node: namespace:kube-system pod:coredns service:kube-dns]"}
+```
+
+ A workaround for this issue is creating a seperate kube-dns service and adding the necessary annotations for it to be scraped.
+If you have no need for the kube-dns metrics (i.e using one of logzio metrics filters), the error can by enabling the flag:
+```
+--set disableKubeDnsScraping=true
+```
+which will cause the prometheus receiver to no scrape the kube-dns service.
+
+More informtion can be found in github issue:
+https://github.com/aws/containers-roadmap/issues/965
+
+
 
 #### Uninstalling the Chart
 
@@ -161,6 +189,29 @@ kubectl get nodes -o json | jq ".items[]|{name:.metadata.name, taints:.spec.tain
 ```
 
 ## Change log
+* 0.2.5 -
+  <ul>
+  <li> Added basic metrics filtering for gke,aks and eks clusters (via "enableMetricsFilter" parameter).
+  </li>
+    <li> Fixed an issue where windows-metrics scraping job trying to scrape linux nodes on gke.
+  </li>
+    <li> Added an option to disable kube-dns service scraping on eks (via "disableKubeDnsScraping" parameter), to prevent contiunous warning logs.
+  </li>
+  <li>Node exporter chart version bump to 3.3.0.</li>
+  <li>Kube state metrics chart version bump to 4.13.0.</li>
+  <li>Prometheus push gateway chart version bump to 1.18.2.</li>
+  </ul>
+
+* 0.2.4 -
+  <ul>
+  <li>
+  Upgraded otel-col-contrib image to 0.55.0.
+  </li>
+  </ul>
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
 * 0.2.3 - 
   <ul>
   <li>Fixed an issue where the windows reverse proxy daemonset is listed as a resource when there are no windows nodes. </li>
@@ -171,9 +222,6 @@ kubectl get nodes -o json | jq ".items[]|{name:.metadata.name, taints:.spec.tain
   </ul>
 
 * 0.2.2 - Windows exporter installer jobs will now run only when username and password are provided.
-
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
 
 * 0.2.1 - Added Windows exporter installer as a scheduled job.
 

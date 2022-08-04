@@ -24,12 +24,23 @@ isRBAC: true
 serviceAccount:
   name: ""
 
+fargateLogRouter:
+  ebabled: false
+
 daemonset:
   tolerations:
   - key: node-role.kubernetes.io/master
     effect: NoSchedule
   nodeSelector:
     os: linux
+  # Prevent node exporter deamonset deploymment on fargate nodes
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: eks.amazonaws.com/compute-type
+                operator: DoesNotExist
   fluentdSystemdConf: disable
   fluentdPrometheusConf: disable
   includeNamespace: ""

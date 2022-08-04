@@ -128,7 +128,7 @@ config:
           kubernetes_sd_configs:
           - role: pod
           relabel_configs:
-            - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            - source_labels: [__meta_kubernetes_pod_annotation_prometheus_windows_io_scrape]
               action: keep
               regex: true|"true"
         - job_name: kubernetes-service-endpoints
@@ -203,7 +203,7 @@ image:
   repository: otel/opentelemetry-collector
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.41.0"
+  tag: "0.55.0"
 nginxWindowsImage:
   # Reverse proxy image to enable metrics scraping from windows nodes
   repository: logzio/logzio-windows-node-reverse-proxy
@@ -319,3 +319,11 @@ prometheus-node-exporter:
     kubernetes.io/os: linux
   rbac:
     pspEnabled: false
+
+
+enableMetricsFilter:
+  gke: false
+  eks: false
+  aks: false
+
+disableKubeDnsScraping: false
