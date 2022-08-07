@@ -237,7 +237,7 @@ logzio-fluentd logzio-helm/logzio-fluentd
 ## Change log
 
  - **0.6.1**:
-   - Fix bug for `extraConfig` (#114).
+   - Fix bug for `extraConfig` ([#114](https://github.com/logzio/logzio-helm/issues/114)).
  - **0.6.0**:
    - Added `daemonset.priorityClassName` and `windowsDaemonset.priorityClassName`.
 
