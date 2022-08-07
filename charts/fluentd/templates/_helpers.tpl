@@ -47,10 +47,9 @@ Builds the fluent.conf with all the includes
 {{- printf .Values.configMapIncludes }}
 {{- if .Values.configmap.extraConfig -}}
 {{- range $key, $value := fromYaml .Values.configmap.extraConfig }}
-{{- printf "@include %s" $key }}
+{{- printf "@include %s\n" $key }}
 {{- end -}}
 {{- end -}}
-{{- printf "\n" }}
 {{- printf "%s" .Values.configmap.fluent }}
 {{- end -}}
 
