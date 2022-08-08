@@ -115,6 +115,8 @@ logzio-monitoring logzio-helm/logzio-monitoring
 ```
 
 ## Changelog
+- **0.1.1**:
+	- Upgrade `logzio-telemetry` Chart to `0.0.3`.
 - **0.1.0**:
 	- Add support for fargate logging
 	- Upgrade `logzio-fluentd` Chart to `0.5.0`.

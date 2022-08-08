@@ -186,6 +186,12 @@ helm uninstall logzio-k8s-telemetry
 
 
 ## Change log
+* 0.0.3
+  - Dep: kube-state-metrics -> `4.13.0`
+  - Dep: prometheus-node-exporter -> `3.3.0`
+  - Dep: prometheus-pushgateway -> `1.18.2`
+  - Remove batch processor from metrics pipeline
+  - Modify resource limitations
 * 0.0.2
   - Add default `nodeAffinity` to prevent node exporter deamonset deploymment on fargate nodes
 * 0.0.1 - Initial release
