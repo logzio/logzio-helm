@@ -13,19 +13,23 @@ It is also dependent on the [kube-state-metrics](https://github.com/kubernetes/k
 To disable the dependency during installation, set `kubeStateMetrics.enabled` and `nodeExporter` to `false`.
 
 #### Before installing the chart
+
 Check if you have any taints on your nodes:
 
 ```
 kubectl get nodes -o json | jq '"\(.items[].metadata.name) \(.items[].spec.taints)"'
 ```
-if you do, please add them as tolerations in values.yaml tolerations.
+
+if you do, please add them as tolerations in values.yaml.
 
 
 #### Standard configuration
 
 
 ##### Deploy the Helm chart
-First add `logzio-helm` repo
+
+Add the `logzio-helm` repo.
+
 ```shell
 helm repo add logzio-helm https://logzio.github.io/logzio-helm
 helm repo update
@@ -35,7 +39,7 @@ To deploy the Helm chart, enter the relevant parameters for the placeholders and
 
 ###### Configure the parameters in the code
 
-Replace the Logz-io `<<PROMETHEUS-METRICS-SHIPPING-TOKEN>>` with the [token](https://app.logz.io/#/dashboard/settings/manage-tokens/data-shipping) of the metrics account to which you want to send your data.
+Replace `<<PROMETHEUS-METRICS-SHIPPING-TOKEN>>` with the [token](https://app.logz.io/#/dashboard/settings/manage-tokens/data-shipping) of the metrics account to which you want to send your data.
 
 
 Replace `<<LISTENER-HOST>>` with your region’s listener host (for example, `https://listener.logz.io:8053`). For more information on finding your account’s region, see [Account region](https://docs.logz.io/user-guide/accounts/account-region.html).
@@ -54,9 +58,9 @@ logzio-otel-k8s-metrics logzio-helm/logzio-otel-k8s-metrics
 
 #### For clusters with Windows Nodes
 
-In order to extract and scrape metrics from Windows Nodes, a Windows Exporter service must first be installed on the node host itself. We will do this by authenticating with username and password using SSH connection to the node through a job.
+To extract and scrape metrics from Windows Nodes, a Windows Exporter service must first be installed on the node host itself. You need to do this by authenticating with username and password using SSH connection to the node through a job.
 
-By default, the Windows installer job will run on deployment and every 10 minutes, and will keep the most recent failed and successful pods.
+By default, the Windows installer job will run on deployment every 10 minutes. It will keep the most recent failed and successful pods.
 You can change these setting in values.yaml:
 
 ```
@@ -67,9 +71,9 @@ windowsExporterInstallerJob:
   failedJobsHistoryLimit: 1
 ```
 
-The default username for windows Node pools is: azureuser. (Username and password are shared across all windows nodepools)
+The default username for Windows Node pools is: azureuser (username and password are shared across all Windows nodepools).
 
-You can change your Windows node pool password in AKS cluster with the following command (will only affect Windows node pools):
+You can change your Windows node pool password in AKS cluster with the following command (it will only affect Windows node pools):
 
 ```
     az aks update \
@@ -133,29 +137,34 @@ To customize your configuration, edit the `config` section in the `values.yaml` 
 
 #### Using Out of the box metrics filters for Logzio dashboards
 
-In order to prevent unnecessary metrics being sent to Logzio and reduce usage cost,
-you can use predefined metrics filters. These filters will send only the metrics that are being used in Logzio's Kubernetes dashboard: Cluster Componenets, Cluster Summary, Pods and Nodes.
+You can use predefined metrics filters to prevent unnecessary metrics being sent to Logz.io and reduce usage cost.
+These filters will only send the metrics that are being used in Logz.io's Kubernetes dashboard: Cluster Componenets, Cluster Summary, Pods and Nodes.
 
-To enable metrics filtering, set the following flag when deploying the chart, replace: ```<<cloud-service>>``` with `eks`, `gke` or `aks`.
+To enable metrics filtering, set the following flag when deploying the chart, replace: `<<cloud-service>>` with `eks`, `gke` or `aks`.
+
 ```
 --set enableMetricsFilter.<<cloud-service>>=true
 ```
 
 
 #### Disabling kube-dns scraping for EKS clusters
-Currently on EKS, kube-dns metrics cannot be scraped from the kube-dns system service - the port used for scraping is already in use, resulting in a warning in the collector pod logs:
+
+In the current EKS setup, kube-dns metrics cannot be scraped from the kube-dns system service as the port used for scraping is already in use. This results in the following warning in the collector pod logs:
+
 ```
 	Failed to scrape Prometheus endpoint	{"kind": "receiver", "name": "prometheus", "pipeline": "metrics", "scrape_timestamp": 1659031329447, "target_labels": "map[__name__:up eks_amazonaws_com_component:kube-dns instance:: job:kubernetes-service-endpoints k8s_app:kube-dns kubernetes_io_cluster_service:true kubernetes_io_name:CoreDNS kubernetes_node: namespace:kube-system pod:coredns service:kube-dns]"}
 ```
 
- A workaround for this issue is creating a seperate kube-dns service and adding the necessary annotations for it to be scraped.
-If you have no need for the kube-dns metrics (i.e using one of logzio metrics filters), the error can by enabling the flag:
+A workaround for this issue is to create a seperate kube-dns service and add the necessary annotations to enable scraping.
+If you do not need the kube-dns metrics (i.e using one of Logz.io metrics filters), enable the following flag:
+
 ```
 --set disableKubeDnsScraping=true
 ```
-which will cause the prometheus receiver to no scrape the kube-dns service.
 
-More informtion can be found in github issue:
+This will disable scraping for the kube-dns service in the prometheus receiver.
+
+More informtion can be found in the following GitHub issue:
 https://github.com/aws/containers-roadmap/issues/965
 
 
