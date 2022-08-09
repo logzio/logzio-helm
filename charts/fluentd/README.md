@@ -235,8 +235,15 @@ logzio-fluentd logzio-helm/logzio-fluentd
 
 
 ## Change log
- - **0.6.0**
+
+ - **0.6.1**:
+   - Fix bug for `extraConfig` ([#114](https://github.com/logzio/logzio-helm/issues/114)).
+ - **0.6.0**:
    - Added `daemonset.priorityClassName` and `windowsDaemonset.priorityClassName`.
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
  - **0.5.0**:
    - Add support for `daemonset.affinity` value.
    - Add support for fargate logging.
@@ -262,3 +269,5 @@ logzio-fluentd logzio-helm/logzio-fluentd
     - Fix templates name - allow dyncmically change it.
  - **0.0.1**:
     - Initial release.
+
+</details>
