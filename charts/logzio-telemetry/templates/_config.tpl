@@ -52,14 +52,29 @@ Build config file for standalone OpenTelemetry Collector
 {{- else if .Values.traces.enabled -}}
 {{- $configData = $tracesConfig }}
 {{- end -}}
+
+{{/*
+Use metrics filter configuration:
+Filter aks,eks and gke with basic logzio dashboard filters
+Drop kube-dns metrics by skipping kube-dns service scraping. (Relevant for eks which
+is not supporting )
+*/}}
+{{- if and .Values.metrics.enabled (or .Values.enableMetricsFilter.eks .Values.enableMetricsFilter.aks .Values.enableMetricsFilter.gke .Values.disableKubeDnsScraping)}}
+{{- range $job := $configData.receivers.prometheus.config.scrape_configs}}
+{{- if and $.Values.disableKubeDnsScraping (eq $job.job_name "kubernetes-service-endpoints")}}
+{{- $_ := set $job ("relabel_configs" | toYaml)  ( mustAppend $job.relabel_configs ($.Files.Get "metrics_filter/eks_kubedns_drop_filter.toml" | fromYaml) ) }}
+{{- end }}
+{{- if $.Values.enableMetricsFilter.eks}}
+{{- $_ := set $job ("metric_relabel_configs" | toYaml)  ($.Files.Get "metrics_filter/eks_filter.toml" | fromYaml | list ) }}
+{{- else if $.Values.enableMetricsFilter.aks}}
+{{- $_ := set $job ("metric_relabel_configs" | toYaml)  ($.Files.Get "metrics_filter/aks_filter.toml" | fromYaml | list ) }}
+{{- else if $.Values.enableMetricsFilter.gke}}
+{{- $_ := set $job ("metric_relabel_configs" | toYaml)  ($.Files.Get "metrics_filter/gke_filter.toml" | fromYaml | list ) }}
+{{- end }}
+{{- end }}
+{{- end }}
+
 {{- .Values.standaloneCollector.configOverride | merge $configData | mustMergeOverwrite $config | toYaml}}
-{{- end -}}
-
-
-{{- define "opentelemetry-collector.hello" -}}
-{{- if .Values.metrics.enabled -}}
-{{- print "Hello world" }}
-{{- end -}}
 {{- end -}}
 
 
@@ -232,3 +247,4 @@ service:
 {{- end }}
 {{- end }}
 {{- end }}
+

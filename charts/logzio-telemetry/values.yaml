@@ -221,7 +221,7 @@ metricsConfig:
           kubernetes_sd_configs:
           - role: pod
           relabel_configs:
-            - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            - source_labels: [__meta_kubernetes_pod_annotation_prometheus_windows_io_scrape]
               action: keep
               regex: true|"true"
         - job_name: kubernetes-service-endpoints
@@ -406,7 +406,7 @@ config:
         exporters: [logging, logzio]
     telemetry:
       logs:
-        level: "debug"
+        level: "info"
 
 # Shared params for agentCollector daemonset and standaloneCollector deployment pods.
 # Can be overridden here or for any component independently using the same keys.
@@ -421,13 +421,11 @@ nginxWindowsImage:
   # Reverse proxy image to enable metrics scraping from windows nodes
   repository: logzio/logzio-windows-node-reverse-proxy
   pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
   tag: "0.0.1"
 windowsExporterInstallerImage:
   # Job image to install windows exporter on windows nodes
   repository: logzio/logzio-windows-exporter-installer
   pullPolicy: IfNotPresent
-  # Overrides the image tag whose defau lt is the chart appVersion.
   tag: "0.0.1"
 imagePullSecrets: []
 
@@ -592,4 +590,9 @@ prometheus-node-exporter:
   rbac:
     pspEnabled: false
 
+enableMetricsFilter:
+  gke: false
+  eks: false
+  aks: false
 
+disableKubeDnsScraping: false
