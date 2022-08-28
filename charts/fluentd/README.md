@@ -239,14 +239,17 @@ logzio-fluentd logzio-helm/logzio-fluentd
 
 ## Change log
 
+ - **0.7.0**:
+   - Add ability to change the secret name with `secretName`. [#133](https://github.com/logzio/logzio-helm/pull/133)
  - **0.6.1**:
    - Fix bug for `extraConfig` ([#114](https://github.com/logzio/logzio-helm/issues/114)).
- - **0.6.0**:
-   - Added `daemonset.priorityClassName` and `windowsDaemonset.priorityClassName`.
+
 
 <details>
   <summary markdown="span"> Expand to check old versions </summary>
 
+ - **0.6.0**:
+   - Added `daemonset.priorityClassName` and `windowsDaemonset.priorityClassName`.
  - **0.5.0**:
    - Add support for `daemonset.affinity` value.
    - Add support for fargate logging.
