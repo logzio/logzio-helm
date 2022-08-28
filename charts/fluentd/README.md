@@ -40,6 +40,8 @@ helm install -n monitoring \
 logzio-fluentd logzio-helm/logzio-fluentd
 ```
 
+In case it's not possible or secure to add the secret from the helm chart (e.g. no secure value-file storage) it is possible to override the name of the secret by overriding secretName in the values file. This way an external secret with the keys logzioShippingToken and logzioListener can be placed by other means. 
+
 #### 4. Check Logz.io for your logs
 
 Give your logs some time to get from your system to ours, and then open [Logz.io](https://app.logz.io/).
@@ -129,6 +131,7 @@ helm install -n monitoring \
 | `clusterRole.rules` | Configurable [cluster role rules](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#role-and-clusterrole) that Fluentd uses to access Kubernetes resources. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
 | `secrets.logzioShippingToken` | Secret with your [logzio shipping token](https://app.logz.io/#/dashboard/settings/general). | `""` |
 | `secrets.logzioListener` | Secret with your logzio listener host. `listener.logz.io`. | `" "` |
+| `secretName` | Name of the secret in case it's placed from an external source. | `logzio-logs-secret` |
 | `configMapIncludes` | Initial includes for `fluent.conf`. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
 | `configmap.extraConfig` | If needed, more Fluentd configuration can be added with this field. | `{}` |
 | `configmap.fluent` | Configuration for `fluent.conf`. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
@@ -236,14 +239,17 @@ logzio-fluentd logzio-helm/logzio-fluentd
 
 ## Change log
 
+ - **0.7.0**:
+   - Add ability to change the secret name with `secretName`. [#133](https://github.com/logzio/logzio-helm/pull/133)
  - **0.6.1**:
    - Fix bug for `extraConfig` ([#114](https://github.com/logzio/logzio-helm/issues/114)).
- - **0.6.0**:
-   - Added `daemonset.priorityClassName` and `windowsDaemonset.priorityClassName`.
+
 
 <details>
   <summary markdown="span"> Expand to check old versions </summary>
 
+ - **0.6.0**:
+   - Added `daemonset.priorityClassName` and `windowsDaemonset.priorityClassName`.
  - **0.5.0**:
    - Add support for `daemonset.affinity` value.
    - Add support for fargate logging.
