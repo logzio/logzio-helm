@@ -1,6 +1,9 @@
 
 # Logzio-k8s-metrics
 
+
+## Warning ⚠️ : This chart is deprecated and no longer maintained
+
 Helm is a tool for managing packages of pre-configured Kubernetes resources using Charts.
 Logzio-k8s-metrics allows you to ship metrics from your Kubernetes cluster.  
 You can either deploy this Daemonset with the standrad configuration, or with autodiscover configuration. For further information about Metricbeat's autodiscover please see [Autodiscover documentation](https://www.elastic.co/guide/en/beats/metricbeat/7.9/configuration-autodiscover.html).  
