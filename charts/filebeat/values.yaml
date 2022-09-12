@@ -255,6 +255,7 @@ daemonset:
       cpu: 100m
       memory: 100Mi
   tolerations: {}
+  priorityClassName: ""
   volumes:
     - name: cert
       configMap:
@@ -282,6 +283,7 @@ winlogbeatDaemonset:
   securityContext:
     runAsUser: 0
   tolerations: {}
+  priorityClassName: ""
   volumes:
     - name: cert
       configMap:
@@ -310,6 +312,7 @@ filebeatWindowsDaemonset:
       cpu: 100m
       memory: 100Mi
   tolerations: {}
+  priorityClassName: ""
   volumes:
     - name: cert
       configMap:
