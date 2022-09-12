@@ -233,6 +233,8 @@ kubectl get nodes -o json | jq ".items[]|{name:.metadata.name, taints:.spec.tain
 
 
 ## Change log
+ - **0.0.7**:
+    - Added priorityClassName support, with new parameters: `daemonset.priorityClassName`, `winlogbeatDaemonset.priorityClassName`, `filebeatWindowsDaemonset.priorityClassName`.
  - **0.0.6**:
     - Added namespace override support, with new parameter `namespaceOverride`.
  - **0.0.5**:
