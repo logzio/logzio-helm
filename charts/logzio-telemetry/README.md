@@ -219,20 +219,21 @@ helm uninstall logzio-k8s-telemetry
 
 
 ## Change log
+* 0.0.5
+  - Upgrade otel collector image -> `otel/opentelemetry-collector-contrib:0.60.0`
 * 0.0.4
   - Added basic metrics filtering for gke,aks and eks clusters (via "enableMetricsFilter" parameter).
   - Fixed an issue where windows-metrics scraping job trying to scrape linux nodes on gke.
   - Added an option to disable kube-dns service scraping on eks (via "disableKubeDnsScraping" parameter), to prevent contiunous warning logs.
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
 * 0.0.3
   - Dep: kube-state-metrics -> `4.13.0`
   - Dep: prometheus-node-exporter -> `3.3.0`
   - Dep: prometheus-pushgateway -> `1.18.2`
   - Remove batch processor from metrics pipeline
   - Modify resource limitations
-
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
-
 * 0.0.2
   - Add default `nodeAffinity` to prevent node exporter deamonset deploymment on fargate nodes
 * 0.0.1 - Initial release
