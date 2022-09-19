@@ -161,6 +161,7 @@ Give your logs some time to get from your system to ours, and then open [Logz.io
 | `daemonset.securityContext` | Configurable [securityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) for Filebeat DaemonSet pod execution environment. (linux based Filebeat)| See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/filebeat/values.yaml) |
 | `daemonset.resources` | Allows you to set the resources for Filebeat Daemonset. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/filebeat/values.yaml) (linux based Filebeat)|
 | `daemonset.tolerations` | Set [tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) for all DaemonSet pods. (linux based Filebeat)| `{}` |
+| `daemonset.priorityClassName` | Set [priorityClassName](https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/) for all DaemonSet pods. (linux based Filebeat)| `""` |
 | `daemonset.volumes` | Templatable string of additional `volumes` to be passed to the DaemonSet. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/filebeat/values.yaml) (linux based Filebeat)|
 | `daemonset.volumeMounts` | Templatable string of additional `volumeMounts` to be passed to the DaemonSet. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/filebeat/values.yaml) (linux based Filebeat)|
 | `winlogbeatDaemonset.ignoreOlder` | Logs older than this will be ignored. (Winlogbeat)| `3h` |
@@ -170,6 +171,7 @@ Give your logs some time to get from your system to ours, and then open [Logz.io
 | `winlogbeatDaemonset.securityContext` | Configurable [securityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) for Filebeat DaemonSet pod execution environment. (Winlogbeat)| See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/filebeat/values.yaml) |
 | `winlogbeatDaemonset.resources` | Allows you to set the resources for Filebeat Daemonset. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/filebeat/values.yaml) (Winlogbeat)|
 | `winlogbeatDaemonset.tolerations` | Set [tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) for all DaemonSet pods. (Winlogbeat)| `{}` |
+| `winlogbeatDaemonset.priorityClassName` | Set [priorityClassName](https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/) for all DaemonSet pods. (linux based Filebeat)| `""` |
 | `winlogbeatDaemonset.volumes` | Templatable string of additional `volumes` to be passed to the DaemonSet. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/filebeat/values.yaml) (Winlogbeat)|
 | `winlogbeatDaemonset.volumeMounts` | Templatable string of additional `volumeMounts` to be passed to the DaemonSet. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/filebeat/values.yaml) (Winlogbeat)|
 | `filebeatWindowsDaemonset.ignoreOlder` | Logs older than this will be ignored. (Windows based Filebeat)| `3h` |
@@ -179,6 +181,7 @@ Give your logs some time to get from your system to ours, and then open [Logz.io
 | `filebeatWindowsDaemonset.securityContext` | Configurable [securityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) for Filebeat DaemonSet pod execution environment. (Windows based Filebeat)| See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/filebeat/values.yaml) |
 | `filebeatWindowsDaemonset.resources` | Allows you to set the resources for Filebeat Daemonset. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/filebeat/values.yaml) (Windows based Filebeat)|
 | `filebeatWindowsDaemonset.tolerations` | Set [tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) for all DaemonSet pods. (Windows based Filebeat)| `{}` |
+| `filebeatWindowsDaemonset.priorityClassName` | Set [priorityClassName](https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/) for all DaemonSet pods. (linux based Filebeat)| `""` |
 | `filebeatWindowsDaemonset.volumes` | Templatable string of additional `volumes` to be passed to the DaemonSet. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/filebeat/values.yaml) (Windows based Filebeat)|
 | `filebeatWindowsDaemonset.volumeMounts` | Templatable string of additional `volumeMounts` to be passed to the DaemonSet. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/filebeat/values.yaml) (Windows based Filebeat)|
 | `secrets.create` | Boolean to toggle secrets creation. Set to false to disable secrets generation.| `true` |
@@ -230,6 +233,8 @@ kubectl get nodes -o json | jq ".items[]|{name:.metadata.name, taints:.spec.tain
 
 
 ## Change log
+ - **0.0.7**:
+    - Added priorityClassName support, with new parameters: `daemonset.priorityClassName`, `winlogbeatDaemonset.priorityClassName`, `filebeatWindowsDaemonset.priorityClassName`.
  - **0.0.6**:
     - Added namespace override support, with new parameter `namespaceOverride`.
  - **0.0.5**:

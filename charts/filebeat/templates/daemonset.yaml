@@ -76,6 +76,9 @@ spec:
       tolerations:
 {{ toYaml .Values.daemonset.tolerations | indent 6 }}
       {{- end }}
+      {{- if .Values.daemonset.priorityClassName }}
+      priorityClassName: {{ .Values.daemonset.priorityClassName }}
+      {{- end }}
       volumes:
       - name: varlibdockercontainers
         hostPath:
@@ -164,6 +167,9 @@ spec:
       tolerations:
 {{ toYaml .Values.winlogbeatDaemonset.tolerations | indent 6 }}
       {{- end }}
+      {{- if .Values.winlogbeatDaemonset.priorityClassName }}
+      priorityClassName: {{ .Values.winlogbeatDaemonset.priorityClassName }}
+      {{- end }}
       volumes:
       - name: varlog
         hostPath:
@@ -251,6 +257,9 @@ spec:
       {{- if .Values.filebeatWindowsDaemonset.tolerations }}
       tolerations:
 {{ toYaml .Values.filebeatWindowsDaemonset.tolerations | indent 6 }}
+      {{- end }}      
+      {{- if .Values.filebeatWindowsDaemonset.priorityClassName }}
+      priorityClassName: {{ .Values.filebeatWindowsDaemonset.priorityClassName }}
       {{- end }}
       volumes:
       - name: varlibdockercontainers
