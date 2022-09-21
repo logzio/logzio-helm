@@ -17,6 +17,8 @@ secrets:
   p8s_logzio_name: ""
   windowsNodeUsername: ""
   windowsNodePassword: ""
+  SampelingProbability: 100
+  SampelingLatency: 0
 
 
 managedServiceAccount: true
@@ -139,6 +141,28 @@ baseCollectorConfig:
   processors:
     batch: {}
     memory_limiter: null
+    tail_sampling:
+      decision_wait: 30s
+      num_traces: 1000
+      expected_new_traces_per_sec: 20
+      policies:
+        [
+            {
+              name: error-in-policy,
+              type: status_code,
+              status_code: {status_codes: [ERROR]}
+            },
+            {
+              name: slow-traces-policy,
+              type: latency,
+              latency: {threshold_ms: $SAMPLING_LATENCY}            
+            },
+            {
+              name: probability-policy-4,
+              type: probabilistic,
+              probabilistic: {sampling_percentage: $SAMPLING_PROBABILITY}
+            }        
+        ]
   service:
     extensions:
       - health_check
@@ -186,7 +210,7 @@ tracesConfig:
     pipelines:
       traces:
         receivers: [jaeger, zipkin, otlp]
-        processors: [batch, memory_limiter]
+        processors: [tail_sampling, memory_limiter, batch]
         exporters: [logging, logzio]
     telemetry:
       logs:

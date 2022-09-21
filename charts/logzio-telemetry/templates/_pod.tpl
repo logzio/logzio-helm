@@ -64,6 +64,16 @@ containers:
           secretKeyRef:
             name: logzio-secret
             key: logzio-listener-region
+      - name: SAMPLING_PROBABILITY
+        valueFrom:
+          secretKeyRef:
+            name: logzio-secret
+            key: sampeling-probability
+      - name: SAMPLING_LATENCY
+        valueFrom:
+          secretKeyRef:
+            name: logzio-secret
+            key: sampeling-latency
 {{- end }}
       - name: P8S_LOGZIO_NAME
         valueFrom:
