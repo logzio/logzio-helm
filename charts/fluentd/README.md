@@ -40,6 +40,14 @@ helm install -n monitoring \
 logzio-fluentd logzio-helm/logzio-fluentd
 ```
 
+helm install \
+--set secrets.logzioShippingToken='ThlyYdhCHUJPlBVYZSBncSMABogmyBzK' \
+--set secrets.logzioListener='listener.logz.io' \
+--set daemonset.logType='yot-logs' \
+--set daemonset.clusterName='yot' \
+logzio-fluentd .
+
+
 In case it's not possible or secure to add the secret from the helm chart (e.g. no secure value-file storage) it is possible to override the name of the secret by overriding secretName in the values file. This way an external secret with the keys logzioShippingToken and logzioListener can be placed by other means. 
 
 #### 4. Check Logz.io for your logs
@@ -103,6 +111,7 @@ helm install -n monitoring \
 | `daemonset.extraVolumeMounts` | If needed, more volume mounts can be added with this field. | `[]` |
 | `daemonset.terminationGracePeriodSeconds` | Termination period (in seconds) to wait before killing Fluentd pod process on pod shutdown. | `30` |
 | `daemonset.extraVolumes` | If needed, more volumes can be added with this field. | `[]` |
+| `daemonset.clusterName` | Your cluster name. | `my_cluster` |
 | `daemonset.init.extraVolumeMounts` | If needed, more volume mounts to the init container can be added with this field. | `[]` |
 | `daemonset.priorityClassName` | Set [priorityClassName](https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/) for all DaemonSet pods. | `""` |
 | `windowsDaemonset.kubernetesVerifySsl` | Enables to validate SSL certificates (windows). | `true` |
@@ -238,7 +247,8 @@ logzio-fluentd logzio-helm/logzio-fluentd
 
 
 ## Change log
-
+ - **0.8.0**:
+   - Add `cluster_name` field and environment variable
  - **0.7.0**:
    - Add ability to change the secret name with `secretName`. [#133](https://github.com/logzio/logzio-helm/pull/133)
  - **0.6.1**:

@@ -100,6 +100,8 @@ spec:
           value: {{ .Values.daemonset.containersPath | quote }}
         - name: LOG_TYPE
           value: {{ .Values.daemonset.logType | quote }}
+        - name: CLUSTER_NAME
+          value: {{ .Values.daemonset.clusterName | quote }}
         {{- if .Values.daemonset.extraEnv }}
 {{ toYaml .Values.daemonset.extraEnv | indent 8 }}
         {{- end }}

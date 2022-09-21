@@ -57,6 +57,7 @@ daemonset:
   logzioRetryForever: true
   logzioFlushThreadCount: 2
   logzioLogLevel: info
+  clusterName: "my_cluster"
   excludeFluentdPath: "/var/log/containers/*fluentd*.log"
   extraExclude: ""
   containersPath: "/var/log/containers/*.log"
@@ -371,6 +372,7 @@ configmap:
       <record>
         type "#{ENV['LOG_TYPE'] || 'k8s'}"
         message ${record["log"]}
+        cluster_name "#{ENV['CLUSTER_NAME']}"
       </record>
       remove_keys log
     </filter>
