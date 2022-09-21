@@ -74,6 +74,13 @@ containers:
           secretKeyRef:
             name: logzio-secret
             key: sampeling-latency
+{{ if .Values.spm.enabled }}
+      - name: SPM_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: logzio-secret
+            key: logzio-spm-shipping-token
+{{ end }}
 {{- end }}
       - name: P8S_LOGZIO_NAME
         valueFrom:

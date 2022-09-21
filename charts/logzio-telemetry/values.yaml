@@ -1,9 +1,11 @@
-# Default values for opentelemetry-collector.
+# Default values for logzio-telemetry.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 traces:
   enabled: false
 metrics:
+  enabled: false
+spm:
   enabled: false
 
 nameOverride: "otel-collector"
@@ -12,6 +14,7 @@ fullnameOverride: ""
 secrets:
   MetricsToken: ""
   TracesToken: ""
+  SpmToken: ""
   ListenerHost: ""
   LogzioRegion: "us"
   p8s_logzio_name: ""
@@ -158,7 +161,7 @@ baseCollectorConfig:
               latency: {threshold_ms: $SAMPLING_LATENCY}            
             },
             {
-              name: probability-policy-4,
+              name: probability-policy,
               type: probabilistic,
               probabilistic: {sampling_percentage: $SAMPLING_PROBABILITY}
             }        
@@ -216,12 +219,39 @@ tracesConfig:
       logs:
         level: "info"  
 
+spmConfig:
+  processors:
+    spanmetrics:
+      metrics_exporter: prometheusremotewrite/spm
+      latency_histogram_buckets: [2ms, 8ms, 50ms, 100ms, 200ms, 500ms, 1s, 5s, 10s]
+      dimensions_cache_size: 100000
+      aggregation_temporality: AGGREGATION_TEMPORALITY_CUMULATIVE
+      dimensions:
+        - name: http.method
+  receivers:
+    # Dummy recivier 
+    otlp/spm:
+      grpc:
+        endpoint: "localhost:12345"
+  exporters:
+    prometheusremotewrite/spm:
+      endpoint: ${LISTENER_URL}
+      headers:
+        Authorization: "Bearer ${SPM_TOKEN}"
+    pipelines:
+      traces:
+        receivers: [jaeger, zipkin, otlp]
+        processors: [tail_sampling, spanmetrics, memory_limiter, batch]
+        exporters: [logging, logzio]
+      metrics:
+        # Dummy recivier 
+        receivers: [ otlp/spm ]
+        exporters: [logging, prometheusremotewrite/spm]
+
+
 metricsConfig:
   extensions:
     health_check: {}
-  processors:
-    batch: {}
-    # If set to null, will be overridden with values based on k8s resource limits
   exporters:
     prometheusremotewrite:
       endpoint: ${LISTENER_URL}
