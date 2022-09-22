@@ -219,6 +219,9 @@ helm uninstall logzio-k8s-telemetry
 
 
 ## Change log
+* 0.0.6
+  - Added span metriccs
+  - Added sampling
 * 0.0.5
   - Upgrade otel collector image -> `otel/opentelemetry-collector-contrib:0.60.0`
 * 0.0.4
