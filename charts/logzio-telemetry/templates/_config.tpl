@@ -46,15 +46,19 @@ Build config file for standalone OpenTelemetry Collector
 {{- $values := deepCopy .Values.standaloneCollector | mustMergeOverwrite (deepCopy .Values) }}
 {{- $data := dict "Values" $values | mustMergeOverwrite (deepCopy .) }}
 {{- $config := include "opentelemetry-collector.baseConfig" $data | fromYaml }}
+
 {{- if and .Values.metrics.enabled .Values.traces.enabled  .Values.spm.enabled }}
+{{- $configData = $metricsConfig  | merge $tracesConfig | merge $spmConfig | mustMergeOverwrite }}
 
-
-{{- if and .Values.metrics.enabled .Values.traces.enabled }}
+{{- else if and .Values.metrics.enabled .Values.traces.enabled }}
 {{- $configData = $metricsConfig  | merge $tracesConfig | mustMergeOverwrite }}
+
 {{- else if and .Values.spm.enabled .Values.traces.enabled -}}
-{{- $configData = $spmConfig  | merge $tracesConfig | mustMergeOverwrite }}
+{{- $configData = $tracesConfig  | merge $spmConfig | mustMergeOverwrite }}
+
 {{- else if .Values.metrics.enabled -}}
 {{- $configData = $metricsConfig  }}
+
 {{- else if .Values.traces.enabled -}}
 {{- $configData = $tracesConfig }}
 {{- end -}}

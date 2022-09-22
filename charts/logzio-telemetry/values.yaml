@@ -238,12 +238,13 @@ spmConfig:
       endpoint: ${LISTENER_URL}
       headers:
         Authorization: "Bearer ${SPM_TOKEN}"
+  service:
     pipelines:
       traces:
         receivers: [jaeger, zipkin, otlp]
         processors: [tail_sampling, spanmetrics, memory_limiter, batch]
         exporters: [logging, logzio]
-      metrics:
+      metrics/spm:
         # Dummy recivier 
         receivers: [ otlp/spm ]
         exporters: [logging, prometheusremotewrite/spm]
