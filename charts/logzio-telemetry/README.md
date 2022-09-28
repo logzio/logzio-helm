@@ -34,7 +34,8 @@ helm repo update
 To deploy the Helm chart, enter the relevant parameters for the placeholders and run the code. 
 
 ###### Configure the parameters in the code
-Replace `<<ENV-TAG>>` with the name for the environment's metrics, to easily identify the metrics for each environment.
+Replace `<<*P8S-LOGZIO-NAME*>>` with the name for the environment's metrics, to easily identify the metrics for each environment.
+Replace `<<*ENV-ID*>>` with the name for your environment's identifier, to easily identify the telemetry data for each environment.
 
 #### For metrics:
 Enable the metrics configuration for this chart: --set metrics.enabled=true
@@ -60,7 +61,8 @@ helm install  \
 --set metrics.enabled=true \
 --set secrets.MetricsToken=<<PROMETHEUS-METRICS-SHIPPING-TOKEN>> \
 --set secrets.ListenerHost=<<LISTENER-HOST>> \
---set secrets.p8s_logzio_name=<<ENV-TAG>> \
+--set secrets.p8s_logzio_name=<<P8S-LOGZIO-NAME>> \
+--set secrets.env_id=<<ENV-ID>> \
 logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry
 ```
 
@@ -70,7 +72,8 @@ helm install \
 --set traces.enabled=true \
 --set secrets.TracesToken=<<TRACES-SHIPPING-TOKEN>> \
 --set secrets.LogzioRegion=<<logzio-region>> \
---set secrets.p8s_logzio_name=<<ENV-TAG>> \
+--set secrets.p8s_logzio_name=<<P8S-LOGZIO-NAME>> \
+--set secrets.env_id=<<ENV-ID>> \
 logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry
 ```
 
@@ -84,7 +87,8 @@ helm install \
 --set secrets.TracesToken=<<TRACES-SHIPPING-TOKEN>> \
 --set secrets.LogzioRegion=<<logzio-region>> \
 --set secrets.ListenerHost=<<LISTENER-HOST>> \
---set secrets.p8s_logzio_name=<<ENV-TAG>> \
+--set secrets.p8s_logzio_name=<<P8S-LOGZIO-NAME>> \
+--set secrets.env_id=<<ENV-ID>> \
 logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry
 ```
 
@@ -100,7 +104,8 @@ helm install  \
 --set metrics.enabled=true \
 --set secrets.MetricsToken=<<PROMETHEUS-METRICS-SHIPPING-TOKEN>> \
 --set secrets.ListenerHost=<<LISTENER-HOST>> \
---set secrets.p8s_logzio_name=<<ENV-TAG>> \
+--set secrets.p8s_logzio_name=<<P8S-LOGZIO-NAME>> \
+--set secrets.env_id=<<ENV-ID>> \
 logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry
 ```
 
