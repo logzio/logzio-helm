@@ -73,11 +73,27 @@ helm install \
 --set secrets.p8s_logzio_name=<<ENV-TAG>> \
 logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry
 ```
-#### Deploy both charts:
+
+#### Deploy the traces chart with span metrics:
+```
+helm install \
+--set traces.enabled=true \
+--set spm.enabled=true \
+--set secrets.SpmToken=<<SPM-SHIPPING-TOKEN>> \
+--set secrets.TracesToken=<<TRACES-SHIPPING-TOKEN>> \
+--set secrets.LogzioRegion=<<logzio-region>> \
+--set secrets.ListenerHost=<<LISTENER-HOST>> \
+--set secrets.p8s_logzio_name=<<ENV-TAG>> \
+logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry
+```
+
+#### Deploy both charts with span metrics:
 ```
 helm install  \
 --set traces.enabled=true \
+--set spm.enabled=true \
 --set secrets.TracesToken=<<TRACES-SHIPPING-TOKEN>> \
+--set secrets.SpmToken=<<SPM-SHIPPING-TOKEN>> \
 --set secrets.LogzioRegion=<<logzio-region>> \
 --set metrics.enabled=true \
 --set secrets.MetricsToken=<<PROMETHEUS-METRICS-SHIPPING-TOKEN>> \

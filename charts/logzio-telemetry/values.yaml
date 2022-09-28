@@ -158,13 +158,13 @@ baseCollectorConfig:
             {
               name: slow-traces-policy,
               type: latency,
-              latency: {threshold_ms: $SAMPLING_LATENCY}            
+              latency: {threshold_ms: "${SAMPLING_LATENCY}" }            
             },
             {
               name: probability-policy,
               type: probabilistic,
-              probabilistic: {sampling_percentage: $SAMPLING_PROBABILITY}
-            }        
+              probabilistic: {sampling_percentage: "${SAMPLING_PROBABILITY}" }
+            }       
         ]
   service:
     extensions:
@@ -231,8 +231,9 @@ spmConfig:
   receivers:
     # Dummy recivier 
     otlp/spm:
-      grpc:
-        endpoint: "localhost:12345"
+      protocols:
+        grpc:
+          endpoint: "localhost:12345"
   exporters:
     prometheusremotewrite/spm:
       endpoint: ${LISTENER_URL}
