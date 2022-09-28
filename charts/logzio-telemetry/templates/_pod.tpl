@@ -64,12 +64,34 @@ containers:
           secretKeyRef:
             name: logzio-secret
             key: logzio-listener-region
+      - name: SAMPLING_PROBABILITY
+        valueFrom:
+          secretKeyRef:
+            name: logzio-secret
+            key: sampeling-probability
+      - name: SAMPLING_LATENCY
+        valueFrom:
+          secretKeyRef:
+            name: logzio-secret
+            key: sampeling-latency
+{{ if .Values.spm.enabled }}
+      - name: SPM_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: logzio-secret
+            key: logzio-spm-shipping-token
+{{ end }}
 {{- end }}
       - name: P8S_LOGZIO_NAME
         valueFrom:
           secretKeyRef:
             name: logzio-secret
             key: p8s-logzio-name
+      - name: ENV_ID
+        valueFrom:
+          secretKeyRef:
+            name: logzio-secret
+            key: env_id
       {{- with .Values.extraEnvs }}
       {{- . | toYaml | nindent 6 }}
       {{- end }}

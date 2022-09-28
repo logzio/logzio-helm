@@ -1,9 +1,11 @@
-# Default values for opentelemetry-collector.
+# Default values for logzio-telemetry.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 traces:
   enabled: false
 metrics:
+  enabled: false
+spm:
   enabled: false
 
 nameOverride: "otel-collector"
@@ -12,11 +14,15 @@ fullnameOverride: ""
 secrets:
   MetricsToken: ""
   TracesToken: ""
+  SpmToken: ""
   ListenerHost: ""
+  env_id: ""
   LogzioRegion: "us"
   p8s_logzio_name: ""
   windowsNodeUsername: ""
   windowsNodePassword: ""
+  SampelingProbability: 100
+  SampelingLatency: 0
 
 
 managedServiceAccount: true
@@ -138,7 +144,34 @@ baseCollectorConfig:
     health_check: {}
   processors:
     batch: {}
+    attributes/env_id:
+      actions:
+        - key: env_id
+          value: ${ENV_ID}
+          action: insert
     memory_limiter: null
+    tail_sampling:
+      decision_wait: 30s
+      num_traces: 1000
+      expected_new_traces_per_sec: 20
+      policies:
+        [
+            {
+              name: error-in-policy,
+              type: status_code,
+              status_code: {status_codes: [ERROR]}
+            },
+            {
+              name: slow-traces-policy,
+              type: latency,
+              latency: {threshold_ms: "${SAMPLING_LATENCY}" }            
+            },
+            {
+              name: probability-policy,
+              type: probabilistic,
+              probabilistic: {sampling_percentage: "${SAMPLING_PROBABILITY}" }
+            }       
+        ]
   service:
     extensions:
       - health_check
@@ -186,18 +219,49 @@ tracesConfig:
     pipelines:
       traces:
         receivers: [jaeger, zipkin, otlp]
-        processors: [batch, memory_limiter]
+        processors: [tail_sampling, attributes/env_id, memory_limiter, batch]
         exporters: [logging, logzio]
     telemetry:
       logs:
         level: "info"  
 
+spmConfig:
+  processors:
+    spanmetrics:
+      metrics_exporter: prometheusremotewrite/spm
+      latency_histogram_buckets: [2ms, 8ms, 50ms, 100ms, 200ms, 500ms, 1s, 5s, 10s]
+      dimensions_cache_size: 100000
+      aggregation_temporality: AGGREGATION_TEMPORALITY_CUMULATIVE
+      dimensions:
+        - name: http.method
+        - name: env_id
+          default: ${ENV_ID}
+  receivers:
+    # Dummy recivier 
+    otlp/spm:
+      protocols:
+        grpc:
+          endpoint: "localhost:12345"
+  exporters:
+    prometheusremotewrite/spm:
+      endpoint: ${LISTENER_URL}
+      headers:
+        Authorization: "Bearer ${SPM_TOKEN}"
+  service:
+    pipelines:
+      traces:
+        receivers: [jaeger, zipkin, otlp]
+        processors: [spanmetrics, tail_sampling, attributes/env_id, memory_limiter, batch]
+        exporters: [logging, logzio]
+      metrics/spm:
+        # Dummy recivier 
+        receivers: [ otlp/spm ]
+        exporters: [logging, prometheusremotewrite/spm]
+
+
 metricsConfig:
   extensions:
     health_check: {}
-  processors:
-    batch: {}
-    # If set to null, will be overridden with values based on k8s resource limits
   exporters:
     prometheusremotewrite:
       endpoint: ${LISTENER_URL}
@@ -282,6 +346,7 @@ metricsConfig:
         exporters:
           - prometheusremotewrite
         processors:
+          - attributes/env_id
           - memory_limiter
         receivers:
           - prometheus
