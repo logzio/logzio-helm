@@ -72,6 +72,7 @@ helm install -n monitoring \
 | `apiVersions.secret` | Secret API version. | `v1` |
 | `namespace` | Chart's namespace. | `monitoring` |
 | `fargateLogRouter.enabled` | Boolen to decide if to configure fargate log router | `false` |
+| `env_id` | Add to your logs field `env_id` with identification of the environment you're shipping logs from. | `""` |
 | `isRBAC` | Specifies whether the Chart should be compatible to a RBAC cluster. If you're running on a non-RBAC cluster, set to `false`.  | `true` |
 | `serviceAccount.name` | Name of the service account. | `""` |
 | `daemonset.tolerations` | Set [tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) for all DaemonSet pods. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
@@ -143,6 +144,7 @@ helm install -n monitoring \
 | `configmap.partialContainerd` | Configuration for `partial-containerd.conf`. Used to concatenate partial logs that split due to large size, for containerd cri. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
 | `configmap.audit` | Configuration for `audit.conf`. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
 | `configmap.auditJson` | Configuration for `audit-json.conf`. This is the configuration that's being used when `daemonset.auditLogFormat` is set to `audit-json` | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
+| `configmap.envId` | Config snippet for adding `env_id` field to logs | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
 | `configmap.customSources` | Add sources to the Fluentd configuration | `""` |
 | `configmap.customFilters` | Add filters to the Fluentd configuration | `""` |
 
@@ -238,16 +240,17 @@ logzio-fluentd logzio-helm/logzio-fluentd
 
 
 ## Change log
-
+ - **0.8.0**:
+   - Add ability to add environment id with `env_id` field.
  - **0.7.0**:
    - Add ability to change the secret name with `secretName`. [#133](https://github.com/logzio/logzio-helm/pull/133)
- - **0.6.1**:
-   - Fix bug for `extraConfig` ([#114](https://github.com/logzio/logzio-helm/issues/114)).
 
 
 <details>
   <summary markdown="span"> Expand to check old versions </summary>
 
+ - **0.6.1**:
+   - Fix bug for `extraConfig` ([#114](https://github.com/logzio/logzio-helm/issues/114)).
  - **0.6.0**:
    - Added `daemonset.priorityClassName` and `windowsDaemonset.priorityClassName`.
  - **0.5.0**:

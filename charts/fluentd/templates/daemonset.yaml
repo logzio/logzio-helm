@@ -100,6 +100,10 @@ spec:
           value: {{ .Values.daemonset.containersPath | quote }}
         - name: LOG_TYPE
           value: {{ .Values.daemonset.logType | quote }}
+        {{- if .Values.env_id }}
+        - name: ENV_ID
+          value: {{ .Values.env_id }}
+        {{- end }}
         {{- if .Values.daemonset.extraEnv }}
 {{ toYaml .Values.daemonset.extraEnv | indent 8 }}
         {{- end }}
@@ -221,6 +225,10 @@ spec:
           value: {{ include "logzio.windowsExcludePath" . | quote }}
         - name: CONTAINERS_PATH
           value: {{ .Values.windowsDaemonset.containersPath | quote }}
+        {{- if .Values.env_id }}
+        - name: ENV_ID
+          value: {{ .Values.env_id }}
+        {{- end }}
         {{- if .Values.windowsDaemonset.extraEnv }}
 {{ toYaml .Values.windowsDaemonset.extraEnv | indent 8 }}
         {{- end }}

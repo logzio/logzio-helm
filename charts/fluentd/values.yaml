@@ -27,6 +27,8 @@ serviceAccount:
 fargateLogRouter:
   ebabled: false
 
+env_id: ""
+
 daemonset:
   tolerations:
   - key: node-role.kubernetes.io/master
@@ -354,6 +356,8 @@ configmap:
 
     @include custom-filters.conf
 
+    @include env-id.conf
+
     # This handles multiline exceptions automatically: https://github.com/GoogleCloudPlatform/fluent-plugin-detect-exceptions
     <match logzio.**>
       @type detect_exceptions
@@ -495,5 +499,12 @@ configmap:
       separator ""
     </filter>
 
+  envId: |
+    <filter **>
+        @type record_modifier
+        <record>
+          env_id "#{ENV['ENV_ID']}"
+        </record>
+      </filter>
   customSources: ""
   customFilters: ""
