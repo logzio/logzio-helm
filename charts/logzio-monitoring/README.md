@@ -38,6 +38,7 @@ helm install -n monitoring \
 --set logs.enabled=true \
 --set logzio-fluentd.secrets.logzioShippingToken="<<LOG-SHIPPING-TOKEN>>" \
 --set logzio-fluentd.secrets.logzioListener="<<LISTENER-HOST>>" \
+--set logzio-fluentd.env_id="<<ENV-ID>>" \
 --set metricsOrTraces.enabled=true \
 --set logzio-k8s-telemetry.metrics.enabled=true \
 --set logzio-k8s-telemetry.secrets.MetricsToken="<<PROMETHEUS-METRICS-SHIPPING-TOKEN>>" \
@@ -46,6 +47,9 @@ helm install -n monitoring \
 --set logzio-k8s-telemetry.traces.enabled=true \
 --set logzio-k8s-telemetry.secrets.TracesToken="<<TRACES-SHIPPING-TOKEN>>" \
 --set logzio-k8s-telemetry.secrets.LogzioRegion="<<LOGZIO-REGION>>" \
+--set logzio-k8s-telemetry.spm.enabled=true \
+--set logzio-k8s-telemetry.secrets.env_id="<<ENV-ID>>" \
+--set logzio-k8s-telemetry.secrets.SpmToken=<<SPM-SHIPPING-TOKEN>> \
 logzio-monitoring logzio-helm/logzio-monitoring
 ```
 
@@ -54,8 +58,10 @@ logzio-monitoring logzio-helm/logzio-monitoring
 | `<<LOG-SHIPPING-TOKEN>>` | Your [logs shipping token](https://app.logz.io/#/dashboard/settings/general). |
 | `<<LISTENER-HOST>>` | Your account's [listener host](https://app.logz.io/#/dashboard/settings/manage-tokens/data-shipping?product=logs). |
 | `<<PROMETHEUS-METRICS-SHIPPING-TOKEN>>` | Your [metrics shipping token](https://app.logz.io/#/dashboard/settings/manage-tokens/data-shipping). |
-| `<<ENV-TAG>>` | The name for the environment's metrics, to easily identify the metrics for each environment. |
+| `<<P8S-LOGZIO-NAME>>` | The name for the environment's metrics, to easily identify the metrics for each environment. |
+| `<<ENV-ID>>` | The name for your environment's identifier, to easily identify the telemetry data for each environment. |
 | `<<TRACES-SHIPPING-TOKEN>>` | Your [traces shipiing token](https://app.logz.io/#/dashboard/settings/manage-tokens/data-shipping). |
+| `<<SPM-SHIPPING-TOKEN>>` | Your [span metrics shipiing token](https://app.logz.io/#/dashboard/settings/manage-tokens/data-shipping). |
 | `<<LOGZIO-REGION>>` | Name of your Logz.io region e.g `us`, `eu`... |
 
 
@@ -115,6 +121,9 @@ logzio-monitoring logzio-helm/logzio-monitoring
 ```
 
 ## Changelog
+- **0.1.3**:
+	- Upgrade `logzio-telemetry` Chart to `0.0.6`.
+	- Upgrade `logzio-fluentd` Chart to `0.8.0`.
 - **0.1.2**:
 	- Upgrade `logzio-telemetry` Chart to `0.0.4`.
 	- Upgrade `logzio-fluentd` Chart to `0.6.1`.
