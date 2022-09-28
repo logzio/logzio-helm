@@ -75,6 +75,7 @@ logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry
 ```
 
 #### Deploy the traces chart with span metrics:
+**Note** `spm.enabled=true` will have no effect unless `traces.enabled` is also set to `true`
 ```
 helm install \
 --set traces.enabled=true \
@@ -88,6 +89,7 @@ logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry
 ```
 
 #### Deploy both charts with span metrics:
+**Note** `spm.enabled=true` will have no effect unless `traces.enabled` is also set to `true`
 ```
 helm install  \
 --set traces.enabled=true \

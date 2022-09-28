@@ -243,7 +243,7 @@ spmConfig:
     pipelines:
       traces:
         receivers: [jaeger, zipkin, otlp]
-        processors: [tail_sampling, spanmetrics, memory_limiter, batch]
+        processors: [spanmetrics, tail_samplingת memory_limiter, batch]
         exporters: [logging, logzio]
       metrics/spm:
         # Dummy recivier 
