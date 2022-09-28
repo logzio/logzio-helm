@@ -234,6 +234,8 @@ spmConfig:
       aggregation_temporality: AGGREGATION_TEMPORALITY_CUMULATIVE
       dimensions:
         - name: http.method
+        - name: env_id
+          default: ${ENV_ID}
   receivers:
     # Dummy recivier 
     otlp/spm:
