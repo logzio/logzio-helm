@@ -87,6 +87,11 @@ containers:
           secretKeyRef:
             name: logzio-secret
             key: p8s-logzio-name
+      - name: ENV_ID
+        valueFrom:
+          secretKeyRef:
+            name: logzio-secret
+            key: env_id
       {{- with .Values.extraEnvs }}
       {{- . | toYaml | nindent 6 }}
       {{- end }}

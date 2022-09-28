@@ -16,6 +16,7 @@ secrets:
   TracesToken: ""
   SpmToken: ""
   ListenerHost: ""
+  env_id: ""
   LogzioRegion: "us"
   p8s_logzio_name: ""
   windowsNodeUsername: ""
@@ -143,6 +144,11 @@ baseCollectorConfig:
     health_check: {}
   processors:
     batch: {}
+    attributes/env_id:
+      actions:
+        - key: env_id
+          value: ${ENV_ID}
+          action: insert
     memory_limiter: null
     tail_sampling:
       decision_wait: 30s
@@ -213,7 +219,7 @@ tracesConfig:
     pipelines:
       traces:
         receivers: [jaeger, zipkin, otlp]
-        processors: [tail_sampling, memory_limiter, batch]
+        processors: [tail_sampling, attributes/env_id, memory_limiter, batch]
         exporters: [logging, logzio]
     telemetry:
       logs:
@@ -243,7 +249,7 @@ spmConfig:
     pipelines:
       traces:
         receivers: [jaeger, zipkin, otlp]
-        processors: [spanmetrics, tail_samplingת memory_limiter, batch]
+        processors: [spanmetrics, tail_sampling, attributes/env_id, memory_limiter, batch]
         exporters: [logging, logzio]
       metrics/spm:
         # Dummy recivier 
@@ -338,6 +344,7 @@ metricsConfig:
         exporters:
           - prometheusremotewrite
         processors:
+          - attributes/env_id
           - memory_limiter
         receivers:
           - prometheus
