@@ -60,8 +60,8 @@ logzio-monitoring logzio-helm/logzio-monitoring
 | `<<PROMETHEUS-METRICS-SHIPPING-TOKEN>>` | Your [metrics shipping token](https://app.logz.io/#/dashboard/settings/manage-tokens/data-shipping). |
 | `<<P8S-LOGZIO-NAME>>` | The name for the environment's metrics, to easily identify the metrics for each environment. |
 | `<<ENV-ID>>` | The name for your environment's identifier, to easily identify the telemetry data for each environment. |
-| `<<TRACES-SHIPPING-TOKEN>>` | Your [traces shipiing token](https://app.logz.io/#/dashboard/settings/manage-tokens/data-shipping). |
-| `<<SPM-SHIPPING-TOKEN>>` | Your [span metrics shipiing token](https://app.logz.io/#/dashboard/settings/manage-tokens/data-shipping). |
+| `<<TRACES-SHIPPING-TOKEN>>` | Your [traces shipping token](https://app.logz.io/#/dashboard/settings/manage-tokens/data-shipping). |
+| `<<SPM-SHIPPING-TOKEN>>` | Your [span metrics shipping token](https://app.logz.io/#/dashboard/settings/manage-tokens/data-shipping). |
 | `<<LOGZIO-REGION>>` | Name of your Logz.io region e.g `us`, `eu`... |
 
 
