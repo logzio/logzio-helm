@@ -15,7 +15,7 @@ The Helm tool is used to manage packages of pre-configured Kubernetes resources 
 
 **Note:** This chart is a fork of the [opentelemtry-collector](https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-collector) Helm chart.
 
-**Note**: This chart is for shipping traces only. For a chart that ships all telemetry (logs, metrics, traces) - use our [Logzio Monitoring chart](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-monitoring).
+**Note**: This chart is for shipping traces only. For a chart that ships all telemetry (logs, metrics, traces, spm) - use our [Logzio Monitoring chart](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-monitoring).
 
 #### Standard configuration
 

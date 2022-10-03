@@ -1,6 +1,6 @@
 # Logzio-k8s-telemetry
 
-**Note**: This chart is for shipping metrics and traces only. For a chart that ships all telemetry (logs, metrics, traces) - use our [Logzio Monitoring chart](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-monitoring).
+**Note**: This chart is for shipping metrics and traces only. For a chart that ships all telemetry (logs, metrics, traces, spm) - use our [Logzio Monitoring chart](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-monitoring).
 
 ##  Overview
 

@@ -7,7 +7,7 @@ Fluentd is flexible enough and has the proper plugins to distribute logs to diff
 
 The chart defaults to configuration for Conatinerd CRI. If your cluster uses Docker as CRI, please refer to `daemonset.containerdRuntime` in the [configuration table](https://github.com/logzio/logzio-helm/tree/master/charts/fluentd#configuration).
 
-**Note**: This chart is for shipping logs only. For a chart that ships all telemetry (logs, metrics, traces) - use our [Logzio Monitoring chart](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-monitoring).
+**Note**: This chart is for shipping logs only. For a chart that ships all telemetry (logs, metrics, traces, spm) - use our [Logzio Monitoring chart](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-monitoring).
 
 ### Deploying the Chart:
 
