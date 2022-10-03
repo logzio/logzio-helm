@@ -1,12 +1,12 @@
-
 # Logzio fluentbit helm chart
 
 ##  Overview
 
 You can use this Helm chart to ship Kubernetes logs to Logz.io with fluentbit.
+This chart is based on the [fluent-bit](https://github.com/fluent/helm-charts/tree/main/charts/fluent-bit) Helm chart. 
 
+**Note**: This chart is for shipping logs only. For a chart that ships all telemetry (logs, metrics, traces) - use our [Logzio Monitoring chart](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-monitoring).
 
-**Note:** This chart is based on the [fluent-bit](https://github.com/fluent/helm-charts/tree/main/charts/fluent-bit) Helm chart. 
 #### Standard configuration
 
 ##### Deploy the Helm chart

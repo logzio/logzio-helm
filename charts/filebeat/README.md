@@ -4,6 +4,8 @@ Helm is a tool for managing packages of pre-configured Kubernetes resources usin
 Logzio-k8s-logs allows you to ship logs from your Kubernetes cluster to Logz.io.
 You can either deploy this Daemonset with the standrad configuration, or with autodiscover configuration. For further information about Filebeat's autodiscover please see [Autodiscover documentation](https://www.elastic.co/guide/en/beats/filebeat/current/configuration-autodiscover.html).
 
+**Note**: This chart is for shipping logs only. For a chart that ships all telemetry (logs, metrics, traces) - use our [Logzio Monitoring chart](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-monitoring).
+
 
 ### Prerequisites:
 * [Helm CLI](https://helm.sh/docs/intro/install/) installed
