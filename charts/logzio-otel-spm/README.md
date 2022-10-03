@@ -1,5 +1,8 @@
-
 # Logzio otel spm
+
+## Warning ⚠️ : This chart is deprecated and no longer maintained
+
+Migrate to [Logzio Monitoring chart](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-monitoring).
 
 ##  Overview
 

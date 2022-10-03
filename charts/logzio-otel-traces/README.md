@@ -1,6 +1,11 @@
 
 # Logzio-otel-traces
 
+## Warning ⚠️ : This chart is deprecated and no longer maintained.
+
+Migrate to [Logzio Monitoring chart](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-monitoring).
+
+
 ##  Overview
 
 You can use a Helm chart to ship Traces to Logz.io via the OpenTelemetry collector.
@@ -9,6 +14,8 @@ The Helm tool is used to manage packages of pre-configured Kubernetes resources 
 **logzio-otel-traces** allows you to ship traces from your Kubernetes cluster to Logz.io with the OpenTelemetry collector.
 
 **Note:** This chart is a fork of the [opentelemtry-collector](https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-collector) Helm chart.
+
+**Note**: This chart is for shipping traces only. For a chart that ships all telemetry (logs, metrics, traces, spm) - use our [Logzio Monitoring chart](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-monitoring).
 
 #### Standard configuration
 

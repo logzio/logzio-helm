@@ -1,8 +1,9 @@
-
 # Logzio-k8s-metrics
 
 
 ## Warning ⚠️ : This chart is deprecated and no longer maintained
+
+Migrate to [Logzio Monitoring chart](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-monitoring).
 
 Helm is a tool for managing packages of pre-configured Kubernetes resources using Charts.
 Logzio-k8s-metrics allows you to ship metrics from your Kubernetes cluster.  
