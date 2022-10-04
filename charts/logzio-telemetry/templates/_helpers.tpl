@@ -84,3 +84,15 @@ Create the name of the clusterRole to use
 {{- default "default" .Values.clusterRole.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Nullable secret value
+*/}}
+{{- define "secretValue" -}}
+    {{- $value := . }}
+    {{- if $value }}
+        {{- printf "%s" $value | b64enc }}
+    {{- else }}
+         {{- printf "%q" "" }}
+    {{- end }}
+{{- end }}

@@ -212,7 +212,6 @@ tracesConfig:
       endpoint: "0.0.0.0:9411"
   service:
     extensions:
-    extensions:
       - health_check
       - pprof
       - zpages
