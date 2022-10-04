@@ -91,7 +91,7 @@ containers:
         valueFrom:
           secretKeyRef:
             name: logzio-secret
-            key: env_id
+            key: env-id
       {{- with .Values.extraEnvs }}
       {{- . | toYaml | nindent 6 }}
       {{- end }}
