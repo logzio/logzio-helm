@@ -92,17 +92,12 @@ filebeatConfig:
         - rename:
             fields:
             - from: "agent"
-              to: "winlogbeat_agent"
+              to: "filebeat_agent"
             ignore_missing: true
         - rename:
             fields:
             - from: "log.file.path"
               to: "source"
-            ignore_missing: true
-        - rename:
-            fields:
-            - from: "log"
-              to: "log_information"
             ignore_missing: true
 
       fields:
@@ -135,17 +130,12 @@ filebeatConfig:
         - rename:
             fields:
             - from: "agent"
-              to: "winlogbeat_agent"
+              to: "filebeat_agent"
             ignore_missing: true
         - rename:
             fields:
             - from: "log.file.path"
               to: "source"
-            ignore_missing: true
-        - rename:
-            fields:
-            - from: "log"
-              to: "log_information"
             ignore_missing: true
 
       fields:
@@ -187,11 +177,6 @@ winlogbeatConfig:
             fields:
             - from: "log.file.path"
               to: "source"
-            ignore_missing: true
-        - rename:
-            fields:
-            - from: "log"
-              to: "log_information"
             ignore_missing: true
 
       output.logstash:
@@ -259,11 +244,6 @@ filebeatWindowsConfig:
             fields:
             - from: "log.file.path"
               to: "source"
-            ignore_missing: true
-        - rename:
-            fields:
-            - from: "log"
-              to: "log_information"
             ignore_missing: true
                     
       fields:
