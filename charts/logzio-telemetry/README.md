@@ -245,6 +245,8 @@ helm uninstall logzio-k8s-telemetry
 
 
 ## Change log
+* 0.0.8
+  - Changed default value for `env_id`
 * 0.0.7
   - Added default value for `env_id`
 * 0.0.6

@@ -16,7 +16,7 @@ secrets:
   TracesToken: ""
   SpmToken: ""
   ListenerHost: ""
-  env_id: "default_env"
+  env_id: "my_environment"
   LogzioRegion: "us"
   p8s_logzio_name: ""
   windowsNodeUsername: ""
