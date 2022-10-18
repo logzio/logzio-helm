@@ -242,6 +242,8 @@ logzio-fluentd logzio-helm/logzio-fluentd
 
 
 ## Change log
+ - **0.9.0**:
+   - Added a default value for `env_id` field.
  - **0.8.0**:
    - Add ability to add environment id with `env_id` field.
  - **0.7.0**:
