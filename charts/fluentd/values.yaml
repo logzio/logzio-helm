@@ -27,7 +27,7 @@ serviceAccount:
 fargateLogRouter:
   ebabled: false
 
-env_id: "default_env"
+env_id: "my_environment"
 
 daemonset:
   tolerations:
