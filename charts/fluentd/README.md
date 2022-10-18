@@ -165,8 +165,8 @@ my-custom-conf-name2.conf: |-
    # .....
 ```
 
-### Adding a custom log_type field from pod attribute
-To add a `log_type` field with a custom value, you can use the annotation key `log_type` with your custom value. The annotation will be automatically parsed into a `log_type` field with the provided value.
+### Adding a custom log_type field from attribute
+To add a `log_type` field with a custom value to each log, you can use the annotation key `log_type` with a custom value. The annotation will be automatically parsed into a `log_type` field with the provided value.
 e.g:
 ```
 ...
