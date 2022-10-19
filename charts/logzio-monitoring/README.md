@@ -87,8 +87,10 @@ For example, if in `logzio-fluentd`'s `values.yaml` file there's a parameter nam
 ```sh
 --set logzio-fluentd.someField="my new value"
 ```
+You can add `log_type` annotation with a custom value, which will be parsed into a `log_type` field with the same value.
 
-#### To modify the metrics and traces Chart configuration:
+
+### To modify the metrics and traces Chart configuration:
 
 You can see a full list of the possible configuration values in the [logzio-telemetry Chart folder](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-telemetry).
 
@@ -121,12 +123,21 @@ logzio-monitoring logzio-helm/logzio-monitoring
 ```
 
 ## Changelog
+- **0.1.5**:
+	- Upgrade `logzio-fluentd` Chart to `0.10.0`.
+
 - **0.1.4**:
 	- Upgrade `logzio-telemetry` Chart to `0.0.8`.
 	- Upgrade `logzio-fluentd` Chart to `0.9.0`.
+
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
 - **0.1.3**:
 	- Upgrade `logzio-telemetry` Chart to `0.0.6`.
 	- Upgrade `logzio-fluentd` Chart to `0.8.0`.
+
 - **0.1.2**:
 	- Upgrade `logzio-telemetry` Chart to `0.0.4`.
 	- Upgrade `logzio-fluentd` Chart to `0.6.1`.
@@ -142,3 +153,5 @@ logzio-monitoring logzio-helm/logzio-monitoring
 	- Upgrade `logzio-fluentd` Chart to `0.4.0`.
 	- Set default logs type to `agent-k8s`.
 - **0.0.1**: Initial release.
+
+</details>
