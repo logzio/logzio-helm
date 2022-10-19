@@ -165,6 +165,24 @@ my-custom-conf-name2.conf: |-
    # .....
 ```
 
+### Adding a custom log_type field from attribute
+To add a `log_type` field with a custom value to each log, you can use the annotation key `log_type` with a custom value. The annotation will be automatically parsed into a `log_type` field with the provided value.
+e.g:
+```
+...
+  metadata:
+    annotations:
+      log_type: "my_type"
+```
+Will result with the following log (json):
+```
+{
+...
+,"log_type": "my_type"
+...
+}
+
+
 ### Uninstalling the Chart
 
 The command removes all the k8s components associated with the chart and deletes the release.  
@@ -242,17 +260,18 @@ logzio-fluentd logzio-helm/logzio-fluentd
 
 
 ## Change log
+ - **0.10.0**:
+   - Added an option to parse `log_type` annotation into `log_type` field.
  - **0.9.0**:
    - Added a default value for `env_id` field.
- - **0.8.0**:
-   - Add ability to add environment id with `env_id` field.
- - **0.7.0**:
-   - Add ability to change the secret name with `secretName`. [#133](https://github.com/logzio/logzio-helm/pull/133)
-
 
 <details>
   <summary markdown="span"> Expand to check old versions </summary>
 
+ - **0.8.0**:
+   - Add ability to add environment id with `env_id` field.
+ - **0.7.0**:
+   - Add ability to change the secret name with `secretName`. [#133](https://github.com/logzio/logzio-helm/pull/133)
  - **0.6.1**:
    - Fix bug for `extraConfig` ([#114](https://github.com/logzio/logzio-helm/issues/114)).
  - **0.6.0**:

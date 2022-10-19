@@ -384,6 +384,16 @@ configmap:
       @id filter_kube_metadata
       kubernetes_url "#{ENV['FLUENT_FILTER_KUBERNETES_URL'] || 'https://' + ENV.fetch('KUBERNETES_SERVICE_HOST') + ':' + ENV.fetch('KUBERNETES_SERVICE_PORT') + '/api'}"
       verify_ssl "#{ENV['KUBERNETES_VERIFY_SSL'] || true}"
+      annotation_match "log\_type"
+    </filter>
+
+    <filter **>
+      @type record_modifier
+      <record>
+        log_type ${record.dig("kubernetes","annotations","log_type")}
+        _dummy_ ${if record.dig("kubernetes","annotations","log_type") then record["kubernetes"]["annotations"].delete("log_type"); end;}
+      </record>
+      remove_keys _dummy_
     </filter>
 
   system: |
