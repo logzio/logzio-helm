@@ -63,7 +63,7 @@ helm install -n monitoring \
 | Parameter | Description | Default |
 |---|---|---|
 | `image` | The logzio-fluentd docker image. | `logzio/logzio-fluentd` |
-| `imageTag` | The logzio-fluentd docker image tag. | `1.1.1` |
+| `imageTag` | The logzio-fluentd docker image tag. | `1.2.0` |
 | `nameOverride` | Overrides the Chart name for resources. | `""` |
 | `fullnameOverride` | Overrides the full name of the resources. | `""` |
 | `apiVersions.daemonset` | Daemonset API version. | `apps/v1` |
@@ -260,14 +260,19 @@ logzio-fluentd logzio-helm/logzio-fluentd
 
 
 ## Change log
+ - **0.11.0**:
+   - Upgrade image `logzio/logzio-fluentd:1.2.0`:
+     - Upgrade to `fluentd 1.15`.
+     - Upgrade plugin `fluent-plugin-kubernetes_metadata_filter` to `3.1.2`.
  - **0.10.0**:
    - Added an option to parse `log_type` annotation into `log_type` field.
- - **0.9.0**:
-   - Added a default value for `env_id` field.
+
 
 <details>
   <summary markdown="span"> Expand to check old versions </summary>
-
+ 
+ - **0.9.0**:
+   - Added a default value for `env_id` field.
  - **0.8.0**:
    - Add ability to add environment id with `env_id` field.
  - **0.7.0**:
