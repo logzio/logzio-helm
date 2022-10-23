@@ -123,16 +123,17 @@ logzio-monitoring logzio-helm/logzio-monitoring
 ```
 
 ## Changelog
+- **0.1.6**:
+	- Upgrade `logzio-fluentd` Chart to `0.11.0`.
 - **0.1.5**:
 	- Upgrade `logzio-fluentd` Chart to `0.10.0`.
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
 
 - **0.1.4**:
 	- Upgrade `logzio-telemetry` Chart to `0.0.8`.
 	- Upgrade `logzio-fluentd` Chart to `0.9.0`.
-
-
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
 
 - **0.1.3**:
 	- Upgrade `logzio-telemetry` Chart to `0.0.6`.
