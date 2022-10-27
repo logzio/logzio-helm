@@ -151,9 +151,6 @@ baseCollectorConfig:
           action: insert
     memory_limiter: null
     tail_sampling:
-      decision_wait: 30s
-      num_traces: 1000
-      expected_new_traces_per_sec: 20
       policies:
         [
             {

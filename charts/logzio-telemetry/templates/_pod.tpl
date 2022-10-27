@@ -68,12 +68,12 @@ containers:
         valueFrom:
           secretKeyRef:
             name: logzio-secret
-            key: sampeling-probability
+            key: sampling-probability
       - name: SAMPLING_LATENCY
         valueFrom:
           secretKeyRef:
             name: logzio-secret
-            key: sampeling-latency
+            key: sampling-latency
 {{ if .Values.spm.enabled }}
       - name: SPM_TOKEN
         valueFrom:
