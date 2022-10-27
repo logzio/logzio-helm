@@ -245,7 +245,7 @@ helm uninstall logzio-k8s-telemetry
 
 
 ## Change log
-* 0.0.8
+* 0.0.9
   - Remove `decision_wait` `num_traces` `expected_new_traces_per_sec` options from the tail sampling proccessor, in order to use the otel default values for the proccessor
   - Fix typos
 * 0.0.8
