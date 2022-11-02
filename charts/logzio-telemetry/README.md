@@ -245,6 +245,8 @@ helm uninstall logzio-k8s-telemetry
 
 
 ## Change log
+* 0.0.10
+  - `SampelingProbability` -> `SamplingProbability`
 * 0.0.9
   - Remove `decision_wait` `num_traces` `expected_new_traces_per_sec` options from the tail sampling proccessor, in order to use the otel default values for the proccessor
   - Fix typos
@@ -255,15 +257,15 @@ helm uninstall logzio-k8s-telemetry
 * 0.0.6
   - Added span metrics
   - Added sampling
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
 * 0.0.5
   - Upgrade otel collector image -> `otel/opentelemetry-collector-contrib:0.60.0`
 * 0.0.4
   - Added basic metrics filtering for gke,aks and eks clusters (via "enableMetricsFilter" parameter).
   - Fixed an issue where windows-metrics scraping job trying to scrape linux nodes on gke.
   - Added an option to disable kube-dns service scraping on eks (via "disableKubeDnsScraping" parameter), to prevent contiunous warning logs.
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
-
 * 0.0.3
   - Dep: kube-state-metrics -> `4.13.0`
   - Dep: prometheus-node-exporter -> `3.3.0`
