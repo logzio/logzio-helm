@@ -21,8 +21,8 @@ secrets:
   p8s_logzio_name: ""
   windowsNodeUsername: ""
   windowsNodePassword: ""
-  SamplingProbability: 100
-  SamplingLatency: 0
+  SamplingProbability: 10
+  SamplingLatency: 500
 
 
 managedServiceAccount: true
