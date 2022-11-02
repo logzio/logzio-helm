@@ -245,6 +245,9 @@ helm uninstall logzio-k8s-telemetry
 
 
 ## Change log
+* 0.0.11
+  - Change default values of `secrets.SamplingProbability`, `secrets.SamplingLatency`
+* 0.0.9
 * 0.0.10
   - `SampelingProbability` -> `SamplingProbability`
 * 0.0.9
