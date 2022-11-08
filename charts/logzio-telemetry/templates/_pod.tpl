@@ -47,6 +47,8 @@ containers:
           secretKeyRef:
             name: logzio-secret
             key: logzio-metrics-shipping-token
+{{- end }}
+{{- if or (eq .Values.metrics.enabled true) (eq .Values.spm.enabled true) }}
       - name: LISTENER_URL
         valueFrom:
           secretKeyRef:

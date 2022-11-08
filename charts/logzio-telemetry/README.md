@@ -245,6 +245,8 @@ helm uninstall logzio-k8s-telemetry
 
 
 ## Change log
+* 0.0.12
+  - Add listener url when `spm` is enabled.
 * 0.0.11
   - Change default values of `secrets.SamplingProbability`, `secrets.SamplingLatency`
 * 0.0.9
@@ -253,6 +255,10 @@ helm uninstall logzio-k8s-telemetry
 * 0.0.9
   - Remove `decision_wait` `num_traces` `expected_new_traces_per_sec` options from the tail sampling proccessor, in order to use the otel default values for the proccessor
   - Fix typos
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
 * 0.0.8
   - Changed default value for `env_id`
 * 0.0.7
@@ -260,9 +266,6 @@ helm uninstall logzio-k8s-telemetry
 * 0.0.6
   - Added span metrics
   - Added sampling
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
-
 * 0.0.5
   - Upgrade otel collector image -> `otel/opentelemetry-collector-contrib:0.60.0`
 * 0.0.4
