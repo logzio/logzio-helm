@@ -1,0 +1,8 @@
+{{- if .Values.appDetection.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "fluentd.fullname" . }}-app-detector-leader-election-role
+  namespace: {{ .Values.namespace }}
+rules: {{ toYaml .Values.appDetection.leaderElectionClusterRole.rules | nindent 2 -}}
+{{- end}}
