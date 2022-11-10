@@ -165,6 +165,11 @@ my-custom-conf-name2.conf: |-
    # .....
 ```
 
+### Enabling automatic app-detection (enabled by default)
+When enabled, automatic app detection will scan all pods scanned for supported application types of [default parsing](https://docs.logz.io/user-guide/log-shipping/built-in-log-types.html). These types are automatically parsed by logzio.
+The detected app name will be added as a value for `logzio/application_type` annotation and injected to the `type` field of each application log.
+To skip specific Deployments/StatefulSets when using automatic app detection, add the `logzio/skip_app_detection: true` annotation.
+
 ### Adding a custom log_type field from attribute
 To add a `log_type` field with a custom value to each log, you can use the annotation key `log_type` with a custom value. The annotation will be automatically parsed into a `log_type` field with the provided value.
 e.g:
@@ -175,7 +180,7 @@ e.g:
       log_type: "my_type"
 ```
 Will result with the following log (json):
-```
+``` 
 {
 ...
 ,"log_type": "my_type"
@@ -260,17 +265,19 @@ logzio-fluentd logzio-helm/logzio-fluentd
 
 
 ## Change log
+- **0.12.0**:
+  - Added ability to auto detect running applications and inject their names into the `type`  field, allowing supported applications to be parsed more efficiently by logzio (enabled by default).
+
  - **0.11.0**:
    - Upgrade image `logzio/logzio-fluentd:1.2.0`:
      - Upgrade to `fluentd 1.15`.
      - Upgrade plugin `fluent-plugin-kubernetes_metadata_filter` to `3.1.2`.
- - **0.10.0**:
-   - Added an option to parse `log_type` annotation into `log_type` field.
 
-
-<details>
+     <details>
   <summary markdown="span"> Expand to check old versions </summary>
- 
+
+ - **0.10.0**:
+   - Added an option to parse `log_type` annotation into `log_type` field. 
  - **0.9.0**:
    - Added a default value for `env_id` field.
  - **0.8.0**:

@@ -4,7 +4,6 @@ imageTag: 1.2.0
 windowsImage: logzio/fluentd-windows
 windowsImageTag: 0.0.1
 
-
 nameOverride: ""
 fullnameOverride: ""
 
@@ -131,6 +130,191 @@ secrets:
   logzioListener: ""
 
 secretName: logzio-logs-secret
+
+
+appDetection:
+  detector:
+    image: logzio/kubernetes-app-detector
+    tag: 0.0.1
+  instrumentor:
+    image: logzio/kubernetes-app-detector-instrumentor
+    tag: 0.0.1
+  fluentdClusterRole:
+    rules:
+    - apiGroups:
+      - ""
+      resources:
+      - pods
+      - namespaces
+      verbs:
+      - get
+      - list
+      - watch
+    - apiGroups:
+      - apps
+      resources:
+      - deployments
+      verbs:
+      - get
+      - list
+      - watch
+    - apiGroups:
+      - apps
+      resources:
+      - statefulsets
+      verbs:
+      - get
+      - list
+      - watch
+    - apiGroups:
+      - logz.io
+      resources:
+      - appdetectors
+      - namespaces
+      verbs:
+      - get
+      - list
+      - watch
+  detectorClusterRole:
+    rules:
+    - apiGroups:
+      - ""
+      resources:
+      - pods
+      verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+    - apiGroups:
+      - ""
+      resources:
+      - pods/status
+      verbs:
+      - get
+      - patch
+      - update
+    - apiGroups:
+      - apps
+      resources:
+      - deployments
+      verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+    - apiGroups:
+      - apps
+      resources:
+      - deployments/finalizers
+      verbs:
+      - update
+    - apiGroups:
+      - apps
+      resources:
+      - deployments/status
+      verbs:
+      - get
+      - patch
+      - update
+    - apiGroups:
+      - apps
+      resources:
+      - statefulsets
+      verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+    - apiGroups:
+      - apps
+      resources:
+      - statefulsets/finalizers
+      verbs:
+      - update
+    - apiGroups:
+      - apps
+      resources:
+      - statefulsets/status
+      verbs:
+      - get
+      - patch
+      - update
+    - apiGroups:
+      - logz.io
+      resources:
+      - appdetectors/finalizers
+      verbs:
+      - update
+    - apiGroups:
+      - logz.io
+      resources:
+      - appdetectors
+      verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+    - apiGroups:
+      - logz.io
+      resources:
+      - appdetectors/finalizers
+      verbs:
+      - update
+    - apiGroups:
+      - logz.io
+      resources:
+      - appdetectors/status
+      verbs:
+      - get
+      - patch
+      - update
+  leaderElectionClusterRole:
+    rules:
+    - apiGroups:
+      - ""
+      resources:
+      - configmaps
+      verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+    - apiGroups:
+      - coordination.k8s.io
+      resources:
+      - leases
+      verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+    - apiGroups:
+      - ""
+      resources:
+      - events
+      verbs:
+      - create
+      - patch
+  enabled: true
 
 configMapIncludes: |
   @include "#{ENV['FLUENTD_SYSTEMD_CONF'] || 'systemd'}.conf"
@@ -384,16 +568,22 @@ configmap:
       @id filter_kube_metadata
       kubernetes_url "#{ENV['FLUENT_FILTER_KUBERNETES_URL'] || 'https://' + ENV.fetch('KUBERNETES_SERVICE_HOST') + ':' + ENV.fetch('KUBERNETES_SERVICE_PORT') + '/api'}"
       verify_ssl "#{ENV['KUBERNETES_VERIFY_SSL'] || true}"
+    # Adding the logzio/application_type annotation to the record (if exists), so we can manipulate it into the type field
+      annotation_match "logzio\/application\_type"
       annotation_match "log\_type"
     </filter>
 
     <filter **>
       @type record_modifier
+      from_annotation ${record.dig("kubernetes","annotations","logzio/application_type")
       <record>
         log_type ${record.dig("kubernetes","annotations","log_type")}
-        _dummy_ ${if record.dig("kubernetes","annotations","log_type") then record["kubernetes"]["annotations"].delete("log_type"); end;}
+        type ${record.dig("kubernetes","annotations","logzio/application_type") || record.dig("type")}
+        _dummy_ ${if record.dig("kubernetes","annotations","logzio/application_type") then record["kubernetes"]["annotations"].delete("logzio/application_type"); end;}
+        _dummy__ ${if record.dig("kubernetes","annotations","log_type") then record["kubernetes"]["annotations"].delete("log_type"); end;}
       </record>
       remove_keys _dummy_
+      remove_keys _dummy__
     </filter>
 
   system: |
