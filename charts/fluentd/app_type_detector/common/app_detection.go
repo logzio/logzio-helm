@@ -70,22 +70,3 @@ var Applications = []Application{
 	"zeek",
 	"zipkinSpan",
 }
-
-//var mysqlApps = map[string]int{
-//	"mysql_monitor": 2,
-//	"mysql":         1,
-//
-//	"kafka_server": 2,
-//	"kafka-server": 2,
-//	"apache":       1,
-//
-//	"nginx_access": 2,
-//	"nginx-access": 2,
-//	"nginx":        1,
-//
-//	"docker_logs":           1,
-//	"docker-collector-logs": 2,
-//
-//	"apache_access": 2,
-//	"apache-access": 2,
-//}

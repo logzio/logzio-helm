@@ -24,11 +24,6 @@ func (appInspector *ApplicationInspector) Inspect(process *process.Details) (str
 		if match {
 			detectedApps[string(applicationType)] = true
 		}
-
-		//if strings.Contains(process.ExeName, string(applicationType)) {
-		//	detectedApps[string(applicationType)] = true
-		//}
-
 	}
 
 	for _, applicationType := range common.Applications {
@@ -37,10 +32,6 @@ func (appInspector *ApplicationInspector) Inspect(process *process.Details) (str
 		if match {
 			detectedApps[string(applicationType)] = true
 		}
-
-		//if strings.Contains(process.CmdLine, string(applicationType)) {
-		//	detectedApps[string(applicationType)] = true
-		//}
 	}
 
 	if len(detectedApps) == 1 {
