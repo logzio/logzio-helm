@@ -148,7 +148,14 @@ helm install -n monitoring \
 | `configmap.auditJson` | Configuration for `audit-json.conf`. This is the configuration that's being used when `daemonset.auditLogFormat` is set to `audit-json` | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
 | `configmap.envId` | Config snippet for adding `env_id` field to logs | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
 | `configmap.customSources` | Add sources to the Fluentd configuration | `""` |
-| `configmap.customFilters` | Add filters to the Fluentd configuration | `""` |
+| `appDetection.enabled` | Enables Automatic app detection and injection into the `type` field | `true` |
+| `appDetection.detector.image` | Kubernetes app detector image name | `logzio/kubernetes-app-detector` |
+| `appDetection.detector.tag` | Kubernetes app detector image tag | `0.0.1` |
+| `appDetection.instrumentor.image` | Kubernetes app detector instrumentor image name | `logzio/kubernetes-app-detector-instrumentor` |
+| `appDetection.instrumentor.tag` | Kubernetes app detector image tag | `0.0.1` |
+| `appDetection.fluentdClusterRole.rules` | Fluentd cluster role rules for app detection | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
+| `appDetection.detectorClusterRole.rules` | Cluster role rules for app detector | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
+| `appDetection.leaderElectionClusterRole.rules` | Cluster role rules for leader election | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml).
 
 **Note:** If you're adding your own configuration file via `configmap.extraConfig`:
 - Add a `--set-file` flag to your `helm install` command, as seen in the [example above](https://github.com/logzio/logzio-helm/tree/master/charts/fluentd#configuration).
@@ -168,7 +175,9 @@ my-custom-conf-name2.conf: |-
 ### Automatic app-detection (enabled by default)
 When enabled, automatic app detection will scan all pods scanned for supported application types of [default parsing](https://docs.logz.io/user-guide/log-shipping/built-in-log-types.html). These types are automatically parsed by logzio.
 The detected app name will be added as a value for `logzio/application_type` annotation and injected to the `type` field of each application log.
-To skip specific Deployments/StatefulSets when using automatic app detection, add the `logzio/skip_app_detection: true` annotation.
+To skip specific Deployments/StatefulSets when using automatic app detection, add the `logzio.io/skip_app_detection: true` annotation.
+
+[Kubernetes app detector repository](https://github.com/logzio/kubernetes-app-detector)
 
 ### Adding a custom log_type field from attribute
 To add a `log_type` field with a custom value to each log, you can use the annotation key `log_type` with a custom value. The annotation will be automatically parsed into a `log_type` field with the provided value.
