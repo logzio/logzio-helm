@@ -14,8 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-// TODO we dont need intrumented app information?
-
 package v1alpha1
 
 import (
