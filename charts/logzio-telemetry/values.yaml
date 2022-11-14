@@ -225,7 +225,7 @@ tracesConfig:
 spmConfig:
   processors:
     spanmetrics:
-      metrics_exporter: prometheusremotewrite/spm
+      metrics_exporter: prometheus/spanmetrics
       latency_histogram_buckets: [2ms, 8ms, 50ms, 100ms, 200ms, 500ms, 1s, 5s, 10s]
       dimensions_cache_size: 100000
       aggregation_temporality: AGGREGATION_TEMPORALITY_CUMULATIVE
