@@ -235,12 +235,21 @@ spmConfig:
           default: ${ENV_ID}
   receivers:
     # Dummy recivier 
-    otlp/spm:
+    otlp/spanmetrics:
       protocols:
         grpc:
           endpoint: "localhost:12345"
+    prometheus/spanmetrics-logzio:
+      config:
+        scrape_configs:
+        - job_name: 'atm'
+          scrape_interval: 15s
+          static_configs:
+          - targets: [ "0.0.0.0:8889" ]
   exporters:
-    prometheusremotewrite/spm:
+    prometheus/spanmetrics:
+      endpoint: "0.0.0.0:8889"
+    prometheusremotewrite/spanmetrics-logzio:
       endpoint: ${LISTENER_URL}
       headers:
         Authorization: "Bearer ${SPM_TOKEN}"
@@ -250,11 +259,13 @@ spmConfig:
         receivers: [jaeger, zipkin, otlp]
         processors: [spanmetrics, tail_sampling, attributes/env_id, memory_limiter, batch]
         exporters: [logging, logzio]
-      metrics/spm:
+      metrics/spanmetrics:
         # Dummy recivier 
-        receivers: [ otlp/spm ]
-        exporters: [logging, prometheusremotewrite/spm]
-
+        receivers: [ otlp/spanmetrics ]
+        exporters: [logging, prometheus/spanmetrics]
+      metrics/spanmetrics-logzio:
+        receivers: [prometheus/spanmetrics-logzio]
+        exporters: [prometheusremotewrite/spanmetrics-logzio]
 
 metricsConfig:
   extensions:

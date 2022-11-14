@@ -245,6 +245,8 @@ helm uninstall logzio-k8s-telemetry
 
 
 ## Change log
+* 0.0.13
+  - Change to `prometheus` exporter for spanmetrics
 * 0.0.12
   - Add listener url when `spm` is enabled.
 * 0.0.11
