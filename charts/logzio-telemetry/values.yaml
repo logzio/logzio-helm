@@ -225,7 +225,7 @@ tracesConfig:
 spmConfig:
   processors:
     spanmetrics:
-      metrics_exporter: prometheusremotewrite/spm
+      metrics_exporter: prometheus/spm
       latency_histogram_buckets: [2ms, 8ms, 50ms, 100ms, 200ms, 500ms, 1s, 5s, 10s]
       dimensions_cache_size: 100000
       aggregation_temporality: AGGREGATION_TEMPORALITY_CUMULATIVE
@@ -239,8 +239,17 @@ spmConfig:
       protocols:
         grpc:
           endpoint: "localhost:12345"
+    prometheus/spm-logzio:
+      config:
+        scrape_configs:
+        - job_name: 'spm'
+          scrape_interval: 15s
+          static_configs:
+          - targets: [ "0.0.0.0:8889" ]
   exporters:
-    prometheusremotewrite/spm:
+    prometheus/spm:
+      endpoint: "0.0.0.0:8889"
+    prometheusremotewrite/spm-logzio:
       endpoint: ${LISTENER_URL}
       headers:
         Authorization: "Bearer ${SPM_TOKEN}"
@@ -253,8 +262,10 @@ spmConfig:
       metrics/spm:
         # Dummy recivier 
         receivers: [ otlp/spm ]
-        exporters: [logging, prometheusremotewrite/spm]
-
+        exporters: [logging, prometheus/spm]
+      metrics/spm-logzio:
+        receivers: [prometheus/spm-logzio]
+        exporters: [prometheusremotewrite/spm-logzio]
 
 metricsConfig:
   extensions:
