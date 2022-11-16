@@ -284,10 +284,15 @@ logzio-fluentd logzio-helm/logzio-fluentd
    - Upgrade image `logzio/logzio-fluentd:1.2.0`:
      - Upgrade to `fluentd 1.15`.
      - Upgrade plugin `fluent-plugin-kubernetes_metadata_filter` to `3.1.2`.
+ - **0.10.0**:
+   - Added an option to parse `log_type` annotation into `log_type` field.
+
 
      <details>
   <summary markdown="span"> Expand to check old versions </summary>
- 
+
+ - **0.10.0**:
+   - Added an option to parse `log_type` annotation into `log_type` field. 
  - **0.9.0**:
    - Added a default value for `env_id` field.
  - **0.8.0**:
