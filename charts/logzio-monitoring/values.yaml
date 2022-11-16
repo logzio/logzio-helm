@@ -1,8 +1,0 @@
-logs:
-  enabled: false
-metricsOrTraces:
-  enabled: false
-
-logzio-fluentd:
-  daemonset:
-    logType: "agent-k8s"
