@@ -4,5 +4,19 @@ kind: ClusterRole
 metadata:
   name: {{ include "fluentd.fullname" . }}
   namespace: {{ .Values.namespace }}
-rules: {{ toYaml .Values.clusterRole.rules | nindent 2 -}}
+rules: {{- if .Values.appDetection.enabled }}
+{{ toYaml .Values.appDetection.fluentdClusterRole.rules | nindent 2 -}}
+{{- else }}
+{{ toYaml .Values.clusterRole.rules | nindent 2 -}}
+{{- end }}
+{{- end }}
+
+---
+{{- if .Values.appDetection.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "fluentd.fullname" . }}-app-detector
+  namespace: {{ .Values.namespace }}
+rules: {{ toYaml .Values.appDetection.detectorClusterRole.rules | nindent 2 -}}
 {{- end }}
