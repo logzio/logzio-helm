@@ -181,7 +181,7 @@ Will result with the following log (json):
 ,"log_type": "my_type"
 ...
 }
-
+```
 
 ### Uninstalling the Chart
 
