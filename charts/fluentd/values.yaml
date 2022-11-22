@@ -135,10 +135,10 @@ secretName: logzio-logs-secret
 appDetection:
   detector:
     image: logzio/kubernetes-app-detector
-    tag: 0.0.1
+    tag: latest
   instrumentor:
     image: logzio/kubernetes-app-detector-instrumentor
-    tag: 0.0.1
+    tag: latest
   fluentdClusterRole:
     rules:
     - apiGroups:
@@ -569,12 +569,10 @@ configmap:
       kubernetes_url "#{ENV['FLUENT_FILTER_KUBERNETES_URL'] || 'https://' + ENV.fetch('KUBERNETES_SERVICE_HOST') + ':' + ENV.fetch('KUBERNETES_SERVICE_PORT') + '/api'}"
       verify_ssl "#{ENV['KUBERNETES_VERIFY_SSL'] || true}"
     # Adding the logzio/application_type annotation to the record (if exists), so we can manipulate it into the type field
-      annotation_match "logzio\/application\_type"
-      annotation_match "log\_type"
+      annotation_match ["logzio\/application\_type|log\_type"]
     </filter>
     <filter **>
       @type record_modifier
-      from_annotation ${record.dig("kubernetes","annotations","logzio/application_type")
       <record>
         # use regex to find log level keywords and extract them
         dummy_level ${record.dig("message").match(/(?i)(?<ss>(\b(info|debug|warning|error|panic|failure|failed|exception|trace)\b))/).to_s}

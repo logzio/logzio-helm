@@ -175,7 +175,7 @@ my-custom-conf-name2.conf: |-
 ### Automatic app-detection (enabled by default)
 When enabled, automatic app detection will scan all pods scanned for supported application types of [default parsing](https://docs.logz.io/user-guide/log-shipping/built-in-log-types.html). These types are automatically parsed by logzio.
 The detected app name will be added as a value for `logzio/application_type` annotation and injected to the `type` field of each application log.
-To skip specific Deployments/StatefulSets when using automatic app detection, add the `logzio.io/skip_app_detection: true` annotation.
+To skip specific Deployments/StatefulSets when using automatic app detection, add the `logzio/skip_app_detection: true` annotation.
 
 [Kubernetes app detector repository](https://github.com/logzio/kubernetes-app-detector)
 
