@@ -165,6 +165,9 @@ baseCollectorConfig:
       - key: deployment
         action: insert
         from_attribute: k8s.deployment.name
+      - key: pod_ip
+        action: insert
+        from_attribute: k8s.pod.ip
       # Delete old
       - key: k8s.deployment.name
         action: delete
@@ -173,6 +176,8 @@ baseCollectorConfig:
       - key: k8s.namespace.name
         action: delete
       - key: k8s.node.name
+        action: delete
+      - key: k8s.pod.ip
         action: delete
     batch: {}
     attributes/env_id:
