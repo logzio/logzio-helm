@@ -144,6 +144,36 @@ baseCollectorConfig:
     health_check: {}
   processors:
     k8sattributes:
+    extract:
+      metadata:
+      - k8s.pod.name
+      - k8s.deployment.name
+      - k8s.namespace.name
+      - k8s.node.name
+    resource/k8s:
+      attributes:
+      # Rename
+      - key: pod
+        action: insert
+        from_attribute: k8s.pod.name
+      - key: kubernetes_node
+        action: insert
+        from_attribute: k8s.node.name
+      - key: namespace
+        action: insert
+        from_attribute: k8s.namespace.name
+      - key: deployment
+        action: insert
+        from_attribute: k8s.deployment.name
+      # Delete old
+      - key: k8s.deployment.name
+        action: delete
+      - key: k8s.pod.name
+        action: delete
+      - key: k8s.namespace.name
+        action: delete
+      - key: k8s.node.name
+        action: delete
     batch: {}
     attributes/env_id:
       actions:
@@ -217,7 +247,7 @@ tracesConfig:
     pipelines:
       traces:
         receivers: [jaeger, zipkin, otlp]
-        processors: [tail_sampling, attributes/env_id, k8sattributes, memory_limiter, batch]
+        processors: [tail_sampling, attributes/env_id, k8sattributes, resource/k8s, memory_limiter, batch]
         exporters: [logging, logzio]
     telemetry:
       logs:
