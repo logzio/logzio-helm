@@ -123,10 +123,12 @@ logzio-monitoring logzio-helm/logzio-monitoring
 ```
 
 ## Changelog
+- **0.1.9**:
+	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.14`.
 - **0.1.8**:
 	- Upgrade `logzio-fluentd` Chart to `0.0.12`.
 - **0.1.7**:
-	- Upgrade `logzio-telemetry` Chart to `0.0.13`.
+	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.13`.
 - **0.1.6**:
 	- Upgrade `logzio-fluentd` Chart to `0.11.0`.
 
@@ -138,22 +140,22 @@ logzio-monitoring logzio-helm/logzio-monitoring
 	- Upgrade `logzio-fluentd` Chart to `0.10.0`.
 
 - **0.1.4**:
-	- Upgrade `logzio-telemetry` Chart to `0.0.8`.
+	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.8`.
 	- Upgrade `logzio-fluentd` Chart to `0.9.0`.
 
 - **0.1.3**:
-	- Upgrade `logzio-telemetry` Chart to `0.0.6`.
+	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.6`.
 	- Upgrade `logzio-fluentd` Chart to `0.8.0`.
 
 - **0.1.2**:
-	- Upgrade `logzio-telemetry` Chart to `0.0.4`.
+	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.4`.
 	- Upgrade `logzio-fluentd` Chart to `0.6.1`.
 - **0.1.1**:
-	- Upgrade `logzio-telemetry` Chart to `0.0.3`.
+	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.3`.
 - **0.1.0**:
 	- Add support for fargate logging
 	- Upgrade `logzio-fluentd` Chart to `0.5.0`.
-	- Upgrade `logzio-telemetry` Chart to `0.0.2`.
+	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.2`.
 - **0.0.3**:
 	- Upgrade `logzio-fluentd` Chart to `0.4.1`.
 - **0.0.2**:
