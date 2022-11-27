@@ -54,6 +54,11 @@ containers:
           secretKeyRef:
             name: logzio-secret
             key: logzio-metrics-listener
+      - name: P8S_LOGZIO_NAME
+        valueFrom:
+          secretKeyRef:
+            name: logzio-secret
+            key: p8s-logzio-name
 {{- end }}
 {{- if .Values.traces.enabled }}
       - name: TRACES_TOKEN
@@ -84,11 +89,6 @@ containers:
             key: logzio-spm-shipping-token
 {{ end }}
 {{- end }}
-      - name: P8S_LOGZIO_NAME
-        valueFrom:
-          secretKeyRef:
-            name: logzio-secret
-            key: p8s-logzio-name
       - name: ENV_ID
         valueFrom:
           secretKeyRef:

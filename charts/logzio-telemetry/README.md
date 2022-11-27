@@ -245,6 +245,10 @@ helm uninstall logzio-k8s-telemetry
 
 
 ## Change log
+* 0.0.14
+  - Add `k8sattributesprocessor`
+  - Require `p8s-logzio-name` only if `metrics` or `spm` are enabled
+  - Add `resource/k8s` processor
 * 0.0.13
   - Change to `prometheus` exporter for spanmetrics
 * 0.0.12
