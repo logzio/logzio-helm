@@ -143,6 +143,7 @@ baseCollectorConfig:
   extensions:
     health_check: {}
   processors:
+    k8sattributes:
     batch: {}
     attributes/env_id:
       actions:
@@ -216,7 +217,7 @@ tracesConfig:
     pipelines:
       traces:
         receivers: [jaeger, zipkin, otlp]
-        processors: [tail_sampling, attributes/env_id, memory_limiter, batch]
+        processors: [tail_sampling, attributes/env_id, k8sattributes, memory_limiter, batch]
         exporters: [logging, logzio]
     telemetry:
       logs:
