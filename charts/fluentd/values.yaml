@@ -397,7 +397,7 @@ configmap:
         type ${record.dig("kubernetes","annotations","log_type") || record.dig("type")}
         _dummy_ ${if record.dig("kubernetes","annotations","log_type") then record["kubernetes"]["annotations"].delete("log_type"); end;}
       </record>
-      remove_keys _dummy_, dummy_level
+      remove_keys _dummy_,dummy_level
     </filter>
 
   system: |
