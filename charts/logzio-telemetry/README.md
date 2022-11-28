@@ -245,6 +245,8 @@ helm uninstall logzio-k8s-telemetry
 
 
 ## Change log
+* 0.0.15
+  - Add `kubernetes-pods` job
 * 0.0.14
   - Add `k8sattributesprocessor`
   - Require `p8s-logzio-name` only if `metrics` or `spm` are enabled
