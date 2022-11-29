@@ -74,12 +74,14 @@ is not supporting )
 {{- if and $.Values.disableKubeDnsScraping (eq $job.job_name "kubernetes-service-endpoints")}}
 {{- $_ := set $job ("relabel_configs" | toYaml)  ( mustAppend $job.relabel_configs ($.Files.Get "metrics_filter/eks_kubedns_drop_filter.toml" | fromYaml) ) }}
 {{- end }}
+{{- if  and (ne $job.job_name "kubernetes-pods") (ne $job.job_name "collector-metrics")}}
 {{- if $.Values.enableMetricsFilter.eks}}
 {{- $_ := set $job ("metric_relabel_configs" | toYaml)  ($.Files.Get "metrics_filter/eks_filter.toml" | fromYaml | list ) }}
 {{- else if $.Values.enableMetricsFilter.aks}}
 {{- $_ := set $job ("metric_relabel_configs" | toYaml)  ($.Files.Get "metrics_filter/aks_filter.toml" | fromYaml | list ) }}
 {{- else if $.Values.enableMetricsFilter.gke}}
 {{- $_ := set $job ("metric_relabel_configs" | toYaml)  ($.Files.Get "metrics_filter/gke_filter.toml" | fromYaml | list ) }}
+{{- end }}
 {{- end }}
 {{- end }}
 {{- end }}
