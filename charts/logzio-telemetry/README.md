@@ -247,9 +247,10 @@ helm uninstall logzio-k8s-telemetry
 ## Change log
 * 0.0.15
   - Add `applications` job
-  - add `collector-metrics` job 
-  - replace `$` -> `$$` to escape special char
+  - Add `collector-metrics` job
+  - Replace `$` -> `$$` to escape special char
   - Upgrade otel image `0.60.0`-> `0.64.0`
+  - Add `k8s 360` metrics to filters
 * 0.0.14
   - Add `k8sattributesprocessor`
   - Require `p8s-logzio-name` only if `metrics` or `spm` are enabled
@@ -262,7 +263,7 @@ helm uninstall logzio-k8s-telemetry
 <details>
   <summary markdown="span"> Expand to check old versions </summary>
 
-  
+
 * 0.0.11
   - Change default values of `secrets.SamplingProbability`, `secrets.SamplingLatency`
 * 0.0.10
