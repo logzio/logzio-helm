@@ -321,6 +321,7 @@ metricsConfig:
           scrape_timeout: 10s
           evaluation_interval: 10s
         scrape_configs:
+        # Job to collect opentelemetry collector metrics
         - job_name: 'collector-metrics'
           scrape_interval: 15s
           static_configs:
@@ -374,7 +375,8 @@ metricsConfig:
             - source_labels: [__meta_kubernetes_pod_node_name]
               action: replace
               target_label: kubernetes_node
-        - job_name: kubernetes-pods
+        # Job to collect metrics from applications running on pods
+        - job_name: applications
           honor_timestamps: true
           honor_labels: true
           metrics_path: /metrics
