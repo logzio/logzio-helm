@@ -321,6 +321,11 @@ metricsConfig:
           scrape_timeout: 10s
           evaluation_interval: 10s
         scrape_configs:
+        # Job to collect opentelemetry collector metrics
+        - job_name: 'collector-metrics'
+          scrape_interval: 15s
+          static_configs:
+          - targets: [ "0.0.0.0:8888" ]
         - job_name: windows-metrics
           honor_timestamps: true
           honor_labels: true
@@ -355,7 +360,7 @@ metricsConfig:
               action: replace
               target_label: __address__
               regex: ([^:]+)(?::\d+)?;(\d+)
-              replacement: $1:$2
+              replacement: $$1:$$2
             - action: labelmap
               regex: __meta_kubernetes_service_label_(.+)
             - source_labels: [__meta_kubernetes_namespace]
@@ -366,6 +371,45 @@ metricsConfig:
               target_label: service
             - source_labels: [__meta_kubernetes_pod_name]
               action: replace
+              target_label: pod
+            - source_labels: [__meta_kubernetes_pod_node_name]
+              action: replace
+              target_label: kubernetes_node
+        # Job to collect metrics from applications running on pods
+        - job_name: applications
+          honor_timestamps: true
+          honor_labels: true
+          metrics_path: /metrics
+          scheme: http
+          kubernetes_sd_configs:
+          - role: pod
+          relabel_configs:
+            - action: keep
+              regex: true|"true"
+              source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            - action: replace
+              regex: (https?)
+              source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scheme]
+              target_label: __scheme__
+            - action: replace
+              regex: (.+)
+              source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+              target_label: __metrics_path__
+            - action: replace
+              regex: (.+?)(?::\d+)?;(\d+)
+              replacement: $$1:$$2
+              source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+              target_label: __address__
+            - action: labelmap
+              regex: __meta_kubernetes_pod_annotation_prometheus_io_param_(.+)
+              replacement: __param_$$1
+            - action: labelmap
+              regex: __meta_kubernetes_pod_label_(.+)
+            - action: replace
+              source_labels: [__meta_kubernetes_namespace]
+              target_label: namespace
+            - action: replace
+              source_labels: [__meta_kubernetes_pod_name]
               target_label: pod
             - source_labels: [__meta_kubernetes_pod_node_name]
               action: replace
@@ -403,7 +447,7 @@ image:
   repository: otel/opentelemetry-collector-contrib
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.60.0"
+  tag: "0.64.0"
 nginxWindowsImage:
   # Reverse proxy image to enable metrics scraping from windows nodes
   repository: logzio/logzio-windows-node-reverse-proxy
