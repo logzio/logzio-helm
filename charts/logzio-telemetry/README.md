@@ -247,6 +247,9 @@ helm uninstall logzio-k8s-telemetry
 ## Change log
 * 0.0.15
   - Add `kubernetes-pods` job
+  - replace `$` -> `$$` to escape special char
+  - Upgrade otel image `0.60.0 `-> `0.64.0`
+  - add collector-metrics job 
 * 0.0.14
   - Add `k8sattributesprocessor`
   - Require `p8s-logzio-name` only if `metrics` or `spm` are enabled
