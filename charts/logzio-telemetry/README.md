@@ -246,7 +246,7 @@ helm uninstall logzio-k8s-telemetry
 
 ## Change log
 * 0.0.16
-  - Add `kube_deployment_labels` metric to filters
+  - Add `kube_deployment_labels` `node_memory_Buffers_bytes` `node_memory_Cached_bytes` metrics to filters
 * 0.0.15
   - Add `applications` job
   - Add `collector-metrics` job
