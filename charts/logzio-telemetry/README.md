@@ -245,6 +245,8 @@ helm uninstall logzio-k8s-telemetry
 
 
 ## Change log
+* 0.0.16
+  - Add `kube_deployment_labels` metric to filters
 * 0.0.15
   - Add `applications` job
   - Add `collector-metrics` job
