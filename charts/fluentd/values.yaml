@@ -25,7 +25,7 @@ serviceAccount:
   name: ""
 
 fargateLogRouter:
-  ebabled: false
+  enabled: false
 
 env_id: "my_environment"
 

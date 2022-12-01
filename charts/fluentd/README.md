@@ -260,6 +260,8 @@ logzio-fluentd logzio-helm/logzio-fluentd
 
 
 ## Change log
+ - **0.14.0**:
+   - Fix typo in `fargateLogRouter`
  - **0.13.0**:
    - Removal of field `log_type`. Auto populating `type` instead.
  - **0.12.0**:
