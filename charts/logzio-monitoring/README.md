@@ -123,24 +123,25 @@ logzio-monitoring logzio-helm/logzio-monitoring
 ```
 
 ## Changelog
+- **0.1.14**:
+	- Upgrade `logzio-fluentd` Chart to `0.14.0`.
 - **0.1.13**:
 	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.17`.
 - **0.1.12**:
 	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.16`.
 - **0.1.11**:
 	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.15`.
+
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
 - **0.1.10**:
 	- Upgrade `logzio-fluentd` Chart to `0.13.0`.
 - **0.1.9**:
 	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.14`.
 - **0.1.8**:
 	- Upgrade `logzio-fluentd` Chart to `0.0.12`.
-
-
-
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
-
 - **0.1.7**:
 	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.13`.
 - **0.1.6**:
