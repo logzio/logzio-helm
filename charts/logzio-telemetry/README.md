@@ -245,6 +245,8 @@ helm uninstall logzio-k8s-telemetry
 
 
 ## Change log
+* 0.0.18
+  - Add `kube_pod_container_status_terminated_reason` `kube_node_labels` metrics to filters
 * 0.0.17
   - Add `kube_pod_container_status_waiting_reason` metric to filters
 * 0.0.16
