@@ -245,7 +245,6 @@ tracesConfig:
       endpoint: "0.0.0.0:9411"
   service:
     extensions:
-    extensions:
       - health_check
       - pprof
       - zpages
@@ -425,8 +424,7 @@ metricsConfig:
           - role: node
           relabel_configs:
           - action: labelmap
-            regex: __meta_kubernetes_node_label_(.+)
-            
+            regex: __meta_kubernetes_node_label_(.+)  
   service:
     extensions:
       - health_check
