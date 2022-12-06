@@ -75,6 +75,9 @@ is not supporting )
 {{- $_ := set $job ("relabel_configs" | toYaml)  ( mustAppend $job.relabel_configs ($.Files.Get "metrics_filter/eks_kubedns_drop_filter.toml" | fromYaml) ) }}
 {{- end }}
 {{- if  and (ne $job.job_name "applications") (ne $job.job_name "collector-metrics")}}
+{{ if $.Values.enableMetricsFilter.kube-system}}
+{{ $_ := set $job ("metric_relabel_configs" | toYaml)  ($.Files.Get "metrics_filter/kube-system.toml" | fromYaml | list ) }}
+{{ end }}
 {{- if $.Values.enableMetricsFilter.eks}}
 {{- $_ := set $job ("metric_relabel_configs" | toYaml)  ($.Files.Get "metrics_filter/eks_filter.toml" | fromYaml | list ) }}
 {{- else if $.Values.enableMetricsFilter.aks}}

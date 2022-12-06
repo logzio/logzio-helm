@@ -337,10 +337,6 @@ metricsConfig:
             - source_labels: [__meta_kubernetes_pod_annotation_prometheus_windows_io_scrape]
               action: keep
               regex: true|"true"
-            # Drop metrics from kube-system namespace
-            - action: drop
-              source_labels: [__meta_kubernetes_namespace,namespace]
-              regex: kube-system
         - job_name: kubernetes-service-endpoints
           honor_timestamps: true
           honor_labels: true
@@ -379,10 +375,6 @@ metricsConfig:
             - source_labels: [__meta_kubernetes_pod_node_name]
               action: replace
               target_label: kubernetes_node
-            # Drop metrics from kube-system namespace
-            - action: drop
-              source_labels: [__meta_kubernetes_namespace,namespace]
-              regex: kube-system
         # Job to collect metrics from applications running on pods
         - job_name: applications
           honor_timestamps: true
@@ -422,10 +414,6 @@ metricsConfig:
             - source_labels: [__meta_kubernetes_pod_node_name]
               action: replace
               target_label: kubernetes_node
-            # Drop metrics from kube-system namespace
-            - action: drop
-              source_labels: [__meta_kubernetes_namespace,namespace]
-              regex: kube-system
         - job_name: 'kubernetes-cadvisor'
           scheme: https
           metrics_path: /metrics/cadvisor
@@ -641,5 +629,6 @@ enableMetricsFilter:
   gke: false
   eks: false
   aks: false
+  kube-system: false
 
 disableKubeDnsScraping: false
