@@ -426,10 +426,7 @@ metricsConfig:
           relabel_configs:
           - action: labelmap
             regex: __meta_kubernetes_node_label_(.+)
-          # Drop metrics from kube-system namespace
-          - action: drop
-            source_labels: [__meta_kubernetes_namespace,namespace]
-            regex: kube-system
+            
   service:
     extensions:
       - health_check
@@ -629,6 +626,6 @@ enableMetricsFilter:
   gke: false
   eks: false
   aks: false
-  kube-system: false
+  kubeSystem: false
 
 disableKubeDnsScraping: false
