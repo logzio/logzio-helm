@@ -39,7 +39,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           
-      - name: Send custom JSON data to Slack workflow
+      - name: Send message to product integrations
         id: slack
         uses: slackapi/slack-github-action@v1.23.0
         with:
