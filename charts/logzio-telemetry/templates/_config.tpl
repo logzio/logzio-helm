@@ -75,15 +75,16 @@ is not supporting )
 {{- $_ := set $job ("relabel_configs" | toYaml)  ( mustAppend $job.relabel_configs ($.Files.Get "metrics_filter/eks_kubedns_drop_filter.toml" | fromYaml) ) }}
 {{- end }}
 {{- if and $.Values.enableMetricsFilter.kubeSystem (or (eq $job.job_name "kubernetes-service-endpoints") (eq $job.job_name "kubernetes-cadvisor") (eq $job.job_name "windows-metrics")) }}
-{{- $_ := set $job ("relabel_configs" | toYaml)  ( mustAppend $job.relabel_configs ($.Files.Get "metrics_filter/kube-system.toml" | fromYaml) ) }}
+{{- $_ := set $job ("metric_relabel_configs" | toYaml)  ( mustAppend $job.metric_relabel_configs ($.Files.Get "metrics_filter/kube-system.toml" | fromYaml) ) }}
 {{- end }}
 {{- if  and (ne $job.job_name "applications") (ne $job.job_name "collector-metrics")}}
 {{- if $.Values.enableMetricsFilter.eks}}
-{{- $_ := set $job ("metric_relabel_configs" | toYaml)  ($.Files.Get "metrics_filter/eks_filter.toml" | fromYaml | list ) }}
+{{- $_ := set $job ("metric_relabel_configs" | toYaml)  ( mustAppend $job.metric_relabel_configs ($.Files.Get "metrics_filter/eks_filter.toml" | fromYaml) ) }}
 {{- else if $.Values.enableMetricsFilter.aks}}
-{{- $_ := set $job ("metric_relabel_configs" | toYaml)  ($.Files.Get "metrics_filter/aks_filter.toml" | fromYaml | list ) }}
+{{- $_ := set $job ("metric_relabel_configs" | toYaml)  ( mustAppend $job.metric_relabel_configs ($.Files.Get "metrics_filter/aks_filter.toml" | fromYaml) ) }}
 {{- else if $.Values.enableMetricsFilter.gke}}
-{{- $_ := set $job ("metric_relabel_configs" | toYaml)  ($.Files.Get "metrics_filter/gke_filter.toml" | fromYaml | list ) }}
+{{- $_ := set $job ("metric_relabel_configs" | toYaml)  ( mustAppend $job.metric_relabel_configs ($.Files.Get "metrics_filter/gke_filter.toml" | fromYaml) ) }}
+
 {{- end }}
 {{- end }}
 {{- end }}
