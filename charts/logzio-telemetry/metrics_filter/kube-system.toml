@@ -1,0 +1,3 @@
+"source_labels": [namespace]
+"action": drop
+"regex": kube-system

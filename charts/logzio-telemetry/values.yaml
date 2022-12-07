@@ -245,7 +245,6 @@ tracesConfig:
       endpoint: "0.0.0.0:9411"
   service:
     extensions:
-    extensions:
       - health_check
       - pprof
       - zpages
@@ -337,6 +336,7 @@ metricsConfig:
             - source_labels: [__meta_kubernetes_pod_annotation_prometheus_windows_io_scrape]
               action: keep
               regex: true|"true"
+          metric_relabel_configs: []
         - job_name: kubernetes-service-endpoints
           honor_timestamps: true
           honor_labels: true
@@ -375,6 +375,8 @@ metricsConfig:
             - source_labels: [__meta_kubernetes_pod_node_name]
               action: replace
               target_label: kubernetes_node
+          metric_relabel_configs: []
+
         # Job to collect metrics from applications running on pods
         - job_name: applications
           honor_timestamps: true
@@ -425,7 +427,9 @@ metricsConfig:
           - role: node
           relabel_configs:
           - action: labelmap
-            regex: __meta_kubernetes_node_label_(.+)
+            regex: __meta_kubernetes_node_label_(.+)  
+          metric_relabel_configs: []
+
   service:
     extensions:
       - health_check
@@ -625,5 +629,6 @@ enableMetricsFilter:
   gke: false
   eks: false
   aks: false
+  kubeSystem: false
 
 disableKubeDnsScraping: false

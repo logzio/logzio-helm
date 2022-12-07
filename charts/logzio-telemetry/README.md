@@ -245,6 +245,8 @@ helm uninstall logzio-k8s-telemetry
 
 
 ## Change log
+* 0.0.19
+  - Drop metrics from `kube-system` namespace
 * 0.0.18
   - Add `kube_pod_container_status_terminated_reason` `kube_node_labels` metrics to filters
 * 0.0.17
@@ -257,6 +259,12 @@ helm uninstall logzio-k8s-telemetry
   - Replace `$` -> `$$` to escape special char
   - Upgrade otel image `0.60.0`-> `0.64.0`
   - Add `k8s 360` metrics to filters
+
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
+
 * 0.0.14
   - Add `k8sattributesprocessor`
   - Require `p8s-logzio-name` only if `metrics` or `spm` are enabled
@@ -265,11 +273,6 @@ helm uninstall logzio-k8s-telemetry
   - Change to `prometheus` exporter for spanmetrics
 * 0.0.12
   - Add listener url when `spm` is enabled.
-
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
-
-
 * 0.0.11
   - Change default values of `secrets.SamplingProbability`, `secrets.SamplingLatency`
 * 0.0.10
