@@ -123,6 +123,8 @@ logzio-monitoring logzio-helm/logzio-monitoring
 ```
 
 ## Changelog
+- **0.1.16**:
+	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.19`.
 - **0.1.15**:
 	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.18`.
 - **0.1.14**:
