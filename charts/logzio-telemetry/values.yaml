@@ -311,12 +311,8 @@ metricsConfig:
   processors:
     filter/kubernetes360:
       metrics:
-        metrics:
-         # option 1
-          # - 'name == "node*" or name == "kube*" or name == "windows*"'
-         # option 2
-          - 'name == ${K8S_360_METRICS}'
-          - 'attributes["logzio"] != "360"'
+        datapoint:
+          - 'IsMatch(metric.name, "(${K8S_360_METRICS})") == true and attributes["logzio_app"] != "kubernetes360"'
   exporters:
     prometheusremotewrite:
       endpoint: ${LISTENER_URL}
@@ -387,6 +383,9 @@ metricsConfig:
             - source_labels: [__meta_kubernetes_pod_node_name]
               action: replace
               target_label: kubernetes_node
+            - source_labels: [__meta_kubernetes_service_annotation_logz_io_app]
+              action: replace
+              target_label: logzio_app
           metric_relabel_configs: []
 
         # Job to collect metrics from applications running on pods
@@ -464,7 +463,7 @@ image:
   repository: otel/opentelemetry-collector-contrib
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.64.0"
+  tag: "0.66.0"
 nginxWindowsImage:
   # Reverse proxy image to enable metrics scraping from windows nodes
   repository: logzio/logzio-windows-node-reverse-proxy
@@ -628,6 +627,10 @@ prometheus-node-exporter:
   service:
     port: 9101
     targetPort: 9101
+    labels:
+    annotations:
+      prometheus.io/scrape: "true"
+      logz.io/app: "kubernetes360"
   nodeSelector:
     kubernetes.io/os: linux
   # Prevent node exporter deamonset deploymment on fargate nodes
