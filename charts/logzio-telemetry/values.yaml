@@ -612,6 +612,9 @@ kube-state-metrics:
     enabled: false
 
 prometheus-node-exporter:
+  service:
+    port: 9101
+    targetPort: 9101
   nodeSelector:
     kubernetes.io/os: linux
   # Prevent node exporter deamonset deploymment on fargate nodes
