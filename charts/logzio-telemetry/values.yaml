@@ -185,6 +185,9 @@ baseCollectorConfig:
         - key: env_id
           value: ${ENV_ID}
           action: insert
+        - key: logzio_agent_version
+          value: ${LOGZIO_AGENT_VERSION}
+          action: insert
     memory_limiter: null
     tail_sampling:
       policies:
@@ -305,6 +308,15 @@ spmConfig:
 metricsConfig:
   extensions:
     health_check: {}
+  processors:
+    filter/kubernetes360:
+      metrics:
+        metrics:
+         # option 1
+          # - 'name == "node*" or name == "kube*" or name == "windows*"'
+         # option 2
+          - 'name == ${K8S_360_METRICS}'
+          - 'attributes["logzio"] != "360"'
   exporters:
     prometheusremotewrite:
       endpoint: ${LISTENER_URL}
@@ -440,6 +452,7 @@ metricsConfig:
         processors:
           - attributes/env_id
           - memory_limiter
+          - filter/kubernetes360
         receivers:
           - prometheus
           
