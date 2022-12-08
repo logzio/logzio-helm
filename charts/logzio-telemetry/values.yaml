@@ -620,7 +620,6 @@ annotations:  {}
 kube-state-metrics:
   service:
     annotations:
-      prometheus.io/scrape: "true"
       logz.io/app: "kubernetes360"
   nodeSelector:
     kubernetes.io/os: linux
