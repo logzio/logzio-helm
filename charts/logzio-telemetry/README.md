@@ -216,7 +216,7 @@ To enable metrics filtering, set the following flag when deploying the chart, re
 To Filter out metrics from `kube-system` namesapce, set the following flag when deploying the chart.
 
 ```
---set enableMetricsFilter.kubeSystem>=true
+--set enableMetricsFilter.kubeSystem=true
 ```
 
 #### Disabling kube-dns scraping for EKS clusters
