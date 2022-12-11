@@ -123,12 +123,13 @@ logzio-monitoring logzio-helm/logzio-monitoring
 ```
 
 ## Changelog
-- **0.1.16**:
+- **0.1.17**:
 	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.20`:
 	  - Change the default port for node exporter `9100` -> `9101` to avoid pods stocking on pending state if a user has `node-exporter` daemon set deployed on the cluster
 	  - Update otel `0.64.0` -> `0.66.0` 
 	  - Add `logzio_agent_version` label
 	  - Add `logz.io/app=kubertneters360` annotation to `Kube-state-metrics` and `node-exporter` 
+	  - Add `filter/kubernetes360` processor for metrics, to avoid duplicated metrics if a user has `Kube-state-metrics` or `node-exporter` deployed on the cluster
 - **0.1.16**:
 	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.19`:
 	  - Drop metrics from `kube-system` namespace
