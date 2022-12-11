@@ -211,6 +211,13 @@ To enable metrics filtering, set the following flag when deploying the chart, re
 --set enableMetricsFilter.<<cloud-service>>=true
 ```
 
+#### Filtering metrics from `kube-system` namesapce
+
+To Filter out metrics from `kube-system` namesapce, set the following flag when deploying the chart.
+
+```
+--set enableMetricsFilter.kubeSystem=true
+```
 
 #### Disabling kube-dns scraping for EKS clusters
 
@@ -245,6 +252,12 @@ helm uninstall logzio-k8s-telemetry
 
 
 ## Change log
+* 0.0.20
+  - Change the default port for node exporter `9100` -> `9101` to avoid pods stocking on pending state if a user has `node-exporter` daemon set deployed on the cluster
+  - Update otel `0.64.0` -> `0.66.0` 
+  - Add `logzio_agent_version` label
+  - Add `logz.io/app=kubertneters360` annotation to `Kube-state-metrics` and `node-exporter`
+  - Add `filter/kubernetes360` processor for metrics, to avoid duplicated metrics if a user has `Kube-state-metrics` or `node-exporter` deployed on the cluster
 * 0.0.19
   - Drop metrics from `kube-system` namespace
 * 0.0.18

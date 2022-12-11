@@ -37,6 +37,13 @@ containers:
           fieldRef:
             apiVersion: v1
             fieldPath: status.podIP
+      - name: K8S_360_METRICS
+        valueFrom:
+          secretKeyRef:
+            name: logzio-secret
+            key: kubernetes-360-metrics
+      - name: LOGZIO_AGENT_VERSION
+        value: {{.Chart.Version}}
       - name: REALESE_NAME
         value: {{.Release.Name}}
       - name: REALESE_NS

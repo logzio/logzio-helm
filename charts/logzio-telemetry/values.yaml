@@ -185,6 +185,9 @@ baseCollectorConfig:
         - key: env_id
           value: ${ENV_ID}
           action: insert
+        - key: logzio_agent_version
+          value: ${LOGZIO_AGENT_VERSION}
+          action: insert
     memory_limiter: null
     tail_sampling:
       policies:
@@ -305,6 +308,11 @@ spmConfig:
 metricsConfig:
   extensions:
     health_check: {}
+  processors:
+    filter/kubernetes360:
+      metrics:
+        datapoint:
+          - 'IsMatch(metric.name, "(${K8S_360_METRICS})") == true and attributes["logzio_app"] != "kubernetes360"'
   exporters:
     prometheusremotewrite:
       endpoint: ${LISTENER_URL}
@@ -375,6 +383,9 @@ metricsConfig:
             - source_labels: [__meta_kubernetes_pod_node_name]
               action: replace
               target_label: kubernetes_node
+            - source_labels: [__meta_kubernetes_service_annotation_logz_io_app]
+              action: replace
+              target_label: logzio_app
           metric_relabel_configs: []
 
         # Job to collect metrics from applications running on pods
@@ -440,6 +451,7 @@ metricsConfig:
         processors:
           - attributes/env_id
           - memory_limiter
+          - filter/kubernetes360
         receivers:
           - prometheus
           
@@ -451,7 +463,7 @@ image:
   repository: otel/opentelemetry-collector-contrib
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.64.0"
+  tag: "0.66.0"
 nginxWindowsImage:
   # Reverse proxy image to enable metrics scraping from windows nodes
   repository: logzio/logzio-windows-node-reverse-proxy
@@ -606,12 +618,21 @@ podLabels:  {}
 annotations:  {}
 
 kube-state-metrics:
+  service:
+    annotations:
+      logz.io/app: "kubernetes360"
   nodeSelector:
     kubernetes.io/os: linux
   podSecurityPolicy:
     enabled: false
 
 prometheus-node-exporter:
+  service:
+    port: 9101
+    targetPort: 9101
+    annotations:
+      prometheus.io/scrape: "true"
+      logz.io/app: "kubernetes360"
   nodeSelector:
     kubernetes.io/os: linux
   # Prevent node exporter deamonset deploymment on fargate nodes
