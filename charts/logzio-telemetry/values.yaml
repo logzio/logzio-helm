@@ -630,7 +630,6 @@ prometheus-node-exporter:
   service:
     port: 9101
     targetPort: 9101
-    labels:
     annotations:
       prometheus.io/scrape: "true"
       logz.io/app: "kubernetes360"
