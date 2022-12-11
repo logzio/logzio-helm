@@ -124,17 +124,33 @@ logzio-monitoring logzio-helm/logzio-monitoring
 
 ## Changelog
 - **0.1.16**:
-	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.19`.
+	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.20`:
+	  - Change the default port for node exporter `9100` -> `9101` to avoid pods stocking on pending state if a user has `node-exporter` daemon set deployed on the cluster
+	  - Update otel `0.64.0` -> `0.66.0` 
+	  - Add `logzio_agent_version` label
+	  - Add `logz.io/app=kubertneters360` annotation to `Kube-state-metrics` and `node-exporter` 
+- **0.1.16**:
+	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.19`:
+	  - Drop metrics from `kube-system` namespace
 - **0.1.15**:
-	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.18`.
+	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.18`:
+	  - Add `kube_pod_container_status_terminated_reason` `kube_node_labels` metrics to filters
 - **0.1.14**:
-	- Upgrade `logzio-fluentd` Chart to `0.14.0`.
+	- Upgrade `logzio-fluentd` Chart to `0.14.0`:
+	   - Fix typo in `fargateLogRouter`
 - **0.1.13**:
-	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.17`.
+	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.17`:
+	  - Add `kube_pod_container_status_waiting_reason` metric to filters
 - **0.1.12**:
-	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.16`.
+	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.16`:
+	  - Add `kube_deployment_labels` `node_memory_Buffers_bytes` `node_memory_Cached_bytes` metrics to filters
 - **0.1.11**:
-	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.15`.
+	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.15`:
+	  - Add `applications` job
+      - Add `collector-metrics` job
+      - Replace `$` -> `$$` to escape special char
+      - Upgrade otel image `0.60.0`-> `0.64.0`
+      - Add `k8s 360` metrics to filters
 
 
 <details>
