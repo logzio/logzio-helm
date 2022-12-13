@@ -3,7 +3,7 @@ entries:
   logzio-dotnet-monitor:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2022-12-11T12:56:16.638378+02:00"
+    created: "2022-12-13T12:30:47.800788+02:00"
     description: A Helm chart for shipping dotnet app runtime metrics using dotnet
       monitor and OTEL.
     digest: dcdce7a979cc7944f0d0db14ed3455795a8278db9c15f3f758e12a319432ba84
@@ -17,7 +17,7 @@ entries:
   logzio-fluent-bit:
   - apiVersion: v2
     appVersion: 0.1.3
-    created: "2022-12-11T12:56:16.642726+02:00"
+    created: "2022-12-13T12:30:47.804178+02:00"
     description: Fast and lightweight log agent based on fluentbit, collect and send
       your logs to logz.io
     digest: 4b1d591dea830ab75775428781a635f592b8bf08705e2a01ba019e5c8ada14a4
@@ -38,7 +38,7 @@ entries:
     version: 0.0.3
   - apiVersion: v2
     appVersion: 0.1.2
-    created: "2022-12-11T12:56:16.6405+02:00"
+    created: "2022-12-13T12:30:47.803067+02:00"
     description: Fast and lightweight log agent based on fluentbit, collect and send
       your logs to logz.io
     digest: 0ccaf26079abc1488a96be1fba4937d37e71e150f846994e35730192094d3a98
@@ -59,7 +59,7 @@ entries:
     version: 0.0.2
   - apiVersion: v2
     appVersion: 0.0.1
-    created: "2022-12-11T12:56:16.639436+02:00"
+    created: "2022-12-13T12:30:47.80193+02:00"
     description: Fast and lightweight log agent based on fluentbit, collect and send
       your logs to logz.io
     digest: 114692741ad6870d70e734786037e0db17664cfb58deac94e2a7297badbd4473
@@ -81,7 +81,7 @@ entries:
   logzio-fluentd:
   - apiVersion: v2
     appVersion: 1.2.0
-    created: "2022-12-11T12:56:16.656888+02:00"
+    created: "2022-12-13T12:30:47.81987+02:00"
     description: A Helm chart for shipping Kubernetes logs via Fluentd.
     digest: d27ceabb32f32838756fe602538ccdafbff85245e43bf27037688d2616a45d83
     keywords:
@@ -98,7 +98,7 @@ entries:
     version: 0.14.0
   - apiVersion: v2
     appVersion: 1.2.0
-    created: "2022-12-11T12:56:16.655507+02:00"
+    created: "2022-12-13T12:30:47.81822+02:00"
     description: A Helm chart for shipping Kubernetes logs via Fluentd.
     digest: 66ad7c446f06792f55095573784ee81cb86546d85bb7797bab17d78a37635e15
     keywords:
@@ -115,7 +115,7 @@ entries:
     version: 0.13.0
   - apiVersion: v2
     appVersion: 1.2.0
-    created: "2022-12-11T12:56:16.654144+02:00"
+    created: "2022-12-13T12:30:47.816645+02:00"
     description: A Helm chart for shipping Kubernetes logs via Fluentd.
     digest: ccc0987f52af6739e61a116625cfe27faec606102a7bf07c2bee3165bb0d0d88
     keywords:
@@ -132,7 +132,7 @@ entries:
     version: 0.12.0
   - apiVersion: v2
     appVersion: 1.2.0
-    created: "2022-12-11T12:56:16.652545+02:00"
+    created: "2022-12-13T12:30:47.815075+02:00"
     description: A Helm chart for shipping Kubernetes logs via Fluentd.
     digest: 495c7f5d29e3cb4c31184df1b2ccc1c768679a2e7af96fc237246abf53aea84b
     keywords:
@@ -147,7 +147,7 @@ entries:
     version: 0.11.0
   - apiVersion: v2
     appVersion: 1.1.1
-    created: "2022-12-11T12:56:16.649345+02:00"
+    created: "2022-12-13T12:30:47.813566+02:00"
     description: A Helm chart for shipping Kubernetes logs via Fluentd.
     digest: f06958e81e1e2d4e31768b77536b2277b0cf0e425e2916f06320c5197222ee56
     keywords:
@@ -162,7 +162,7 @@ entries:
     version: 0.10.0
   - apiVersion: v2
     appVersion: 1.1.1
-    created: "2022-12-11T12:56:16.672948+02:00"
+    created: "2022-12-13T12:30:47.836005+02:00"
     description: A Helm chart for shipping Kubernetes logs via Fluentd.
     digest: 9884acb22ce581e4b36197c9269d328e8d9047be41a870afd9658ab91eeaff15
     keywords:
@@ -177,7 +177,7 @@ entries:
     version: 0.9.0
   - apiVersion: v2
     appVersion: 1.1.1
-    created: "2022-12-11T12:56:16.670607+02:00"
+    created: "2022-12-13T12:30:47.834516+02:00"
     description: A Helm chart for shipping Kubernetes logs via Fluentd.
     digest: 4f15ad20f80ff88dcf1a625b8589e04c7b6df8443864c982e4828b4d353a3b52
     keywords:
@@ -192,7 +192,7 @@ entries:
     version: 0.8.0
   - apiVersion: v2
     appVersion: 1.1.1
-    created: "2022-12-11T12:56:16.669016+02:00"
+    created: "2022-12-13T12:30:47.831923+02:00"
     description: A Helm chart for shipping Kubernetes logs via Fluentd.
     digest: eba0ac138cecc1a8234bf7683b6358cae2f71c6b3a25c1ef2f0c8bcbe4d12336
     keywords:
@@ -207,7 +207,7 @@ entries:
     version: 0.7.0
   - apiVersion: v2
     appVersion: 1.1.1
-    created: "2022-12-11T12:56:16.667592+02:00"
+    created: "2022-12-13T12:30:47.830446+02:00"
     description: A Helm chart for shipping Kubernetes logs via Fluentd.
     digest: 8818640e53f2dafbfba2e0bfe12ce1c9178d471b0d33aa7b6a31b8dab6ad548f
     keywords:
@@ -222,7 +222,7 @@ entries:
     version: 0.6.1
   - apiVersion: v2
     appVersion: 1.1.1
-    created: "2022-12-11T12:56:16.666142+02:00"
+    created: "2022-12-13T12:30:47.829001+02:00"
     description: A Helm chart for shipping Kubernetes logs via Fluentd.
     digest: 8c335eec34de450679d843013dd9713aed112dd24a638bfaf153694e34b9495c
     keywords:
@@ -237,7 +237,7 @@ entries:
     version: 0.6.0
   - apiVersion: v2
     appVersion: 1.1.1
-    created: "2022-12-11T12:56:16.664625+02:00"
+    created: "2022-12-13T12:30:47.827538+02:00"
     description: A Helm chart for shipping Kubernetes logs via Fluentd.
     digest: bc92300c28a76c307b7b64bb93f5aeaad1b1da5cb74abdea945f032a255b2ba3
     keywords:
@@ -252,7 +252,7 @@ entries:
     version: 0.5.0
   - apiVersion: v2
     appVersion: 1.1.1
-    created: "2022-12-11T12:56:16.66314+02:00"
+    created: "2022-12-13T12:30:47.826102+02:00"
     description: A Helm chart for shipping Kubernetes logs via Fluentd.
     digest: c30f240d9d09176d9f4794988dda81f09db129e2b25dc2597f5b7d7a01dc3f78
     keywords:
@@ -267,7 +267,7 @@ entries:
     version: 0.4.1
   - apiVersion: v2
     appVersion: 1.0.2
-    created: "2022-12-11T12:56:16.660647+02:00"
+    created: "2022-12-13T12:30:47.824723+02:00"
     description: A Helm chart for shipping Kubernetes logs via Fluentd.
     digest: a52e31d2ae2103235a9de560b1676afd70bcac0c7f081cb9232d734434d04569
     keywords:
@@ -282,7 +282,7 @@ entries:
     version: 0.4.0
   - apiVersion: v2
     appVersion: 1.0.2
-    created: "2022-12-11T12:56:16.659305+02:00"
+    created: "2022-12-13T12:30:47.823225+02:00"
     description: A Helm chart for shipping Kubernetes logs via Fluentd.
     digest: 4c5abcdbf4206950cf806cadb18b75725b5b03f87d8da56cda488259f4a79099
     keywords:
@@ -297,7 +297,7 @@ entries:
     version: 0.3.0
   - apiVersion: v2
     appVersion: 1.0.2
-    created: "2022-12-11T12:56:16.657951+02:00"
+    created: "2022-12-13T12:30:47.82144+02:00"
     description: A Helm chart for shipping Kubernetes logs via Fluentd.
     digest: 5030eb57529c36c9e708c787d91010ee987d4f0725632e762d0c0e8f29d01b6b
     keywords:
@@ -312,7 +312,7 @@ entries:
     version: 0.2.0
   - apiVersion: v2
     appVersion: 1.0.2
-    created: "2022-12-11T12:56:16.647929+02:00"
+    created: "2022-12-13T12:30:47.812025+02:00"
     description: A Helm chart for shipping Kubernetes logs via Fluentd.
     digest: e5ace7581b8ad86a9d80e9ea146ac5cc6448a7d3e74a956241e1aea1c33ab5aa
     keywords:
@@ -327,7 +327,7 @@ entries:
     version: 0.1.0
   - apiVersion: v2
     appVersion: 1.0.1
-    created: "2022-12-11T12:56:16.646953+02:00"
+    created: "2022-12-13T12:30:47.810721+02:00"
     description: A Helm chart for shipping Kubernetes logs via Fluentd.
     digest: cd79899047135a8cf45fe725c97ebdf2b175af2098e7baeacbfabffa938745fe
     keywords:
@@ -342,7 +342,7 @@ entries:
     version: 0.0.4
   - apiVersion: v2
     appVersion: 1.0.1
-    created: "2022-12-11T12:56:16.645875+02:00"
+    created: "2022-12-13T12:30:47.808203+02:00"
     description: A Helm chart for shipping Kubernetes logs via Fluentd.
     digest: fc199f41820a080c55e247f369c523c5d3125862ad45749cd282a127c93bf4f0
     keywords:
@@ -357,7 +357,7 @@ entries:
     version: 0.0.3
   - apiVersion: v2
     appVersion: 1.0.1
-    created: "2022-12-11T12:56:16.644859+02:00"
+    created: "2022-12-13T12:30:47.806838+02:00"
     description: A Helm chart for shipping Kubernetes logs via Fluentd.
     digest: 99f72b1504c82e8c3979dd027a6cbfe9852fa661b634236417e6c502953c48e7
     keywords:
@@ -372,7 +372,7 @@ entries:
     version: 0.0.2
   - apiVersion: v2
     appVersion: 1.0.1
-    created: "2022-12-11T12:56:16.643795+02:00"
+    created: "2022-12-13T12:30:47.805516+02:00"
     description: A Helm chart for shipping Kubernetes logs via Fluentd.
     digest: 6012347e5850f74e096f4a7a51ca66da49c03f42d04b2e1ac94070c8a3dd3c7b
     keywords:
@@ -388,7 +388,7 @@ entries:
   logzio-k8s-logs:
   - apiVersion: v1
     appVersion: 7.8.1
-    created: "2022-12-11T12:56:16.679944+02:00"
+    created: "2022-12-13T12:30:47.844513+02:00"
     description: A Helm chart for shipping k8s logs to logz.io via Filebeat and Winlogbeat.
     digest: 118cc7cbeb9c9c1dc853b444dc7363c7126203658596b73522c4ceab3289d442
     name: logzio-k8s-logs
@@ -397,7 +397,7 @@ entries:
     version: 0.0.7
   - apiVersion: v1
     appVersion: 7.8.1
-    created: "2022-12-11T12:56:16.678743+02:00"
+    created: "2022-12-13T12:30:47.842145+02:00"
     description: A Helm chart for shipping k8s logs to logz.io via Filebeat and Winlogbeat.
     digest: 06f4dd3c6f32477bbf3a12ad56c766f788245d3b4715360eaaed220b5571061d
     name: logzio-k8s-logs
@@ -406,7 +406,7 @@ entries:
     version: 0.0.6
   - apiVersion: v1
     appVersion: 7.8.1
-    created: "2022-12-11T12:56:16.677558+02:00"
+    created: "2022-12-13T12:30:47.840886+02:00"
     description: A Helm chart for shipping k8s logs to logz.io via Filebeat and Winlogbeat.
     digest: 7260c62f16cbdbe5e4b809e1e3006815d116660f4d496ca90addb2503b358235
     name: logzio-k8s-logs
@@ -415,7 +415,7 @@ entries:
     version: 0.0.5
   - apiVersion: v1
     appVersion: 7.8.1
-    created: "2022-12-11T12:56:16.676375+02:00"
+    created: "2022-12-13T12:30:47.839614+02:00"
     description: A Helm chart for shipping k8s logs to logz.io via Filebeat and Winlogbeat.
     digest: 229966d1c83012d89252f699b4978a76ac8d94376d376dbb88e6f1a7043cbcf1
     name: logzio-k8s-logs
@@ -424,7 +424,7 @@ entries:
     version: 0.0.4
   - apiVersion: v1
     appVersion: 7.8.1
-    created: "2022-12-11T12:56:16.6752+02:00"
+    created: "2022-12-13T12:30:47.838286+02:00"
     description: A Helm chart for shipping k8s logs to logz.io via Filebeat.
     digest: 11c793b93c7220ed96fe7d4e226fbbd21376a729bb3c92cca8c44786f5f8da6c
     name: logzio-k8s-logs
@@ -433,7 +433,7 @@ entries:
     version: 0.0.3
   - apiVersion: v1
     appVersion: 7.8.1
-    created: "2022-12-11T12:56:16.674393+02:00"
+    created: "2022-12-13T12:30:47.837451+02:00"
     description: A Helm chart for shipping k8s logs to logz.io via Filebeat.
     digest: efd1c93c08b611e532882d2ad2a1ae58081ca11ff2dd559e1f6c5f77ea5a294c
     name: logzio-k8s-logs
@@ -442,7 +442,7 @@ entries:
     version: 0.0.2
   - apiVersion: v1
     appVersion: 7.8.1
-    created: "2022-12-11T12:56:16.673693+02:00"
+    created: "2022-12-13T12:30:47.836727+02:00"
     description: A Helm chart for shipping k8s logs to logz.io via Filebeat.
     digest: 12e648f76c6970f5f10d38b630e60bbdd859d942bc41cf9963c00b634cf1b869
     name: logzio-k8s-logs
@@ -452,7 +452,7 @@ entries:
   logzio-k8s-metrics:
   - apiVersion: v1
     appVersion: 7.9.1
-    created: "2022-12-11T12:56:16.688652+02:00"
+    created: "2022-12-13T12:30:47.851043+02:00"
     description: A Helm chart for shipping k8s metrics to logzio.io
     digest: 514459a2337820a4bb6dbbc7417911c442281abc0f34987ad9b16ed40fd9a8b6
     name: logzio-k8s-metrics
@@ -461,7 +461,7 @@ entries:
     version: 0.0.6
   - apiVersion: v1
     appVersion: 7.9.1
-    created: "2022-12-11T12:56:16.687446+02:00"
+    created: "2022-12-13T12:30:47.849851+02:00"
     description: A Helm chart for shipping k8s metrics to logzio.io
     digest: 25b0c99e5ed0725439bc7fb430469fb41e51a010bda9907c8e16361cc70a0d0b
     name: logzio-k8s-metrics
@@ -470,7 +470,7 @@ entries:
     version: 0.0.5
   - apiVersion: v1
     appVersion: 7.9.1
-    created: "2022-12-11T12:56:16.686288+02:00"
+    created: "2022-12-13T12:30:47.848673+02:00"
     description: A Helm chart for shipping k8s metrics to logzio.io
     digest: b4eda9687a92fa7f27ab81be5d3325cfb54068e104e726916f82714e23c3cf95
     name: logzio-k8s-metrics
@@ -479,7 +479,7 @@ entries:
     version: 0.0.4
   - apiVersion: v1
     appVersion: 7.9.1
-    created: "2022-12-11T12:56:16.685211+02:00"
+    created: "2022-12-13T12:30:47.847534+02:00"
     description: A Helm chart for shipping k8s metrics to logzio.io
     digest: 74ac0b9f0a10de603c6b110e47865030e85ae69fd2a603015f3095ab0137c70f
     name: logzio-k8s-metrics
@@ -488,7 +488,7 @@ entries:
     version: 0.0.3
   - apiVersion: v1
     appVersion: 0.0.1
-    created: "2022-12-11T12:56:16.684334+02:00"
+    created: "2022-12-13T12:30:47.846631+02:00"
     description: A Helm chart for shipping k8s metrics to logzio.io
     digest: f01dd8b4a9d8647b650cadfe1b03dc8d12ab26c15d51d9cd5a59bbd18dc9b5e2
     name: logzio-k8s-metrics
@@ -497,7 +497,7 @@ entries:
     version: 0.0.2
   - apiVersion: v1
     appVersion: 0.0.1
-    created: "2022-12-11T12:56:16.68094+02:00"
+    created: "2022-12-13T12:30:47.84558+02:00"
     description: A Helm chart for shipping k8s metrics to logzio.io
     digest: 2e4f2f94dc919d7d5b20fcfd7e7f93d36385c8167de671d5077edd8c3f8a951d
     name: logzio-k8s-metrics
@@ -507,7 +507,7 @@ entries:
   logzio-k8s-telemetry:
   - apiVersion: v2
     appVersion: 0.66.0
-    created: "2022-12-11T12:56:16.757507+02:00"
+    created: "2022-12-13T12:30:47.922664+02:00"
     dependencies:
     - condition: metrics.enabled, kubeStateMetrics.enabled
       name: kube-state-metrics
@@ -539,7 +539,7 @@ entries:
     version: 0.0.20
   - apiVersion: v2
     appVersion: 0.64.0
-    created: "2022-12-11T12:56:16.747013+02:00"
+    created: "2022-12-13T12:30:47.912109+02:00"
     dependencies:
     - condition: metrics.enabled, kubeStateMetrics.enabled
       name: kube-state-metrics
@@ -571,7 +571,7 @@ entries:
     version: 0.0.19
   - apiVersion: v2
     appVersion: 0.64.0
-    created: "2022-12-11T12:56:16.740836+02:00"
+    created: "2022-12-13T12:30:47.906853+02:00"
     dependencies:
     - condition: metrics.enabled, kubeStateMetrics.enabled
       name: kube-state-metrics
@@ -603,7 +603,7 @@ entries:
     version: 0.0.18
   - apiVersion: v2
     appVersion: 0.64.0
-    created: "2022-12-11T12:56:16.735967+02:00"
+    created: "2022-12-13T12:30:47.900608+02:00"
     dependencies:
     - condition: metrics.enabled, kubeStateMetrics.enabled
       name: kube-state-metrics
@@ -635,7 +635,7 @@ entries:
     version: 0.0.17
   - apiVersion: v2
     appVersion: 0.64.0
-    created: "2022-12-11T12:56:16.729439+02:00"
+    created: "2022-12-13T12:30:47.895469+02:00"
     dependencies:
     - condition: metrics.enabled, kubeStateMetrics.enabled
       name: kube-state-metrics
@@ -667,7 +667,7 @@ entries:
     version: 0.0.16
   - apiVersion: v2
     appVersion: 0.60.0
-    created: "2022-12-11T12:56:16.724473+02:00"
+    created: "2022-12-13T12:30:47.889334+02:00"
     dependencies:
     - condition: metrics.enabled, kubeStateMetrics.enabled
       name: kube-state-metrics
@@ -699,7 +699,7 @@ entries:
     version: 0.0.15
   - apiVersion: v2
     appVersion: 0.60.0
-    created: "2022-12-11T12:56:16.719245+02:00"
+    created: "2022-12-13T12:30:47.884082+02:00"
     dependencies:
     - condition: metrics.enabled, kubeStateMetrics.enabled
       name: kube-state-metrics
@@ -731,7 +731,7 @@ entries:
     version: 0.0.14
   - apiVersion: v2
     appVersion: 0.60.0
-    created: "2022-12-11T12:56:16.713819+02:00"
+    created: "2022-12-13T12:30:47.877923+02:00"
     dependencies:
     - condition: metrics.enabled, kubeStateMetrics.enabled
       name: kube-state-metrics
@@ -763,7 +763,7 @@ entries:
     version: 0.0.13
   - apiVersion: v2
     appVersion: 0.60.0
-    created: "2022-12-11T12:56:16.709173+02:00"
+    created: "2022-12-13T12:30:47.872833+02:00"
     dependencies:
     - condition: metrics.enabled, kubeStateMetrics.enabled
       name: kube-state-metrics
@@ -795,7 +795,7 @@ entries:
     version: 0.0.12
   - apiVersion: v2
     appVersion: 0.60.0
-    created: "2022-12-11T12:56:16.703434+02:00"
+    created: "2022-12-13T12:30:47.867804+02:00"
     dependencies:
     - condition: metrics.enabled, kubeStateMetrics.enabled
       name: kube-state-metrics
@@ -827,7 +827,7 @@ entries:
     version: 0.0.11
   - apiVersion: v2
     appVersion: 0.60.0
-    created: "2022-12-11T12:56:16.698645+02:00"
+    created: "2022-12-13T12:30:47.862007+02:00"
     dependencies:
     - condition: metrics.enabled, kubeStateMetrics.enabled
       name: kube-state-metrics
@@ -859,7 +859,7 @@ entries:
     version: 0.0.10
   - apiVersion: v2
     appVersion: 0.60.0
-    created: "2022-12-11T12:56:16.790166+02:00"
+    created: "2022-12-13T12:30:47.959714+02:00"
     dependencies:
     - condition: metrics.enabled, kubeStateMetrics.enabled
       name: kube-state-metrics
@@ -891,7 +891,7 @@ entries:
     version: 0.0.9
   - apiVersion: v2
     appVersion: 0.60.0
-    created: "2022-12-11T12:56:16.78528+02:00"
+    created: "2022-12-13T12:30:47.954088+02:00"
     dependencies:
     - condition: metrics.enabled, kubeStateMetrics.enabled
       name: kube-state-metrics
@@ -923,7 +923,7 @@ entries:
     version: 0.0.8
   - apiVersion: v2
     appVersion: 0.60.0
-    created: "2022-12-11T12:56:16.781179+02:00"
+    created: "2022-12-13T12:30:47.94924+02:00"
     dependencies:
     - condition: metrics.enabled, kubeStateMetrics.enabled
       name: kube-state-metrics
@@ -955,7 +955,7 @@ entries:
     version: 0.0.7
   - apiVersion: v2
     appVersion: 0.60.0
-    created: "2022-12-11T12:56:16.776322+02:00"
+    created: "2022-12-13T12:30:47.944331+02:00"
     dependencies:
     - condition: metrics.enabled, kubeStateMetrics.enabled
       name: kube-state-metrics
@@ -987,7 +987,7 @@ entries:
     version: 0.0.6
   - apiVersion: v2
     appVersion: 0.60.0
-    created: "2022-12-11T12:56:16.771887+02:00"
+    created: "2022-12-13T12:30:47.938177+02:00"
     dependencies:
     - condition: metrics.enabled, kubeStateMetrics.enabled
       name: kube-state-metrics
@@ -1019,7 +1019,7 @@ entries:
     version: 0.0.5
   - apiVersion: v2
     appVersion: 0.56.0
-    created: "2022-12-11T12:56:16.7676+02:00"
+    created: "2022-12-13T12:30:47.933544+02:00"
     dependencies:
     - condition: metrics.enabled, kubeStateMetrics.enabled
       name: kube-state-metrics
@@ -1051,7 +1051,7 @@ entries:
     version: 0.0.4
   - apiVersion: v2
     appVersion: 0.56.0
-    created: "2022-12-11T12:56:16.76215+02:00"
+    created: "2022-12-13T12:30:47.927709+02:00"
     dependencies:
     - condition: metrics.enabled, kubeStateMetrics.enabled
       name: kube-state-metrics
@@ -1083,7 +1083,7 @@ entries:
     version: 0.0.3
   - apiVersion: v2
     appVersion: 0.42.0
-    created: "2022-12-11T12:56:16.751427+02:00"
+    created: "2022-12-13T12:30:47.916704+02:00"
     dependencies:
     - condition: metrics.enabled, kubeStateMetrics.enabled
       name: kube-state-metrics
@@ -1115,7 +1115,7 @@ entries:
     version: 0.0.2
   - apiVersion: v2
     appVersion: 0.42.0
-    created: "2022-12-11T12:56:16.693737+02:00"
+    created: "2022-12-13T12:30:47.856964+02:00"
     dependencies:
     - condition: metrics.enabled, kubeStateMetrics.enabled
       name: kube-state-metrics
@@ -1147,7 +1147,7 @@ entries:
     version: 0.0.1
   logzio-monitoring:
   - apiVersion: v2
-    created: "2022-12-11T12:56:16.865043+02:00"
+    created: "2022-12-13T12:30:48.049816+02:00"
     dependencies:
     - condition: logs.enabled
       name: logzio-fluentd
@@ -1160,7 +1160,7 @@ entries:
     description: logzio-monitoring allows you to ship logs, metrics and traces from
       your Kubernetes cluster using the OpenTelemetry collector for metrics and traces,
       and Fluentd for logs.
-    digest: a70d4f7d076c0d7153c3a67aa0c572f737a16ff21ac5404e25f5d8d646e2458d
+    digest: 9cf20832263759efd36b79977e3ba399c488c8d97cb1a7c1eadbd6059c38f7db
     maintainers:
     - email: tamir.michaeli@logz.io
       name: tamirmich
@@ -1174,7 +1174,7 @@ entries:
     - https://logzio.github.io/logzio-helm/logzio-monitoring-0.1.17.tgz
     version: 0.1.17
   - apiVersion: v2
-    created: "2022-12-11T12:56:16.859183+02:00"
+    created: "2022-12-13T12:30:48.043193+02:00"
     dependencies:
     - condition: logs.enabled
       name: logzio-fluentd
@@ -1201,7 +1201,7 @@ entries:
     - https://logzio.github.io/logzio-helm/logzio-monitoring-0.1.16.tgz
     version: 0.1.16
   - apiVersion: v2
-    created: "2022-12-11T12:56:16.852457+02:00"
+    created: "2022-12-13T12:30:48.035738+02:00"
     dependencies:
     - condition: logs.enabled
       name: logzio-fluentd
@@ -1228,7 +1228,7 @@ entries:
     - https://logzio.github.io/logzio-helm/logzio-monitoring-0.1.15.tgz
     version: 0.1.15
   - apiVersion: v2
-    created: "2022-12-11T12:56:16.84643+02:00"
+    created: "2022-12-13T12:30:48.028375+02:00"
     dependencies:
     - condition: logs.enabled
       name: logzio-fluentd
@@ -1255,7 +1255,7 @@ entries:
     - https://logzio.github.io/logzio-helm/logzio-monitoring-0.1.14.tgz
     version: 0.1.14
   - apiVersion: v2
-    created: "2022-12-11T12:56:16.841109+02:00"
+    created: "2022-12-13T12:30:48.02143+02:00"
     dependencies:
     - condition: logs.enabled
       name: logzio-fluentd
@@ -1282,7 +1282,7 @@ entries:
     - https://logzio.github.io/logzio-helm/logzio-monitoring-0.1.13.tgz
     version: 0.1.13
   - apiVersion: v2
-    created: "2022-12-11T12:56:16.835021+02:00"
+    created: "2022-12-13T12:30:48.01401+02:00"
     dependencies:
     - condition: logs.enabled
       name: logzio-fluentd
@@ -1309,7 +1309,7 @@ entries:
     - https://logzio.github.io/logzio-helm/logzio-monitoring-0.1.12.tgz
     version: 0.1.12
   - apiVersion: v2
-    created: "2022-12-11T12:56:16.829692+02:00"
+    created: "2022-12-13T12:30:48.00707+02:00"
     dependencies:
     - condition: logs.enabled
       name: logzio-fluentd
@@ -1336,7 +1336,7 @@ entries:
     - https://logzio.github.io/logzio-helm/logzio-monitoring-0.1.11.tgz
     version: 0.1.11
   - apiVersion: v2
-    created: "2022-12-11T12:56:16.82359+02:00"
+    created: "2022-12-13T12:30:47.999219+02:00"
     dependencies:
     - condition: logs.enabled
       name: logzio-fluentd
@@ -1363,7 +1363,7 @@ entries:
     - https://logzio.github.io/logzio-helm/logzio-monitoring-0.1.10.tgz
     version: 0.1.10
   - apiVersion: v2
-    created: "2022-12-11T12:56:16.91069+02:00"
+    created: "2022-12-13T12:30:48.104152+02:00"
     dependencies:
     - condition: logs.enabled
       name: logzio-fluentd
@@ -1390,7 +1390,7 @@ entries:
     - https://logzio.github.io/logzio-helm/logzio-monitoring-0.1.9.tgz
     version: 0.1.9
   - apiVersion: v2
-    created: "2022-12-11T12:56:16.9048+02:00"
+    created: "2022-12-13T12:30:48.096919+02:00"
     dependencies:
     - condition: logs.enabled
       name: logzio-fluentd
@@ -1417,7 +1417,7 @@ entries:
     - https://logzio.github.io/logzio-helm/logzio-monitoring-0.1.8.tgz
     version: 0.1.8
   - apiVersion: v2
-    created: "2022-12-11T12:56:16.898112+02:00"
+    created: "2022-12-13T12:30:48.09046+02:00"
     dependencies:
     - condition: logs.enabled
       name: logzio-fluentd
@@ -1444,7 +1444,7 @@ entries:
     - https://logzio.github.io/logzio-helm/logzio-monitoring-0.1.7.tgz
     version: 0.1.7
   - apiVersion: v2
-    created: "2022-12-11T12:56:16.89303+02:00"
+    created: "2022-12-13T12:30:48.083126+02:00"
     dependencies:
     - condition: logs.enabled
       name: logzio-fluentd
@@ -1471,7 +1471,7 @@ entries:
     - https://logzio.github.io/logzio-helm/logzio-monitoring-0.1.6.tgz
     version: 0.1.6
   - apiVersion: v2
-    created: "2022-12-11T12:56:16.88725+02:00"
+    created: "2022-12-13T12:30:48.076498+02:00"
     dependencies:
     - condition: logs.enabled
       name: logzio-fluentd
@@ -1498,7 +1498,7 @@ entries:
     - https://logzio.github.io/logzio-helm/logzio-monitoring-0.1.5.tgz
     version: 0.1.5
   - apiVersion: v2
-    created: "2022-12-11T12:56:16.88197+02:00"
+    created: "2022-12-13T12:30:48.070122+02:00"
     dependencies:
     - condition: logs.enabled
       name: logzio-fluentd
@@ -1525,7 +1525,7 @@ entries:
     - https://logzio.github.io/logzio-helm/logzio-monitoring-0.1.4.tgz
     version: 0.1.4
   - apiVersion: v2
-    created: "2022-12-11T12:56:16.876024+02:00"
+    created: "2022-12-13T12:30:48.063151+02:00"
     dependencies:
     - condition: logs.enabled
       name: logzio-fluentd
@@ -1552,7 +1552,7 @@ entries:
     - https://logzio.github.io/logzio-helm/logzio-monitoring-0.1.3.tgz
     version: 0.1.3
   - apiVersion: v2
-    created: "2022-12-11T12:56:16.870959+02:00"
+    created: "2022-12-13T12:30:48.057077+02:00"
     dependencies:
     - condition: logs.enabled
       name: logzio-fluentd
@@ -1579,7 +1579,7 @@ entries:
     - https://logzio.github.io/logzio-helm/logzio-monitoring-0.1.2.tgz
     version: 0.1.2
   - apiVersion: v2
-    created: "2022-12-11T12:56:16.817577+02:00"
+    created: "2022-12-13T12:30:47.99201+02:00"
     dependencies:
     - condition: logs.enabled
       name: logzio-fluentd
@@ -1606,7 +1606,7 @@ entries:
     - https://logzio.github.io/logzio-helm/logzio-monitoring-0.1.1.tgz
     version: 0.1.1
   - apiVersion: v2
-    created: "2022-12-11T12:56:16.812506+02:00"
+    created: "2022-12-13T12:30:47.985522+02:00"
     dependencies:
     - condition: logs.enabled
       name: logzio-fluentd
@@ -1633,7 +1633,7 @@ entries:
     - https://logzio.github.io/logzio-helm/logzio-monitoring-0.1.0.tgz
     version: 0.1.0
   - apiVersion: v2
-    created: "2022-12-11T12:56:16.806353+02:00"
+    created: "2022-12-13T12:30:47.978814+02:00"
     dependencies:
     - condition: logs.enabled
       name: logzio-fluentd
@@ -1660,7 +1660,7 @@ entries:
     - https://logzio.github.io/logzio-helm/logzio-monitoring-0.0.3.tgz
     version: 0.0.3
   - apiVersion: v2
-    created: "2022-12-11T12:56:16.801487+02:00"
+    created: "2022-12-13T12:30:47.972651+02:00"
     dependencies:
     - condition: logs.enabled
       name: logzio-fluentd
@@ -1687,7 +1687,7 @@ entries:
     - https://logzio.github.io/logzio-helm/logzio-monitoring-0.0.2.tgz
     version: 0.0.2
   - apiVersion: v2
-    created: "2022-12-11T12:56:16.795757+02:00"
+    created: "2022-12-13T12:30:47.965928+02:00"
     dependencies:
     - condition: logs.enabled
       name: logzio-fluentd
@@ -1716,7 +1716,7 @@ entries:
   logzio-otel-k8s-metrics:
   - apiVersion: v2
     appVersion: 0.42.0
-    created: "2022-12-11T12:56:16.93628+02:00"
+    created: "2022-12-13T12:30:48.134007+02:00"
     dependencies:
     - condition: kubeStateMetrics.enabled
       name: kube-state-metrics
@@ -1748,7 +1748,7 @@ entries:
     version: 0.2.5
   - apiVersion: v2
     appVersion: 0.42.0
-    created: "2022-12-11T12:56:16.93301+02:00"
+    created: "2022-12-13T12:30:48.130123+02:00"
     dependencies:
     - condition: kubeStateMetrics.enabled
       name: kube-state-metrics
@@ -1780,7 +1780,7 @@ entries:
     version: 0.2.4
   - apiVersion: v2
     appVersion: 0.42.0
-    created: "2022-12-11T12:56:16.929082+02:00"
+    created: "2022-12-13T12:30:48.125725+02:00"
     dependencies:
     - condition: kubeStateMetrics.enabled
       name: kube-state-metrics
@@ -1812,7 +1812,7 @@ entries:
     version: 0.2.3
   - apiVersion: v2
     appVersion: 0.24.0
-    created: "2022-12-11T12:56:16.92578+02:00"
+    created: "2022-12-13T12:30:48.121998+02:00"
     dependencies:
     - condition: kubeStateMetrics.enabled
       name: kube-state-metrics
@@ -1844,7 +1844,7 @@ entries:
     version: 0.2.2
   - apiVersion: v2
     appVersion: 0.24.0
-    created: "2022-12-11T12:56:16.922555+02:00"
+    created: "2022-12-13T12:30:48.118556+02:00"
     dependencies:
     - condition: kubeStateMetrics.enabled
       name: kube-state-metrics
@@ -1876,7 +1876,7 @@ entries:
     version: 0.2.1
   - apiVersion: v2
     appVersion: 0.24.0
-    created: "2022-12-11T12:56:16.918469+02:00"
+    created: "2022-12-13T12:30:48.113992+02:00"
     dependencies:
     - condition: kubeStateMetrics.enabled
       name: kube-state-metrics
@@ -1908,7 +1908,7 @@ entries:
     version: 0.2.0
   - apiVersion: v2
     appVersion: 0.24.0
-    created: "2022-12-11T12:56:16.915578+02:00"
+    created: "2022-12-13T12:30:48.110427+02:00"
     dependencies:
     - condition: kubeStateMetrics.enabled
       name: kube-state-metrics
@@ -1938,7 +1938,7 @@ entries:
     version: 0.1.1
   - apiVersion: v2
     appVersion: 0.24.0
-    created: "2022-12-11T12:56:16.912831+02:00"
+    created: "2022-12-13T12:30:48.106921+02:00"
     dependencies:
     - condition: kubeStateMetrics.enabled
       name: kube-state-metrics
@@ -1964,7 +1964,7 @@ entries:
     version: 0.1.0
   logzio-otel-spm:
   - apiVersion: v2
-    created: "2022-12-11T12:56:16.938267+02:00"
+    created: "2022-12-13T12:30:48.1363+02:00"
     description: Based on OpenTelemetry Collector Helm chart for Kubernetes, collect
       traces, span metrics and send to logzio
     digest: 98533b4195ace87cffe463268d415f52acd174e26f275cf8066e03bda7317ec7
@@ -1974,7 +1974,7 @@ entries:
     - https://logzio.github.io/logzio-helm/logzio-otel-spm-0.0.2.tgz
     version: 0.0.2
   - apiVersion: v2
-    created: "2022-12-11T12:56:16.937271+02:00"
+    created: "2022-12-13T12:30:48.135131+02:00"
     description: Based on OpenTelemetry Collector Helm chart for Kubernetes, collect
       traces, span metrics and send to logzio
     digest: 230a9d432e5f884e2c8eb71688b7e18bc3c04c3f330cfeaf44291ee794c28835
@@ -1985,7 +1985,7 @@ entries:
     version: 0.0.1
   logzio-otel-traces:
   - apiVersion: v2
-    created: "2022-12-11T12:56:16.940673+02:00"
+    created: "2022-12-13T12:30:48.140054+02:00"
     description: Based on OpenTelemetry Collector Helm chart for Kubernetes, collect
       traces and send to logzio
     digest: 9020129d5e6cf69c09008e176b99db60b7117fc4f2cc6ddfa3b3b03520d61edf
@@ -1995,7 +1995,7 @@ entries:
     - https://logzio.github.io/logzio-helm/logzio-otel-traces-0.0.3.tgz
     version: 0.0.3
   - apiVersion: v2
-    created: "2022-12-11T12:56:16.939846+02:00"
+    created: "2022-12-13T12:30:48.138266+02:00"
     description: Based on OpenTelemetry Collector Helm chart for Kubernetes, collect
       traces and send to logzio
     digest: f44c06b29a37ac006672fc6a428316f0911d074bef3c0d7baab91893ac356623
@@ -2005,7 +2005,7 @@ entries:
     - https://logzio.github.io/logzio-helm/logzio-otel-traces-0.0.2.tgz
     version: 0.0.2
   - apiVersion: v2
-    created: "2022-12-11T12:56:16.939016+02:00"
+    created: "2022-12-13T12:30:48.137231+02:00"
     description: Based on OpenTelemetry Collector Helm chart for Kubernetes, collect
       traces and send to logzio
     digest: 5f701e4e0c67a9bfebd7882b7ad8d30879acab7f21567ce10223ef4ec25e41b1
@@ -2014,4 +2014,4 @@ entries:
     urls:
     - https://logzio.github.io/logzio-helm/logzio-otel-traces-0.0.1.tgz
     version: 0.0.1
-generated: "2022-12-11T12:56:16.637221+02:00"
+generated: "2022-12-13T12:30:47.799847+02:00"
