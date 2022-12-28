@@ -190,6 +190,29 @@ helm install logzio-k8s-telemetry
  logzio-helm/logzio-k8s-telemetry -f my_values.yaml 
 ```
 
+#### Using pprof extention
+The pprof extension in OpenTelemetry Collector allows you to view and analyze the profile of the collector during runtime. Here's how you can use it:
+
+Forward the 1777 pprof port of the collector pod to your local network using the following command:
+```
+kubectl port-forward <<pod>> 1777:1777
+```
+Use the go tool pprof command to fetch the profile and visualize it in the web UI on port 1212.
+To view the heap memory profile:
+```
+go tool pprof -http=localhost:1212 http://localhost:1777/debug/pprof/heap
+```
+To view the CPU profile:
+```
+go tool pprof -http=localhost:1212 http://localhost:1777/debug/pprof/profile
+```
+You can also use the pprof extension to view other types of profiles, such as goroutine, thread creation, and block. To do this, replace the endpoint in the go tool pprof command with the appropriate profile type. For example, to view the goroutine profile:
+```
+go tool pprof -http=localhost:1212 http://localhost:1777/debug/pprof/goroutine
+```
+You can find a complete list of the available profile types and their corresponding endpoints in the pprof documentation.
+
+
 ##### Customize the metrics collected by the Helm chart 
 
 The default configuration uses the Prometheus receiver with the following scrape jobs:
