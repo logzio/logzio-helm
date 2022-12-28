@@ -190,50 +190,6 @@ helm install logzio-k8s-telemetry
  logzio-helm/logzio-k8s-telemetry -f my_values.yaml 
 ```
 
-#### Using pprof extention
-The pprof extension in OpenTelemetry Collector allows you to view and analyze the profile of the collector during runtime. Here's how you can use it:
-
-To download the go tool pprof command, you will need to install the Go programming language. You can download and install Go from the [official website](https://golang.org/dl/).
-
-Once Go is installed, you can use the go command to install pprof and other tools:
-
-```
-go get -u golang.org/x/tools/cmd/pprof
-```
-This will download and install pprof and any necessary dependencies. You can then use the go tool pprof command.
-
-Alternatively, you can also install pprof using a package manager, such as apt-get on Ubuntu or brew on macOS:
-
-```
-sudo apt-get install pprof # on Ubuntu
-brew install pprof # on macOS
-```
-
-Forward the 1777 pprof port of the collector pod to your local network using the following command:
-```
-kubectl port-forward <<pod>> 1777:1777
-```
-Use the go tool pprof command to fetch the profile and visualize it in the web UI on port 1212.
-To view the heap memory profile:
-```
-go tool pprof -http=localhost:1212 http://localhost:1777/debug/pprof/heap
-```
-To view the CPU profile:
-```
-go tool pprof -http=localhost:1212 http://localhost:1777/debug/pprof/profile
-```
-Or to look at a 30-second CPU profile:
-```
-go tool pprof -http=localhost:1212 http://localhost:1777/debug/pprof/profile?seconds=30
-
-```
-You can also use the pprof extension to view other types of profiles, such as goroutine, thread creation, and block. To do this, replace the endpoint in the go tool pprof command with the appropriate profile type. For example, to view the goroutine profile:
-```
-go tool pprof -http=localhost:1212 http://localhost:1777/debug/pprof/goroutine
-```
-You can find a complete list of the available profile types and their corresponding endpoints in the pprof [documentation](https://golang.org/pkg/net/http/pprof/).
-
-
 ##### Customize the metrics collected by the Helm chart 
 
 The default configuration uses the Prometheus receiver with the following scrape jobs:
@@ -283,8 +239,50 @@ This will disable scraping for the kube-dns service in the prometheus receiver.
 More informtion can be found in the following GitHub issue:
 https://github.com/aws/containers-roadmap/issues/965
 
+### Using pprof extention
+The pprof extension in OpenTelemetry Collector allows you to view and analyze the profile of the collector during runtime. Here's how you can use it:
 
-#### Uninstalling the Chart
+To download the go tool pprof command, you will need to install the Go programming language. You can download and install Go from the [official website](https://golang.org/dl/).
+
+Once Go is installed, you can use the go command to install pprof and other tools:
+
+```
+go get -u golang.org/x/tools/cmd/pprof
+```
+This will download and install pprof and any necessary dependencies. You can then use the go tool pprof command.
+
+Alternatively, you can also install pprof using a package manager, such as apt-get on Ubuntu or brew on macOS:
+
+```
+sudo apt-get install pprof # on Ubuntu
+brew install pprof # on macOS
+```
+
+Forward the 1777 pprof port of the collector pod to your local network using the following command:
+```
+kubectl port-forward <<pod>> 1777:1777
+```
+Use the go tool pprof command to fetch the profile and visualize it in the web UI on port 1212.
+To view the heap memory profile:
+```
+go tool pprof -http=localhost:1212 http://localhost:1777/debug/pprof/heap
+```
+To view the CPU profile:
+```
+go tool pprof -http=localhost:1212 http://localhost:1777/debug/pprof/profile
+```
+Or to look at a 30-second CPU profile:
+```
+go tool pprof -http=localhost:1212 http://localhost:1777/debug/pprof/profile?seconds=30
+
+```
+You can also use the pprof extension to view other types of profiles, such as goroutine, thread creation, and block. To do this, replace the endpoint in the go tool pprof command with the appropriate profile type. For example, to view the goroutine profile:
+```
+go tool pprof -http=localhost:1212 http://localhost:1777/debug/pprof/goroutine
+```
+You can find a complete list of the available profile types and their corresponding endpoints in the pprof [documentation](https://golang.org/pkg/net/http/pprof/).
+
+### Uninstalling the Chart
 
 The uninstall command is used to remove all the Kubernetes components associated with the chart and to delete the release.  
 
