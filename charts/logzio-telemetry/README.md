@@ -294,6 +294,8 @@ helm uninstall logzio-k8s-telemetry
 
 
 ## Change log
+* 0.0.21
+  - Updated collector image - fixing memory leak crash.
 * 0.0.20
   - Change the default port for node exporter `9100` -> `9101` to avoid pods stocking on pending state if a user has `node-exporter` daemon set deployed on the cluster
   - Update otel `0.64.0` -> `0.66.0` 
