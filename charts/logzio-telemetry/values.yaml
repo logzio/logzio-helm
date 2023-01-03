@@ -460,10 +460,10 @@ metricsConfig:
 
 image:
   # If you want to use the contrib image `otel/opentelemetry-collector-contrib`, you also need to change `command.name` value to `otelcontribcol`.
-  repository: otel/opentelemetry-collector-contrib
+  repository: albteo/opentelemetry-collector-contrib
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.66.0"
+  tag: "20221129"
 nginxWindowsImage:
   # Reverse proxy image to enable metrics scraping from windows nodes
   repository: logzio/logzio-windows-node-reverse-proxy
@@ -478,7 +478,7 @@ imagePullSecrets: []
 
 # OpenTelemetry Collector executable
 command:
-  name: otelcol-contrib
+  name: otelcontribcol
   extraArgs: []
 
 serviceAccount:
