@@ -123,6 +123,11 @@ logzio-monitoring logzio-helm/logzio-monitoring
 ```
 
 ## Changelog
+- **0.1.18**:
+	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.21`:
+	  - Updated collector image - fixing memory leak crash
+	- Upgrade `logzio-fluentd` Chart to `0.15.0`:
+	  - Added dedot processor `- replacing `.` with `_` in log fields
 - **0.1.17**:
 	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.20`:
 	  - Change the default port for node exporter `9100` -> `9101` to avoid pods stocking on pending state if a user has `node-exporter` daemon set deployed on the cluster
@@ -133,6 +138,12 @@ logzio-monitoring logzio-helm/logzio-monitoring
 - **0.1.16**:
 	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.19`:
 	  - Drop metrics from `kube-system` namespace
+
+
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
 - **0.1.15**:
 	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.18`:
 	  - Add `kube_pod_container_status_terminated_reason` `kube_node_labels` metrics to filters
@@ -152,11 +163,6 @@ logzio-monitoring logzio-helm/logzio-monitoring
       - Replace `$` -> `$$` to escape special char
       - Upgrade otel image `0.60.0`-> `0.64.0`
       - Add `k8s 360` metrics to filters
-
-
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
-
 - **0.1.10**:
 	- Upgrade `logzio-fluentd` Chart to `0.13.0`.
 - **0.1.9**:
