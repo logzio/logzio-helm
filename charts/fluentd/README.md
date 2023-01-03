@@ -260,18 +260,20 @@ logzio-fluentd logzio-helm/logzio-fluentd
 
 
 ## Change log
+ - **0.15.0**:
+   - Added dedot processor - auto replace `.` in log field to `_`.
  - **0.14.0**:
    - Fix typo in `fargateLogRouter`
  - **0.13.0**:
    - Removal of field `log_type`. Auto populating `type` instead.
- - **0.12.0**:
-   - Added auto detection for log_level field.
+
 
 
 
 <details>
   <summary markdown="span"> Expand to check old versions </summary>
-
+ - **0.12.0**:
+   - Added auto detection for log_level field.
  - **0.11.0**:
    - Upgrade image `logzio/logzio-fluentd:1.2.0`:
      - Upgrade to `fluentd 1.15`.

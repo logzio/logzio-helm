@@ -1,5 +1,5 @@
 image: logzio/logzio-fluentd
-imageTag: 1.2.0
+imageTag: 1.3.0
 
 windowsImage: logzio/fluentd-windows
 windowsImageTag: 0.0.1
@@ -398,6 +398,12 @@ configmap:
         _dummy_ ${if record.dig("kubernetes","annotations","log_type") then record["kubernetes"]["annotations"].delete("log_type"); end;}
       </record>
       remove_keys _dummy_,dummy_level
+    </filter>
+    <filter **>
+      @type             dedot
+      de_dot            true
+      de_dot_separator  _
+      de_dot_nested     true
     </filter>
 
   system: |
