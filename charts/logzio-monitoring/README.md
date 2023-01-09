@@ -127,7 +127,7 @@ logzio-monitoring logzio-helm/logzio-monitoring
 	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.21`:
 	  - Updated collector image - fixing memory leak crash
 	- Upgrade `logzio-fluentd` Chart to `0.15.0`:
-	  - Added dedot processor `- replacing `.` with `_` in log fields
+	  - Added dedot processor - replacing `.` with `_` in log fields
 - **0.1.17**:
 	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.20`:
 	  - Change the default port for node exporter `9100` -> `9101` to avoid pods stocking on pending state if a user has `node-exporter` daemon set deployed on the cluster
