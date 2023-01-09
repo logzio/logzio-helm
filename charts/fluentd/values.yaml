@@ -127,11 +127,11 @@ clusterRole:
     - watch
 
 secrets:
+  enabled: true
   logzioShippingToken: ""
   logzioListener: ""
 
-defaultSecretName: logzio-logs-secret
-secretName: ""
+secretName: "logzio-logs-secret"
 
 configMapIncludes: |
   @include "#{ENV['FLUENTD_SYSTEMD_CONF'] || 'systemd'}.conf"
