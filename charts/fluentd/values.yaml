@@ -131,6 +131,7 @@ secrets:
   logzioListener: ""
 
 defaultSecretName: logzio-logs-secret
+secretName: ""
 
 configMapIncludes: |
   @include "#{ENV['FLUENTD_SYSTEMD_CONF'] || 'systemd'}.conf"
@@ -255,7 +256,7 @@ configmap:
         @type none
       </parse>
     </source>
-    
+
     <source>
       @type tail
       @id in_tail_kubelet
@@ -339,7 +340,7 @@ configmap:
         @type kubernetes
       </parse>
     </source>
-    
+
     <source>
       @type tail
       @id in_tail_cluster_autoscaler
