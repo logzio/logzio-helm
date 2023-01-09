@@ -75,7 +75,3 @@ Builds the list for exclude paths in the tail for the containers - windows
 {{- print .Values.windowsDaemonset.excludeFluentdPath }}
 {{- end -}}
 {{- end -}}
-
-{{- define "logzio.secretName" }}
-{{- print .Values.secretName }}
-{{- end -}}
