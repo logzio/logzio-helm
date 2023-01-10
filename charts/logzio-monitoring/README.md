@@ -124,6 +124,9 @@ logzio-monitoring logzio-helm/logzio-monitoring
 
 ## Changelog
 - **0.1.18**:
+	- Upgrade `logzio-fluentd` Chart to `0.16.0`:
+	  - Increased memory and cpu requests.
+- **0.1.18**:
 	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.21`:
 	  - Updated collector image - fixing memory leak crash
 	- Upgrade `logzio-fluentd` Chart to `0.15.0`:
