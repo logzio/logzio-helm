@@ -2,7 +2,7 @@ apiVersion: v2
 name: logzio-monitoring
 description: logzio-monitoring allows you to ship logs, metrics and traces from your Kubernetes cluster using the OpenTelemetry collector for metrics and traces, and Fluentd for logs.
 type: application
-version: 0.1.18
+version: 0.1.19
 
 sources:
   - https://github.com/logzio/logzio-helm
