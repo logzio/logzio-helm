@@ -134,6 +134,7 @@ helm install -n monitoring \
 | `clusterRole.rules` | Configurable [cluster role rules](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#role-and-clusterrole) that Fluentd uses to access Kubernetes resources. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
 | `secrets.logzioShippingToken` | Secret with your [logzio shipping token](https://app.logz.io/#/dashboard/settings/general). | `""` |
 | `secrets.logzioListener` | Secret with your logzio listener host. `listener.logz.io`. | `" "` |
+| `secrets.enabled` | When `true`, the logzio secret will be created and managed by this Chart. If you're managing the logzio secret by yourself, set to `false`. | `true` |
 | `secretName` | Name of the secret in case it's placed from an external source. | `logzio-logs-secret` |
 | `configMapIncludes` | Initial includes for `fluent.conf`. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
 | `configmap.extraConfig` | If needed, more Fluentd configuration can be added with this field. | `{}` |
@@ -260,20 +261,18 @@ logzio-fluentd logzio-helm/logzio-fluentd
 
 
 ## Change log
+ - **0.17.0**:
+   - Add `secrets.enabled` to control secret creation and management. ([#194](https://github.com/logzio/logzio-helm/pull/194))
  - **0.16.0**:
    - Inreased memory request and limit to 500Mi, cpu request to 200m.
  - **0.15.0**:
    - Added dedot processor - auto replace `.` in log field to `_`.
- - **0.14.0**:
-   - Fix typo in `fargateLogRouter`
-
-
-
-
 
 <details>
   <summary markdown="span"> Expand to check old versions </summary>
  
+  - **0.14.0**:
+   - Fix typo in `fargateLogRouter`
  - **0.13.0**:
    - Removal of field `log_type`. Auto populating `type` instead.
  - **0.12.0**:

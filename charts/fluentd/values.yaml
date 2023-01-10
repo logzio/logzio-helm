@@ -127,6 +127,7 @@ clusterRole:
     - watch
 
 secrets:
+  enabled: true
   logzioShippingToken: ""
   logzioListener: ""
 
@@ -255,7 +256,7 @@ configmap:
         @type none
       </parse>
     </source>
-    
+
     <source>
       @type tail
       @id in_tail_kubelet
@@ -339,7 +340,7 @@ configmap:
         @type kubernetes
       </parse>
     </source>
-    
+
     <source>
       @type tail
       @id in_tail_cluster_autoscaler
