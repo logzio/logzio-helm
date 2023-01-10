@@ -123,6 +123,10 @@ logzio-monitoring logzio-helm/logzio-monitoring
 ```
 
 ## Changelog
+
+- **0.1.20**:
+	- Upgrade `logzio-fluentd` Chart to `0.17.0`:
+		- Add `secrets.enabled` to control secret creation and management.
 - **0.1.19**:
 	- Upgrade `logzio-fluentd` Chart to `0.16.0`:
 	  - Increased memory and cpu requests.
@@ -131,6 +135,12 @@ logzio-monitoring logzio-helm/logzio-monitoring
 	  - Updated collector image - fixing memory leak crash
 	- Upgrade `logzio-fluentd` Chart to `0.15.0`:
 	  - Added dedot processor - replacing `.` with `_` in log fields
+
+
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
 - **0.1.17**:
 	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.20`:
 	  - Change the default port for node exporter `9100` -> `9101` to avoid pods stocking on pending state if a user has `node-exporter` daemon set deployed on the cluster
@@ -141,12 +151,6 @@ logzio-monitoring logzio-helm/logzio-monitoring
 - **0.1.16**:
 	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.19`:
 	  - Drop metrics from `kube-system` namespace
-
-
-
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
-
 - **0.1.15**:
 	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.18`:
 	  - Add `kube_pod_container_status_terminated_reason` `kube_node_labels` metrics to filters
