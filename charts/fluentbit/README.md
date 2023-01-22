@@ -90,7 +90,7 @@ kubectl get nodes -o json | jq ".items[]|{name:.metadata.name, taints:.spec.tain
 
 
 ## Change log
-* 0.0.4 - Upgrade docker image to 0.1.4, adding dedot filter
+* 0.0.4 - Upgrade docker image to 0.3.0, adding dedot filter
           in Logzio Output config, added memory and cpu requirements.
 * 0.0.3 - Upgrade docker image to 0.1.3.
 * 0.0.2 - Upgrade docker image to v0.1.2.

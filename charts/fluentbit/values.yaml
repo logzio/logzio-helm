@@ -12,7 +12,7 @@ replicaCount: 1
 image:
   repository: logzio/fluent-bit-output
   # Overrides the image tag whose default is {{ .Chart.AppVersion }}
-  tag: "0.1.4"
+  tag: "0.3.0"
   pullPolicy: Always
 
 testFramework:
