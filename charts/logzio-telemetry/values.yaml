@@ -260,50 +260,16 @@ tracesConfig:
       logs:
         level: "info"  
 
-spmConfig:
-  processors:
-    spanmetrics:
-      metrics_exporter: prometheus/spm
-      latency_histogram_buckets: [2ms, 8ms, 50ms, 100ms, 200ms, 500ms, 1s, 5s, 10s]
-      dimensions_cache_size: 100000
-      aggregation_temporality: AGGREGATION_TEMPORALITY_CUMULATIVE
-      dimensions:
-        - name: http.method
-        - name: env_id
-          default: ${ENV_ID}
-  receivers:
-    # Dummy recivier 
-    otlp/spm:
-      protocols:
-        grpc:
-          endpoint: "localhost:12345"
-    prometheus/spm-logzio:
-      config:
-        scrape_configs:
-        - job_name: 'spm'
-          scrape_interval: 15s
-          static_configs:
-          - targets: [ "0.0.0.0:8889" ]
+spmForwarderConfig:
   exporters:
-    prometheus/spm:
-      endpoint: "0.0.0.0:8889"
-    prometheusremotewrite/spm-logzio:
-      endpoint: ${LISTENER_URL}
-      headers:
-        Authorization: "Bearer ${SPM_TOKEN}"
+    otlp:
+      endpoint: 
   service:
     pipelines:
-      traces:
+      traces/spm:
         receivers: [jaeger, zipkin, otlp]
-        processors: [spanmetrics, tail_sampling, attributes/env_id, memory_limiter, batch]
-        exporters: [logging, logzio]
-      metrics/spm:
-        # Dummy recivier 
-        receivers: [ otlp/spm ]
-        exporters: [logging, prometheus/spm]
-      metrics/spm-logzio:
-        receivers: [prometheus/spm-logzio]
-        exporters: [prometheusremotewrite/spm-logzio]
+        processors: [tail_sampling, attributes/env_id, memory_limiter, batch]
+        exporters: [logging, otlp]
 
 metricsConfig:
   extensions:
@@ -546,6 +512,116 @@ ports:
     hostPort: 9411
     protocol: TCP
 
+spanMetricsAgregator:
+  name: "span-metrics-aggregator"
+  config:
+    processors:
+      memory_limiter: {}
+      spanmetrics:
+        metrics_exporter: prometheus/spm
+        latency_histogram_buckets: [2ms, 8ms, 50ms, 100ms, 200ms, 500ms, 1s, 5s, 10s]
+        dimensions_cache_size: 100000
+        aggregation_temporality: AGGREGATION_TEMPORALITY_CUMULATIVE
+        dimensions:
+          - name: http.method
+          - name: env_id
+            default: ${ENV_ID}
+    receivers:
+      # Dummy recivier 
+      otlp/spm:
+        protocols:
+          grpc:
+            endpoint: "localhost:12345"
+      prometheus/spm-logzio:
+        config:
+          scrape_configs:
+          - job_name: 'spm'
+            scrape_interval: 15s
+            static_configs:
+            - targets: [ "0.0.0.0:8889" ]
+      jaeger:
+        protocols:
+          thrift_compact:
+            endpoint: "0.0.0.0:6831"
+          thrift_binary:
+            endpoint: "0.0.0.0:6832"
+          grpc:
+            endpoint: "0.0.0.0:14250"
+          thrift_http:
+            endpoint: "0.0.0.0:14268"
+      otlp:
+        protocols:
+          grpc:
+            endpoint: "0.0.0.0:4317"
+          http:
+            endpoint: "0.0.0.0:4318"
+      zipkin:
+        endpoint: "0.0.0.0:9411"
+    exporters:
+      prometheus/spm:
+        endpoint: "0.0.0.0:8889"
+      prometheusremotewrite/spm-logzio:
+        endpoint: ${LISTENER_URL}
+        headers:
+          Authorization: "Bearer ${SPM_TOKEN}"
+    service:
+      pipelines:
+        traces:
+          receivers: [jaeger, zipkin, otlp]
+          processors: [spanmetrics, memory_limiter, batch]
+          exporters: [logging]
+        metrics/spm:
+          # Dummy recivier 
+          receivers: [otlp/spm ]
+          exporters: [logging, prometheus/spm]
+        metrics/spm-logzio:
+          receivers: [prometheus/spm-logzio]
+          exporters: [prometheusremotewrite/spm-logzio]
+  # service values        
+  service:
+    type: ClusterIP
+    annotations: {}
+  ports:
+    otlp:
+      enabled: true
+      containerPort: 4317
+      servicePort: 4317
+      hostPort: 4317
+      protocol: TCP
+    otlp-http:
+      enabled: true
+      containerPort: 4318
+      servicePort: 4318
+      hostPort: 4318
+      protocol: TCP
+    jaeger-compact:
+      enabled: true
+      containerPort: 6831
+      servicePort: 6831
+      hostPort: 6831
+      protocol: UDP
+    jaeger-thrift:
+      enabled: true
+      containerPort: 14268
+      servicePort: 14268
+      hostPort: 14268
+      protocol: TCP
+    jaeger-grpc:
+      enabled: true
+      containerPort: 14250
+      servicePort: 14250
+      hostPort: 14250
+      protocol: TCP
+    zipkin:
+      enabled: true
+      containerPort: 9411
+      servicePort: 9411
+      hostPort: 9411
+      protocol: TCP
+  resources:
+    limits:
+      cpu: 256m
+      memory: 512Mi
 
 # Configuration for agent OpenTelemetry Collector daemonset, disabled by default
 agentCollector:
@@ -570,8 +646,8 @@ standaloneCollector:
 
   resources:
     limits:
-      cpu: 1280m
-      memory: 2560Mi
+      cpu: 256m
+      memory: 512Mi
 
   podAnnotations: {}
   # Configuration override that will be merged into the agent's default config
@@ -653,3 +729,57 @@ enableMetricsFilter:
   kubeSystem: false
 
 disableKubeDnsScraping: false
+
+
+
+receivers:
+  zipkin:
+    endpoint: "0.0.0.0:9412"
+exporters:
+  logzio/traces:
+    account_token: "EapWbZhjgjCJjDNOsTiwEgyaIqBEZfNp"
+    region: "us"
+  zipkin:
+    endpoint: "0.0.0.0:9411/api/v2/spans"
+    tls:
+      insecure: true
+processors:
+  batch:
+  tail_sampling:
+    policies:
+      [
+        {
+          name: policy-errors,
+          type: status_code,
+          status_code: {status_codes: [ERROR]}
+        },
+        {
+          name: policy-slow,
+          type: latency,
+          latency: {threshold_ms: 1000}
+        }, 
+        {
+          name: policy-random-ok,
+          type: probabilistic,
+          probabilistic: {sampling_percentage: 10}
+        }        
+      ]
+​
+extensions:
+  pprof:
+    endpoint: :1777
+  zpages:
+    endpoint: :55679
+  health_check:
+​
+service:
+  extensions: [health_check, pprof, zpages]
+  pipelines:
+    traces/logzio:
+      receivers: [zipkin]
+      processors: [batch]
+      exporters: [logzio/traces]
+    traces/zipkin:
+      receivers: [zipkin]
+      processors: [batch]
+      exporters: [zipkin]

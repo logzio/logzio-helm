@@ -42,7 +42,7 @@ Build config file for standalone OpenTelemetry Collector
 {{- $configData := .Values.emptyConfig }}
 {{- $metricsConfig := deepCopy .Values.metricsConfig | mustMergeOverwrite  }}
 {{- $tracesConfig := deepCopy .Values.tracesConfig | mustMergeOverwrite }}
-{{- $spmConfig := deepCopy .Values.spmConfig | mustMergeOverwrite }}
+{{- $spmConfig := deepCopy .Values.spmForwarderConfig | mustMergeOverwrite }}
 {{- $values := deepCopy .Values.standaloneCollector | mustMergeOverwrite (deepCopy .Values) }}
 {{- $data := dict "Values" $values | mustMergeOverwrite (deepCopy .) }}
 {{- $config := include "opentelemetry-collector.baseConfig" $data | fromYaml }}
@@ -62,6 +62,14 @@ Build config file for standalone OpenTelemetry Collector
 {{- else if .Values.traces.enabled -}}
 {{- $configData = $tracesConfig }}
 {{- end -}}
+
+
+{{- define "opentelemetry-collector.spanMetricsAggregatorConfig" -}}
+{{- $configData := .Values.emptyConfig }}
+{{- $spmConfig := deepCopy .Values.spanMetricsAgregator.config | mustMergeOverwrite }}
+{{- $configData = merge $spmConfig | mustMergeOverwrite }}
+{{- end -}}
+
 
 {{/*
 Use metrics filter configuration:

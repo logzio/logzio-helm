@@ -1,0 +1,11 @@
+{{- if and .Values.metrics.enabled .Values.traces.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: { .Values.spanMetricsAggregator.name }
+  labels:
+    {{- include "opentelemetry-collector.labels" . | nindent 4 }}
+data:
+  relay: |
+    {{- include "opentelemetry-collector.spanMetricsAggregatorConfig" . | nindent 4 -}}
+{{- end}}
