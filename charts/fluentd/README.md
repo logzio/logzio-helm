@@ -261,17 +261,19 @@ logzio-fluentd logzio-helm/logzio-fluentd
 
 
 ## Change log
+ - **0.18.0**:
+   - Added log_level detection for "warn" level.
  - **0.17.0**:
    - Add `secrets.enabled` to control secret creation and management. ([#194](https://github.com/logzio/logzio-helm/pull/194))
  - **0.16.0**:
    - Inreased memory request and limit to 500Mi, cpu request to 200m.
- - **0.15.0**:
-   - Added dedot processor - auto replace `.` in log field to `_`.
 
 <details>
   <summary markdown="span"> Expand to check old versions </summary>
- 
-  - **0.14.0**:
+
+ - **0.15.0**:
+   - Added dedot processor - auto replace `.` in log field to `_`.
+ - **0.14.0**:
    - Fix typo in `fargateLogRouter`
  - **0.13.0**:
    - Removal of field `log_type`. Auto populating `type` instead.

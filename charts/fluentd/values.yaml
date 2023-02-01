@@ -391,9 +391,9 @@ configmap:
       @type record_modifier
       <record>
         # use regex to find log level keywords and extract them
-        dummy_level ${record.dig("message").match(/(?i)(?<ss>(\b(info|debug|warning|error|panic|failure|failed|exception|trace)\b))/).to_s}
+        dummy_level ${record.dig("message").match(/(?i)(?<ss>(\b(info|debug|warning|warn|error|panic|failure|failed|exception|trace)\b))/).to_s}
         # sort log level keywords and use info as default
-        log_level ${if record.dig("dummy_level") =~ /^(?i)(error|failure|failed|exception|panic)$/ then "ERROR"; elsif record.dig("dummy_level") != "" then record.dig("dummy_level").upcase; else "INFO" end;}
+        log_level ${if record.dig("dummy_level") =~ /^(?i)(error|failure|failed|exception|panic)$/ then "ERROR"; elsif record.dig("dummy_level")=~ /^(?i)(warn|warning)$/ then "WARNING" ; elsif record.dig("dummy_level") != "" then record.dig("dummy_level").upcase; else "INFO" end;}
         # insert log_type from annotation (if exists)
         type ${record.dig("kubernetes","annotations","log_type") || record.dig("type")}
         _dummy_ ${if record.dig("kubernetes","annotations","log_type") then record["kubernetes"]["annotations"].delete("log_type"); end;}
