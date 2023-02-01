@@ -263,12 +263,14 @@ tracesConfig:
 spmForwarderConfig:
   exporters:
     otlp:
-      endpoint: 
+      endpoint: "${SPM_SERVICE_ENDPOINT}"
+      tls:
+        insecure: true
   service:
     pipelines:
       traces/spm:
         receivers: [jaeger, zipkin, otlp]
-        processors: [tail_sampling, attributes/env_id, memory_limiter, batch]
+        processors: [attributes/env_id, memory_limiter, batch]
         exporters: [logging, otlp]
 
 metricsConfig:
@@ -426,10 +428,10 @@ metricsConfig:
 
 image:
   # If you want to use the contrib image `otel/opentelemetry-collector-contrib`, you also need to change `command.name` value to `otelcontribcol`.
-  repository: albteo/opentelemetry-collector-contrib
+  repository: otel/opentelemetry-collector-contrib
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "20221129"
+  tag: "0.70.0"
 nginxWindowsImage:
   # Reverse proxy image to enable metrics scraping from windows nodes
   repository: logzio/logzio-windows-node-reverse-proxy
@@ -444,7 +446,7 @@ imagePullSecrets: []
 
 # OpenTelemetry Collector executable
 command:
-  name: otelcontribcol
+  name: otelcol-contrib
   extraArgs: []
 
 serviceAccount:
@@ -513,10 +515,8 @@ ports:
     protocol: TCP
 
 spanMetricsAgregator:
-  name: "span-metrics-aggregator"
   config:
     processors:
-      memory_limiter: {}
       spanmetrics:
         metrics_exporter: prometheus/spm
         latency_histogram_buckets: [2ms, 8ms, 50ms, 100ms, 200ms, 500ms, 1s, 5s, 10s]
@@ -558,6 +558,7 @@ spanMetricsAgregator:
       zipkin:
         endpoint: "0.0.0.0:9411"
     exporters:
+      logging: {}
       prometheus/spm:
         endpoint: "0.0.0.0:8889"
       prometheusremotewrite/spm-logzio:
@@ -568,7 +569,7 @@ spanMetricsAgregator:
       pipelines:
         traces:
           receivers: [jaeger, zipkin, otlp]
-          processors: [spanmetrics, memory_limiter, batch]
+          processors: [spanmetrics]
           exporters: [logging]
         metrics/spm:
           # Dummy recivier 
@@ -729,57 +730,3 @@ enableMetricsFilter:
   kubeSystem: false
 
 disableKubeDnsScraping: false
-
-
-
-receivers:
-  zipkin:
-    endpoint: "0.0.0.0:9412"
-exporters:
-  logzio/traces:
-    account_token: "EapWbZhjgjCJjDNOsTiwEgyaIqBEZfNp"
-    region: "us"
-  zipkin:
-    endpoint: "0.0.0.0:9411/api/v2/spans"
-    tls:
-      insecure: true
-processors:
-  batch:
-  tail_sampling:
-    policies:
-      [
-        {
-          name: policy-errors,
-          type: status_code,
-          status_code: {status_codes: [ERROR]}
-        },
-        {
-          name: policy-slow,
-          type: latency,
-          latency: {threshold_ms: 1000}
-        }, 
-        {
-          name: policy-random-ok,
-          type: probabilistic,
-          probabilistic: {sampling_percentage: 10}
-        }        
-      ]
-​
-extensions:
-  pprof:
-    endpoint: :1777
-  zpages:
-    endpoint: :55679
-  health_check:
-​
-service:
-  extensions: [health_check, pprof, zpages]
-  pipelines:
-    traces/logzio:
-      receivers: [zipkin]
-      processors: [batch]
-      exporters: [logzio/traces]
-    traces/zipkin:
-      receivers: [zipkin]
-      processors: [batch]
-      exporters: [zipkin]
