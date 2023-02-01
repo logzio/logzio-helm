@@ -1,11 +1,13 @@
-{{- if and .Values.metrics.enabled .Values.traces.enabled }}
+{{- if and .Values.spm.enabled .Values.traces.enabled }}
+{{ $config := .Values.spanMetricsAgregator.config }}
+{{- $configYaml := toYaml $config }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: { .Values.spanMetricsAggregator.name }
+  name: {{ include "opentelemetry-spm.fullname" . }}
   labels:
     {{- include "opentelemetry-collector.labels" . | nindent 4 }}
 data:
   relay: |
-    {{- include "opentelemetry-collector.spanMetricsAggregatorConfig" . | nindent 4 -}}
-{{- end}}
+{{ $configYaml | indent 4 }}
+{{- end }}

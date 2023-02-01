@@ -63,14 +63,6 @@ Build config file for standalone OpenTelemetry Collector
 {{- $configData = $tracesConfig }}
 {{- end -}}
 
-
-{{- define "opentelemetry-collector.spanMetricsAggregatorConfig" -}}
-{{- $configData := .Values.emptyConfig }}
-{{- $spmConfig := deepCopy .Values.spanMetricsAgregator.config | mustMergeOverwrite }}
-{{- $configData = merge $spmConfig | mustMergeOverwrite }}
-{{- end -}}
-
-
 {{/*
 Use metrics filter configuration:
 Filter aks,eks and gke with basic logzio dashboard filters
@@ -99,6 +91,12 @@ is not supporting )
 {{- end }}
 
 {{- .Values.standaloneCollector.configOverride | merge $configData | mustMergeOverwrite $config | toYaml}}
+{{- end -}}
+
+{{- define "opentelemetry-collector.spanMetricsAggregatorConfig" -}}
+{{- $configData := .Values.emptyConfig }}
+{{- $spmConfig := deepCopy .Values.spanMetricsAgregator.config | mustMergeOverwrite }}
+{{- $configData = merge $spmConfig | mustMergeOverwrite }}
 {{- end -}}
 
 

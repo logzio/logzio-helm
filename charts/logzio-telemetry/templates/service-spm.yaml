@@ -1,8 +1,8 @@
-{{- if and .Values.metrics.enabled .Values.traces.enabled }}
+{{- if and .Values.spm.enabled .Values.traces.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
-  name:  { .Values.spanMetricsAggregator.name }
+  name:  {{ include "opentelemetry-spm.fullname" . }}
   labels:
     {{- include "opentelemetry-collector.labels" . | nindent 4 }}
   {{- if .Values.spanMetricsAgregator.service.annotations }}
