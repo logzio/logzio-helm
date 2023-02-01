@@ -123,23 +123,26 @@ logzio-monitoring logzio-helm/logzio-monitoring
 ```
 
 ## Changelog
-
+- **0.1.21**:
+	- Upgrade `logzio-fluentd` Chart to `0.18.0`:
+		- Added `warn` log level detection.
 - **0.1.20**:
 	- Upgrade `logzio-fluentd` Chart to `0.17.0`:
 		- Add `secrets.enabled` to control secret creation and management.
 - **0.1.19**:
 	- Upgrade `logzio-fluentd` Chart to `0.16.0`:
 	  - Increased memory and cpu requests.
-- **0.1.18**:
-	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.21`:
-	  - Updated collector image - fixing memory leak crash
-	- Upgrade `logzio-fluentd` Chart to `0.15.0`:
-	  - Added dedot processor - replacing `.` with `_` in log fields
 
 
 
 <details>
   <summary markdown="span"> Expand to check old versions </summary>
+
+- **0.1.18**:
+	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.21`:
+	  - Updated collector image - fixing memory leak crash
+	- Upgrade `logzio-fluentd` Chart to `0.15.0`:
+	  - Added dedot processor - replacing `.` with `_` in log fields
 
 - **0.1.17**:
 	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.20`:
