@@ -48,6 +48,9 @@ containers:
         value: {{.Release.Name}}
       - name: REALESE_NS
         value: {{.Release.Namespace}}
+      - name: SPM_SERVICE_ENDPOINT
+        {{- $serviceName := include "opentelemetry-spm.fullname" .}}
+        value: {{ printf "http://%s.%s.svc.cluster.local:4317" $serviceName .Release.Namespace }}
 {{- if .Values.metrics.enabled }}
       - name: METRICS_TOKEN
         valueFrom:

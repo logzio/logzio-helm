@@ -42,7 +42,7 @@ Build config file for standalone OpenTelemetry Collector
 {{- $configData := .Values.emptyConfig }}
 {{- $metricsConfig := deepCopy .Values.metricsConfig | mustMergeOverwrite  }}
 {{- $tracesConfig := deepCopy .Values.tracesConfig | mustMergeOverwrite }}
-{{- $spmConfig := deepCopy .Values.spmConfig | mustMergeOverwrite }}
+{{- $spmConfig := deepCopy .Values.spmForwarderConfig | mustMergeOverwrite }}
 {{- $values := deepCopy .Values.standaloneCollector | mustMergeOverwrite (deepCopy .Values) }}
 {{- $data := dict "Values" $values | mustMergeOverwrite (deepCopy .) }}
 {{- $config := include "opentelemetry-collector.baseConfig" $data | fromYaml }}
@@ -91,6 +91,12 @@ is not supporting )
 {{- end }}
 
 {{- .Values.standaloneCollector.configOverride | merge $configData | mustMergeOverwrite $config | toYaml}}
+{{- end -}}
+
+{{- define "opentelemetry-collector.spanMetricsAggregatorConfig" -}}
+{{- $configData := .Values.emptyConfig }}
+{{- $spmConfig := deepCopy .Values.spanMetricsAgregator.config | mustMergeOverwrite }}
+{{- $configData = merge $spmConfig | mustMergeOverwrite }}
 {{- end -}}
 
 

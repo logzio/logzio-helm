@@ -1,0 +1,26 @@
+{{- if and .Values.spm.enabled .Values.traces.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "opentelemetry-spm.fullname" . }}
+  labels:
+    {{- include "opentelemetry-collector.labels" . | nindent 4 }}
+spec:
+{{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.standaloneCollector.replicaCount }}
+{{- end }}
+  selector:
+    matchLabels:
+      {{- include "opentelemetry-collector.selectorLabels" . | nindent 6 }}
+      component: standalone-collector
+  template:
+    metadata:
+      labels:
+        {{- include "opentelemetry-collector.selectorLabels" . | nindent 8 }}
+        component: standalone-collector
+        {{- with .Values.standaloneCollector.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}  
+    spec:
+      {{- include "opentelemetry-spm.pod" . | nindent 8}}
+{{- end }}

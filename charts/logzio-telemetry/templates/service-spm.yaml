@@ -1,0 +1,30 @@
+{{- if and .Values.spm.enabled .Values.traces.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name:  {{ include "opentelemetry-spm.fullname" . }}
+  labels:
+    {{- include "opentelemetry-collector.labels" . | nindent 4 }}
+  {{- if .Values.spanMetricsAgregator.service.annotations }}
+  annotations:
+    {{ toYaml .Values.spanMetricsAgregator.service.annotations | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.spanMetricsAgregator.service.type }}
+  {{- if .Values.spanMetricsAgregator.service.clusterIP }}
+  clusterIP: {{ .Values.spanMetricsAgregator.service.clusterIP }}
+  {{- end }}
+  # Check ports of otel-traces
+  ports:
+    {{- range $key, $port := .Values.spanMetricsAgregator.ports }}
+    {{- if $port.enabled }}
+    - name: {{ $key }}
+      port: {{ $port.servicePort }}
+      targetPort: {{ $key }}
+      protocol: {{ $port.protocol }}
+    {{- end }}
+    {{- end }}
+  selector:
+    {{- include "opentelemetry-collector.selectorLabels" . | nindent 4 }}
+    component: standalone-collector
+{{- end }}
