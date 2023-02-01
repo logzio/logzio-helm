@@ -294,6 +294,12 @@ helm uninstall logzio-k8s-telemetry
 
 
 ## Change log
+* 0.0.22
+  - **breaking changes:** Add separate span metrics component that includes the following resources:
+    - `deployment-spm.yaml`
+    - `service-spm.yaml`
+    - `configmap-spm.yaml`
+  - Updated collector image -> `0.70.0`
 * 0.0.21
   - Updated collector image - fixing memory leak crash.
 * 0.0.20
