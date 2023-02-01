@@ -123,6 +123,13 @@ logzio-monitoring logzio-helm/logzio-monitoring
 ```
 
 ## Changelog
+- **0.1.22**:
+	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.22`:
+    - **breaking changes:** Add separate span metrics component that includes the following resources:
+      - `deployment-spm.yaml`
+      - `service-spm.yaml`
+      - `configmap-spm.yaml`
+    - Updated collector image -> `0.70.0`
 - **0.1.21**:
 	- Upgrade `logzio-fluentd` Chart to `0.18.0`:
 		- Added `warn` log level detection.
