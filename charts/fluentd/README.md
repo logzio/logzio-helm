@@ -269,6 +269,8 @@ When enabling promehteus configuration, the pod collects and exposes fluentd met
  - **0.19.0**:
    - Upgraded image to `logzio/logzio-fluentd:1.3.1`:
      - Added prometheus monitor plugin
+   - Upgraded image to `logzio/fluentd-windows:0.0.2`:
+     - Added prometheus monitor plugin
    - Updated `daemonset.fluentdPrometheusConf` and `windowsDaemonset.fluentdPrometheusConf` - now controls prometheus config for collecting and exposing fluentd metrics.
  - **0.18.0**:
    - Added log_level detection for "warn" level.
