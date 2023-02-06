@@ -261,15 +261,13 @@ logzio-fluentd logzio-helm/logzio-fluentd
 ## Monitoring fluentd with prometheus
 In order to monitor fluentd and collect input & output metrics. You can 
 enable prometheus configuration with the `daemonset.fluentdPrometheusConf` and `windowsDaemonset.fluentdPrometheusConf` parameter (default to false).
-When enabling promehteus configuration, the pod collects and exposes fluentd metrics on port `24231`, `/metrics` endpoint. The templates contains annotations to easly ship when using promehteus shipper or `logzio-telemetry` chart.
+When enabling promehteus configuration, the pod collects and exposes fluentd metrics on port `24231`, `/metrics` endpoint. The templates contains annotations to easly ship when using promehteus shipper or `logzio-telemetry` chart. Monitoring Windows fluentd is not supported.
 
 
 
 ## Change log
  - **0.19.0**:
    - Upgraded image to `logzio/logzio-fluentd:1.3.1`:
-     - Added prometheus monitor plugin
-   - Upgraded image to `logzio/fluentd-windows:0.0.2`:
      - Added prometheus monitor plugin
    - Updated `daemonset.fluentdPrometheusConf` and `windowsDaemonset.fluentdPrometheusConf` - now controls prometheus config for collecting and exposing fluentd metrics.
  - **0.18.0**:

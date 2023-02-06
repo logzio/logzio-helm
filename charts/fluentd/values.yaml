@@ -2,7 +2,7 @@ image: logzio/logzio-fluentd
 imageTag: 1.3.1
 
 windowsImage: logzio/fluentd-windows
-windowsImageTag: 0.0.2
+windowsImageTag: 0.0.1
 
 
 nameOverride: ""
@@ -84,7 +84,7 @@ windowsDaemonset:
   nodeSelector:
     os: windows
   fluentdSystemdConf: disable
-  fluentdPrometheusConf: false
+  fluentdPrometheusConf: true
   includeNamespace: ""
   kubernetesVerifySsl: true
   auditLogFormat: audit
