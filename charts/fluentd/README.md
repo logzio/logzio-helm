@@ -279,7 +279,7 @@ When enabling promehteus configuration, the pod collects and exposes fluentd met
   <summary markdown="span"> Expand to check old versions </summary>
 
  - **0.16.0**:
-   - Inrceased memory request and limit to 500Mi, cpu request to 200m.
+   - Increased memory request and limit to 500Mi, cpu request to 200m.
  - **0.15.0**:
    - Added dedot processor - auto replace `.` in log field to `_`.
  - **0.14.0**:
