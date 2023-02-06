@@ -15,6 +15,11 @@ spec:
       labels:
         k8s-app: {{ .Values.k8sApp }}
         version: v1
+{{- if .Values.daemonset.fluentdPrometheusConf }}
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "24231"
+{{- end}}
     spec:
       {{- if .Values.daemonset.priorityClassName }}
       priorityClassName: {{ .Values.daemonset.priorityClassName }}
@@ -23,9 +28,9 @@ spec:
       serviceAccount: {{ template "fluentd.serviceAccount" . }}
       serviceAccountName: {{ template "fluentd.serviceAccount" . }}
       {{- end }}
-      {{- if .Values.affinity }}
+      {{- if .Values.daemonset.affinity }}
       affinity:
-{{ toYaml .Values.affinity | indent 8 }}
+{{ toYaml .Values.daemonset.affinity | indent 8 }}
       {{- end }}
       {{- if .Values.daemonset.tolerations }}
       tolerations:
@@ -51,6 +56,12 @@ spec:
       containers:
       - name: fluentd
         image: "{{ .Values.image }}:{{ .Values.imageTag }}"
+{{- if .Values.daemonset.fluentdPrometheusConf }}
+        ports:
+        - name: metrics
+          containerPort: 24231
+          protocol: TCP
+{{- end}}
         env:
         - name: LOGZIO_LOG_SHIPPING_TOKEN
           valueFrom:
@@ -84,8 +95,6 @@ spec:
           value: {{ .Values.daemonset.logzioLogLevel | quote }}
         - name: FLUENTD_SYSTEMD_CONF
           value: {{ .Values.daemonset.fluentdSystemdConf | quote }}
-        - name: FLUENTD_PROMETHEUS_CONF
-          value: {{ .Values.daemonset.fluentdPrometheusConf | quote }}
         - name: INCLUDE_NAMESPACE
           value: {{ .Values.daemonset.includeNamespace | quote }}
         - name: KUBERNETES_VERIFY_SSL
@@ -130,8 +139,17 @@ spec:
         hostPath:
           path: /var/lib/docker/containers
       - name: config-volume
+{{- if .Values.daemonset.fluentdPrometheusConf }}
+        projected:
+          sources:
+          - configMap:
+              name: {{ include "fluentd.fullname" . }}
+          - configMap:
+              name: {{ include "fluentd.fullname" . }}-monitoring
+{{- else }}
         configMap:
           name: {{ include "fluentd.fullname" . }}
+{{- end }}
       - name: fluentdconf
         emptyDir: {}
       {{- if .Values.daemonset.extraVolumes }}
@@ -211,8 +229,6 @@ spec:
           value: {{ .Values.windowsDaemonset.logzioLogLevel | quote }}
         - name: FLUENTD_SYSTEMD_CONF
           value: {{ .Values.windowsDaemonset.fluentdSystemdConf | quote }}
-        - name: FLUENTD_PROMETHEUS_CONF
-          value: {{ .Values.windowsDaemonset.fluentdPrometheusConf | quote }}
         - name: INCLUDE_NAMESPACE
           value: {{ .Values.windowsDaemonset.includeNamespace | quote }}
         - name: KUBERNETES_VERIFY_SSL

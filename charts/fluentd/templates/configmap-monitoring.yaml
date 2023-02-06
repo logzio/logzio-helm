@@ -1,0 +1,11 @@
+{{- if or .Values.daemonset.fluentdPrometheusConf .Values.windowsDaemonset.fluentdPrometheusConf }}
+apiVersion: {{ .Values.apiVersions.configmap }}
+kind: ConfigMap
+metadata:
+  name: {{ include "fluentd.fullname" . }}-monitoring
+  namespace: {{ .Values.namespace }}
+  labels:
+    k8s-app: {{ .Values.k8sApp }}
+data:
+  prometheus.conf : {{ toYaml .Values.configmap.prometheus | indent 2 }}
+{{- end }}
