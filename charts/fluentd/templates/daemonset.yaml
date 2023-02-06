@@ -139,8 +139,17 @@ spec:
         hostPath:
           path: /var/lib/docker/containers
       - name: config-volume
+{{- if .Values.daemonset.fluentdPrometheusConf }}
+        projected:
+          sources:
+          - configMap:
+              name: {{ include "fluentd.fullname" . }}
+          - configMap:
+              name: {{ include "fluentd.fullname" . }}-monitoring
+{{- else }}
         configMap:
           name: {{ include "fluentd.fullname" . }}
+{{- end }}
       - name: fluentdconf
         emptyDir: {}
       {{- if .Values.daemonset.extraVolumes }}
@@ -272,8 +281,17 @@ spec:
         hostPath:
           path: C:\ProgramData\docker\containers
       - name: config-volume
+{{- if .Values.windowsDaemonset.fluentdPrometheusConf }}
+        projected:
+          sources:
+          - configMap:
+              name: {{ include "fluentd.fullname" . }}
+          - configMap:
+              name: {{ include "fluentd.fullname" . }}-monitoring
+{{- else }}
         configMap:
           name: {{ include "fluentd.fullname" . }}
+{{- end }}
       {{- if .Values.windowsDaemonset.extraVolumes }}
 {{ toYaml .Values.windowsDaemonset.extraVolumes | indent 6 }}
       {{- end }}
