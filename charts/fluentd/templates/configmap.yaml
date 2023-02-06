@@ -26,6 +26,10 @@ data:
 
   custom-filters.conf : {{ toYaml .Values.configmap.customFilters | indent 2 }}
 
+  {{- if .Values.daemonset.fluentdPrometheusConf }}
+  prometheus.conf : {{ toYaml .Values.configmap.prometheus | indent 2 }}
+  {{- end }}
+
   {{- if .Values.env_id }}
   env-id.conf : {{ toYaml .Values.configmap.envId | indent 2 }}
   {{- end }}

@@ -81,7 +81,7 @@ helm install -n monitoring \
 | `daemonset.nodeSelector` | Set [nodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) for all DaemonSet pods. | `{}` |
 | `daemonset.affinity` | Set [affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity) rules for the scheduler to determine where all DaemonSet pods can be placed. |  |
 | `daemonset.fluentdSystemdConf` | Controls whether Fluentd system messages will be enabled. | `disable` |
-| `daemonset.fluentdPrometheusConf` | Controls the launch of a prometheus plugin that monitors Fluentd. | `disable` |
+| `daemonset.fluentdPrometheusConf` | Controls the launch of a prometheus plugin that monitors Fluentd. | `false` |
 | `daemonset.includeNamespace` | Use if you wish to send logs from specific k8s namespaces, space delimited. Should be in the following format: `kubernetes.var.log.containers.**_<<NAMESPACE-TO-INCLUDE>>_** kubernetes.var.log.containers.**_<<ANOTHER-NAMESPACE>>_**`. | `""` |
 | `daemonset.kubernetesVerifySsl` | Enables to validate SSL certificates. | `true` |
 | `daemonset.auditLogFormat` | Match Fluentd's format for kube-apiserver audit logs. Set to `audit-json` if your audit logs are in json format. | `audit` |
@@ -258,19 +258,28 @@ helm install \
 logzio-fluentd logzio-helm/logzio-fluentd
 ```
 
+## Monitoring fluentd with prometheus
+In order to monitor fluentd and collect input & output metrics. You can 
+enable prometheus configuration with the `daemonset.fluentdPrometheusConf` and `windowsDaemonset.fluentdPrometheusConf` parameter (default to false).
+When enabling promehteus configuration, the pod collects and exposes fluentd metrics on port `24231`, `/metrics` endpoint. The templates contains annotations to easly ship when using promehteus shipper or `logzio-telemetry` chart.
+
 
 
 ## Change log
+ - **0.19.0**:
+   - Upgraded image to `logzio/logzio-fluentd:1.3.1`:
+     - Added prometheus monitor plugin
+   - Updated `daemonset.fluentdPrometheusConf` and `windowsDaemonset.fluentdPrometheusConf` - now controls prometheus config for collecting and exposing fluentd metrics.
  - **0.18.0**:
    - Added log_level detection for "warn" level.
  - **0.17.0**:
    - Add `secrets.enabled` to control secret creation and management. ([#194](https://github.com/logzio/logzio-helm/pull/194))
- - **0.16.0**:
-   - Inreased memory request and limit to 500Mi, cpu request to 200m.
 
 <details>
   <summary markdown="span"> Expand to check old versions </summary>
 
+ - **0.16.0**:
+   - Inrceased memory request and limit to 500Mi, cpu request to 200m.
  - **0.15.0**:
    - Added dedot processor - auto replace `.` in log field to `_`.
  - **0.14.0**:
