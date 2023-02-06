@@ -176,11 +176,6 @@ spec:
       labels:
         k8s-app: {{ .Values.k8sApp }}
         version: v1
-{{- if .Values.windowsDaemonset.fluentdPrometheusConf }}
-      annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "24231"
-{{- end}}
     spec:
       {{- if .Values.windowsDaemonset.priorityClassName }}
       priorityClassName: {{ .Values.windowsDaemonset.priorityClassName }}
@@ -201,12 +196,6 @@ spec:
       containers:
       - name: fluentd-win
         image: "{{ .Values.windowsImage }}:{{ .Values.windowsImageTag }}"
-{{- if .Values.windowsDaemonset.fluentdPrometheusConf }}
-        ports:
-        - name: metrics
-          containerPort: 24231
-          protocol: TCP
-{{- end}}
         env:
         - name: LOGZIO_LOG_SHIPPING_TOKEN
           valueFrom:
@@ -281,17 +270,8 @@ spec:
         hostPath:
           path: C:\ProgramData\docker\containers
       - name: config-volume
-{{- if .Values.windowsDaemonset.fluentdPrometheusConf }}
-        projected:
-          sources:
-          - configMap:
-              name: {{ include "fluentd.fullname" . }}
-          - configMap:
-              name: {{ include "fluentd.fullname" . }}-monitoring
-{{- else }}
         configMap:
           name: {{ include "fluentd.fullname" . }}
-{{- end }}
       {{- if .Values.windowsDaemonset.extraVolumes }}
 {{ toYaml .Values.windowsDaemonset.extraVolumes | indent 6 }}
       {{- end }}

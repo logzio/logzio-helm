@@ -84,7 +84,7 @@ windowsDaemonset:
   nodeSelector:
     os: windows
   fluentdSystemdConf: disable
-  fluentdPrometheusConf: true
+  fluentdPrometheusConf: false
   includeNamespace: ""
   kubernetesVerifySsl: true
   auditLogFormat: audit
