@@ -8,7 +8,8 @@ RUN gem install fluent-plugin-detect-exceptions \
 && gem install fluent-plugin-systemd -v 1.0.3 \
 && gem install fluent-plugin-multi-format-parser \
 && gem install fluent-plugin-windows-eventlog \
-&& gem install fluent-plugin-prometheus
+&& gem install fluent-plugin-prometheus \
+&& fluent-plugin-dedot_filter 
 COPY plugins /fluent/plugins
 
 ENTRYPOINT ["cmd", "/k" ,"fluentd", "--config", "C:\\fluent\\conf\\fluent.conf","-p","C:\\fluent\\plugins"]
