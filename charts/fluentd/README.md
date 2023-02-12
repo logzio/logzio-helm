@@ -266,18 +266,24 @@ When enabling promehteus configuration, the pod collects and exposes fluentd met
 
 
 ## Change log
+ - **0.20.0**:
+   - Upgraded windows image to `logzio/windows:0.0.2`:
+     - Added prometheus monitor plugin
+     - Added dedot plugin
+   - Updated `windowsDaemonset.fluentdPrometheusConf` - now controls prometheus config for collecting and exposing fluentd metrics.
  - **0.19.0**:
    - Upgraded image to `logzio/logzio-fluentd:1.3.1`:
      - Added prometheus monitor plugin
-   - Updated `daemonset.fluentdPrometheusConf` and `windowsDaemonset.fluentdPrometheusConf` - now controls prometheus config for collecting and exposing fluentd metrics.
+   - Updated `daemonset.fluentdPrometheusConf` - now controls prometheus config for collecting and exposing fluentd metrics.
  - **0.18.0**:
    - Added log_level detection for "warn" level.
- - **0.17.0**:
-   - Add `secrets.enabled` to control secret creation and management. ([#194](https://github.com/logzio/logzio-helm/pull/194))
+
 
 <details>
   <summary markdown="span"> Expand to check old versions </summary>
 
+ - **0.17.0**:
+   - Add `secrets.enabled` to control secret creation and management. ([#194](https://github.com/logzio/logzio-helm/pull/194))
  - **0.16.0**:
    - Increased memory request and limit to 500Mi, cpu request to 200m.
  - **0.15.0**:
