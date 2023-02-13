@@ -123,11 +123,11 @@ logzio-monitoring logzio-helm/logzio-monitoring
 ```
 
 ## Changelog
-- **0.1.21**:
+- **0.1.24**:
 	- Upgrade `logzio-fluentd` Chart to `0.20.0`:
 		- Added support for fluentd monitoring for windows pods.
 
-- **0.1.20**:
+- **0.1.23**:
 	- Upgrade `logzio-fluentd` Chart to `0.19.0`:
 		- Added support for fluentd monitoring for arm and amd pods.
 
