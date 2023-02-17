@@ -1,0 +1,19 @@
+{{- if .Values.trivyToLogzio.serviceAccount.create -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "trivy-to-logzio.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+rules:
+  - apiGroups:
+    - "aquasecurity.github.io"
+    - ""
+    - apps
+    resources:
+    - namespaces
+    - vulnerabilityreports
+    verbs:
+    - get
+    - list
+    - watch
+{{- end -}}

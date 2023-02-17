@@ -1,0 +1,38 @@
+{{- if .Values.securityScan.enabled -}}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "trivy-to-logzio.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    k8s-app: {{ include "trivy-to-logzio.fullname" . }}
+spec:
+  schedule: {{ .Values.trivyToLogzio.schedule }}
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            k8s-app: {{ include "trivy-to-logzio.fullname" . }}
+        spec:
+          serviceAccount: {{ template "trivy-to-logzio.serviceAccount" . }}
+          serviceAccountName: {{ template "trivy-to-logzio.serviceAccount" . }}
+          restartPolicy: {{ .Values.trivyToLogzio.restartPolicy }}
+          containers:
+          - name: trivy-to-logzio
+            image: "{{ .Values.trivyToLogzio.image }}:{{ .Values.trivyToLogzio.imageTag }}"
+            env:
+            - name: LOGZIO_LOG_SHIPPING_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.trivyToLogzio.secrets.name }}
+                  key: logzio-log-shipping-token
+            - name: LOGZIO_LOG_LISTENER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.trivyToLogzio.secrets.name }}
+                  key: logzio-log-listener
+            - name: ENV_ID
+              value: {{ .Values.trivyToLogzio.env_id }}
+          terminationGracePeriodSeconds: {{ .Values.trivyToLogzio.terminationGracePeriodSeconds }}
+{{- end -}}

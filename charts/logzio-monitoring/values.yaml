@@ -2,7 +2,32 @@ logs:
   enabled: false
 metricsOrTraces:
   enabled: false
+securityScan:
+  enabled: false
 
 logzio-fluentd:
   daemonset:
     logType: "agent-k8s"
+
+trivy-operator:
+  trivy:
+    ignoreUnfixed: true
+
+trivyToLogzio:
+  nameOverride: ""
+  fullnameOverride: ""
+  name: "trivy-to-logzio"
+  schedule: "0 7 * * *" # Every day at 07:00 AM
+  restartPolicy: OnFailure
+  image: mirii1994/trivy-to-logz
+  imageTag: test
+  env_id: ""
+  terminationGracePeriodSeconds: 30
+  serviceAccount:
+    create: true
+    name: ""
+  secrets:
+    enabled: true
+    name: "logzio-logs-secret-trivy"
+    logzioShippingToken: ""
+    logzioListener: ""
