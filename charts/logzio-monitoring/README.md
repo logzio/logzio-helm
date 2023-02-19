@@ -50,6 +50,11 @@ helm install -n monitoring \
 --set logzio-k8s-telemetry.spm.enabled=true \
 --set logzio-k8s-telemetry.secrets.env_id="<<ENV-ID>>" \
 --set logzio-k8s-telemetry.secrets.SpmToken=<<SPM-SHIPPING-TOKEN>> \
+--set securityScan.enabled=true \
+--set trivyToLogzio.env_id='<<ENV-ID>>' \
+--set trivyToLogzio.schedule='<<CRON-EXPRESSION>>' \
+--set trivyToLogzio.secrets.logzioShippingToken='<<LOG-SHIPPING-TOKEN>>' \
+--set trivyToLogzio.secrets.logzioListener='<<LISTENER-HOST>>' \
 logzio-monitoring logzio-helm/logzio-monitoring
 ```
 
@@ -63,6 +68,7 @@ logzio-monitoring logzio-helm/logzio-monitoring
 | `<<TRACES-SHIPPING-TOKEN>>` | Your [traces shipping token](https://app.logz.io/#/dashboard/settings/manage-tokens/data-shipping). |
 | `<<SPM-SHIPPING-TOKEN>>` | Your [span metrics shipping token](https://app.logz.io/#/dashboard/settings/manage-tokens/data-shipping). |
 | `<<LOGZIO-REGION>>` | Name of your Logz.io traces region e.g `us`, `eu`... |
+| `<<CRON-EXPRESSION>>` | Defaults to `"0 7 * * *"`. The cron expression to trigger the security scan extraction into your logz.io account. |
 
 
 ### Further configuration
@@ -75,6 +81,22 @@ However, you can modify the Chart by using the `--set` flag in your `helm instal
 | --- | --- | --- |
 | `logs.enabled` | Enable to send k8s logs | `false` |
 | `metricsOrTraces` | Enable to send k8s metrics or traces | `false` |
+| `securityScan.enabled` | Enable to perform and send security scans to logz.io (using [Trivy Operator](https://github.com/aquasecurity/trivy-operator)) | `false` |
+| `trivy-operator.trivy.ignoreUnfixed` | Whether to show only fixed vulnerabilities in vulnerabilities reported by Trivy. | `false` |
+| `trivyToLogzio.nameOverride` | Overrides the Chart name for resources. | `""` |
+| `trivyToLogzio.fullnameOverride` | Overrides the full name of the resources. | `""` |
+| `trivyToLogzio.schedule` | Cron expression for scheduling shipping vulnerability report to logz.io | `"0 7 * * *"` |
+| `trivyToLogzio.restartPolicy` | Container restart policy | `OnFailure` |
+| `trivyToLogzio.image` | Container image | `mirii1994/trivy-to-logz` |
+| `trivyToLogzio.imageTag` | Container image tag | `test` |
+| `trivyToLogzio.env_id` | The name for your environment's identifier, to easily identify the telemetry data for each environment | `""` |
+| `trivyToLogzio.terminationGracePeriodSeconds` | Termination period (in seconds) to wait before killing Fluentd pod process on pod shutdown. | `30` |
+| `trivyToLogzio.serviceAccount.create` | Specifies whether to create a service account for the cron job | `true` |
+| `trivyToLogzio.serviceAccount.name` | Name of the service account. | `""` |
+| `trivyToLogzio.secrets.enabled` | Specifies wheter to create a secret for the cron job | `true` |
+| `trivyToLogzio.secrets.name` | Secret name | `"logzio-logs-secret-trivy"` |
+| `trivyToLogzio.secrets.logzioShippingToken` | Your logz.io log shipping token | `""` |
+| `trivyToLogzio.secrets.logzioListener` | Your logz.io listener host | `""` (defaults to us region) |
 
 #### To modify the logs Chart configuration:
 

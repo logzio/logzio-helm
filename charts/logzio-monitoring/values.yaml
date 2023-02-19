@@ -11,12 +11,11 @@ logzio-fluentd:
 
 trivy-operator:
   trivy:
-    ignoreUnfixed: true
+    ignoreUnfixed: false
 
 trivyToLogzio:
   nameOverride: ""
   fullnameOverride: ""
-  name: "trivy-to-logzio"
   schedule: "0 7 * * *" # Every day at 07:00 AM
   restartPolicy: OnFailure
   image: mirii1994/trivy-to-logz
