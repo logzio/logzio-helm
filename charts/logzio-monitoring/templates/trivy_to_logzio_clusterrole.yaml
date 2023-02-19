@@ -12,6 +12,7 @@ rules:
     resources:
     - namespaces
     - vulnerabilityreports
+    - pods
     verbs:
     - get
     - list
