@@ -753,7 +753,7 @@ opencost:
       filter/opencost-exporter: 
         metrics:
           datapoint:     
-            - 'IsMatch(metric.name, "(${OPENCOST_DUPLICATES})") == true and attributes["app"] != "opencost"'
+            - 'IsMatch(metric.name, "(${OPENCOST_DUPLICATES})") == true and attributes["app"] == "opencost"'
     service:
       pipelines:
         metrics:
