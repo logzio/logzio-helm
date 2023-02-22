@@ -239,6 +239,15 @@ This will disable scraping for the kube-dns service in the prometheus receiver.
 More informtion can be found in the following GitHub issue:
 https://github.com/aws/containers-roadmap/issues/965
 
+
+### Enabling opencost 
+Opencost measures and allocates infrastructure and container costs in real time.
+To enable opencost:
+```
+--set opencost.enabled=true
+```
+
+
 ### Using pprof extention
 The pprof extension in OpenTelemetry Collector allows you to view and analyze the profile of the collector during runtime. Here's how you can use it:
 
@@ -294,6 +303,9 @@ helm uninstall logzio-k8s-telemetry
 
 
 ## Change log
+* 0.0.23
+  - Fixed dependencies conditions in Chart.yaml, added tags.
+  - Added opencost exporter, enables the collection of kubecost metrics.
 * 0.0.22
   - **breaking changes:** Add separate span metrics component that includes the following resources:
     - `deployment-spm.yaml`
@@ -302,6 +314,12 @@ helm uninstall logzio-k8s-telemetry
   - Updated collector image -> `0.70.0`
 * 0.0.21
   - Updated collector image - fixing memory leak crash.
+
+
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
 * 0.0.20
   - Change the default port for node exporter `9100` -> `9101` to avoid pods stocking on pending state if a user has `node-exporter` daemon set deployed on the cluster
   - Update otel `0.64.0` -> `0.66.0` 
@@ -322,12 +340,6 @@ helm uninstall logzio-k8s-telemetry
   - Replace `$` -> `$$` to escape special char
   - Upgrade otel image `0.60.0`-> `0.64.0`
   - Add `k8s 360` metrics to filters
-
-
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
-
-
 * 0.0.14
   - Add `k8sattributesprocessor`
   - Require `p8s-logzio-name` only if `metrics` or `spm` are enabled

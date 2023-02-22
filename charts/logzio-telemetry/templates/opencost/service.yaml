@@ -1,0 +1,16 @@
+{{- if .Values.opencost.enabled }}
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}-opencost
+  annotations:
+    prometheus.io/scrape: "true"
+spec:
+  selector:
+    app: opencost
+  type: ClusterIP
+  ports:
+    - name: opencost-metrics
+      port: 9003
+      targetPort: 9003
+{{- end }}

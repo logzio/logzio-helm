@@ -273,6 +273,7 @@ spmForwarderConfig:
         processors: [attributes/env_id, memory_limiter, batch]
         exporters: [logging, otlp]
 
+
 metricsConfig:
   extensions:
     health_check: {}
@@ -730,3 +731,31 @@ enableMetricsFilter:
   kubeSystem: false
 
 disableKubeDnsScraping: false
+
+opencost:
+  enabled: false
+  restartPolicy: Always
+  image:
+    repository: quay.io/kubecost1/kubecost-cost-model
+    tag: latest
+    pullPolicy:
+  resources:
+    requests:
+      cpu: "10m"
+      memory: "55M"
+    limits:
+      cpu: "999m"
+      memory: "1G"
+  prometheusEndpoint: "http://my-prometheus-server.prometheus.svc" 
+  config:
+    processors:
+    # opencost collects duplicates metrics from kube-state and cadvisor.
+      filter/opencost-exporter: 
+        metrics:
+          datapoint:     
+            - 'IsMatch(metric.name, "(${OPENCOST_DUPLICATES})") == true and attributes["app"] != "opencost"'
+    service:
+      pipelines:
+        metrics:
+          processors:
+            - filter/opencost-exporter

@@ -47,6 +47,13 @@ Build config file for standalone OpenTelemetry Collector
 {{- $data := dict "Values" $values | mustMergeOverwrite (deepCopy .) }}
 {{- $config := include "opentelemetry-collector.baseConfig" $data | fromYaml }}
 
+{{- if .Values.opencost.enabled }}
+{{- $opencostConfig := deepCopy .Values.opencost.config | mustMergeOverwrite }}
+{{- $metricsConfig = deepCopy $opencostConfig | merge $metricsConfig | mustMergeOverwrite }}
+{{/* merge processor list */}}
+{{- $_ := set $metricsConfig.service.pipelines.metrics "processors" (concat $metricsConfig.service.pipelines.metrics.processors $opencostConfig.service.pipelines.metrics.processors )}}
+{{- end }}
+
 {{- if and .Values.metrics.enabled .Values.traces.enabled  .Values.spm.enabled }}
 {{- $configData = $metricsConfig  | merge $tracesConfig | merge $spmConfig | mustMergeOverwrite }}
 

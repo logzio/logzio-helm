@@ -42,6 +42,13 @@ containers:
           secretKeyRef:
             name: logzio-secret
             key: kubernetes-360-metrics
+{{- if .Values.opencost.enabled }}
+      - name: OPENCOST_DUPLICATES
+        valueFrom:
+          secretKeyRef:
+            name: logzio-secret
+            key: opencost-duplicates
+{{- end }}
       - name: LOGZIO_AGENT_VERSION
         value: {{.Chart.Version}}
       - name: REALESE_NAME
