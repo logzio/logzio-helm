@@ -306,6 +306,7 @@ helm uninstall logzio-k8s-telemetry
 * 0.0.23
   - Fixed dependencies conditions in Chart.yaml, added tags.
   - Added opencost exporter, enables the collection of kubecost metrics.
+  - Added remote_write_queue options for prometheus exporter, increased num_consumers to 4.
 * 0.0.22
   - **breaking changes:** Add separate span metrics component that includes the following resources:
     - `deployment-spm.yaml`

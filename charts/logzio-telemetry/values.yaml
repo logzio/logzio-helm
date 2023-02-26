@@ -289,6 +289,9 @@ metricsConfig:
         p8s_logzio_name: ${P8S_LOGZIO_NAME}
       headers:
         Authorization: "Bearer ${METRICS_TOKEN}"
+      remote_write_queue:
+        num_consumers: 4
+        queue_size: 10000
   receivers:
     prometheus:
       config:
