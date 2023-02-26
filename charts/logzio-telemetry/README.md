@@ -294,6 +294,9 @@ helm uninstall logzio-k8s-telemetry
 
 
 ## Change log
+
+* 0.0.23
+  - Added prometheus remote write queue options, increased number of queue consumers to 4.
 * 0.0.22
   - **breaking changes:** Add separate span metrics component that includes the following resources:
     - `deployment-spm.yaml`
