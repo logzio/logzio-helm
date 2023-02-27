@@ -1,0 +1,18 @@
+apiVersion: v2
+name: logzio-trivy
+description: A Helm chart for deploying Trivy operator for scanning security risks on your cluster, and shipping them to Logz.io
+keywords:
+  - logging
+  - trivy
+  - security
+version: 0.0.1
+appVersion: 0.0.1
+sources:
+  - https://github.com/logzio/logzio-helm
+dependencies:
+  - name: trivy-operator
+    version: "0.11.1"
+    repository: "https://aquasecurity.github.io/helm-charts/"
+maintainers:
+  - name: Miri Bar
+    email: miri.ignatiev@logz.io
