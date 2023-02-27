@@ -17,9 +17,8 @@ trivyToLogzio:
   nameOverride: ""
   fullnameOverride: ""
   schedule: "0 7 * * *" # Every day at 07:00 AM
-  restartPolicy: OnFailure
-  image: mirii1994/trivy-to-logz
-  imageTag: test
+  image: logzio/trivy-to-logzio
+  imageTag: 0.0.1
   env_id: ""
   terminationGracePeriodSeconds: 30
   serviceAccount:
