@@ -2,7 +2,9 @@
 
 The logzio-monitoring Helm Chart deploys the [Trivy operator](https://github.com/aquasecurity/trivy-operator) to your k8s cluster, and sends its reports to Logz.io
 
-**Note:** this project is currently in *beta* and is prone to changes.
+**Note:**
+- This project is currently in *beta* and is prone to changes.
+- Currently only vulnerability is being collected.
 
 ## Instructions for standard deployment:
 
