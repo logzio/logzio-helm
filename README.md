@@ -13,3 +13,4 @@ Please look in the chart directories for the documentation for each chart.
 * [Filebeat](https://github.com/logzio/logzio-helm/tree/master/charts/filebeat)
 * [Fluentbit](https://github.com/logzio/logzio-helm/tree/master/charts/fluentbit)
 * [Fluentd](https://github.com/logzio/logzio-helm/tree/master/charts/fluentd)
+* [Logzio-Trivy](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-trivy)
