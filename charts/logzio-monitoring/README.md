@@ -51,6 +51,7 @@ helm install -n monitoring \
 --set logzio-k8s-telemetry.spm.enabled=true \
 --set logzio-k8s-telemetry.secrets.env_id="<<ENV-ID>>" \
 --set logzio-k8s-telemetry.secrets.SpmToken=<<SPM-SHIPPING-TOKEN>> \
+--set securityReport.enabled=true \
 --set logzio-trivy.env_id="<<ENV-ID>>" \
 --set logzio-trivy.secrets.logzioShippingToken="<<LOG-SHIPPING-TOKEN>>" \
 --set logzio-trivy.secrets.logzioListener="<<LISTENER-HOST>>" \
