@@ -128,19 +128,22 @@ logzio-monitoring logzio-helm/logzio-monitoring
 ```
 
 ## Changelog
+
 - **0.2.0**:
 	- Add `logzio-trivy` Chart to scan for security risks on cluster, and send reports to Logz.io.
+- **0.1.25**:
+	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.23`:
+		- Updated metrics filter.
 - **0.1.24**:
 	- Upgrade `logzio-fluentd` Chart to `0.20.0`:
 		- Added support for fluentd monitoring for windows pods.
 
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
 - **0.1.23**:
 	- Upgrade `logzio-fluentd` Chart to `0.19.0`:
 		- Added support for fluentd monitoring for arm and amd pods.
-
-
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
 - **0.1.22**:
 	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.22`:
     - **breaking changes:** Add separate span metrics component that includes the following resources:
