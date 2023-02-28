@@ -123,6 +123,10 @@ logzio-monitoring logzio-helm/logzio-monitoring
 ```
 
 ## Changelog
+- **0.1.25**:
+	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.23`:
+		- Updated metrics filter.
+
 - **0.1.24**:
 	- Upgrade `logzio-fluentd` Chart to `0.20.0`:
 		- Added support for fluentd monitoring for windows pods.
