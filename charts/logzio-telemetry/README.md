@@ -239,6 +239,16 @@ This will disable scraping for the kube-dns service in the prometheus receiver.
 More informtion can be found in the following GitHub issue:
 https://github.com/aws/containers-roadmap/issues/965
 
+
+### Collector deployment modes
+The default collector deployment is as standalone.
+This mode can cause the collector pod to have a very high memory and cpu usage.
+For this case you can use daemonset deployment for the pod:
+```
+--set collector.mode=daemonset
+```
+
+
 ### Using pprof extention
 The pprof extension in OpenTelemetry Collector allows you to view and analyze the profile of the collector during runtime. Here's how you can use it:
 
@@ -293,7 +303,11 @@ helm uninstall logzio-k8s-telemetry
 ```
 
 
+
 ## Change log
+* 0.0.24
+  - Added `collector.mode` flag - now supports `standalone` and `daeomnset`.
+  - Fixed subchart conditions.
 * 0.0.23
   - Updated metrics filter (#219)
 * 0.0.22
