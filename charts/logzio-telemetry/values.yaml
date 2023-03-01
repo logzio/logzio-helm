@@ -123,17 +123,14 @@ kubeStateMetrics:
   ##
   enabled: true
 
-kube-state-metrics:
-  podAnnotations:
-    prometheus.io/scrape: "true"
-
 pushGateway:
   ## If false, pushGateway sub-chart will not be installed
   ##
   enabled: true
 prometheus-pushgateway:
   podAnnotations:
-    prometheus.io/scrape: "true"
+    prometheus.io/scrape: "false"
+    logz.io/app: "kubernetes360"
   serviceAnnotations:
     prometheus.io/scrape: "true"
   nodeSelector:
@@ -722,7 +719,7 @@ annotations:  {}
 
 kube-state-metrics:
   podAnnotations:
-    prometheus.io/scrape: "true"
+    prometheus.io/scrape: "false"
     logz.io/app: "kubernetes360"  
   service:
     annotations:
@@ -734,7 +731,7 @@ kube-state-metrics:
 
 prometheus-node-exporter:
   podAnnotations:
-    prometheus.io/scrape: "true"
+    prometheus.io/scrape: "false"
     logz.io/app: "kubernetes360"
   service:
     port: 9101
