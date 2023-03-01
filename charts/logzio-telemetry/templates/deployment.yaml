@@ -1,4 +1,4 @@
-{{- if .Values.standaloneCollector.enabled -}}
+{{- if eq .Values.collector.mode "standalone" }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:

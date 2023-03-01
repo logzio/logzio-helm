@@ -37,6 +37,10 @@ containers:
           fieldRef:
             apiVersion: v1
             fieldPath: status.podIP
+      - name: KUBE_NODE_NAME
+        valueFrom:
+          fieldRef:
+            fieldPath: spec.nodeName
       - name: K8S_360_METRICS
         valueFrom:
           secretKeyRef:
