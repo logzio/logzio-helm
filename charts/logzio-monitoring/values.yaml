@@ -2,6 +2,8 @@ logs:
   enabled: false
 metricsOrTraces:
   enabled: false
+securityReport:
+  enabled: false
 
 logzio-fluentd:
   daemonset:

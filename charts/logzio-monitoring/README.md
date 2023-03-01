@@ -1,14 +1,15 @@
 # logzio-monitoring
 
-The logzio-monitoring Helm Chart ships your Kubernetes logs, metrics and traces to your Logz.io account.
+The logzio-monitoring Helm Chart ships your Kubernetes telemetry (logs, metrics, traces and security reports) to your Logz.io account.
 
 **Note:** this project is currently in *beta* and is prone to changes.
 
 ## Overview
 
-This project packages 2 Helm Charts:
+This project packages 3 Helm Charts:
 - [logzio-fluentd](https://github.com/logzio/logzio-helm/tree/master/charts/fluentd) for logs shipping (via Fluentd).
 - [logzio-telemetry](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-telemetry) for metrics and traces (via OpenTelemetry Collector).
+- [logzio-trivy](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-trivy) for security reports (via Trivy operator).
 
 ## Instructions for standard deployment:
 
@@ -50,6 +51,10 @@ helm install -n monitoring \
 --set logzio-k8s-telemetry.spm.enabled=true \
 --set logzio-k8s-telemetry.secrets.env_id="<<ENV-ID>>" \
 --set logzio-k8s-telemetry.secrets.SpmToken=<<SPM-SHIPPING-TOKEN>> \
+--set securityReport.enabled=true \
+--set logzio-trivy.env_id="<<ENV-ID>>" \
+--set logzio-trivy.secrets.logzioShippingToken="<<LOG-SHIPPING-TOKEN>>" \
+--set logzio-trivy.secrets.logzioListener="<<LISTENER-HOST>>" \
 logzio-monitoring logzio-helm/logzio-monitoring
 ```
 
@@ -123,18 +128,22 @@ logzio-monitoring logzio-helm/logzio-monitoring
 ```
 
 ## Changelog
+
+- **0.2.0**:
+	- Add `logzio-trivy` Chart to scan for security risks on cluster, and send reports to Logz.io.
 - **0.1.25**:
 	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.23`:
 		- Updated metrics filter.
-
 - **0.1.24**:
 	- Upgrade `logzio-fluentd` Chart to `0.20.0`:
 		- Added support for fluentd monitoring for windows pods.
 
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
 - **0.1.23**:
 	- Upgrade `logzio-fluentd` Chart to `0.19.0`:
 		- Added support for fluentd monitoring for arm and amd pods.
-
 - **0.1.22**:
 	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.22`:
     - **breaking changes:** Add separate span metrics component that includes the following resources:
@@ -142,11 +151,6 @@ logzio-monitoring logzio-helm/logzio-monitoring
       - `service-spm.yaml`
       - `configmap-spm.yaml`
     - Updated collector image -> `0.70.0`
-
-
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
-
 - **0.1.21**:
 	- Upgrade `logzio-fluentd` Chart to `0.18.0`:
 		- Added `warn` log level detection.
