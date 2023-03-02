@@ -5,7 +5,7 @@ keywords:
   - logging
   - trivy
   - security
-version: 0.0.1
+version: 0.0.2
 appVersion: 0.0.1
 sources:
   - https://github.com/logzio/logzio-helm

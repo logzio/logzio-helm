@@ -6,7 +6,7 @@ metadata:
   labels:
     k8s-app: {{ include "trivy-to-logzio.fullname" . }}
 spec:
-  schedule: {{ .Values.schedule }}
+  schedule: {{ .Values.schedule | quote }}
   jobTemplate:
     spec:
       template:

@@ -61,4 +61,5 @@ However, you can modify the Chart by using the `--set` flag in your `helm instal
 
 ## Changelog
 
+- **0.0.2**: Add quotes to schedule expression to avoid errors.
 - **0.0.1**: Initial release.
