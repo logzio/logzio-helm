@@ -306,7 +306,7 @@ helm uninstall logzio-k8s-telemetry
 
 ## Change log
 * 0.0.24
-  - Added `collector.mode` flag - now supports `standalone` and `daeomnset`.
+  - Added `collector.mode` flag - now supports `standalone` and `daemonset`.
   - Fixed subchart conditions.
 * 0.0.23
   - Updated metrics filter (#219)
@@ -318,6 +318,11 @@ helm uninstall logzio-k8s-telemetry
   - Updated collector image -> `0.70.0`
 * 0.0.21
   - Updated collector image - fixing memory leak crash.
+
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
 * 0.0.20
   - Change the default port for node exporter `9100` -> `9101` to avoid pods stocking on pending state if a user has `node-exporter` daemon set deployed on the cluster
   - Update otel `0.64.0` -> `0.66.0` 
@@ -338,12 +343,6 @@ helm uninstall logzio-k8s-telemetry
   - Replace `$` -> `$$` to escape special char
   - Upgrade otel image `0.60.0`-> `0.64.0`
   - Add `k8s 360` metrics to filters
-
-
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
-
-
 * 0.0.14
   - Add `k8sattributesprocessor`
   - Require `p8s-logzio-name` only if `metrics` or `spm` are enabled
