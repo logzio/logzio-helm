@@ -241,17 +241,11 @@ https://github.com/aws/containers-roadmap/issues/965
 
 
 ### Collector deployment modes
-The default collector deployment is as standalone.
-This mode can cause the collector pod to have a very high memory and cpu usage.
+The default collector deployment is as standalone collector.
+This mode can cause the collector pod to have a very high memory and cpu usage in a large scale clusters.
 For this case you can use daemonset deployment for the pod:
 ```
 --set collector.mode=daemonset
-```
-and set the prometheus scrape annotation to true on the subcharts pods:
-```
---set prometheus-node-exporter.podAnnotations.prometheus.io/scrape=true
---set kube-state-metrics.podAnnotations.prometheus.io/scrape=true
---set prometheus-pushgateway.podAnnotations.prometheus.io/scrape=true
 ```
 
 
