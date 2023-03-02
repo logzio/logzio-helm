@@ -1,6 +1,6 @@
-{{- if or (eq .Values.collector.mode "standalone") (.Values.traces.enabled) }}
+{{- if and (eq .Values.collector.mode "daemonset") (.Values.metrics.enabled) }}
 apiVersion: apps/v1
-kind: Deployment
+kind: DaemonSet
 metadata:
   name: {{ include "opentelemetry-collector.fullname" . }}
   labels:
@@ -12,22 +12,22 @@ spec:
   selector:
     matchLabels:
       {{- include "opentelemetry-collector.selectorLabels" . | nindent 6 }}
-      component: standalone-collector
+      component: daemonset-collector
   template:
     metadata:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
-        {{- with .Values.standaloneCollector.podAnnotations }}
+        {{- with .Values.daemonsetCollector.podAnnotations }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
       labels:
         {{- include "opentelemetry-collector.selectorLabels" . | nindent 8 }}
-        component: standalone-collector
-        {{- with .Values.standaloneCollector.podLabels }}
+        component: daemonset-collector
+        {{- with .Values.daemonsetCollector.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
-      {{- $podValues := deepCopy .Values.standaloneCollector | mustMergeOverwrite (deepCopy .Values) }}
+      {{- $podValues := deepCopy .Values.daemonsetCollector | mustMergeOverwrite (deepCopy .Values) }}
       {{- $podData := dict "Values" $podValues "configmapSuffix" "" "isAgent" false }}
-      {{- include "opentelemetry-collector.pod" ($podData | mustMergeOverwrite (deepCopy .)) | nindent 6 }}
+      {{- include "opentelemetry-collector.daemonset-pod" ($podData | mustMergeOverwrite (deepCopy .)) | nindent 6 }}
 {{- end }}
