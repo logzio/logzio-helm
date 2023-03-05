@@ -4,6 +4,7 @@
 
 collector:
   mode: standalone # possible values: standalone, daemonset
+  selectorLabels: # add key value labels for collector pod selectors
 
 traces:
   enabled: false
@@ -146,7 +147,7 @@ emptyConfig: {}
 baseCollectorConfig:
   exporters:
     logging:
-      loglevel: debug
+      loglevel: info
   extensions:
     health_check: {}
   processors:
@@ -201,7 +202,7 @@ baseCollectorConfig:
       - health_check
     telemetry:
       logs:
-        level: "debug"
+        level: "info"
 
 tracesConfig:
   exporters:
