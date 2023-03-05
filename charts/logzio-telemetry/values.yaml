@@ -129,9 +129,6 @@ pushGateway:
   ##
   enabled: true
 prometheus-pushgateway:
-  podAnnotations:
-    prometheus.io/scrape: "false"
-    logz.io/app: "kubernetes360"
   serviceAnnotations:
     prometheus.io/scrape: "true"
   nodeSelector:
@@ -719,9 +716,6 @@ podLabels:  {}
 annotations:  {}
 
 kube-state-metrics:
-  podAnnotations:
-    prometheus.io/scrape: "false"
-    logz.io/app: "kubernetes360"  
   service:
     annotations:
       prometheus.io/scrape: "true"
@@ -732,9 +726,6 @@ kube-state-metrics:
     enabled: false
 
 prometheus-node-exporter:
-  podAnnotations:
-    prometheus.io/scrape: "false"
-    logz.io/app: "kubernetes360"
   service:
     port: 9101
     targetPort: 9101
@@ -867,7 +858,7 @@ daemonsetConfig:
           kubernetes_sd_configs:
           - role: node
             selectors:
-            # only scrape data from pods running on the same node as collector
+            # only scrape data from node with the same name as the node the collector run on
             - role: node
               field: "metadata.name=$KUBE_NODE_NAME"
           relabel_configs:

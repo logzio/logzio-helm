@@ -171,7 +171,7 @@ Give your metrics some time to get from your system to ours, then open [Logz.io]
 
 
 ####  Customizing Helm chart parameters
-
+See `VALUES.md` for additional information.
 
 ##### Configure customization options
 
@@ -309,6 +309,7 @@ helm uninstall logzio-k8s-telemetry
   - Added `collector.mode` flag - now supports `standalone` and `daemonset`.
   - Fixed subchart conditions.
   - Added `collector.selectorLabels` in `values.yaml`, enabling user to add custom selector labels to the collector pods.
+  - Added `VALUES.md`. 
 * 0.0.23
   - Updated metrics filter (#219)
 * 0.0.22
@@ -328,7 +329,7 @@ helm uninstall logzio-k8s-telemetry
   - Change the default port for node exporter `9100` -> `9101` to avoid pods stocking on pending state if a user has `node-exporter` daemon set deployed on the cluster
   - Update otel `0.64.0` -> `0.66.0` 
   - Add `logzio_agent_version` label
-  - Add `logz.io/app=kubertneters360` annotation to `Kube-state-metrics` and `node-exporter`
+  - Add `logz.io/app=kubertnetes360` annotation to `Kube-state-metrics` and `node-exporter`
   - Add `filter/kubernetes360` processor for metrics, to avoid duplicated metrics if a user has `Kube-state-metrics` or `node-exporter` deployed on the cluster
 * 0.0.19
   - Drop metrics from `kube-system` namespace
