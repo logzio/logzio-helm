@@ -16,7 +16,7 @@ dependencies:
     repository: "https://logzio.github.io/logzio-helm/"
     condition: metricsOrTraces.enabled
   - name: logzio-trivy
-    version: "0.0.1"
+    version: "0.0.2"
     repository: "https://logzio.github.io/logzio-helm/"
     condition: securityReport.enabled
 
