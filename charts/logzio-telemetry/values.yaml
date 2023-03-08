@@ -666,8 +666,8 @@ daemonsetCollector:
 
   resources:
     limits:
-      cpu: 256m
-      memory: 512Mi
+      cpu: 512m
+      memory: 1024Mi
 
   podAnnotations: {}
   # Configuration override that will be merged into the agent's default config
