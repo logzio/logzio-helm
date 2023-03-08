@@ -45,7 +45,7 @@ However, you can modify the Chart by using the `--set` flag in your `helm instal
 | `trivy-operator.trivy.ignoreUnfixed` | Whether to show only fixed vulnerabilities in vulnerabilities reported by Trivy. | `false` |
 | `nameOverride` | Overrides the Chart name for resources. | `""` |
 | `fullnameOverride` | Overrides the full name of the resources. | `""` |
-| `schedule` | Cron expression for scheduling shipping vulnerability report to logz.io | `"0 7 * * *"` |
+| `schedule` | Time for daily scanning for security reports and send them to Logz.io, in format "HH:MM" | `"07:00"` |
 | `restartPolicy` | Container restart policy | `OnFailure` |
 | `image` | Container image | `logzio/trivy-to-logzio` |
 | `imageTag` | Container image tag | `0.0.1` |
@@ -57,8 +57,14 @@ However, you can modify the Chart by using the `--set` flag in your `helm instal
 | `secrets.name` | Secret name | `"logzio-logs-secret-trivy"` |
 | `secrets.logzioShippingToken` | Your logz.io log shipping token | `""` |
 | `secrets.logzioListener` | Your logz.io listener host | `""` (defaults to us region) |
+| `scriptLogLevel` | Log level of the script that sends security risk to Logz.io. Can be one of: `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`. | `INFO` |
 
 
 ## Changelog
 
+- **0.1.0**:
+  - **Breaking changes**:
+    - Deprecation of CronJob, using Deployment instead.
+    - Scanning for reports will occur once upon container deployment, then once a day at the scheduled time. 
+    - Not using Cron expressions anymore. Instead, set a time for the daily run in form of HH:MM.  
 - **0.0.1**: Initial release.
