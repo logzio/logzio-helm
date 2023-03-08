@@ -308,7 +308,6 @@ helm uninstall logzio-k8s-telemetry
 * 0.0.24
   - Added `collector.mode` flag - now supports `standalone` and `daemonset`.
   - Fixed subchart conditions.
-  - Added `collector.selectorLabels` in `values.yaml`, enabling user to add custom selector labels to the collector pods.
   - Added `VALUES.md`. 
 * 0.0.23
   - Updated metrics filter (#219)

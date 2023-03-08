@@ -4,8 +4,6 @@
 
 collector:
   mode: standalone # possible values: standalone, daemonset
-  selectorLabels: # add key value labels for collector pod selectors
-
 traces:
   enabled: false
 metrics:

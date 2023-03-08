@@ -64,10 +64,6 @@ Selector labels
 {{- define "opentelemetry-collector.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "opentelemetry-collector.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
-{{- range $key, $value := .Values.collector.selectorLabels }}
-{{ $key }} : "{{ $value }}"
-{{- end }}
-
 {{- end }}
 
 {{/*

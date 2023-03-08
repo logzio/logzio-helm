@@ -33,7 +33,7 @@ logzio-k8s-telemetry allows you to ship metrics and traces from your Kubernetes 
 | baseCollectorConfig.service.telemetry.logs.level | string | `"info"` | log level that will be used with the collector. The value must be updated for the exporter logging in order to take effect. |
 | tracesConfig.exporters.logging.loglevel | string | `"info"` | log level that will be used with the collector. The value must be updated for the service telemetry in order to take effect. |
 | tracesConfig.service.telemetry.logs.level | string | `"info"` | og level that will be used with the collector. The value must be updated for the exporter logging in order to take effect. |
-| collector.selectorLabels | string | `nil` | Selector labels that will be added to the collector pods. |
+| podLabels | string | `nil` | Selector labels that will be added to the collector pods. |
 | command.extraArgs | list | `[]` | Additional arguments for the opentelemetry collector. |
 | command.name | string | `"otelcol-contrib"` | Command name for the opentelemetry collector executable. |
 | disableKubeDnsScraping | bool | `false` | Enabling this flag will disable kube-dns service scraping. |
