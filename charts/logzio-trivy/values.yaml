@@ -4,10 +4,9 @@ trivy-operator:
 
 nameOverride: ""
 fullnameOverride: ""
-schedule: "0 7 * * *" # Every day at 07:00 AM
-restartPolicy: OnFailure
+schedule: "07:00"
 image: logzio/trivy-to-logzio
-imageTag: 0.0.1
+imageTag: 0.1.0
 env_id: ""
 terminationGracePeriodSeconds: 30
 serviceAccount:
@@ -18,3 +17,4 @@ secrets:
   name: "logzio-logs-secret-trivy"
   logzioShippingToken: ""
   logzioListener: ""
+scriptLogLevel: INFO
