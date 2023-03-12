@@ -651,7 +651,7 @@ standaloneCollector:
 
   resources:
     limits:
-      cpu: 5125m
+      cpu: 512m
       memory: 1024Mi
 
   podAnnotations: {}
