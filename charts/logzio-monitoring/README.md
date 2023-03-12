@@ -128,7 +128,7 @@ logzio-monitoring logzio-helm/logzio-monitoring
 ```
 
 ## Changelog
-- **0.2.2**:
+- **0.3.0**:
 	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.24`:
 	- **breaking changes:** Changes default collector mode to `daemonset`:
       - Controlled using the `logzio-k8s-telemetry.collector.mode` value - supports `daemonset` and `standalone`.
