@@ -28,7 +28,7 @@ logzio-k8s-telemetry allows you to ship metrics and traces from your Kubernetes 
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| collector.mode | string | `"standalone"` | The mode in which that collector will be deployed. Possible values: `"standalone"`,`"daemonset"` Large scale clusters should use `daemonset`.|
+| collector.mode | string | `"daemonset"` | The mode in which that collector will be deployed. Possible values: `"standalone"`,`"daemonset"` Large scale clusters should use `daemonset`.|
 | baseCollectorConfig.exporters.logging.loglevel | string | `"info"` | log level that will be used with the collector. The value must be updated for the service telemetry in order to take effect. |
 | baseCollectorConfig.service.telemetry.logs.level | string | `"info"` | log level that will be used with the collector. The value must be updated for the exporter logging in order to take effect. |
 | tracesConfig.exporters.logging.loglevel | string | `"info"` | log level that will be used with the collector. The value must be updated for the service telemetry in order to take effect. |

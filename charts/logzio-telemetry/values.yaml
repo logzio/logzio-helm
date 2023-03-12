@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 
 collector:
-  mode: standalone # possible values: standalone, daemonset
+  mode: daemonset # possible values: standalone, daemonset
 traces:
   enabled: false
 metrics:

@@ -306,9 +306,10 @@ helm uninstall logzio-k8s-telemetry
 
 ## Change log
 * 0.0.24
-  - Added `collector.mode` flag - now supports `standalone` and `daemonset`.
+  - Added `collector.mode` flag - now supports `standalone` and `daemonset`, default is `daemonset`.
   - Fixed subchart conditions.
   - Added `VALUES.md`. 
+  - Increased minimum memory (`1024Mi`) and cpu (`512m`) requiremts for the collector pods.
 * 0.0.23
   - Updated metrics filter (#219)
 * 0.0.22
