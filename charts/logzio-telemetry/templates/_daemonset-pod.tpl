@@ -1,4 +1,4 @@
-{{- define "opentelemetry-collector.pod" -}}
+{{- define "opentelemetry-collector.daemonset-pod" -}}
 {{- with .Values.imagePullSecrets }}
 imagePullSecrets:
   {{- toYaml . | nindent 2 }}
@@ -52,17 +52,11 @@ containers:
         value: {{.Release.Name}}
       - name: REALESE_NS
         value: {{.Release.Namespace}}
-      - name: SPM_SERVICE_ENDPOINT
-        {{- $serviceName := include "opentelemetry-spm.fullname" .}}
-        value: {{ printf "http://%s.%s.svc.cluster.local:4317" $serviceName .Release.Namespace }}
-{{- if .Values.metrics.enabled }}
       - name: METRICS_TOKEN
         valueFrom:
           secretKeyRef:
             name: logzio-secret
             key: logzio-metrics-shipping-token
-{{- end }}
-{{- if or (eq .Values.metrics.enabled true) (eq .Values.spm.enabled true) }}
       - name: LISTENER_URL
         valueFrom:
           secretKeyRef:
@@ -73,36 +67,6 @@ containers:
           secretKeyRef:
             name: logzio-secret
             key: p8s-logzio-name
-{{- end }}
-{{- if .Values.traces.enabled }}
-      - name: TRACES_TOKEN
-        valueFrom:
-          secretKeyRef:
-            name: logzio-secret
-            key: logzio-traces-shipping-token
-      - name: LOGZIO_LISTENER_REGION
-        valueFrom:
-          secretKeyRef:
-            name: logzio-secret
-            key: logzio-listener-region
-      - name: SAMPLING_PROBABILITY
-        valueFrom:
-          secretKeyRef:
-            name: logzio-secret
-            key: sampling-probability
-      - name: SAMPLING_LATENCY
-        valueFrom:
-          secretKeyRef:
-            name: logzio-secret
-            key: sampling-latency
-{{ if .Values.spm.enabled }}
-      - name: SPM_TOKEN
-        valueFrom:
-          secretKeyRef:
-            name: logzio-secret
-            key: logzio-spm-shipping-token
-{{ end }}
-{{- end }}
       - name: ENV_ID
         valueFrom:
           secretKeyRef:
@@ -154,7 +118,7 @@ priorityClassName: {{ .Values.priorityClassName | quote }}
 volumes:
   - name: {{ .Chart.Name }}-configmap
     configMap:
-      name: {{ include "opentelemetry-collector.fullname" . }}{{ .configmapSuffix }}
+      name: {{ include "opentelemetry-collector.fullname" . }}{{ .configmapSuffix }}-daemonset
       items:
         - key: relay
           path: relay.yaml

@@ -1,4 +1,4 @@
-{{- if .Values.standaloneCollector.enabled -}}
+{{- if or (and (eq .Values.collector.mode "standalone") (.Values.metrics.enabled)) (.Values.traces.enabled) }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -8,4 +8,16 @@ metadata:
 data:
   relay: |
     {{- include "opentelemetry-collector.standaloneCollectorConfig" . | nindent 4 -}}
+{{- end }}
+---
+{{- if and (eq .Values.collector.mode "daemonset") .Values.metrics.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "opentelemetry-collector.fullname" . }}-daemonset
+  labels:
+    {{- include "opentelemetry-collector.labels" . | nindent 4 }}
+data:
+  relay: |
+    {{- include "opentelemetry-collector.daemonsetCollectorConfig" . | nindent 4 -}}
 {{- end }}
