@@ -67,5 +67,6 @@ However, you can modify the Chart by using the `--set` flag in your `helm instal
   - **Breaking changes**:
     - Deprecation of CronJob, using Deployment instead.
     - Scanning for reports will occur once upon container deployment, then once a day at the scheduled time. 
-    - Not using cron expressions anymore. Instead, set a time for the daily run in form of HH:MM.  
+    - Not using cron expressions anymore. Instead, set a time for the daily run in form of HH:MM. 
+- **0.0.2**: Add quotes to schedule expression to avoid errors. 
 - **0.0.1**: Initial release.
