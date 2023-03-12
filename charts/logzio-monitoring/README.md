@@ -128,7 +128,11 @@ logzio-monitoring logzio-helm/logzio-monitoring
 ```
 
 ## Changelog
-
+- **0.3.0**:
+	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.24`:
+	- **breaking changes:** Changes default collector mode to `daemonset`:
+      - Controlled using the `logzio-k8s-telemetry.collector.mode` value - supports `daemonset` and `standalone`.
+    - Increased memory and cpu limits for the collector pods, to `1024Mi` and `512m`.
 - **0.2.1.**:
 	- Upgrade `logzio-trivy` Chart to `0.0.2`:
 		- Bug fix for cron expression.
@@ -141,6 +145,7 @@ logzio-monitoring logzio-helm/logzio-monitoring
 
 <details>
   <summary markdown="span"> Expand to check old versions </summary>
+
 
 - **0.1.24**:
 	- Upgrade `logzio-fluentd` Chart to `0.20.0`:
