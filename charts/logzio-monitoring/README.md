@@ -143,6 +143,11 @@ logzio-monitoring logzio-helm/logzio-monitoring
   <summary markdown="span"> Expand to check old versions </summary>
 
 - **0.1.24**:
+	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.24`:
+	- **breaking changes:** Changes default collector mode to `daemonset`:
+      - Controlled using the `logzio-k8s-telemetry.collector.mode` value - supports `daemonset` and `standalone`.
+    - Increased memory and cpu limits for the collector pods, to `1024Mi` and `512m`.
+- **0.1.24**:
 	- Upgrade `logzio-fluentd` Chart to `0.20.0`:
 		- Added support for fluentd monitoring for windows pods.
 - **0.1.23**:
