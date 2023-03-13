@@ -72,6 +72,14 @@ containers:
           secretKeyRef:
             name: logzio-secret
             key: env_id
+{{- if .Values.opencost.enabled }}
+      - name: OPENCOST_DUPLICATES
+        valueFrom:
+          secretKeyRef:
+            name: logzio-secret
+            key: opencost-duplicates
+{{- end }}
+
       {{- with .Values.extraEnvs }}
       {{- . | toYaml | nindent 6 }}
       {{- end }}
@@ -141,7 +149,7 @@ volumes:
 nodeSelector:
   {{- toYaml . | nindent 2 }}
 {{- end }}
-{{- with .Values.affinity }}
+{{- with .Values.daemonsetCollector.affinity }}
 affinity:
   {{- toYaml . | nindent 2 }}
 {{- end }}

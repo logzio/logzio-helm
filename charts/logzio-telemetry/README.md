@@ -305,6 +305,10 @@ helm uninstall logzio-k8s-telemetry
 
 
 ## Change log
+
+* 0.0.25
+  - Added affinity condition to the collector daemonset mode.
+  - Added opencost duplicate metrics filtering.
 * 0.0.24
   - Added `collector.mode` flag - now supports `standalone` and `daemonset`, default is `daemonset`.
   - Fixed subchart conditions.
@@ -312,6 +316,12 @@ helm uninstall logzio-k8s-telemetry
   - Increased minimum memory (`1024Mi`) and cpu (`512m`) requiremts for the collector pods.
 * 0.0.23
   - Updated metrics filter (#219)
+
+
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
 * 0.0.22
   - **breaking changes:** Add separate span metrics component that includes the following resources:
     - `deployment-spm.yaml`
@@ -320,11 +330,6 @@ helm uninstall logzio-k8s-telemetry
   - Updated collector image -> `0.70.0`
 * 0.0.21
   - Updated collector image - fixing memory leak crash.
-
-
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
-
 * 0.0.20
   - Change the default port for node exporter `9100` -> `9101` to avoid pods stocking on pending state if a user has `node-exporter` daemon set deployed on the cluster
   - Update otel `0.64.0` -> `0.66.0` 

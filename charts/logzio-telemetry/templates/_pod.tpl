@@ -108,6 +108,13 @@ containers:
           secretKeyRef:
             name: logzio-secret
             key: env_id
+{{- if .Values.opencost.enabled }}
+      - name: OPENCOST_DUPLICATES
+        valueFrom:
+          secretKeyRef:
+            name: logzio-secret
+            key: opencost-duplicates
+{{- end }}
       {{- with .Values.extraEnvs }}
       {{- . | toYaml | nindent 6 }}
       {{- end }}

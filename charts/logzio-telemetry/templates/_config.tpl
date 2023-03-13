@@ -47,6 +47,14 @@ Build config file for standalone OpenTelemetry Collector
 {{- $data := dict "Values" $values | mustMergeOverwrite (deepCopy .) }}
 {{- $config := include "opentelemetry-collector.baseConfig" $data | fromYaml }}
 
+{{- if .Values.opencost.enabled }}
+{{- $opencostConfig := deepCopy .Values.opencost.config | mustMergeOverwrite }}
+{{- $metricsConfig = deepCopy $opencostConfig | merge $metricsConfig | mustMergeOverwrite }}
+{{/* merge processor list */}}
+{{- $_ := set $metricsConfig.service.pipelines.metrics "processors" (concat $metricsConfig.service.pipelines.metrics.processors $opencostConfig.service.pipelines.metrics.processors )}}
+{{- end }}
+
+
 {{- if and (and (eq .Values.collector.mode "standalone") (.Values.metrics.enabled)) .Values.traces.enabled  .Values.spm.enabled }}
 {{- $configData = $metricsConfig  | merge $tracesConfig | merge $spmConfig | mustMergeOverwrite }}
 
@@ -184,6 +192,15 @@ Build config file for standalone OpenTelemetry Collector daemonset
 {{- define "opentelemetry-collector.daemonsetCollectorConfig" -}}
 {{- $configData := .Values.emptyConfig }}
 {{- $metricsConfig := deepCopy .Values.daemonsetConfig | mustMergeOverwrite  }}
+
+
+{{- if .Values.opencost.enabled }}
+{{- $opencostConfig := deepCopy .Values.opencost.config | mustMergeOverwrite }}
+{{- $metricsConfig = deepCopy $opencostConfig | merge $metricsConfig | mustMergeOverwrite }}
+{{/* merge processor list */}}
+{{- $_ := set $metricsConfig.service.pipelines.metrics "processors" (concat $metricsConfig.service.pipelines.metrics.processors $opencostConfig.service.pipelines.metrics.processors )}}
+{{- end }}
+
 {{- $values := deepCopy .Values.daemonsetCollector | mustMergeOverwrite (deepCopy .Values) }}
 {{- $data := dict "Values" $values | mustMergeOverwrite (deepCopy .) }}
 {{- $config := include "opentelemetry-collector.baseConfig" $data | fromYaml }}

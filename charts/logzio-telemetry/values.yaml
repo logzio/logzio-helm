@@ -663,6 +663,14 @@ daemonsetCollector:
 
   containerLogs:
     enabled: false
+  
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: eks.amazonaws.com/compute-type
+                operator: DoesNotExist
 
   resources:
     limits:
@@ -878,7 +886,19 @@ daemonsetConfig:
         receivers:
           - prometheus
           
-# Shared params for agentCollector daemonset and standaloneCollector deployment pods.
-# Can be overridden here or for any component independently using the same keys.
+opencost:
+  enabled: false
+  config:
+    processors:
+    # opencost collects duplicates metrics from kube-state and cadvisor.
+      filter/opencost-exporter: 
+        metrics:
+          datapoint:     
+            - 'IsMatch(metric.name, "(${OPENCOST_DUPLICATES})") == true and attributes["app"] == "opencost"'
+    service:
+      pipelines:
+        metrics:
+          processors:
+            - filter/opencost-exporter
 
 
