@@ -1,4 +1,4 @@
-{{- if .Values.standaloneCollector.enabled -}}
+{{- if or (eq .Values.collector.mode "standalone") (.Values.traces.enabled) }}
 apiVersion: v1
 kind: Service
 metadata:
