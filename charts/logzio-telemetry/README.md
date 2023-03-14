@@ -307,8 +307,12 @@ helm uninstall logzio-k8s-telemetry
 ## Change log
 
 * 0.0.25
-  - Added affinity condition to the collector daemonset mode.
+  - Added affinity condition to the daemonset collector.
   - Added opencost duplicate metrics filtering.
+  - Fix condition for collector service.
+  - Improved naming of the collector deployments:
+    - Daemonset pods now have the "ds" suffix.
+    - Standalone pod now have the "standalone" suffix.
 * 0.0.24
   - Added `collector.mode` flag - now supports `standalone` and `daemonset`, default is `daemonset`.
   - Fixed subchart conditions.

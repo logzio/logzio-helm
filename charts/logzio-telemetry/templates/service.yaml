@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "opentelemetry-collector.fullname" . }}
+  name: {{ include "opentelemetry-collector.serviceName" . }}
   labels:
     {{- include "opentelemetry-collector.labels" . | nindent 4 }}
   {{- if .Values.service.annotations }}
