@@ -126,7 +126,7 @@ priorityClassName: {{ .Values.priorityClassName | quote }}
 volumes:
   - name: {{ .Chart.Name }}-configmap
     configMap:
-      name: {{ include "opentelemetry-collector.fullname" . }}{{ .configmapSuffix }}-daemonset
+      name: {{ include "opentelemetry-collector.daemonsetFullname" . }}{{ .configmapSuffix }}
       items:
         - key: relay
           path: relay.yaml
