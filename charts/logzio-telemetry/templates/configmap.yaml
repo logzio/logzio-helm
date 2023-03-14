@@ -14,7 +14,7 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "opentelemetry-collector.fullname" . }}-daemonset
+  name: {{ include "opentelemetry-collector.daemonsetFullname" . }}
   labels:
     {{- include "opentelemetry-collector.labels" . | nindent 4 }}
 data:

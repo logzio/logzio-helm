@@ -12,6 +12,20 @@ If release name contains chart name it will be used as a full name.
 */}}
 {{- define "opentelemetry-collector.fullname" -}}
 {{- if .Values.fullnameOverride }}
+{{- printf "%s-%s" .Values.fullnameOverride "standalone" | trunc 63 | trimSuffix "-" }}
+{{- else }}
+{{- $name := default .Chart.Name ( printf "%s-%s" .Values.nameOverride "standalone" )}}
+{{- if contains $name .Release.Name }}
+{{- .Release.Name | trunc 63 | trimSuffix "-" }}
+{{- else }}
+{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+
+{{- define "opentelemetry-collector.serviceName" -}}
+{{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
 {{- $name := default .Chart.Name .Values.nameOverride }}
@@ -19,6 +33,20 @@ If release name contains chart name it will be used as a full name.
 {{- .Release.Name | trunc 63 | trimSuffix "-" }}
 {{- else }}
 {{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+
+{{- define "opentelemetry-collector.daemonsetFullname" -}}
+{{- if .Values.fullnameOverride }}
+{{- printf "%s-%s" .Values.fullnameOverride "ds" | trunc 63 | trimSuffix "-" }}
+{{- else }}
+{{- $name := default .Chart.Name (printf "%s-%s" .Values.nameOverride "ds")}}
+{{- if contains $name .Release.Name }}
+{{- .Release.Name | trunc 63 | trimSuffix "-" }}
+{{- else }}
+{{- printf "%s-%s" .Release.Name $name  | trunc 63 | trimSuffix "-" }}
 {{- end }}
 {{- end }}
 {{- end }}

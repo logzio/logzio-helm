@@ -72,6 +72,14 @@ containers:
           secretKeyRef:
             name: logzio-secret
             key: env_id
+{{- if .Values.opencost.enabled }}
+      - name: OPENCOST_DUPLICATES
+        valueFrom:
+          secretKeyRef:
+            name: logzio-secret
+            key: opencost-duplicates
+{{- end }}
+
       {{- with .Values.extraEnvs }}
       {{- . | toYaml | nindent 6 }}
       {{- end }}
@@ -118,7 +126,7 @@ priorityClassName: {{ .Values.priorityClassName | quote }}
 volumes:
   - name: {{ .Chart.Name }}-configmap
     configMap:
-      name: {{ include "opentelemetry-collector.fullname" . }}{{ .configmapSuffix }}-daemonset
+      name: {{ include "opentelemetry-collector.daemonsetFullname" . }}{{ .configmapSuffix }}
       items:
         - key: relay
           path: relay.yaml
@@ -141,7 +149,7 @@ volumes:
 nodeSelector:
   {{- toYaml . | nindent 2 }}
 {{- end }}
-{{- with .Values.affinity }}
+{{- with .Values.daemonsetCollector.affinity }}
 affinity:
   {{- toYaml . | nindent 2 }}
 {{- end }}
