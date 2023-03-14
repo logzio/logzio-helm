@@ -664,7 +664,7 @@ daemonsetCollector:
   containerLogs:
     enabled: false
   
-  # prevent daemonset deployment on fargate
+  # prevent collector daemonset deployment on fargate nodes
   affinity:
     nodeAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
