@@ -4,7 +4,20 @@ metricsOrTraces:
   enabled: false
 securityReport:
   enabled: false
+finops:
+  enabled: false
 
 logzio-fluentd:
   daemonset:
     logType: "agent-k8s"
+
+opencost:
+  opencost:
+    ui:
+      enabled: false
+    prometheus:
+      internal:
+        enabled: false
+    service:
+      annotations:
+        prometheus.io/scrape: "true"
