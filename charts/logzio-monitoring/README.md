@@ -129,7 +129,7 @@ logzio-monitoring logzio-helm/logzio-monitoring
 
 ## Changelog
 
-- **0.4.1**:
+- **0.5.0**:
 	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.25`:
 		- Added affinity selector to the collector daemonset deployment.
 		- Improved namings of collector pods.
