@@ -19,7 +19,6 @@ spec:
       containers:
       - name: trivy-to-logzio
         image: "{{ .Values.image }}:{{ .Values.imageTag }}"
-        imagePullPolicy: Always
         env:
         - name: LOGZIO_LOG_SHIPPING_TOKEN
           valueFrom:

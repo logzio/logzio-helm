@@ -62,6 +62,9 @@ However, you can modify the Chart by using the `--set` flag in your `helm instal
 
 ## Changelog
 
+- **0.1.1**:
+  - Upgrade to image `logzio/trivy-to-logzio:0.2.0`:
+    - Watch for new reports, in addition to daily scan.
 - **0.1.0**:
   - Upgrade to image `logzio/trivy-to-logzio:0.1.0`.
   - **Breaking changes**:
