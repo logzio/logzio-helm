@@ -241,11 +241,12 @@ https://github.com/aws/containers-roadmap/issues/965
 
 
 ### Collector deployment modes
-The default collector deployment is as standalone collector.
-This mode can cause the collector pod to have a very high memory and cpu usage in a large scale clusters.
-For this case you can use daemonset deployment for the pod:
+The default collector deployment is as a daemonset collector.
+This is the recommended deployment method.
+In some cases the standalone collector deployment can be more beneficial, e.g a small cluster with low metrics/traces count.
+For this case you can use standalone deployment for the pod:
 ```
---set collector.mode=daemonset
+--set collector.mode=standalone
 ```
 
 
