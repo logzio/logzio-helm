@@ -20,7 +20,7 @@ helm repo update
 Use the following command, and replace the placeholders with your parameters:
 
 ```sh
-helm install -n monitoring \
+helm install -n monitoring --create-namespace \
 --set env_id="<<ENV-ID>>" \
 --set secrets.logzioShippingToken="<<LOG-SHIPPING-TOKEN>>" \
 --set secrets.logzioListener="<<LISTENER-HOST>>" \
@@ -48,7 +48,7 @@ However, you can modify the Chart by using the `--set` flag in your `helm instal
 | `schedule` | Time for daily scanning for security reports and send them to Logz.io, in format "HH:MM" | `"07:00"` |
 | `restartPolicy` | Container restart policy | `OnFailure` |
 | `image` | Container image | `logzio/trivy-to-logzio` |
-| `imageTag` | Container image tag | `0.1.0` |
+| `imageTag` | Container image tag | `0.2.0` |
 | `env_id` | The name for your environment's identifier, to easily identify the telemetry data for each environment | `""` |
 | `terminationGracePeriodSeconds` | Termination period (in seconds) to wait before killing Fluentd pod process on pod shutdown. | `30` |
 | `serviceAccount.create` | Specifies whether to create a service account for the cron job | `true` |
@@ -62,7 +62,7 @@ However, you can modify the Chart by using the `--set` flag in your `helm instal
 
 ## Changelog
 
-- **0.1.1**:
+- **0.2.0**:
   - Upgrade to image `logzio/trivy-to-logzio:0.2.0`:
     - Watch for new reports, in addition to daily scan.
 - **0.1.0**:
