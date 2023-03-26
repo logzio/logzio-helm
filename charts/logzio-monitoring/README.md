@@ -129,6 +129,9 @@ logzio-monitoring logzio-helm/logzio-monitoring
 
 ## Changelog
 
+- **0.5.1**:
+	- Upgrade `logzio-trivy` Chart to `0.2.0`:
+		- Watch for creation/modification of reports.
 - **0.5.0**:
 	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.25`:
 		- Added affinity selector to the collector daemonset deployment.
@@ -141,17 +144,18 @@ logzio-monitoring logzio-helm/logzio-monitoring
 			- Deprecation of CronJob, using Deployment instead.
 			- Scanning for reports will occur once upon container deployment, then once a day at the scheduled time.
 			- Not using cron expressions anymore. Instead, set a time for the daily run in form of HH:MM.
-- **0.3.0**:
-	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.24`:
-	- **breaking changes:** Changes default collector mode to `daemonset`:
-      - Controlled using the `logzio-k8s-telemetry.collector.mode` value - supports `daemonset` and `standalone`.
-    - Increased memory and cpu limits for the collector pods, to `1024Mi` and `512m`.
+
 
 
 
 <details>
   <summary markdown="span"> Expand to check old versions </summary>
 
+- **0.3.0**:
+	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.24`:
+	- **breaking changes:** Changes default collector mode to `daemonset`:
+      - Controlled using the `logzio-k8s-telemetry.collector.mode` value - supports `daemonset` and `standalone`.
+    - Increased memory and cpu limits for the collector pods, to `1024Mi` and `512m`.
 - **0.2.1.**:
 	- Upgrade `logzio-trivy` Chart to `0.0.2`:
 		- Bug fix for cron expression.
