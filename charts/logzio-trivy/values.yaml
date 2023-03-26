@@ -6,7 +6,7 @@ nameOverride: ""
 fullnameOverride: ""
 schedule: "07:00"
 image: logzio/trivy-to-logzio
-imageTag: 0.1.0
+imageTag: 0.2.0
 env_id: ""
 terminationGracePeriodSeconds: 30
 serviceAccount:
