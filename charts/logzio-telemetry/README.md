@@ -309,7 +309,7 @@ helm uninstall logzio-k8s-telemetry
 
 * 0.0.25
   - Added affinity condition to the daemonset collector.
-  - Added opencost duplicate metrics filtering.
+  - Added opencost duplicate metrics filtering. NOTE: Opencost can be enabled with [Logzio Monitorig Helm Chart](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-monitoring)
   - Fix condition for collector service.
   - Improved naming of the collector deployments:
     - Daemonset pods now have the "ds" suffix.
