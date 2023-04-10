@@ -166,6 +166,15 @@ my-custom-conf-name2.conf: |-
    # .....
 ```
 
+### Handling image pull rate limit
+In some cases (i.e spot clusters) where the pods/nodes are replaced frequently, the pull rate limit for images pulled from dockerhub might be reached, with an error:
+`You have reached your pull rate limit. You may increase the limit by authenticating and upgrading: https://www.docker.com/increase-rate-limits`.
+In these cases we can use the following `--set` command to use an alternative image repository:
+
+```shell
+--set image.repository=public.ecr.aws/c3d4d8b6/logzio-fluentd
+```
+
 ### Adding a custom log_type field from attribute
 To add a `log_type` field with a custom value to each log, you can use the annotation key `log_type` with a custom value. The annotation will be automatically parsed into a `log_type` field with the provided value.
 e.g:
