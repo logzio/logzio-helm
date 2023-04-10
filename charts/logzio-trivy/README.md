@@ -43,6 +43,10 @@ However, you can modify the Chart by using the `--set` flag in your `helm instal
 | Parameter	| Description | Default |
 | --- | --- | --- |
 | `trivy-operator.trivy.ignoreUnfixed` | Whether to show only fixed vulnerabilities in vulnerabilities reported by Trivy. | `false` |
+| `trivy-operator.operator.configAuditScannerEnabled` | The flag to enable configuration audit scanner | `false` |
+| `trivy-operator.operator.rbacAssessmentScannerEnabled` | The flag to enable rbac assessment scanner | `true` |
+| `trivy-operator.operator.infraAssessmentScannerEnabled` | The flag to enable infra assessment scanner | `true` |
+| `trivy-operator.operator.clusterComplianceEnabled` | The flag to enable cluster compliance scanner | `true` |
 | `nameOverride` | Overrides the Chart name for resources. | `""` |
 | `fullnameOverride` | Overrides the full name of the resources. | `""` |
 | `schedule` | Time for daily scanning for security reports and send them to Logz.io, in format "HH:MM" | `"07:00"` |
@@ -62,6 +66,8 @@ However, you can modify the Chart by using the `--set` flag in your `helm instal
 
 ## Changelog
 
+- **0.2.1**:
+  - Default to disable unused reports (config audit, rbac assessment, infra assessment, cluster compliance).
 - **0.2.0**:
   - Upgrade to image `logzio/trivy-to-logzio:0.2.0`:
     - Watch for new reports, in addition to daily scan.
