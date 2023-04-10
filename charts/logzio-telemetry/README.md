@@ -112,6 +112,17 @@ helm install  \
 logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry
 ```
 
+#### Handling image pull rate limit
+In some cases (i.e spot clusters) where the pods/nodes are replaced frequently, the pull rate limit for images pulled from dockerhub might be reached, with an error:
+`You have reached your pull rate limit. You may increase the limit by authenticating and upgrading: https://www.docker.com/increase-rate-limits`.
+In these cases we can use the following `--set` commands to use an alternative image repository:
+
+```shell
+--set image.repository=ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-contrib
+--set prometheus-pushgateway.image.repository=public.ecr.aws/c3d4d8b6/prom-pushgateway
+```
+
+
 #### For clusters with Windows Nodes
 
 In order to extract and scrape metrics from Windows Nodes, a Windows Exporter service must first be installed on the node host itself. We will do this by authenticating with username and password using SSH connection to the node through a job.
