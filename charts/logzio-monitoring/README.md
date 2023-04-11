@@ -134,8 +134,9 @@ In these cases we can use the following `--set` commands to use an alternative i
 
 ```shell
 --set logzio-k8s-telemetry.image.repository=ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-contrib
---set logzio-k8s-telemetry.prometheus-pushgateway.image.repository=public.ecr.aws/c3d4d8b6/prom-pushgateway
---set logzio-fluentd.image.repository=public.ecr.aws/c3d4d8b6/logzio-fluentd
+--set logzio-k8s-telemetry.prometheus-pushgateway.image.repository=public.ecr.aws/logzio/prom-pushgateway
+--set logzio-fluentd.image=public.ecr.aws/logzio/logzio-fluentd
+--set logzio-trivy.image=public.ecr.aws/logzio/trivy-to-logzio
 ```
 
 ## Changelog
