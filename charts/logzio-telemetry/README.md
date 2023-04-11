@@ -119,7 +119,7 @@ In these cases we can use the following `--set` commands to use an alternative i
 
 ```shell
 --set image.repository=ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-contrib
---set prometheus-pushgateway.image.repository=public.ecr.aws/c3d4d8b6/prom-pushgateway
+--set prometheus-pushgateway.image.repository=public.ecr.aws/logzio/prom-pushgateway
 ```
 
 
