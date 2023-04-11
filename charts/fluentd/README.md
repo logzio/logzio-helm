@@ -172,7 +172,7 @@ In some cases (i.e spot clusters) where the pods/nodes are replaced frequently, 
 In these cases we can use the following `--set` command to use an alternative image repository:
 
 ```shell
---set image.repository=public.ecr.aws/c3d4d8b6/logzio-fluentd
+--set image=public.ecr.aws/logzio/logzio-fluentd
 ```
 
 ### Adding a custom log_type field from attribute
