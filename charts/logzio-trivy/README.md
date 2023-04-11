@@ -59,6 +59,17 @@ However, you can modify the Chart by using the `--set` flag in your `helm instal
 | `secrets.logzioListener` | Your logz.io listener host | `""` (defaults to us region) |
 | `scriptLogLevel` | Log level of the script that sends security risk to Logz.io. Can be one of: `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`. | `INFO` |
 
+### Handling image pull rate limit
+In some cases (i.e spot clusters) where the pods/nodes are replaced frequently, the pull rate limit for images pulled from dockerhub might be reached, with an error:
+```shell
+You have reached your pull rate limit. You may increase the limit by authenticating and upgrading: https://www.docker.com/increase-rate-limits.
+```
+In these cases we can use the following `--set` command to use an alternative image repository:
+
+```shell
+--set image=public.ecr.aws/logzio/trivy-to-logzio
+```
+
 
 ## Changelog
 
