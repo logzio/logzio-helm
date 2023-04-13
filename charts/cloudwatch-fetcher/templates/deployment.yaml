@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "cloudwatch-fetcher.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    k8s-app: {{ include "cloudwatch-fetcher.fullname" . }}
+spec:
+  selector:
+    matchLabels:
+      k8s-app: {{ include "cloudwatch-fetcher.fullname" . }}
+  template:
+    metadata:
+      labels:
+        k8s-app: {{ include "cloudwatch-fetcher.fullname" . }}
+    spec:
+      initContainers:
+        - name: copy-position
+          image: busybox
+          command: ['sh', '-c', 'cp /shared-volume/..data/* /logzio/src/shared']
+          volumeMounts:
+            - name: shared-volume
+              mountPath: /shared-volume
+            - name: fetcher-shared
+              mountPath: /logzio/src/shared
+      containers:
+      - name: logzio-cloudwatch-fetcher
+        image: "{{ .Values.image }}:{{ .Values.imageTag }}"
+        imagePullPolicy: Always
+        env:
+        - name: LOGZIO_LOG_SHIPPING_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.secrets.name }}
+              key: logzio-log-shipping-token
+        - name: LOGZIO_LOG_LISTENER
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.secrets.name }}
+              key: logzio-log-listener
+        {{- if .Values.secrets.awsAccessKey }}
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.secrets.name }}
+              key: aws-access-key
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.secrets.name }}
+              key: aws-secret-key
+        {{- end }}
+        {{- if .Values.secrets.awsRoleArn }}
+        - name: AWS_ROLE_ARN
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.secrets.name }}
+              key: aws-role-arn
+        {{- end }}
+        volumeMounts:
+        - name: fetcher-shared
+          mountPath: /logzio/src/shared
+        - name: shared-volume
+          mountPath: /shared-volume
+      volumes:
+      - name: shared-volume
+        configMap:
+          name: {{ include "cloudwatch-fetcher.fullname" . }}
+      - name: fetcher-shared
+        {{- if .Values.persistentVolume.enabled }}
+        persistentVolumeClaim:
+          claimName: {{ include "cloudwatch-fetcher.fullname" . }}
+        {{- end }}
+        {{- if not .Values.persistentVolume.enabled }}
+        emptyDir: {}
+        {{- end }}

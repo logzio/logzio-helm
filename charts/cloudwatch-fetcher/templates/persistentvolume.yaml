@@ -1,0 +1,18 @@
+{{- if .Values.persistentVolume.enabled -}}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ include "cloudwatch-fetcher.fullname" . }}
+  labels:
+    k8s-app: {{ include "cloudwatch-fetcher.fullname" . }}
+spec:
+  storageClassName: {{ .Values.persistentVolume.storageClassName }}
+  capacity:
+    storage: {{ .Values.persistentVolume.capacity.storage }}
+  accessModes:
+    {{- range .Values.persistentVolume.accessModes }}
+      - {{ . }}
+    {{- end }}
+  hostPath:
+    path: "/logzio/src/shared"
+{{- end }}
