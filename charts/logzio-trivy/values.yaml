@@ -3,9 +3,9 @@ trivy-operator:
     ignoreUnfixed: false
   operator:
     configAuditScannerEnabled: false
-    rbacAssessmentScannerEnabled: true
-    infraAssessmentScannerEnabled: true
-    clusterComplianceEnabled: true
+    rbacAssessmentScannerEnabled: false
+    infraAssessmentScannerEnabled: false
+    clusterComplianceEnabled: false
 
 nameOverride: ""
 fullnameOverride: ""
