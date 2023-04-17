@@ -36,7 +36,7 @@ logzio-trivy logzio-helm/logzio-trivy
 
 ### Further configuration
 
-The above `helm install` command will deploy a standard configuration version of the Chart, for shipping logs, metrics and traces.
+The above `helm install` command will deploy a standard configuration version of the Chart.
 
 However, you can modify the Chart by using the `--set` flag in your `helm install` command:
 
