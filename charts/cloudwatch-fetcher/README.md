@@ -52,7 +52,7 @@ Use the following command, and replace the placeholders with your parameters:
 ```shell
 helm install -n monitoring --create-namespace \                 
 --set secrets.logzioShippingToken="<<LOGZIO-LOG-SHIPPING-TOKEN>>" \
---set secrets.logzioListener="https://<<LOGZIO-LISTENER>>:8071" \
+--set secrets.logzioListener="<<LOGZIO-LISTENER>>" \
 --set secrets.awsAccessKey="<<AWS-ACCESS-KEY>>" \
 --set secrets.awsSecretKey="<<AWS-SECRET-KEY>>" \
 --set-file fetcherConfig=<<CONFIG-PATH>> \
