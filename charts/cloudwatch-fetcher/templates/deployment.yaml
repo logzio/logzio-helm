@@ -50,13 +50,6 @@ spec:
               name: {{ .Values.secrets.name }}
               key: aws-secret-key
         {{- end }}
-        {{- if .Values.secrets.awsRoleArn }}
-        - name: AWS_ROLE_ARN
-          valueFrom:
-            secretKeyRef:
-              name: {{ .Values.secrets.name }}
-              key: aws-role-arn
-        {{- end }}
         volumeMounts:
         - name: fetcher-shared
           mountPath: /logzio/src/shared

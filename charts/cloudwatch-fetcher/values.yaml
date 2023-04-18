@@ -8,7 +8,6 @@ secrets:
   logzioListener: ""
   awsAccessKey: ""
   awsSecretKey: ""
-  awsRoleArn: ""
 
 persistentVolume:
   enabled: true
