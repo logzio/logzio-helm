@@ -68,6 +68,7 @@ However, you can modify the Chart by using the `--set` flag in your `helm instal
 
 - **0.2.1**:
   - Default to disable unused reports (config audit, rbac assessment, infra assessment, cluster compliance).
+  - Bump Trivy-Operator version to `0.13.0`.
 - **0.2.0**:
   - Upgrade to image `logzio/trivy-to-logzio:0.2.0`:
     - Watch for new reports, in addition to daily scan.
