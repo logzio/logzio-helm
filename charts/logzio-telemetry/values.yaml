@@ -15,6 +15,7 @@ nameOverride: "otel-collector"
 fullnameOverride: ""
 
 secrets:
+  enabled: true
   MetricsToken: ""
   TracesToken: ""
   SpmToken: ""
@@ -399,6 +400,7 @@ metricsConfig:
             - source_labels: [__meta_kubernetes_pod_node_name]
               action: replace
               target_label: kubernetes_node
+          metric_relabel_configs: []
         - job_name: 'kubernetes-cadvisor'
           scheme: https
           metrics_path: /metrics/cadvisor
@@ -854,6 +856,49 @@ daemonsetConfig:
             - source_labels: [__meta_kubernetes_service_annotation_logz_io_app]
               action: replace
               target_label: logzio_app                 
+          metric_relabel_configs: []
+        - job_name: applications
+          honor_timestamps: true
+          honor_labels: true
+          metrics_path: /metrics
+          scheme: http
+          kubernetes_sd_configs:
+          - role: pod
+            selectors:
+            # only scrape data from pods running on the same node as collector
+            - role: pod
+              field: "spec.nodeName=$KUBE_NODE_NAME"
+          relabel_configs:
+            - action: keep
+              regex: true|"true"
+              source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            - action: replace
+              regex: (https?)
+              source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scheme]
+              target_label: __scheme__
+            - action: replace
+              regex: (.+)
+              source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+              target_label: __metrics_path__
+            - action: replace
+              regex: (.+?)(?::\d+)?;(\d+)
+              replacement: $$1:$$2
+              source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+              target_label: __address__
+            - action: labelmap
+              regex: __meta_kubernetes_pod_annotation_prometheus_io_param_(.+)
+              replacement: __param_$$1
+            - action: labelmap
+              regex: __meta_kubernetes_pod_label_(.+)
+            - action: replace
+              source_labels: [__meta_kubernetes_namespace]
+              target_label: namespace
+            - action: replace
+              source_labels: [__meta_kubernetes_pod_name]
+              target_label: pod
+            - source_labels: [__meta_kubernetes_pod_node_name]
+              action: replace
+              target_label: kubernetes_node          
           metric_relabel_configs: []
         - job_name: 'kubernetes-cadvisor'
           scheme: https
