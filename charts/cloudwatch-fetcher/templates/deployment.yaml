@@ -38,6 +38,8 @@ spec:
             secretKeyRef:
               name: {{ .Values.secrets.name }}
               key: logzio-log-listener
+        - name: RESET_POSITION_FILE
+          value: {{ .Values.resetPositionFile | quote }}
         {{- if .Values.secrets.awsAccessKey }}
         - name: AWS_ACCESS_KEY_ID
           valueFrom:

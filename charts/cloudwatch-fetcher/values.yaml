@@ -44,3 +44,4 @@ loggingConfig: |
   format=%(asctime)s %(threadName)-12s %(name)-12s %(levelname)-8s %(message)s
 
 fetcherConfig: ""
+resetPositionFile: false
