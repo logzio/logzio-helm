@@ -140,7 +140,14 @@ In these cases we can use the following `--set` commands to use an alternative i
 ```
 
 ## Changelog
-
+- **0.5.2**:
+	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.26`:
+		- Added `applications` scrape job for `daemonset` collector mode.
+    - Added `secrets.enabled` value.
+	- Upgrade `logzio-fluentd` Chart to `0.20.1`:
+		- Added log level detection for fargate log router.
+    - Remove `namespace` value, replaced by `Realese.namespace` in all templates
+.
 - **0.5.1**:
 	- Upgrade `logzio-trivy` Chart to `0.2.0`:
 		- Watch for creation/modification of reports.
