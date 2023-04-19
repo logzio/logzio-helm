@@ -278,8 +278,6 @@ When enabling promehteus configuration, the pod collects and exposes fluentd met
  - **0.20.1**:
    - Added log level detection for fargate log router
    - Remove `namespace` value, replaced by `Realese.namespace` in all templates
- - **0.20.1**:
-   - Updated fargate log router configuration to add `log_level` field
  - **0.20.0**:
    - Upgraded windows image to `logzio/windows:0.0.2`:
      - Added prometheus monitor plugin
