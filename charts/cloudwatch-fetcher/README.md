@@ -67,6 +67,14 @@ cloudwatch-fetcher logzio-helm/cloudwatch-fetcher
 | `<<AWS-SECRET-KEY>>` | Your AWS secret key |
 | `<<CONFIG-PATH>>` | Path tho the Cloudwatch Fetcher configuration file you created in the previous step |
 
+
+### 4. Check Logz.io for your logs
+
+Give your logs some time to get from your system to ours, and then open [Logz.io](https://app.logz.io/).
+
+**NOTE** that the logs will have the original timestamp from Cloudwatch, so when you're searching for them, make sure that you're viewing the relevant time frame.
+
+
 ## Further Configuration
 
 The above helm install command will deploy a standard configuration version of the Chart.
@@ -90,6 +98,7 @@ However, you can modify the Chart by using the --set flag in your helm install c
 | `persistentVolume.resources.requests.storage` | Storage request for the PVC | `30Mi` |
 | `loggingConfig` | Configuration for the logging of the fetcher | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/cloudwatch-fetcher/values.yaml) |
 | `fetcherConfig` | Configuration for the fetcher | `""` |
+| `resetPositionFile` | Delete current position file | `false` |
 
 
 ## Presistent volume
