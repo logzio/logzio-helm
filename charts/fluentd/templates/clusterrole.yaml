@@ -3,6 +3,6 @@ apiVersion: {{ .Values.apiVersions.clusterRole }}
 kind: ClusterRole
 metadata:
   name: {{ include "fluentd.fullname" . }}
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Release.Namespace }}
 rules: {{ toYaml .Values.clusterRole.rules | nindent 2 -}}
 {{- end }}

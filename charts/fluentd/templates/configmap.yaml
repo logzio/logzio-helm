@@ -2,7 +2,7 @@ apiVersion: {{ .Values.apiVersions.configmap }}
 kind: ConfigMap
 metadata:
   name: {{ include "fluentd.fullname" . }}
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Release.Namespace}}
   labels:
     k8s-app: {{ .Values.k8sApp }}
 data:

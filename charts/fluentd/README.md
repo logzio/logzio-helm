@@ -275,6 +275,9 @@ When enabling promehteus configuration, the pod collects and exposes fluentd met
 
 
 ## Change log
+ - **0.20.1**:
+   - Added log level detection for fargate log router
+   - Remove `namespace` value, replaced by `Realese.namespace` in all templates
  - **0.20.0**:
    - Upgraded windows image to `logzio/windows:0.0.2`:
      - Added prometheus monitor plugin
@@ -284,13 +287,13 @@ When enabling promehteus configuration, the pod collects and exposes fluentd met
    - Upgraded image to `logzio/logzio-fluentd:1.3.1`:
      - Added prometheus monitor plugin
    - Updated `daemonset.fluentdPrometheusConf` - now controls prometheus config for collecting and exposing fluentd metrics.
- - **0.18.0**:
-   - Added log_level detection for "warn" level.
 
 
 <details>
   <summary markdown="span"> Expand to check old versions </summary>
 
+ - **0.18.0**:
+   - Added log_level detection for "warn" level.
  - **0.17.0**:
    - Add `secrets.enabled` to control secret creation and management. ([#194](https://github.com/logzio/logzio-helm/pull/194))
  - **0.16.0**:

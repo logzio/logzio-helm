@@ -2,7 +2,7 @@ apiVersion: {{ .Values.apiVersions.daemonset }}
 kind: DaemonSet
 metadata:
   name: {{ include "fluentd.fullname" . }}
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Release.Namespace }}
   labels:
     k8s-app: {{ .Values.k8sApp }}
     version: v1
@@ -162,7 +162,7 @@ apiVersion: {{ .Values.apiVersions.daemonset }}
 kind: DaemonSet
 metadata:
   name: {{ include "fluentd.fullname" . }}-windows
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Release.namespace }}
   labels:
     k8s-app: {{ .Values.k8sApp }}
     version: v1

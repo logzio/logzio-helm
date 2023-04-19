@@ -16,7 +16,6 @@ apiVersions:
   configmap: v1
   secret: v1
 
-namespace: monitoring
 k8sApp: fluentd-logzio
 
 isRBAC: true
