@@ -15,6 +15,7 @@ nameOverride: "otel-collector"
 fullnameOverride: ""
 
 secrets:
+  enabled: true
   MetricsToken: ""
   TracesToken: ""
   SpmToken: ""
@@ -26,8 +27,6 @@ secrets:
   windowsNodePassword: ""
   SamplingProbability: 10
   SamplingLatency: 500
-  enabled:
-    true
 
 
 managedServiceAccount: true
