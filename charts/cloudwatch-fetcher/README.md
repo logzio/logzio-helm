@@ -12,6 +12,10 @@ Before using this tool, you'll need to make sure that you have AWS access keys w
 * `logs:FilterLogEvents`
 * `sts:GetCallerIdentity`
 
+
+**Note**: This solution can handle one AWS account per container. If you wish to follow multiple accounts, you'll need to create multiple deployments (one deployment per AWS account).
+
+
 ## Standard Deployment
 
 ### 1. Add Logz.io's Helm repo:
