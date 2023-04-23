@@ -11,7 +11,7 @@ sources:
   - https://github.com/logzio/logzio-helm
 dependencies:
   - name: trivy-operator
-    version: "0.13.0"
+    version: "0.13.1"
     repository: "https://aquasecurity.github.io/helm-charts/"
 maintainers:
   - name: Miri Bar
