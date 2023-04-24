@@ -37,6 +37,10 @@ log_groups:
     custom_fields:
       key1: val1
       key2: val2
+  - path: 'some-log-group'
+  - path: 'newloggroup'
+    custom_fields:
+      hello: world
 aws_region: 'us-east-1'
 collection_interval: 10
 ```
@@ -69,7 +73,7 @@ cloudwatch-fetcher logzio-helm/cloudwatch-fetcher
 | `<<LOGZIO-LISTENER>>` | Your account's [listener host](https://app.logz.io/#/dashboard/settings/manage-tokens/data-shipping?product=logs). For example, `listener.logz.io` |
 | `<<AWS-ACCESS-KEY>>` | Your AWS access key |
 | `<<AWS-SECRET-KEY>>` | Your AWS secret key |
-| `<<CONFIG-PATH>>` | Path tho the Cloudwatch Fetcher configuration file you created in the previous step |
+| `<<CONFIG-PATH>>` | Path to the Cloudwatch Fetcher configuration file you created in the previous step |
 
 
 ### 4. Check Logz.io for your logs
