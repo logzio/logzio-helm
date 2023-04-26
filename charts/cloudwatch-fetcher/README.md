@@ -1,8 +1,6 @@
 # Cloudwatch Fetcher
 
-With this Helm Chart you can deploy to your K8S cluster the Logz.io's Cloudwatch Fetcher.
-
-The Cloudwatch fetcher allows you to define a time interval to fetch logs from AWS Cloudwatch, and ship them to Logz.io.
+By using this Helm Chart, you can easily deploy Logz.io's Cloudwatch Fetcher to your K8S cluster. With the Cloudwatch Fetcher, you can define a specific time interval for fetching logs from AWS Cloudwatch and ship them to Logz.io.
 
 Cloudwatch-fetcher's code can be found in the [cloudwatch-fetcher](https://github.com/logzio/cloudwatch-fetcher) Github repo.
 
@@ -13,21 +11,21 @@ Before using this tool, you'll need to make sure that you have AWS access keys w
 * `sts:GetCallerIdentity`
 
 
-**Note**: This solution can handle one AWS account per container. If you wish to follow multiple accounts, you'll need to create multiple deployments (one deployment per AWS account).
+**Note**: The solution can handle only one AWS account per container. If you want to monitor multiple accounts, you'll need to create multiple deployments, one for each AWS account.
 
 
 ## Standard Deployment
 
-### 1. Add Logz.io's Helm repo:
+### 1. Add Logz.io Helm repo:
 
 ```shell
 helm repo add logzio-helm https://logzio.github.io/logzio-helm
 helm repo update
 ```
 
-### 2. Create configuration file
+### 2. Create a configuration file
 
-Create a configuration file for Cloudwatch fetcher.
+Create a configuration file for the Cloudwatch fetcher.
 
 **Example:**
 
@@ -53,7 +51,7 @@ collection_interval: 10
 | `aws_region`               | The AWS region your log groups are in. **Note** that all log groups should be in the same region | **Required**     |
 | `collection_interval`      | Interval **IN MINUTES** to fetch logs from Cloudwatch                                            | Default: `5`     |
 
-### 3. Deploy the Chart:
+### 3. Deploy the Chart
 
 Use the following command, and replace the placeholders with your parameters:
 
@@ -111,7 +109,7 @@ However, you can modify the Chart by using the --set flag in your helm install c
 
 ## Presistent volume
 
-By default, this Helm Chart enables the creation of a Persistent Volume (PV) and a Persisten Volume Claim (PVC). With these resources, the Fetcher saves a position file that allows saving the last time the fetcher extracted logs from Cloudwatch. This is neccessary to prevent data lose in case the pod has stopped. If you choose to disable those resources, or if your cluster does not allow the creation of these resource - some data may be lost in case that the pod will stop.
+By default, this Helm Chart creates a Persistent Volume (PV) and a Persistent Volume Claim (PVC). These resources enable the Fetcher to save a position file, which records the last time the fetcher extracted logs from Cloudwatch. This is essential to prevent data loss in case the pod stops. If you choose to disable these resources or if your cluster does not allow their creation, some data may be lost if the pod stops.
 
 ## Uninstalling the Chart
 
