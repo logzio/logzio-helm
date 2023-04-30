@@ -140,6 +140,11 @@ In these cases we can use the following `--set` commands to use an alternative i
 ```
 
 ## Changelog
+- **0.5.3**:
+	- Upgrade `logzio-trivy` Chart to `0.2.1`:
+		- Default to disable unused reports (config audit, rbac assessment, infra assessment, cluster compliance).
+		- Bump Trivy-Operator version to 0.13.1.
+		- Bump logzio-trivy version to 0.2.1.
 - **0.5.2**:
 	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.26`:
 		- Added `applications` scrape job for `daemonset` collector mode.
@@ -151,6 +156,11 @@ In these cases we can use the following `--set` commands to use an alternative i
 - **0.5.1**:
 	- Upgrade `logzio-trivy` Chart to `0.2.0`:
 		- Watch for creation/modification of reports.
+
+
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
 - **0.5.0**:
 	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.25`:
 		- Added affinity selector to the collector daemonset deployment.
@@ -163,13 +173,6 @@ In these cases we can use the following `--set` commands to use an alternative i
 			- Deprecation of CronJob, using Deployment instead.
 			- Scanning for reports will occur once upon container deployment, then once a day at the scheduled time.
 			- Not using cron expressions anymore. Instead, set a time for the daily run in form of HH:MM.
-
-
-
-
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
-
 - **0.3.0**:
 	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.24`:
 	- **breaking changes:** Changes default collector mode to `daemonset`:
