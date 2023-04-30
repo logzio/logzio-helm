@@ -1,0 +1,6 @@
+apiVersion: v2
+name: cloudwatch-fetcher
+description: A Helm chart for fetching periodically logs from AWS Cloudwatch and sending them to Logz.io
+type: application
+version: 0.0.1
+appVersion: "0.0.1"
