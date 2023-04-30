@@ -52,7 +52,7 @@ However, you can modify the Chart by using the `--set` flag in your `helm instal
 | `schedule` | Time for daily scanning for security reports and send them to Logz.io, in format "HH:MM" | `"07:00"` |
 | `restartPolicy` | Container restart policy | `OnFailure` |
 | `image` | Container image | `logzio/trivy-to-logzio` |
-| `imageTag` | Container image tag | `0.2.0` |
+| `imageTag` | Container image tag | `0.2.1` |
 | `env_id` | The name for your environment's identifier, to easily identify the telemetry data for each environment | `""` |
 | `terminationGracePeriodSeconds` | Termination period (in seconds) to wait before killing Fluentd pod process on pod shutdown. | `30` |
 | `serviceAccount.create` | Specifies whether to create a service account for the cron job | `true` |
@@ -79,7 +79,7 @@ In these cases we can use the following `--set` command to use an alternative im
 
 - **0.2.1**:
   - Default to disable unused reports (config audit, rbac assessment, infra assessment, cluster compliance).
-  - Bump Trivy-Operator version to `0.13.0`.
+  - Bump Trivy-Operator version to `0.13.1`.
   - Bump logzio-trivy version to `0.2.1`.
 - **0.2.0**:
   - Upgrade to image `logzio/trivy-to-logzio:0.2.0`:
