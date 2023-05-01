@@ -140,6 +140,9 @@ In these cases we can use the following `--set` commands to use an alternative i
 ```
 
 ## Changelog
+- **0.5.4**:
+	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.27`:
+		- Removed duplicate `prometheus.io/scrape` annotation from `kube-state-metrics`(@dlip)
 - **0.5.3**:
 	- Upgrade `logzio-trivy` Chart to `0.2.1`:
 		- Default to disable unused reports (config audit, rbac assessment, infra assessment, cluster compliance).
