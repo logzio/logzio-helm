@@ -317,6 +317,8 @@ helm uninstall logzio-k8s-telemetry
 
 
 ## Change log
+* 0.0.27
+  - Removed duplicate `prometheus.io/scrape` annotation from `kube-state-metrics`
 * 0.0.26
   - Added `applications` scrape job for `daemonset` collector mode.
   - Added `secrets.enabled` value.
