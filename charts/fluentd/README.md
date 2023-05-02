@@ -275,6 +275,9 @@ When enabling promehteus configuration, the pod collects and exposes fluentd met
 
 
 ## Change log
+ - **0.20.2**:
+   - Upgrade docker image `logzio/logzio-fluentd` to `1.4.0`:
+     - Use fluentd's retry instead of retry in code (raise exception on non-2xx response).
  - **0.20.1**:
    - Added log level detection for fargate log router
    - Remove `namespace` value, replaced by `Realese.namespace` in all templates
@@ -283,15 +286,15 @@ When enabling promehteus configuration, the pod collects and exposes fluentd met
      - Added prometheus monitor plugin
      - Added dedot plugin
    - Updated `windowsDaemonset.fluentdPrometheusConf` - now controls prometheus config for collecting and exposing fluentd metrics.
- - **0.19.0**:
-   - Upgraded image to `logzio/logzio-fluentd:1.3.1`:
-     - Added prometheus monitor plugin
-   - Updated `daemonset.fluentdPrometheusConf` - now controls prometheus config for collecting and exposing fluentd metrics.
 
 
 <details>
   <summary markdown="span"> Expand to check old versions </summary>
 
+ - **0.19.0**:
+   - Upgraded image to `logzio/logzio-fluentd:1.3.1`:
+     - Added prometheus monitor plugin
+   - Updated `daemonset.fluentdPrometheusConf` - now controls prometheus config for collecting and exposing fluentd metrics.
  - **0.18.0**:
    - Added log_level detection for "warn" level.
  - **0.17.0**:
