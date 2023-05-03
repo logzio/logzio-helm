@@ -49,7 +49,7 @@ collection_interval: 10
 | `log_groups.path`          | The AWS Cloudwatch log group you want to tail                                                    | **Required**     |
 | `log_groups.custom_fields` | Array of key-value pairs, for adding custom fields to the logs from the log group                | -                |
 | `aws_region`               | The AWS region your log groups are in. **Note** that all log groups should be in the same region | **Required**     |
-| `collection_interval`      | Interval **IN MINUTES** to fetch logs from Cloudwatch                                            | Default: `5`     |
+| `collection_interval`      | Interval **IN MINUTES** to fetch logs from Cloudwatch. Minimum value is 5, maximum value is 1380 | Default: `5`     |
 
 ### 3. Deploy the Chart
 
