@@ -6,7 +6,7 @@
 
     If you are not sure what your cluster domain name is, you can run the following command to look it up:
     ```
-    kubectl run -it --image=k8s.gcr.io/e2e-test-images/jessie-dnsutils:1.3 --restart=Never shell -- \
+    kubectl run -it --image=registry.k8s.io/e2e-test-images/jessie-dnsutils:1.3 --restart=Never shell -- \
     sh -c 'nslookup kubernetes.default | grep Name | sed "s/Name:\skubernetes.default//"'
     ```
     It will deploy a small pod that extracts your cluster domain name from your Kubernetes environment. You can remove this pod after it has returned the cluster domain name.
