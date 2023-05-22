@@ -259,7 +259,7 @@ tracesConfig:
     pipelines:
       traces:
         receivers: [jaeger, zipkin, otlp]
-        processors: [tail_sampling, attributes/env_id, k8sattributes, resource/k8s, memory_limiter, batch]
+        processors: [attributes/env_id, k8sattributes, resource/k8s, tail_sampling, memory_limiter, batch]
         exporters: [logging, logzio]
     telemetry:
       logs:
@@ -275,7 +275,7 @@ spmForwarderConfig:
     pipelines:
       traces/spm:
         receivers: [jaeger, zipkin, otlp]
-        processors: [attributes/env_id, memory_limiter, batch]
+        processors: [attributes/env_id, attributes/env_id, k8sattributes, memory_limiter, batch]
         exporters: [logging, otlp]
 
 metricsConfig:
