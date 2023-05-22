@@ -288,6 +288,7 @@ metricsConfig:
           - 'IsMatch(metric.name, "(${K8S_360_METRICS})") == true and attributes["logzio_app"] != "kubernetes360"'
   exporters:
     prometheusremotewrite:
+      timeout: 30s
       endpoint: ${LISTENER_URL}
       external_labels:
         p8s_logzio_name: ${P8S_LOGZIO_NAME}
@@ -297,13 +298,12 @@ metricsConfig:
     prometheus:
       config:
         global:
-          scrape_interval: 15s
-          scrape_timeout: 10s
-          evaluation_interval: 10s
+          scrape_interval: 30s
+          scrape_timeout: 30s
         scrape_configs:
         # Job to collect opentelemetry collector metrics
         - job_name: 'collector-metrics'
-          scrape_interval: 15s
+          scrape_interval: 30s
           static_configs:
           - targets: [ "0.0.0.0:8888" ]
         - job_name: windows-metrics
@@ -542,7 +542,7 @@ spanMetricsAgregator:
         config:
           scrape_configs:
           - job_name: 'spm'
-            scrape_interval: 15s
+            scrape_interval: 30s
             static_configs:
             - targets: [ "0.0.0.0:8889" ]
       jaeger:
@@ -568,6 +568,7 @@ spanMetricsAgregator:
       prometheus/spm:
         endpoint: "0.0.0.0:8889"
       prometheusremotewrite/spm-logzio:
+        timeout: 30s
         endpoint: ${LISTENER_URL}
         headers:
           Authorization: "Bearer ${SPM_TOKEN}"
@@ -775,6 +776,7 @@ daemonsetConfig:
         datapoint:
   exporters:
     prometheusremotewrite:
+      timeout: 30s
       endpoint: ${LISTENER_URL}
       external_labels:
         p8s_logzio_name: ${P8S_LOGZIO_NAME}
@@ -784,13 +786,12 @@ daemonsetConfig:
     prometheus:
       config:
         global:
-          scrape_interval: 15s
-          scrape_timeout: 10s
-          evaluation_interval: 10s
+          scrape_interval: 30s
+          scrape_timeout: 30s
         scrape_configs:
         # Job to collect opentelemetry collector metrics
         - job_name: 'collector-metrics'
-          scrape_interval: 15s
+          scrape_interval: 30s
           static_configs:
           - targets: [ "0.0.0.0:8888" ]
         - job_name: windows-metrics
