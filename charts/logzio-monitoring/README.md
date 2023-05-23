@@ -140,6 +140,11 @@ In these cases we can use the following `--set` commands to use an alternative i
 ```
 
 ## Changelog
+- **0.5.6**:
+	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.28`:
+		- Change default metrics scrape and export values to handle more cases
+    - Reorder processors
+    - Remove the memory_limiter processor
 - **0.5.5**:
 	- Upgrade `logzio-fluentd` Chart to `0.20.2`:
 		- Use fluentd's retry instead of retry in code (raise exception on non-2xx response).
