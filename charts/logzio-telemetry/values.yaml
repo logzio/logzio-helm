@@ -297,8 +297,8 @@ metricsConfig:
     prometheus:
       config:
         global:
-          scrape_interval: 30s
-          scrape_timeout: 30s
+          scrape_interval: 60s
+          scrape_timeout: 60s
         scrape_configs:
         # Job to collect opentelemetry collector metrics
         - job_name: 'collector-metrics'
