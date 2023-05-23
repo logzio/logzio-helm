@@ -317,6 +317,10 @@ helm uninstall logzio-k8s-telemetry
 
 
 ## Change log
+* 0.0.28
+  - Change default metrics scrape and export values to handle more cases
+  - Reorder processors
+  - Remove the `memory_limiter` processor
 * 0.0.27
   - Removed duplicate `prometheus.io/scrape` annotation from `kube-state-metrics` (@dlip)
 * 0.0.26
