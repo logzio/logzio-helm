@@ -274,7 +274,7 @@ spmForwarderConfig:
     pipelines:
       traces/spm:
         receivers: [jaeger, zipkin, otlp]
-        processors: [attributes/env_id, attributes/env_id, k8sattributes, batch]
+        processors: [attributes/env_id, k8sattributes, batch]
         exporters: [logging, otlp]
 
 metricsConfig:
