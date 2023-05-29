@@ -317,6 +317,10 @@ helm uninstall logzio-k8s-telemetry
 
 
 ## Change log
+* 0.0.29
+  - Upgrade traces and metrics otel image `0.70.0` -> `0.78.0`
+  - Upgrade spm image `0.70.0` -> `0.73.0`
+  - Added values for seprate spm iamge
 * 0.0.28
   - Change default metrics scrape and export values to handle more cases
   - Reorder processors
@@ -333,6 +337,11 @@ helm uninstall logzio-k8s-telemetry
   - Improved naming of the collector deployments:
     - Daemonset pods now have the "ds" suffix.
     - Standalone pod now have the "standalone" suffix.
+
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
 * 0.0.24
   - Added `collector.mode` flag - now supports `standalone` and `daemonset`, default is `daemonset`.
   - Fixed subchart conditions.
@@ -340,12 +349,6 @@ helm uninstall logzio-k8s-telemetry
   - Increased minimum memory (`1024Mi`) and cpu (`512m`) requiremts for the collector pods.
 * 0.0.23
   - Updated metrics filter (#219)
-
-
-
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
-
 * 0.0.22
   - **breaking changes:** Add separate span metrics component that includes the following resources:
     - `deployment-spm.yaml`

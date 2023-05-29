@@ -13,8 +13,8 @@ containers:
       {{- range .Values.command.extraArgs }}
       - {{ . }}
       {{- end }}
-    image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-    imagePullPolicy: {{ .Values.image.pullPolicy }}
+    image: "{{ .Values.spmImage.repository }}:{{ .Values.spmImage.tag | default .Chart.AppVersion }}"
+    imagePullPolicy: {{ .Values.spmImage.pullPolicy }}
     ports:
       {{- range $key, $port := .Values.spanMetricsAgregator.ports }}
       {{- if $port.enabled }}
