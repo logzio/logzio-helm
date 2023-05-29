@@ -447,7 +447,6 @@ windowsExporterInstallerImage:
   pullPolicy: IfNotPresent
   tag: "0.0.1"
 spmImage:
-  # Job image to install windows exporter on windows nodes
   repository: otel/opentelemetry-collector-contrib
   pullPolicy: IfNotPresent
   tag: "0.73.0"
