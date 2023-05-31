@@ -144,7 +144,7 @@ In these cases we can use the following `--set` commands to use an alternative i
 	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.29`:
     - Upgrade traces and metrics otel image `0.70.0` -> `0.78.0`
     - Upgrade spm image `0.70.0` -> `0.73.0`
-    - Added values for seprate spm iamge
+    - Added values for seprate spm image
 - **0.5.6**:
 	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.28`:
 		- Change default metrics scrape and export values to handle more cases
