@@ -1,0 +1,123 @@
+# Default values for mychart.
+
+global:
+  serviceAccount: "default"
+
+kubernetesInstrumentor:
+  image:
+    repository: "logzio/instrumentor"
+    tag: "v1.0.60-b"
+  instrumentationDetectorImage:
+    repository: "logzio/instrumentation-detector"
+    tag: "v1.0.60-b"
+  javaAgentImage:
+    repository: "logzio/otel-agent-java"
+    tag: "v0.0.1-test"
+  dotnetAgentImage:
+    repository: "logzio/otel-agent-dotnet"
+    tag: "0.0.17-test"
+  nodejsAgentImage:
+    repository: "logzio/otel-agent-nodejs"
+    tag: "0.0.6-test"
+  pythonAgentImage:
+    repository: "logzio/otel-agent-python"
+    tag: "0.0.18-test"
+  ports:
+    metricsPort: 8080
+    healthProbePort: 8081
+  resources:
+    limits:
+      cpu: "500m"
+      memory: "128Mi"
+    requests:
+      cpu: "10m"
+      memory: "64Mi"
+  env:
+    monitoringServiceEndpoint: "logzio-monitoring-otel-collector.monitoring.svc.cluster.local"
+  service:
+    name: "kubernetes-instrumentor-service"
+    port: 8080
+    targetPort: 8080
+
+ezkonnectServer:
+  image:
+    repository: "yotamloe/ezkonnect-server"
+    tag: "0.0.3"
+  ports:
+    http: 5050
+  service:
+    name: "ezkonnect-server"
+    port: 5050
+    targetPort: 5050
+
+ezkonnectUi:
+  image:
+    repository: "resdeni/ezkonnect-ui"
+    tag: "v0.0.5"
+  ports:
+    http: 8080
+  service:
+    name: "ezkonnect-ui-service"
+    type: "LoadBalancer"
+    port: 8080
+    targetPort: 8080
+
+rbac:
+  clusterRoles:
+    kubernetesInstrumentor:
+      rules:
+        - apiGroups: [""]
+          resources: ["pods", "pods/status"]
+          verbs: ["create", "delete", "get", "list", "patch", "update", "watch"]
+        - apiGroups: ["apps"]
+          resources: ["deployments", "deployments/finalizers", "deployments/status", "statefulsets", "statefulsets/finalizers", "statefulsets/status"]
+          verbs: ["create", "delete", "get", "list", "patch", "update", "watch"]
+        - apiGroups: ["logz.io"]
+          resources: ["instrumentedapplications", "instrumentedapplications/finalizers", "instrumentedapplications/status"]
+          verbs: ["create", "delete", "get", "list", "patch", "update", "watch"]
+    ezkonnectServer:
+      rules:
+        - apiGroups: ["", "logz.io", "apps"]
+          resources: ["pods", "services", "instrumentedapplications", "deployments", "statefulsets"]
+          verbs: ["get", "list", "watch", "update"]
+  clusterRoleBindings:
+    kubernetesInstrumentor:
+      roleRef:
+        apiGroup: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: kubernetes-instrumentor
+      subjects:
+        - kind: ServiceAccount
+          name: kubernetes-instrumentor
+          namespace: default
+    ezkonnectServer:
+      roleRef:
+        apiGroup: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: ezkonnect-server
+      subjects:
+        - kind: ServiceAccount
+          name: default
+          namespace: default
+  roles:
+    logzioLeaderElectionRole:
+      namespace: default
+      rules:
+        - apiGroups: [""]
+          resources: ["configmaps", "events"]
+          verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+        - apiGroups: ["coordination.k8s.io"]
+          resources: ["leases"]
+          verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  roleBindings:
+    kubernetesInstrumentorLeaderElection:
+      roleRef:
+        apiGroup: rbac.authorization.k8s.io
+        kind: Role
+        name: logzio-leader-election-role
+      subjects:
+        - kind: ServiceAccount
+          name: kubernetes-instrumentor
+          namespace: default
+# Rest of your values
+

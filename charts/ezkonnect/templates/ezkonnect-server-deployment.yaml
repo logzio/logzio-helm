@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ezkonnect-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ezkonnect-server
+  template:
+    metadata:
+      labels:
+        app: ezkonnect-server
+    spec:
+      containers:
+      - name: ezkonnect-server
+        image: "{{ .Values.ezkonnectServer.image.repository }}:{{ .Values.ezkonnectServer.image.tag }}"
+        ports:
+        - containerPort: {{ .Values.ezkonnectServer.ports.http }}

@@ -1,0 +1,9 @@
+apiVersion: v2
+name: ezkonnect
+description: easliy add auto otel auto instrumantation and log types to your kubernetes applications
+type: application
+version: 1.0.0
+
+maintainers:
+- name: yotamloe
+  email: yotam.loewenbach@logz.io
