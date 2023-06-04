@@ -79,6 +79,7 @@ You can override the default values by creating your own `values.yaml` file and 
 Here, `my_values.yaml` is your custom configuration file.
 
 
-## Change log
+Change log
+-------------
 * 0.0.1
-    - simplify the process of instrumenting Kubernetes applications with OpenTelemetry auto-instrumentation and configurable log types
+  - Easily add otel auto instrumentation and log types to your Kubernetes applications
