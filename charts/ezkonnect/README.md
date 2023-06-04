@@ -7,8 +7,14 @@ The EZKonnect Helm chart is designed to simplify the process of instrumenting Ku
 The EZKonnect Helm chart encapsulates three main components:
 
 1.  Kubernetes Instrumentor - Provides auto-instrumentation and log type controller for Kubernetes applications.
-2.  EZKonnect Server - A server module that handles comuunication between the user and the Kubernetes instrumentor.
+2.  EZKonnect Server - A server that handles the comuunication between the user and the Kubernetes instrumentor.
 3.  EZKonnect UI - A graphical interface for managing and viewing your instrumentation data.
+
+Supported languages:
+- java
+- nodejs
+- python
+- dotnet
 
 Installation
 ------------
@@ -72,3 +78,8 @@ You can override the default values by creating your own `values.yaml` file and 
 `helm install [REALESE_NAME] logzio-helm/ezkonnect --values my_values.yaml` 
 
 Here, `my_values.yaml` is your custom configuration file.
+
+
+## Change log
+* 0.0.1
+    - simplify the process of instrumenting Kubernetes applications with OpenTelemetry auto-instrumentation and configurable log types
