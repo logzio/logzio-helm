@@ -1,10 +1,9 @@
-## ezkonnect Helm Chart
-EZKonnect Helm Chart
+ezkonnect Helm Chart
 ====================
 
 The EZKonnect Helm chart is designed to simplify the process of instrumenting Kubernetes applications with OpenTelemetry auto-instrumentation and configurable log types. It is designed to work in conjunction with the [logzio-monitoring](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-monitoring) Helm chart.
 
-The EZKonnect Helm chart encapsulates three main components:
+The EZKonnect Helm chart includes three main components:
 
 1.  Kubernetes Instrumentor - Provides auto-instrumentation and log type controller for Kubernetes applications.
 2.  EZKonnect Server - A server that handles the comuunication between the user and the Kubernetes instrumentor.
