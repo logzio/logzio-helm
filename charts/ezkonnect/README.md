@@ -1,2 +1,74 @@
 ## ezkonnect Helm Chart
-The ezkonnect Helm chart is designed to simplify the process of instrumenting Kubernetes applications with OpenTelemetry auto-instrumentation and configurable log types. This Helm chart is designed to work with the [logzio-monitoring](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-monitoring) helm chart.
+EZKonnect Helm Chart
+====================
+
+The EZKonnect Helm chart is designed to simplify the process of instrumenting Kubernetes applications with OpenTelemetry auto-instrumentation and configurable log types. It is designed to work in conjunction with the [logzio-monitoring](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-monitoring) Helm chart.
+
+The EZKonnect Helm chart encapsulates three main components:
+
+1.  Kubernetes Instrumentor - Provides auto-instrumentation and log type controller for Kubernetes applications.
+2.  EZKonnect Server - A server module that handles comuunication between the user and the Kubernetes instrumentor.
+3.  EZKonnect UI - A graphical interface for managing and viewing your instrumentation data.
+
+Installation
+------------
+
+To install the EZKonnect Helm chart, use the following command:
+
+```bash
+helm repo update
+helm install [REALESE_NAME] logzio-helm/ezkonnect
+``` 
+
+Configuration
+-------------
+
+The following table lists the configurable parameters of the EZKonnect chart and their default values.
+
+| Parameter | Description | Default |
+| --- | --- | --- |
+| `kubernetesInstrumentor.image.repository` | Repository of the instrumentor image | `"logzio/instrumentor"` |
+| `kubernetesInstrumentor.image.tag` | Tag of the instrumentor image | `"0.0.3"` |
+| `kubernetesInstrumentor.instrumentationDetectorImage.repository` | Repository of the instrumentation detector image | `"logzio/instrumentation-detector"` |
+| `kubernetesInstrumentor.instrumentationDetectorImage.tag` | Tag of the instrumentation detector image | `"0.0.3"` |
+| `kubernetesInstrumentor.javaAgentImage.repository` | Repository of the Java agent image | `"logzio/otel-agent-java"` |
+| `kubernetesInstrumentor.javaAgentImage.tag` | Tag of the Java agent image | `"0.0.2"` |
+| `kubernetesInstrumentor.dotnetAgentImage.repository` | Repository of the .Net agent image | `"logzio/otel-agent-dotnet"` |
+| `kubernetesInstrumentor.dotnetAgentImage.tag` | Tag of the .Net agent image | `"0.0.2"` |
+| `kubernetesInstrumentor.nodejsAgentImage.repository` | Repository of the Node.js agent image | `"logzio/otel-agent-nodejs"` |
+| `kubernetesInstrumentor.nodejsAgentImage.tag` | Tag of the Node.js agent image | `"0.0.2"` |
+| `kubernetesInstrumentor.pythonAgentImage.repository` | Repository of the Python agent image | `"logzio/otel-agent-python"` |
+| `kubernetesInstrumentor.pythonAgentImage.tag` | Tag of the Python agent image | `"0.0.2"` |
+| `kubernetesInstrumentor.ports.metricsPort` | Metrics port for the instrumentor | `8080` |
+| `kubernetesInstrumentor.ports.healthProbePort` | Health probe port for the instrumentor | `8081` |
+| `kubernetesInstrumentor.resources.limits.cpu` | CPU limit for the instrumentor | `"500m"` |
+| `kubernetesInstrumentor.resources.limits.memory` | Memory limit for the instrumentor | `"128Mi"` |
+| `kubernetesInstrumentor.resources.requests.cpu` | CPU request for the instrumentor | `"10m"` |
+| `kubernetesInstrumentor.resources.requests.memory` | Memory request for the instrumentor | `"64Mi"` |
+| `kubernetesInstrumentor.env.monitoringServiceEndpoint` | Endpoint of the monitoring service | `"logzio-monitoring-otel-collector.monitoring.svc.cluster.local"` |
+| `kubernetesInstrumentor.service.name` | Name of the instrumentor service | `"kubernetes-instrumentor-service"` |
+| `kubernetesInstrumentor.service.port` | Service port for the instrumentor | `8080` |
+| `kubernetesInstrumentor.service.targetPort` | Target port for the instrumentor service | `8080` |
+| `ezkonnectServer.image.repository` | Repository of the server image | `"logzio/ezkonnect-server"` |
+| `ezkonnectServer.image.tag` | Tag of the server image | `"0.0.3"` |
+| `ezkonnectServer.ports.http` | HTTP port for the server | `5050` |
+| `ezkonnectServer.service.name` | Name of the server service | `"ezkonnect-server"` |
+| `ezkonnectServer.service.port` | Service port for the server | `5050` |
+| `ezkonnectServer.service.targetPort` | Target port for the server service | `5050` |
+| `ezkonnectUi.image.repository` | Repository of the UI image | `"logzio/ezkonnect-ui"` |
+| `ezkonnectUi.image.tag` | Tag of the UI image | `"v0.0.2"` |
+| `ezkonnectUi.ports.http` | HTTP port for the UI | `8080` |
+| `ezkonnectUi.service.name` | Name of the UI service | `"ezkonnect-ui-service"` |
+| `ezkonnectUi.service.type` | Type of the UI service | `"LoadBalancer"` |
+| `ezkonnectUi.service.port` | Service port for the UI | `8080` |
+| `ezkonnectUi.service.targetPort` | Target port for the UI service | `8080` |
+| `rbac.clusterRoles...` | Configure the RBAC cluster roles | Refer to `values.yaml` |
+| `rbac.clusterRoleBindings...` | Configure the RBAC cluster role bindings | Refer to `values.yaml` |
+| `rbac.roles...` | Configure the RBAC roles | Refer to `values.yaml` |
+| `rbac.roleBindings...` | Configure the RBAC role bindings | Refer to `values.yaml` |
+
+You can override the default values by creating your own `values.yaml` file and passing the `--values` or `-f` option to the Helm command. For example:
+
+`helm install [REALESE_NAME] logzio-helm/ezkonnect --values my_values.yaml` 
+
+Here, `my_values.yaml` is your custom configuration file.

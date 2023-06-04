@@ -119,5 +119,4 @@ rbac:
         - kind: ServiceAccount
           name: kubernetes-instrumentor
           namespace: default
-# Rest of your values
 
