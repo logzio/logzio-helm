@@ -15,6 +15,7 @@ spec:
       labels:
         app: kubernetes-instrumentor
     spec:
+      serviceAccountName: {{ .Values.kubernetesInstrumentor.serviceAccount }}
       containers:
         - name: manager
           image: "{{ .Values.kubernetesInstrumentor.image.repository }}:{{ .Values.kubernetesInstrumentor.image.tag }}"
@@ -26,7 +27,7 @@ spec:
           ports:
             - name: metrics-port
               containerPort: {{ .Values.kubernetesInstrumentor.ports.metricsPort }}
-            - name: health-probe-port
+            - name: health-probe
               containerPort: {{ .Values.kubernetesInstrumentor.ports.healthProbePort }}
           args:
             - "--health-probe-bind-address=:{{ .Values.kubernetesInstrumentor.ports.healthProbePort }}"

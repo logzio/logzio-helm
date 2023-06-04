@@ -22,16 +22,17 @@ To install the EZKonnect Helm chart, use the following command:
 
 ```bash
 helm repo update
-helm install [REALESE_NAME] logzio-helm/ezkonnect
+helm install [REALESE_NAME] logzio-helm/ezkonnect -n ezkonnect --create-namespace
 ``` 
 
 Configuration
 -------------
 
 The following table lists the configurable parameters of the EZKonnect chart and their default values.
-
+serviceAccount
 | Parameter | Description | Default |
 | --- | --- | --- |
+| `kubernetesInstrumentor.serviceAccount` | Service account name of the instrumentor deployment | `"kubernetes-instrumentor"` |
 | `kubernetesInstrumentor.image.repository` | Repository of the instrumentor image | `"logzio/instrumentor"` |
 | `kubernetesInstrumentor.image.tag` | Tag of the instrumentor image | `"0.0.3"` |
 | `kubernetesInstrumentor.instrumentationDetectorImage.repository` | Repository of the instrumentation detector image | `"logzio/instrumentation-detector"` |
@@ -54,6 +55,7 @@ The following table lists the configurable parameters of the EZKonnect chart and
 | `kubernetesInstrumentor.service.name` | Name of the instrumentor service | `"kubernetes-instrumentor-service"` |
 | `kubernetesInstrumentor.service.port` | Service port for the instrumentor | `8080` |
 | `kubernetesInstrumentor.service.targetPort` | Target port for the instrumentor service | `8080` |
+| `ezkonnectServer.serviceAccount` | Service account name of the instrumentor deployment | `"ezkonnect-server"` |
 | `ezkonnectServer.image.repository` | Repository of the server image | `"logzio/ezkonnect-server"` |
 | `ezkonnectServer.image.tag` | Tag of the server image | `"0.0.3"` |
 | `ezkonnectServer.ports.http` | HTTP port for the server | `5050` |
@@ -69,12 +71,10 @@ The following table lists the configurable parameters of the EZKonnect chart and
 | `ezkonnectUi.service.targetPort` | Target port for the UI service | `8080` |
 | `rbac.clusterRoles...` | Configure the RBAC cluster roles | Refer to `values.yaml` |
 | `rbac.clusterRoleBindings...` | Configure the RBAC cluster role bindings | Refer to `values.yaml` |
-| `rbac.roles...` | Configure the RBAC roles | Refer to `values.yaml` |
-| `rbac.roleBindings...` | Configure the RBAC role bindings | Refer to `values.yaml` |
 
 You can override the default values by creating your own `values.yaml` file and passing the `--values` or `-f` option to the Helm command. For example:
 
-`helm install [REALESE_NAME] logzio-helm/ezkonnect --values my_values.yaml` 
+`helm install [REALESE_NAME] logzio-helm/ezkonnect -n ezkonnect --create-namespace --values my_values.yaml` 
 
 Here, `my_values.yaml` is your custom configuration file.
 

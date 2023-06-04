@@ -1,12 +1,12 @@
 apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
+kind: ClusterRoleBinding
 metadata:
-  name: kubernetesInstrumentorLeaderElection
+  name: kubernetes-instrumentor
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: logzioLeaderElectionRole
-subjects: 
+  kind: ClusterRole
+  name: kubernetesInstrumentor
+subjects:
   - kind: ServiceAccount
     name: {{ .Values.kubernetesInstrumentor.serviceAccount }}
     namespace: {{ .Release.Namespace }}

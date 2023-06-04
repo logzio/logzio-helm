@@ -1,9 +1,7 @@
-# Default values for mychart.
-
-global:
-  serviceAccount: "default"
+# Default values for ezkkonect.
 
 kubernetesInstrumentor:
+  serviceAccount: "kubernetes-instrumentor"
   image:
     repository: "logzio/instrumentor"
     tag: "0.0.3"
@@ -40,9 +38,10 @@ kubernetesInstrumentor:
     targetPort: 8080
 
 ezkonnectServer:
+  serviceAccount: "ezkonnect-server"
   image:
     repository: "logzio/ezkonnect-server"
-    tag: "0.0.3"
+    tag: "0.0.1"
   ports:
     http: 5050
   service:
@@ -80,28 +79,9 @@ rbac:
         - apiGroups: ["", "logz.io", "apps"]
           resources: ["pods", "services", "instrumentedapplications", "deployments", "statefulsets"]
           verbs: ["get", "list", "watch", "update"]
-  clusterRoleBindings:
-    kubernetesInstrumentor:
-      roleRef:
-        apiGroup: rbac.authorization.k8s.io
-        kind: ClusterRole
-        name: kubernetes-instrumentor
-      subjects:
-        - kind: ServiceAccount
-          name: kubernetes-instrumentor
-          namespace: default
-    ezkonnectServer:
-      roleRef:
-        apiGroup: rbac.authorization.k8s.io
-        kind: ClusterRole
-        name: ezkonnect-server
-      subjects:
-        - kind: ServiceAccount
-          name: default
-          namespace: default
+
   roles:
     logzioLeaderElectionRole:
-      namespace: default
       rules:
         - apiGroups: [""]
           resources: ["configmaps", "events"]
@@ -109,14 +89,4 @@ rbac:
         - apiGroups: ["coordination.k8s.io"]
           resources: ["leases"]
           verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
-  roleBindings:
-    kubernetesInstrumentorLeaderElection:
-      roleRef:
-        apiGroup: rbac.authorization.k8s.io
-        kind: Role
-        name: logzio-leader-election-role
-      subjects:
-        - kind: ServiceAccount
-          name: kubernetes-instrumentor
-          namespace: default
 

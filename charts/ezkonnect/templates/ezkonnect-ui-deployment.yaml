@@ -15,6 +15,6 @@ spec:
     spec:
       containers:
         - name: ezkonnect-ui-container
-          image: "{{ .Values.ezkonnectUI.image.repository }}:{{ .Values.ezkonnectUI.image.tag }}"
+          image: "{{ .Values.ezkonnectUi.image.repository }}:{{ .Values.ezkonnectUi.image.tag }}"
           ports:
-            - containerPort: {{ .Values.ezkonnectUI.ports.http }}
+            - containerPort: {{ .Values.ezkonnectUi.ports.http }}

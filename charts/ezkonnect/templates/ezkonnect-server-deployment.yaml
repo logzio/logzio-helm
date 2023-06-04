@@ -13,6 +13,7 @@ spec:
       labels:
         app: ezkonnect-server
     spec:
+      serviceAccountName: {{ .Values.ezkonnectServer.serviceAccount }}
       containers:
       - name: ezkonnect-server
         image: "{{ .Values.ezkonnectServer.image.repository }}:{{ .Values.ezkonnectServer.image.tag }}"
