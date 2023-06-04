@@ -6,22 +6,22 @@ global:
 kubernetesInstrumentor:
   image:
     repository: "logzio/instrumentor"
-    tag: "v1.0.60-b"
+    tag: "0.0.3"
   instrumentationDetectorImage:
     repository: "logzio/instrumentation-detector"
-    tag: "v1.0.60-b"
+    tag: "0.0.3"
   javaAgentImage:
     repository: "logzio/otel-agent-java"
-    tag: "v0.0.1-test"
+    tag: "0.0.2"
   dotnetAgentImage:
     repository: "logzio/otel-agent-dotnet"
-    tag: "0.0.17-test"
+    tag: "0.0.2"
   nodejsAgentImage:
     repository: "logzio/otel-agent-nodejs"
-    tag: "0.0.6-test"
+    tag: "0.0.2"
   pythonAgentImage:
     repository: "logzio/otel-agent-python"
-    tag: "0.0.18-test"
+    tag: "0.0.2"
   ports:
     metricsPort: 8080
     healthProbePort: 8081
@@ -41,7 +41,7 @@ kubernetesInstrumentor:
 
 ezkonnectServer:
   image:
-    repository: "yotamloe/ezkonnect-server"
+    repository: "logzio/ezkonnect-server"
     tag: "0.0.3"
   ports:
     http: 5050
@@ -52,8 +52,8 @@ ezkonnectServer:
 
 ezkonnectUi:
   image:
-    repository: "resdeni/ezkonnect-ui"
-    tag: "v0.0.5"
+    repository: "logzio/ezkonnect-ui"
+    tag: "v0.0.2"
   ports:
     http: 8080
   service:
