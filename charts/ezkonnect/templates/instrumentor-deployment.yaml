@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kubernetes-instrumentor
+  namespace: {{ .Release.Namespace }}
   labels:
     app: kubernetes-instrumentor
 spec:
