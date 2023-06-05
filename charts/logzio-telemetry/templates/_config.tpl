@@ -1,28 +1,17 @@
-{{/*
-Default memory limiter configuration for OpenTelemetry Collector based on k8s resource limits.
-*/}}
-{{- define "opentelemetry-collector.memoryLimiter" -}}
-# check_interval is the time between measurements of memory usage.
-check_interval: 5s
 
-# By default limit_mib is set to 80% of ".Values.resources.limits.memory"
-limit_mib: {{ include "opentelemetry-collector.getMemLimitMib" .Values.resources.limits.memory }}
-
-# By default spike_limit_mib is set to 25% of ".Values.resources.limits.memory"
-spike_limit_mib: {{ include "opentelemetry-collector.getMemSpikeLimitMib" .Values.resources.limits.memory }}
-{{- end }}
 
 {{/*
 Merge user supplied top-level (not particular to standalone or agent) config into memory limiter config.
 */}}
 {{- define "opentelemetry-collector.baseConfig" -}}
 {{- $processorsConfig := get .Values.baseCollectorConfig "processors" }}
-{{- if not $processorsConfig.memory_limiter }}
-{{- $_ := set $processorsConfig "memory_limiter" (include "opentelemetry-collector.memoryLimiter" . | fromYaml) }}
-{{- end }}
 {{- .Values.baseCollectorConfig | toYaml }}
 {{- end }}
 
+
+{{/*
+REMOVE
+*/}}
 {{/*
 Build config file for agent OpenTelemetry Collector
 */}}
@@ -46,7 +35,12 @@ Build config file for standalone OpenTelemetry Collector
 {{- $values := deepCopy .Values.standaloneCollector | mustMergeOverwrite (deepCopy .Values) }}
 {{- $data := dict "Values" $values | mustMergeOverwrite (deepCopy .) }}
 {{- $config := include "opentelemetry-collector.baseConfig" $data | fromYaml }}
-
+{{- $ctxParams := dict "job" "infrastructure" -}}
+{{- $ctxParams = merge $ctxParams $ -}}
+{{- $infraFilters := include "opentelemetry-collector.getJobFilters" $ctxParams -}}
+{{- $ctxParams = dict "job" "applications" -}}
+{{- $ctxParams = merge $ctxParams $ -}}
+{{- $applicationsFilters := include "opentelemetry-collector.getJobFilters" $ctxParams -}}
 {{- if .Values.opencost.enabled }}
 {{- $opencostConfig := deepCopy .Values.opencost.config | mustMergeOverwrite }}
 {{- $metricsConfig = deepCopy $opencostConfig | merge $metricsConfig | mustMergeOverwrite }}
@@ -71,33 +65,38 @@ Build config file for standalone OpenTelemetry Collector
 {{- $configData = $tracesConfig }}
 {{- end -}}
 
-{{/*
-Use metrics filter configuration:
-Filter aks,eks and gke with basic logzio dashboard filters
-Drop kube-dns metrics by skipping kube-dns service scraping. (Relevant for eks which
-is not supporting )
-*/}}
-{{- if and (and (eq .Values.collector.mode "standalone") (.Values.metrics.enabled)) (or .Values.enableMetricsFilter.eks .Values.enableMetricsFilter.aks .Values.enableMetricsFilter.gke .Values.enableMetricsFilter.kubeSystem .Values.disableKubeDnsScraping)}}
-{{- range $job := $configData.receivers.prometheus.config.scrape_configs}}
-{{- if and $.Values.disableKubeDnsScraping (eq $job.job_name "kubernetes-service-endpoints")}}
-{{- $_ := set $job ("relabel_configs" | toYaml)  ( mustAppend $job.relabel_configs ($.Files.Get "metrics_filter/eks_kubedns_drop_filter.toml" | fromYaml) ) }}
-{{- end }}
-{{- if and $.Values.enableMetricsFilter.kubeSystem (or (eq $job.job_name "kubernetes-service-endpoints") (eq $job.job_name "kubernetes-cadvisor") (eq $job.job_name "windows-metrics")) }}
-{{- $_ := set $job ("metric_relabel_configs" | toYaml)  ( mustAppend $job.metric_relabel_configs ($.Files.Get "metrics_filter/kube-system.toml" | fromYaml) ) }}
-{{- end }}
-{{- if  and (ne $job.job_name "applications") (ne $job.job_name "collector-metrics")}}
-{{- if $.Values.enableMetricsFilter.eks}}
-{{- $_ := set $job ("metric_relabel_configs" | toYaml)  ( mustAppend $job.metric_relabel_configs ($.Files.Get "metrics_filter/eks_filter.toml" | fromYaml) ) }}
-{{- else if $.Values.enableMetricsFilter.aks}}
-{{- $_ := set $job ("metric_relabel_configs" | toYaml)  ( mustAppend $job.metric_relabel_configs ($.Files.Get "metrics_filter/aks_filter.toml" | fromYaml) ) }}
-{{- else if $.Values.enableMetricsFilter.gke}}
-{{- $_ := set $job ("metric_relabel_configs" | toYaml)  ( mustAppend $job.metric_relabel_configs ($.Files.Get "metrics_filter/gke_filter.toml" | fromYaml) ) }}
 
-{{- end }}
-{{- end }}
-{{- end }}
-{{- end }}
+{{- if (and (eq .Values.collector.mode "standalone") (.Values.metrics.enabled)) -}}
+  {{- range $job := (index $configData "receivers" "prometheus/infrastructure" "config" "scrape_configs") -}}
+    {{- range $key,$filter := ($infraFilters | fromJson) -}}
+      {{- if contains "metric" $key -}}
+        {{- $_ := set $job ("metric_relabel_configs" | toYaml)  ( append $job.metric_relabel_configs ($filter)) -}}
+      {{- else -}}
+        {{- $_ := set $job ("relabel_configs" | toYaml)  ( append $job.relabel_configs ($filter)) -}}
+      {{- end -}}
+    {{- end -}} 
+  {{- end -}}
 
+  {{- range $job := (index $configData "receivers" "prometheus/cadvisor" "config" "scrape_configs") -}}
+    {{- range $key,$filter := ($infraFilters | fromJson) -}}
+      {{- if contains "metric" $key -}}
+        {{- $_ := set $job ("metric_relabel_configs" | toYaml)  ( append $job.metric_relabel_configs ($filter)) -}}
+      {{- else -}}
+        {{- $_ := set $job ("relabel_configs" | toYaml)  ( append $job.relabel_configs ($filter)) -}}
+      {{- end -}}
+    {{- end -}} 
+  {{- end -}}
+
+  {{- range $job := (index $configData "receivers" "prometheus/applications" "config" "scrape_configs") -}}
+    {{- range $key,$filter := ($applicationsFilters | fromJson) -}}
+      {{- if contains "metric" $key -}}
+        {{- $_ := set $job ("metric_relabel_configs" | toYaml)  ( append $job.metric_relabel_configs ($filter)) -}}
+      {{- else -}}
+        {{- $_ := set $job ("relabel_configs" | toYaml)  ( append $job.relabel_configs ($filter)) -}}
+      {{- end -}}
+    {{- end -}} 
+  {{- end -}}
+{{- end -}}
 {{- .Values.standaloneCollector.configOverride | merge $configData | mustMergeOverwrite $config | toYaml}}
 {{- end -}}
 
@@ -193,11 +192,17 @@ Build config file for standalone OpenTelemetry Collector daemonset
 {{- $configData := .Values.emptyConfig }}
 {{- $metricsConfig := deepCopy .Values.daemonsetConfig | mustMergeOverwrite  }}
 
+{{- $ctxParams := dict "job" "infrastructure" -}}
+{{- $ctxParams = merge $ctxParams $ -}}
+{{- $infraFilters := include "opentelemetry-collector.getJobFilters" $ctxParams -}}
+{{- $ctxParams = dict "job" "applications" -}}
+{{- $ctxParams = merge $ctxParams $ -}}
+{{- $applicationsFilters := include "opentelemetry-collector.getJobFilters" $ctxParams -}}
 
 {{- if .Values.opencost.enabled }}
 {{- $opencostConfig := deepCopy .Values.opencost.config | mustMergeOverwrite }}
 {{- $metricsConfig = deepCopy $opencostConfig | merge $metricsConfig | mustMergeOverwrite }}
-{{/* merge processor list */}}
+{{/* merge processor list for opencost*/}}
 {{- $_ := set $metricsConfig.service.pipelines.metrics "processors" (concat $metricsConfig.service.pipelines.metrics.processors $opencostConfig.service.pipelines.metrics.processors )}}
 {{- end }}
 
@@ -208,38 +213,132 @@ Build config file for standalone OpenTelemetry Collector daemonset
 {{- $configData = $metricsConfig  }}
 {{- end }}
 
+{{- if .Values.metrics.enabled -}}
+  {{- range $job := (index $configData "receivers" "prometheus/infrastructure" "config" "scrape_configs") -}}
+    {{- range $key,$filter := ($infraFilters | fromJson) -}}
+      {{- if contains "metric" $key -}}
+        {{- $_ := set $job ("metric_relabel_configs" | toYaml)  ( append $job.metric_relabel_configs ($filter)) -}}
+      {{- else -}}
+        {{- $_ := set $job ("relabel_configs" | toYaml)  ( append $job.relabel_configs ($filter)) -}}
+      {{- end -}}
+    {{- end -}} 
+  {{- end -}}
 
-{{/*
-Use metrics filter configuration:
-Filter aks,eks and gke with basic logzio dashboard filters
-Drop kube-dns metrics by skipping kube-dns service scraping. (Relevant for eks which
-is not supporting )
-*/}}
-{{- if and .Values.metrics.enabled (or .Values.enableMetricsFilter.eks .Values.enableMetricsFilter.aks .Values.enableMetricsFilter.gke .Values.enableMetricsFilter.kubeSystem .Values.disableKubeDnsScraping)}}
-{{- range $job := $configData.receivers.prometheus.config.scrape_configs}}
-{{- if and $.Values.disableKubeDnsScraping (eq $job.job_name "applications")}}
-{{- $_ := set $job ("relabel_configs" | toYaml)  ( mustAppend $job.relabel_configs ($.Files.Get "metrics_filter/eks_kubedns_drop_filter.toml" | fromYaml) ) }}
-{{- end }}
-{{- if and $.Values.enableMetricsFilter.kubeSystem (or (eq $job.job_name "applications") (eq $job.job_name "kubernetes-cadvisor") (eq $job.job_name "windows-metrics")) }}
-{{- $_ := set $job ("metric_relabel_configs" | toYaml)  ( mustAppend $job.metric_relabel_configs ($.Files.Get "metrics_filter/kube-system.toml" | fromYaml) ) }}
-{{- end }}
-{{- if  and (ne $job.job_name "applications") (ne $job.job_name "collector-metrics")}}
-{{- if $.Values.enableMetricsFilter.eks}}
-{{- $_ := set $job ("metric_relabel_configs" | toYaml)  ( mustAppend $job.metric_relabel_configs ($.Files.Get "metrics_filter/eks_filter.toml" | fromYaml) ) }}
-{{- else if $.Values.enableMetricsFilter.aks}}
-{{- $_ := set $job ("metric_relabel_configs" | toYaml)  ( mustAppend $job.metric_relabel_configs ($.Files.Get "metrics_filter/aks_filter.toml" | fromYaml) ) }}
-{{- else if $.Values.enableMetricsFilter.gke}}
-{{- $_ := set $job ("metric_relabel_configs" | toYaml)  ( mustAppend $job.metric_relabel_configs ($.Files.Get "metrics_filter/gke_filter.toml" | fromYaml) ) }}
-{{- end }}
-{{- end }}
-{{- end }}
-{{- end }}
+  {{- range $job := (index $configData "receivers" "prometheus/cadvisor" "config" "scrape_configs") -}}
+    {{- range $key,$filter := ($infraFilters | fromJson) -}}
+      {{- if contains "metric" $key -}}
+        {{- $_ := set $job ("metric_relabel_configs" | toYaml)  ( append $job.metric_relabel_configs ($filter)) -}}
+      {{- else -}}
+        {{- $_ := set $job ("relabel_configs" | toYaml)  ( append $job.relabel_configs ($filter)) -}}
+      {{- end -}}
+    {{- end -}} 
+  {{- end -}}
+
+  {{- range $job := (index $configData "receivers" "prometheus/applications" "config" "scrape_configs") -}}
+    {{- range $key,$filter := ($applicationsFilters | fromJson) -}}
+      {{- if contains "metric" $key -}}
+        {{- $_ := set $job ("metric_relabel_configs" | toYaml)  ( append $job.metric_relabel_configs ($filter)) -}}
+      {{- else -}}
+        {{- $_ := set $job ("relabel_configs" | toYaml)  ( append $job.relabel_configs ($filter)) -}}
+      {{- end -}}
+    {{- end -}} 
+  {{- end -}}
+{{- end -}}
 
 {{- .Values.daemonsetCollector.configOverride | merge $configData | mustMergeOverwrite $config | toYaml}}
 {{- end -}}
 
+{{/*
+Create infrastracture jobs filters
+Param 1: dict: "job" infrastructure/applications & global context
+*/}}
+{{- define "opentelemetry-collector.getJobFilters" -}}
+
+{{/*job's metrics keep filters*/}}
+{{- $job := .job -}}
+{{- $metricsKeepFilters := (dict "source_labels" (list "__name__") "action" "keep") -}}
+{{- if (and .Values.enableMetricsFilter.aks (eq $job "infrastructure")) -}}
+  {{- $_ := set $metricsKeepFilters ("regex" ) .Values.prometheusFilters.metrics.infrastructure.keep.aks -}}
+{{- else if (and .Values.enableMetricsFilter.eks (eq $job "infrastructure")) -}}
+  {{- $_ := set $metricsKeepFilters ("regex" ) .Values.prometheusFilters.metrics.infrastructure.keep.eks -}}
+{{- else if (and .Values.enableMetricsFilter.gke (eq $job "infrastructure")) -}}
+  {{- $_ := set $metricsKeepFilters ("regex" ) .Values.prometheusFilters.metrics.infrastructure.keep.gke -}}
+{{- end -}}
+{{- $customKeep := index .Values "prometheusFilters" "metrics" $job "keep" "custom" -}}
+{{- if $customKeep -}}
+  {{- if (hasKey $metricsKeepFilters "regex" ) -}}
+    {{- $_ := set $metricsKeepFilters "regex" (print (get $metricsKeepFilters ("regex") ) "|" $customKeep ) -}}
+  {{- else -}}
+    {{- $_ := set $metricsKeepFilters "regex" $customKeep -}}
+  {{- end -}}
+{{- end -}}
+
+{{/*job's metrics drop filters*/}}
+{{- $metricsDropFilters := (dict "source_labels" (list "__name__") "action" "drop") -}}
+{{- $customDrop := index .Values "prometheusFilters" "metrics" $job "drop" "custom" -}}
+{{- if $customDrop -}}
+  {{- $_ := set $metricsDropFilters "regex" $customDrop -}}
+{{- end -}}
+
+{{/*job's namespace keep filters*/}}
+{{- $namespaceKeepFilters := (dict "source_labels" (list "namespace") "action" "keep") -}}
+{{- $customKeep = index .Values "prometheusFilters" "namespaces" $job "drop" "custom" -}}
+{{- if $customKeep -}}
+  {{- $_ := set $namespaceKeepFilters "regex" $customKeep -}}
+{{- end -}}
+
+{{/*job's namespace drop filters*/}}
+{{- $namespaceDropFilters := (dict "source_labels" (list "namespace") "action" "drop") -}}
+{{- if (and .Values.enableMetricsFilter.kubeSystem (eq $job "infrastructure")) -}}
+  {{- $_ = set $namespaceDropFilters ("regex" ) .Values.prometheusFilters.namespaces.infrastructure.drop.kubeSystem -}}
+{{- end -}}
+{{- $customDrop = index .Values "prometheusFilters" "namespaces" $job "drop" "custom" -}}
+{{- if $customDrop -}}
+  {{- if (hasKey $namespaceDropFilters "regex" ) -}}
+    {{- $_ := set $namespaceDropFilters "regex" (print (get $namespaceDropFilters ("regex") ) "|" $customDrop ) -}}
+  {{- else -}}
+    {{- $_ := set $namespaceDropFilters "regex" $customDrop -}}
+  {{- end -}}
+{{- end -}}
+
+{{/*job's service keep filters*/}}
+{{- $serviceKeepFilters := (dict "source_labels" (list "__meta_kubernetes_service_name") "action" "keep") -}}
+{{- $customKeep = index .Values "prometheusFilters" "services" $job "keep" "custom" -}}
+{{- if $customKeep -}}
+  {{- $_ := set $serviceKeepFilters "regex" $customKeep -}}
+{{- end -}}
+
+{{/*job's service drop filters*/}}
+{{- $serviceDropFilters := (dict "source_labels" (list "__meta_kubernetes_service_name") "action" "drop") -}}
+{{- if (and .Values.disableKubeDnsScraping (eq $job "infrastructure")) -}}
+  {{- $_ := set $serviceDropFilters ("regex" ) .Values.prometheusFilters.services.infrastructure.drop.kubeDns -}}
+{{- end -}}
+{{- $customDrop = index .Values "prometheusFilters" "services" $job "drop" "custom" -}}
+{{- if $customDrop -}}
+  {{- if (hasKey $serviceDropFilters "regex" ) -}}
+    {{- $_ := set $serviceDropFilters "regex" (print (get $serviceDropFilters ("regex") ) "|" $customDrop ) -}}
+  {{- else -}}
+    {{- $_ := set $serviceDropFilters "regex" $customDrop -}}
+  {{- end -}}
+{{- end -}}
+
+{{/*remove empty filters*/}}
+{{/*use the "metric" prefix for dict keys to associate filter with "metric_relabel_config"*/}}
+{{- $allFilters := dict "metric1" $metricsKeepFilters "metric2" $metricsDropFilters "3" $namespaceKeepFilters "4" $namespaceDropFilters "5" $serviceDropFilters "6" $serviceKeepFilters -}}
+{{- $checkedFilters := dict -}}
+{{- range $key,$filter := $allFilters -}}
+{{/*check if regex key exists, if so filter also exist*/}}
+  {{- if  (hasKey $filter "regex" ) -}}
+    {{- $_ := set $checkedFilters $key $filter  -}}
+  {{- end -}}  
+{{- end -}}
+{{- $res := $checkedFilters | toJson -}}
+{{- $res -}}
+{{- end -}}
+
+
 {{- define "opentelemetry-collector.agent.containerLogsConfig" -}}
-{{- if .Values.agentCollector.containerLogs.enabled }}
+{{- if .Values.agentCollector.containerLogs.enabled -}}
 receivers:
   filelog:
     include: [ /var/log/pods/*/*/*.log ]
@@ -329,6 +428,9 @@ service:
 {{- end }}
 {{- end }}
 {{- end }}
+
+
+
 
 
 
