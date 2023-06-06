@@ -211,7 +211,7 @@ The default configuration uses the Prometheus receiver with the following scrape
 To customize your configuration, edit the `config` section in the `values.yaml` file.
 
 
-#### Using Out of the box metrics filters for Logzio dashboards
+### Using Out of the box metrics filters for Logzio dashboards
 
 You can use predefined metrics filters to prevent unnecessary metrics being sent to Logz.io and reduce usage cost.
 These filters will only send the metrics that are being used in Logz.io's Kubernetes dashboard: Cluster Componenets, Cluster Summary, Pods and Nodes.
@@ -222,7 +222,24 @@ To enable metrics filtering, set the following flag when deploying the chart, re
 --set enableMetricsFilter.<<cloud-service>>=true
 ```
 
-#### Filtering metrics from `kube-system` namesapce
+### Adding addiotional filters for metrics scraping
+
+To add flexibility for the metrics filtering, you can add custom filters for the following:
+- metric name (keep & drop)
+- service names (keep & drop - only for infrastructure pipeline)
+- namespace names
+
+Added filters should be in the format of regex, i.e: `"metrics1|metric2"` etc.
+To add a custom filter, choose to which pipeline the filter is needed, and add the filter under the `custom` key accordingly.
+For example, to add a custom `namespace` keep filter to the application metric job, you can set:
+```
+--set prometheusFilters.namespaces.applications.custom="namesapce_1|namespace_2"
+```
+
+For more information, view `prometheusFitlers` in `values.yaml`.
+
+
+### Filtering metrics from `kube-system` namesapce
 
 To Filter out metrics from `kube-system` namesapce, set the following flag when deploying the chart.
 
@@ -230,7 +247,7 @@ To Filter out metrics from `kube-system` namesapce, set the following flag when 
 --set enableMetricsFilter.kubeSystem=true
 ```
 
-#### Disabling kube-dns scraping for EKS clusters
+### Disabling kube-dns scraping for EKS clusters
 
 In the current EKS setup, kube-dns metrics cannot be scraped from the kube-dns system service as the port used for scraping is already in use. This results in the following warning in the collector pod logs:
 
@@ -239,13 +256,11 @@ In the current EKS setup, kube-dns metrics cannot be scraped from the kube-dns s
 ```
 
 A workaround for this issue is to create a seperate kube-dns service and add the necessary annotations to enable scraping.
-If you do not need the kube-dns metrics (i.e using one of Logz.io metrics filters), enable the following flag:
+By default, the kube-dns service filter is enabled, using the flag:
 
 ```
---set disableKubeDnsScraping=true
+disableKubeDnsScraping=true
 ```
-
-This will disable scraping for the kube-dns service in the prometheus receiver.
 
 More informtion can be found in the following GitHub issue:
 https://github.com/aws/containers-roadmap/issues/965
