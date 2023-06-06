@@ -332,6 +332,16 @@ helm uninstall logzio-k8s-telemetry
 
 
 ## Change log
+* 0.1.0 
+  - **BREAKING CHANGES**:
+    - Split prometheus scrape jobs to separate pipelines:
+      - Infrastrucutre: includes kubernetes-service-endpoints, windows-metrics, collector-metrics & cadvisor jobs.
+      - Applications: includes applications jobs
+    - Improved prometheus filters mechanism:
+      - Users can now easily add custom filters for metrics, namesapces & services
+      using `prometheusFilters` in `values.md`. For more information view [Adding additional filters](#adding-addiotional-filters-for-metrics-scraping) 
+    - Added spot labels for kube-state-metrics.
+    - Enabled kube-dns filter as default. 
 * 0.0.28
   - Change default metrics scrape and export values to handle more cases
   - Reorder processors
@@ -341,6 +351,10 @@ helm uninstall logzio-k8s-telemetry
 * 0.0.26
   - Added `applications` scrape job for `daemonset` collector mode.
   - Added `secrets.enabled` value.
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
 * 0.0.25
   - Added affinity condition to the daemonset collector.
   - Added opencost duplicate metrics filtering. NOTE: Opencost can be enabled with [Logzio Monitorig Helm Chart](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-monitoring)
@@ -353,14 +367,9 @@ helm uninstall logzio-k8s-telemetry
   - Fixed subchart conditions.
   - Added `VALUES.md`. 
   - Increased minimum memory (`1024Mi`) and cpu (`512m`) requiremts for the collector pods.
+
 * 0.0.23
   - Updated metrics filter (#219)
-
-
-
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
-
 * 0.0.22
   - **breaking changes:** Add separate span metrics component that includes the following resources:
     - `deployment-spm.yaml`
