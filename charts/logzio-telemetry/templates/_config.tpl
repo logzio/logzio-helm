@@ -20,18 +20,20 @@ Build config file for standalone OpenTelemetry Collector
 {{- $values := deepCopy .Values.standaloneCollector | mustMergeOverwrite (deepCopy .Values) }}
 {{- $data := dict "Values" $values | mustMergeOverwrite (deepCopy .) }}
 {{- $config := include "opentelemetry-collector.baseConfig" $data | fromYaml }}
-{{- $ctxParams := dict "job" "infrastructure" -}}
+{{- $ctxParams := dict "pipeline" "infrastructure" -}}
 {{- $ctxParams = merge $ctxParams $ -}}
-{{- $infraFilters := include "opentelemetry-collector.getJobFilters" $ctxParams -}}
-{{- $ctxParams = dict "job" "applications" -}}
+{{- $infraFilters := include "opentelemetry-collector.getPipelineFilters" $ctxParams -}}
+{{- $ctxParams = dict "pipeline" "applications" -}}
 {{- $ctxParams = merge $ctxParams $ -}}
-{{- $applicationsFilters := include "opentelemetry-collector.getJobFilters" $ctxParams -}}
-{{- if .Values.opencost.enabled }}
-{{- $opencostConfig := deepCopy .Values.opencost.config | mustMergeOverwrite }}
-{{- $metricsConfig = deepCopy $opencostConfig | merge $metricsConfig | mustMergeOverwrite }}
-{{/* merge processor list */}}
-{{- $_ := set $metricsConfig.service.pipelines.metrics "processors" (concat $metricsConfig.service.pipelines.metrics.processors $opencostConfig.service.pipelines.metrics.processors )}}
-{{- end }}
+{{- $applicationsFilters := include "opentelemetry-collector.getPipelineFilters" $ctxParams -}}
+
+{{/* Handle opencost config */}}
+{{- if .Values.opencost.enabled -}}
+{{- $opencostConfig := deepCopy .Values.opencost.config | mustMergeOverwrite -}}
+{{- $metricsConfig = deepCopy $opencostConfig | merge $metricsConfig | mustMergeOverwrite -}}
+{{/* merge processor list for opencost*/}}
+{{- $_ := set (index $metricsConfig "service" "pipelines" "metrics/infrastructure") "processors" (concat (index $metricsConfig "service" "pipelines" "metrics/infrastructure" "processors") (index $opencostConfig "service" "pipelines" "metrics/infrastructure" "processors" )) -}}
+{{- end -}}
 
 
 {{- if and (and (eq .Values.collector.mode "standalone") (.Values.metrics.enabled)) .Values.traces.enabled  .Values.spm.enabled }}
@@ -177,18 +179,19 @@ Build config file for standalone OpenTelemetry Collector daemonset
 {{- $configData := .Values.emptyConfig }}
 {{- $metricsConfig := deepCopy .Values.daemonsetConfig | mustMergeOverwrite  }}
 
-{{- $ctxParams := dict "job" "infrastructure" -}}
+{{- $ctxParams := dict "pipeline" "infrastructure" -}}
 {{- $ctxParams = merge $ctxParams $ -}}
-{{- $infraFilters := include "opentelemetry-collector.getJobFilters" $ctxParams -}}
-{{- $ctxParams = dict "job" "applications" -}}
+{{- $infraFilters := include "opentelemetry-collector.getPipelineFilters" $ctxParams -}}
+{{- $ctxParams = dict "pipeline" "applications" -}}
 {{- $ctxParams = merge $ctxParams $ -}}
-{{- $applicationsFilters := include "opentelemetry-collector.getJobFilters" $ctxParams -}}
+{{- $applicationsFilters := include "opentelemetry-collector.getPipelineFilters" $ctxParams -}}
 
+{{/* Handle opencost config */}}
 {{- if .Values.opencost.enabled }}
 {{- $opencostConfig := deepCopy .Values.opencost.config | mustMergeOverwrite }}
 {{- $metricsConfig = deepCopy $opencostConfig | merge $metricsConfig | mustMergeOverwrite }}
 {{/* merge processor list for opencost*/}}
-{{- $_ := set $metricsConfig.service.pipelines.metrics "processors" (concat $metricsConfig.service.pipelines.metrics.processors $opencostConfig.service.pipelines.metrics.processors )}}
+{{- $_ := set (index $metricsConfig "service" "pipelines" "metrics/infrastructure") "processors" (concat (index $metricsConfig "service" "pipelines" "metrics/infrastructure" "processors") (index $opencostConfig "service" "pipelines" "metrics/infrastructure" "processors" )) -}}
 {{- end }}
 
 {{- $values := deepCopy .Values.daemonsetCollector | mustMergeOverwrite (deepCopy .Values) }}
@@ -234,22 +237,22 @@ Build config file for standalone OpenTelemetry Collector daemonset
 {{- end -}}
 
 {{/*
-Create infrastracture jobs filters
-Param 1: dict: "job" infrastructure/applications & global context
+Create pipeline job filters
+Param 1: dict: "pipeline" infrastructure/applications & global context
 */}}
-{{- define "opentelemetry-collector.getJobFilters" -}}
+{{- define "opentelemetry-collector.getPipelineFilters" -}}
 
-{{/*job's metrics keep filters*/}}
-{{- $job := .job -}}
+{{/*pipelines's metrics keep filters*/}}
+{{- $pipeline := .pipeline -}}
 {{- $metricsKeepFilters := (dict "source_labels" (list "__name__") "action" "keep") -}}
-{{- if (and .Values.enableMetricsFilter.aks (eq $job "infrastructure")) -}}
+{{- if (and .Values.enableMetricsFilter.aks (eq $pipeline "infrastructure")) -}}
   {{- $_ := set $metricsKeepFilters ("regex" ) .Values.prometheusFilters.metrics.infrastructure.keep.aks -}}
-{{- else if (and .Values.enableMetricsFilter.eks (eq $job "infrastructure")) -}}
+{{- else if (and .Values.enableMetricsFilter.eks (eq $pipeline "infrastructure")) -}}
   {{- $_ := set $metricsKeepFilters ("regex" ) .Values.prometheusFilters.metrics.infrastructure.keep.eks -}}
-{{- else if (and .Values.enableMetricsFilter.gke (eq $job "infrastructure")) -}}
+{{- else if (and .Values.enableMetricsFilter.gke (eq $pipeline "infrastructure")) -}}
   {{- $_ := set $metricsKeepFilters ("regex" ) .Values.prometheusFilters.metrics.infrastructure.keep.gke -}}
 {{- end -}}
-{{- $customKeep := index .Values "prometheusFilters" "metrics" $job "keep" "custom" -}}
+{{- $customKeep := index .Values "prometheusFilters" "metrics" $pipeline "keep" "custom" -}}
 {{- if $customKeep -}}
   {{- if (hasKey $metricsKeepFilters "regex" ) -}}
     {{- $_ := set $metricsKeepFilters "regex" (print (get $metricsKeepFilters ("regex") ) "|" $customKeep ) -}}
@@ -258,26 +261,26 @@ Param 1: dict: "job" infrastructure/applications & global context
   {{- end -}}
 {{- end -}}
 
-{{/*job's metrics drop filters*/}}
+{{/*pipeline's metrics drop filters*/}}
 {{- $metricsDropFilters := (dict "source_labels" (list "__name__") "action" "drop") -}}
-{{- $customDrop := index .Values "prometheusFilters" "metrics" $job "drop" "custom" -}}
+{{- $customDrop := index .Values "prometheusFilters" "metrics" $pipeline "drop" "custom" -}}
 {{- if $customDrop -}}
   {{- $_ := set $metricsDropFilters "regex" $customDrop -}}
 {{- end -}}
 
-{{/*job's namespace keep filters*/}}
+{{/*pipeline's namespace keep filters*/}}
 {{- $namespaceKeepFilters := (dict "source_labels" (list "namespace") "action" "keep") -}}
-{{- $customKeep = index .Values "prometheusFilters" "namespaces" $job "drop" "custom" -}}
+{{- $customKeep = index .Values "prometheusFilters" "namespaces" $pipeline "drop" "custom" -}}
 {{- if $customKeep -}}
   {{- $_ := set $namespaceKeepFilters "regex" $customKeep -}}
 {{- end -}}
 
-{{/*job's namespace drop filters*/}}
+{{/*pipeline's namespace drop filters*/}}
 {{- $namespaceDropFilters := (dict "source_labels" (list "namespace") "action" "drop") -}}
-{{- if (and .Values.enableMetricsFilter.kubeSystem (eq $job "infrastructure")) -}}
+{{- if (and .Values.enableMetricsFilter.kubeSystem (eq $pipeline "infrastructure")) -}}
   {{- $_ = set $namespaceDropFilters ("regex" ) .Values.prometheusFilters.namespaces.infrastructure.drop.kubeSystem -}}
 {{- end -}}
-{{- $customDrop = index .Values "prometheusFilters" "namespaces" $job "drop" "custom" -}}
+{{- $customDrop = index .Values "prometheusFilters" "namespaces" $pipeline "drop" "custom" -}}
 {{- if $customDrop -}}
   {{- if (hasKey $namespaceDropFilters "regex" ) -}}
     {{- $_ := set $namespaceDropFilters "regex" (print (get $namespaceDropFilters ("regex") ) "|" $customDrop ) -}}
@@ -286,24 +289,26 @@ Param 1: dict: "job" infrastructure/applications & global context
   {{- end -}}
 {{- end -}}
 
-{{/*job's service keep filters*/}}
+{{/*pipeline's service keep filters - only valid for infrastructure pipelines!*/}}
 {{- $serviceKeepFilters := (dict "source_labels" (list "__meta_kubernetes_service_name") "action" "keep") -}}
-{{- $customKeep = index .Values "prometheusFilters" "services" $job "keep" "custom" -}}
-{{- if $customKeep -}}
-  {{- $_ := set $serviceKeepFilters "regex" $customKeep -}}
-{{- end -}}
-
-{{/*job's service drop filters*/}}
 {{- $serviceDropFilters := (dict "source_labels" (list "__meta_kubernetes_service_name") "action" "drop") -}}
-{{- if (and .Values.disableKubeDnsScraping (eq $job "infrastructure")) -}}
-  {{- $_ := set $serviceDropFilters ("regex" ) .Values.prometheusFilters.services.infrastructure.drop.kubeDns -}}
-{{- end -}}
-{{- $customDrop = index .Values "prometheusFilters" "services" $job "drop" "custom" -}}
-{{- if $customDrop -}}
-  {{- if (hasKey $serviceDropFilters "regex" ) -}}
-    {{- $_ := set $serviceDropFilters "regex" (print (get $serviceDropFilters ("regex") ) "|" $customDrop ) -}}
-  {{- else -}}
-    {{- $_ := set $serviceDropFilters "regex" $customDrop -}}
+{{- if eq $pipeline "infrastructure" -}}
+  {{- $customKeep = index .Values "prometheusFilters" "services" $pipeline "keep" "custom" -}}
+  {{- if $customKeep -}}
+    {{- $_ := set $serviceKeepFilters "regex" $customKeep -}}
+  {{- end -}}
+
+  {{/*pipeline's service drop filters*/}}
+  {{- if (and .Values.disableKubeDnsScraping (eq $pipeline "infrastructure")) -}}
+    {{- $_ := set $serviceDropFilters ("regex" ) .Values.prometheusFilters.services.infrastructure.drop.kubeDns -}}
+  {{- end -}}
+  {{- $customDrop = index .Values "prometheusFilters" "services" $pipeline "drop" "custom" -}}
+  {{- if $customDrop -}}
+    {{- if (hasKey $serviceDropFilters "regex" ) -}}
+      {{- $_ := set $serviceDropFilters "regex" (print (get $serviceDropFilters ("regex") ) "|" $customDrop ) -}}
+    {{- else -}}
+      {{- $_ := set $serviceDropFilters "regex" $customDrop -}}
+    {{- end -}}
   {{- end -}}
 {{- end -}}
 
