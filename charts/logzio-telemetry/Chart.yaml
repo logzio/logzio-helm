@@ -5,7 +5,7 @@ description: logzio-k8s-telemetry allows you to ship metrics and traces from you
 type: application
 
 sources:
-  - https://github.com/prometśeus/node_exporter
+  - https://github.com/prometheus/node_exporter
   - https://github.com/kubernetes/kube-state-metrics
 dependencies:
   - name: kube-state-metrics
