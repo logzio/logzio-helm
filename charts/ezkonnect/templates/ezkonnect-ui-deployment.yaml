@@ -12,6 +12,8 @@ spec:
     metadata:
       labels:
         app: ezkonnect-ui
+      annotation:
+        logz.io/skip: "true"
     spec:
       containers:
         - name: ezkonnect-ui-container

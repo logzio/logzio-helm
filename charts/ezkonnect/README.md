@@ -22,7 +22,7 @@ To install the EZKonnect Helm chart, use the following command:
 
 ```bash
 helm repo update
-helm install [REALESE_NAME] logzio-helm/ezkonnect -n ezkonnect --create-namespace
+helm install logzio-ezkonnect logzio-helm/ezkonnect -n ezkonnect --create-namespace
 ``` 
 
 Configuration
@@ -74,7 +74,7 @@ serviceAccount
 
 You can override the default values by creating your own `values.yaml` file and passing the `--values` or `-f` option to the Helm command. For example:
 
-`helm install [REALESE_NAME] logzio-helm/ezkonnect -n ezkonnect --create-namespace --values my_values.yaml` 
+`helm install logzio-ezkonnect logzio-helm/ezkonnect -n ezkonnect --create-namespace --values my_values.yaml` 
 
 Here, `my_values.yaml` is your custom configuration file.
 
