@@ -275,22 +275,25 @@ When enabling promehteus configuration, the pod collects and exposes fluentd met
 
 
 ## Change log
+
+ - **0.20.3**:
+   - ezKonnect support: Added `logz.io/application_type` to type annotation check .
  - **0.20.2**:
    - Upgrade docker image `logzio/logzio-fluentd` to `1.4.0`:
      - Use fluentd's retry instead of retry in code (raise exception on non-2xx response).
  - **0.20.1**:
    - Added log level detection for fargate log router
    - Remove `namespace` value, replaced by `Realese.namespace` in all templates
- - **0.20.0**:
-   - Upgraded windows image to `logzio/windows:0.0.2`:
-     - Added prometheus monitor plugin
-     - Added dedot plugin
-   - Updated `windowsDaemonset.fluentdPrometheusConf` - now controls prometheus config for collecting and exposing fluentd metrics.
 
 
 <details>
   <summary markdown="span"> Expand to check old versions </summary>
 
+ - **0.20.0**:
+   - Upgraded windows image to `logzio/windows:0.0.2`:
+     - Added prometheus monitor plugin
+     - Added dedot plugin
+   - Updated `windowsDaemonset.fluentdPrometheusConf` - now controls prometheus config for collecting and exposing fluentd metrics.
  - **0.19.0**:
    - Upgraded image to `logzio/logzio-fluentd:1.3.1`:
      - Added prometheus monitor plugin

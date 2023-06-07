@@ -4,7 +4,7 @@ description: A Helm chart for shipping Kubernetes logs via Fluentd.
 keywords:
   - logging
   - fluentd
-version: 0.20.2
+version: 0.20.3
 appVersion: 1.4.0
 maintainers:
   - name: Miri Bar

@@ -384,7 +384,7 @@ configmap:
       @id filter_kube_metadata
       kubernetes_url "#{ENV['FLUENT_FILTER_KUBERNETES_URL'] || 'https://' + ENV.fetch('KUBERNETES_SERVICE_HOST') + ':' + ENV.fetch('KUBERNETES_SERVICE_PORT') + '/api'}"
       verify_ssl "#{ENV['KUBERNETES_VERIFY_SSL'] || true}"
-      annotation_match "log\_type"
+      annotation_match "log\_type|logz\.io\/application\_type"
     </filter>
     <filter **>
       @type record_modifier
@@ -394,7 +394,7 @@ configmap:
         # sort log level keywords and use info as default
         log_level ${if record.dig("dummy_level") =~ /^(?i)(error|failure|failed|exception|panic)$/ then "ERROR"; elsif record.dig("dummy_level")=~ /^(?i)(warn|warning)$/ then "WARNING" ; elsif record.dig("dummy_level") != "" then record.dig("dummy_level").upcase; else "INFO" end;}
         # insert log_type from annotation (if exists)
-        type ${record.dig("kubernetes","annotations","log_type") || record.dig("type")}
+        type ${record.dig("kubernetes","annotations","log_type") || record.dig("kubernetes","annotations","logz.io/application_type") || record.dig("type")}
         _dummy_ ${if record.dig("kubernetes","annotations","log_type") then record["kubernetes"]["annotations"].delete("log_type"); end;}
       </record>
       remove_keys _dummy_,dummy_level
