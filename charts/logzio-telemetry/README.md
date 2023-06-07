@@ -341,6 +341,10 @@ helm uninstall logzio-k8s-telemetry
       - Users can now easily add custom filters for metrics, namesapces & services
       using `prometheusFilters` in `values.md`. For more information view [Adding additional filters](#adding-addiotional-filters-for-metrics-scraping) 
     - Added spot labels for kube-state-metrics.
+* 0.0.29
+  - Upgrade traces and metrics otel image `0.70.0` -> `0.78.0`
+  - Upgrade spm image `0.70.0` -> `0.73.0`
+  - Added values for seprate spm iamge
 * 0.0.28
   - Change default metrics scrape and export values to handle more cases
   - Reorder processors
@@ -361,6 +365,11 @@ helm uninstall logzio-k8s-telemetry
   - Improved naming of the collector deployments:
     - Daemonset pods now have the "ds" suffix.
     - Standalone pod now have the "standalone" suffix.
+
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
 * 0.0.24
   - Added `collector.mode` flag - now supports `standalone` and `daemonset`, default is `daemonset`.
   - Fixed subchart conditions.

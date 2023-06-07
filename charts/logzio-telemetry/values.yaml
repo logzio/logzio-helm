@@ -478,6 +478,10 @@ windowsExporterInstallerImage:
   repository: logzio/logzio-windows-exporter-installer
   pullPolicy: IfNotPresent
   tag: "0.0.1"
+spmImage:
+  repository: otel/opentelemetry-collector-contrib
+  pullPolicy: IfNotPresent
+  tag: "0.73.0"
 imagePullSecrets: []
 
 # OpenTelemetry Collector executable
