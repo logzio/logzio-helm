@@ -341,7 +341,6 @@ helm uninstall logzio-k8s-telemetry
       - Users can now easily add custom filters for metrics, namesapces & services
       using `prometheusFilters` in `values.md`. For more information view [Adding additional filters](#adding-addiotional-filters-for-metrics-scraping) 
     - Added spot labels for kube-state-metrics.
-    - Enabled kube-dns filter as default. 
 * 0.0.28
   - Change default metrics scrape and export values to handle more cases
   - Reorder processors

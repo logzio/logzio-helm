@@ -762,7 +762,7 @@ enableMetricsFilter:
   aks: false
   kubeSystem: false
 
-disableKubeDnsScraping: true
+disableKubeDnsScraping: false
 
 daemonsetConfig:
   extensions:
