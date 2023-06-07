@@ -41,7 +41,7 @@ ezkonnectServer:
   serviceAccount: "ezkonnect-server"
   image:
     repository: "logzio/ezkonnect-server"
-    tag: "v1.0.1"
+    tag: "v1.0.2"
   ports:
     http: 5050
   service:
