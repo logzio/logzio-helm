@@ -12,7 +12,7 @@ spec:
     metadata:
       labels:
         app: ezkonnect-ui
-      annotation:
+      annotations:
         logz.io/skip: "true"
     spec:
       containers:
@@ -20,3 +20,6 @@ spec:
           image: "{{ .Values.ezkonnectUi.image.repository }}:{{ .Values.ezkonnectUi.image.tag }}"
           ports:
             - containerPort: {{ .Values.ezkonnectUi.ports.http }}
+          env:
+            - name: VITE_ENDPOINT_API
+              value: "http://{{ .Values.ezkonnectServer.service.name }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.ezkonnectServer.service.port }}"

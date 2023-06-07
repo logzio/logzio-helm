@@ -14,7 +14,7 @@ spec:
     metadata:
       labels:
         app: kubernetes-instrumentor
-      annotation:
+      annotations:
         logz.io/skip: "true"
     spec:
       serviceAccountName: {{ .Values.kubernetesInstrumentor.serviceAccount }}
