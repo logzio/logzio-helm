@@ -140,6 +140,9 @@ In these cases we can use the following `--set` commands to use an alternative i
 ```
 
 ## Changelog
+- **0.5.8**:
+	- Upgrade `logzio-fluentd` Chart to `0.20.3`:
+	 - Added `logz.io/application_type` annotation detection. 
 - **0.5.7**:
 	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.29`:
     - Upgrade traces and metrics otel image `0.70.0` -> `0.78.0`
@@ -153,6 +156,12 @@ In these cases we can use the following `--set` commands to use an alternative i
 - **0.5.5**:
 	- Upgrade `logzio-fluentd` Chart to `0.20.2`:
 		- Use fluentd's retry instead of retry in code (raise exception on non-2xx response).
+
+
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
 - **0.5.4**:
 	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.27`:
 		- Removed duplicate `prometheus.io/scrape` annotation from `kube-state-metrics`(@dlip)
@@ -161,11 +170,6 @@ In these cases we can use the following `--set` commands to use an alternative i
 		- Default to disable unused reports (config audit, rbac assessment, infra assessment, cluster compliance).
 		- Bump Trivy-Operator version to 0.13.1.
 		- Bump logzio-trivy version to 0.2.1.
-
-
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
-
 - **0.5.2**:
 	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.26`:
 		- Added `applications` scrape job for `daemonset` collector mode.
