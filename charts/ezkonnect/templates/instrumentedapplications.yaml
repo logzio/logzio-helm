@@ -54,6 +54,8 @@ spec:
                 languages:
                   items:
                     properties:
+                      opentelemetryPreconfigured:
+                        type: boolean
                       containerName:
                         type: string
                       language:
