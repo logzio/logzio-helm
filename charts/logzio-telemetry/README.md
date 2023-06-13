@@ -339,7 +339,7 @@ helm uninstall logzio-k8s-telemetry
       - Applications: includes applications jobs
     - Improved prometheus filters mechanism:
       - Users can now easily add custom filters for metrics, namesapces & services
-      using `prometheusFilters` in `values.md`. For more information view [Adding additional filters](#adding-addiotional-filters-for-metrics-scraping) 
+      using `prometheusFilters` in `values.yaml`. For more information view [Adding additional filters](#adding-addiotional-filters-for-metrics-scraping) 
     - Added spot labels for kube-state-metrics.
 * 0.0.29
   - Upgrade traces and metrics otel image `0.70.0` -> `0.78.0`
