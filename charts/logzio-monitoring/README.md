@@ -140,6 +140,16 @@ In these cases we can use the following `--set` commands to use an alternative i
 ```
 
 ## Changelog
+- **0.5.9**:
+	- Upgrade `logzio-k8s-telemetry` to `0.0.29`:
+		- **BREAKING CHANGES**:
+			- Split prometheus scrape jobs to separate pipelines:
+				- Infrastrucutre: includes kubernetes-service-endpoints, windows-metrics, collector-metrics & cadvisor jobs.
+				- Applications: includes applications jobs
+			- Improved prometheus filters mechanism:
+			- Users can now easily add custom filters for metrics, namesapces & services
+			using `prometheusFilters` in `logzio-k8s-telemetry` `values.yaml`. For more information view [Adding additional filters](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-telemetry#adding-addiotional-filters-for-metrics-scraping) 
+			- Added spot labels for kube-state-metrics.
 - **0.5.8**:
 	- Upgrade `logzio-fluentd` Chart to `0.20.3`:
 	 - Added `logz.io/application_type` annotation detection. 
