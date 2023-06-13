@@ -26,6 +26,14 @@ spec:
           env:
             - name: MONITORING_SERVICE_ENDPOINT
               value: "{{ .Values.kubernetesInstrumentor.env.monitoringServiceEndpoint }}"
+            - name: DOTNET_AGENT_IMAGE
+              value: "{{ .Values.kubernetesInstrumentor.dotnetAgentImage.repository }}:{{ .Values.kubernetesInstrumentor.dotnetAgentImage.tag }}"
+            - name: PYTHON_AGENT_IMAGE
+              value: "{{ .Values.kubernetesInstrumentor.pythonAgentImage.repository }}:{{ .Values.kubernetesInstrumentor.pythonAgentImage.tag }}"
+            - name: NODEJS_AGENT_IMAGE
+              value: "{{ .Values.kubernetesInstrumentor.nodejsAgentImage.repository }}:{{ .Values.kubernetesInstrumentor.nodejsAgentImage.tag }}"
+            - name: JAVA_AGENT_IMAGE
+              value: "{{ .Values.kubernetesInstrumentor.javaAgentImage.repository }}:{{ .Values.kubernetesInstrumentor.javaAgentImage.tag }}"
           ports:
             - name: metrics-port
               containerPort: {{ .Values.kubernetesInstrumentor.ports.metricsPort }}
