@@ -270,7 +270,7 @@ Param 1: dict: "pipeline" infrastructure/applications & global context
 
 {{/*pipeline's namespace keep filters*/}}
 {{- $namespaceKeepFilters := (dict "source_labels" (list "namespace") "action" "keep") -}}
-{{- $customKeep = index .Values "prometheusFilters" "namespaces" $pipeline "drop" "custom" -}}
+{{- $customKeep = index .Values "prometheusFilters" "namespaces" $pipeline "keep" "custom" -}}
 {{- if $customKeep -}}
   {{- $_ := set $namespaceKeepFilters "regex" $customKeep -}}
 {{- end -}}
