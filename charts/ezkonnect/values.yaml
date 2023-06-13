@@ -4,22 +4,22 @@ kubernetesInstrumentor:
   serviceAccount: "kubernetes-instrumentor"
   image:
     repository: "logzio/instrumentor"
-    tag: "v1.0.2"
+    tag: "v1.0.3"
   instrumentationDetectorImage:
     repository: "logzio/instrumentation-detector"
-    tag: "v1.0.2"
+    tag: "v1.0.3"
   javaAgentImage:
     repository: "logzio/otel-agent-java"
-    tag: "v1.0.2"
+    tag: "v1.0.3"
   dotnetAgentImage:
     repository: "logzio/otel-agent-dotnet"
-    tag: "v1.0.2"
+    tag: "v1.0.3"
   nodejsAgentImage:
     repository: "logzio/otel-agent-nodejs"
-    tag: "v1.0.2"
+    tag: "v1.0.3"
   pythonAgentImage:
     repository: "logzio/otel-agent-python"
-    tag: "v1.0.2"
+    tag: "v1.0.3"
   ports:
     metricsPort: 8080
     healthProbePort: 8081
@@ -41,7 +41,7 @@ ezkonnectServer:
   serviceAccount: "ezkonnect-server"
   image:
     repository: "logzio/ezkonnect-server"
-    tag: "v1.0.2"
+    tag: "v1.0.4"
   ports:
     http: 5050
   service:
@@ -52,7 +52,7 @@ ezkonnectServer:
 ezkonnectUi:
   image:
     repository: "logzio/ezkonnect-ui"
-    tag: "v0.0.2"
+    tag: "v0.0.3"
   ports:
     http: 8080
   service:
@@ -89,4 +89,3 @@ rbac:
         - apiGroups: ["coordination.k8s.io"]
           resources: ["leases"]
           verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
-
