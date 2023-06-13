@@ -140,7 +140,7 @@ In these cases we can use the following `--set` commands to use an alternative i
 ```
 
 ## Changelog
-- **0.5.9**:
+- **0.6.0**:
 	- Upgrade `logzio-k8s-telemetry` to `0.0.29`:
 		- **BREAKING CHANGES**:
 			- Split prometheus scrape jobs to separate pipelines:
