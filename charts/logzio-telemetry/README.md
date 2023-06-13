@@ -259,7 +259,7 @@ A workaround for this issue is to create a seperate kube-dns service and add the
 By default, the kube-dns service filter is enabled, using the flag:
 
 ```
-disableKubeDnsScraping=true
+--set disableKubeDnsScraping=true
 ```
 
 More informtion can be found in the following GitHub issue:
