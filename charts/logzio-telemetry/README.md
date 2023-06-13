@@ -236,7 +236,7 @@ For example, to add a custom `namespace` keep filter to the application metric j
 --set prometheusFilters.namespaces.applications.custom="namesapce_1|namespace_2"
 ```
 
-For more information, view `prometheusFitlers` in `values.yaml`.
+For more information, view `prometheusFitlers` in [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/logzio-telemetry/values.yaml).
 
 
 ### Filtering metrics from `kube-system` namesapce
