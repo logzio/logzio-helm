@@ -1015,7 +1015,7 @@ prometheusFilters:
     # (kubernetes-service-endpoints & cadvisor jobs)
     infrastructure:
       keep:
-        custom: monitoring
+        custom:
       drop:
         kubeSystem: kube-system # need to also enable the flag: enableMetricsFilter.kubeSystem=true
         custom:
@@ -1037,8 +1037,6 @@ prometheusFilters:
       drop:
         kubeDns: kube-dns # need to also enable the flag: disableKubeDnsScraping=true
         custom:
-
-cloudProvider:  ""
     
 
 
