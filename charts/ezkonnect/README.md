@@ -25,6 +25,13 @@ helm repo update
 helm install logzio-ezkonnect logzio-helm/ezkonnect -n ezkonnect --create-namespace
 ``` 
 
+Then use `kubectl port-forward` to accsess the user intefrace in your browser
+```
+kubectl port-forward svc/ezkonnect-ui -n ezkonnect 8080:8080
+```
+
+Go to http://localhost:8080 
+
 Configuration
 -------------
 
