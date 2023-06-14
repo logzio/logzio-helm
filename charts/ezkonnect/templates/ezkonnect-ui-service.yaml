@@ -4,7 +4,6 @@ metadata:
   name: {{ .Values.ezkonnectUi.service.name }}
   namespace: {{ .Release.Namespace }}
 spec:
-  type: LoadBalancer
   selector:
     app: ezkonnect-ui
   ports:
