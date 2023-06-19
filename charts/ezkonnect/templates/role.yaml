@@ -1,0 +1,6 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: logzioLeaderElectionRole
+  namespace: {{ .Release.Namespace }}
+rules: {{ toYaml .Values.rbac.roles.logzioLeaderElectionRole.rules | nindent 2 }}
