@@ -41,17 +41,17 @@ serviceAccount
 | --- | --- | --- |
 | `kubernetesInstrumentor.serviceAccount` | Service account name of the instrumentor deployment | `"kubernetes-instrumentor"` |
 | `kubernetesInstrumentor.image.repository` | Repository of the instrumentor image | `"logzio/instrumentor"` |
-| `kubernetesInstrumentor.image.tag` | Tag of the instrumentor image | `"v1.0.3"` |
+| `kubernetesInstrumentor.image.tag` | Tag of the instrumentor image | `"v1.0.4"` |
 | `kubernetesInstrumentor.instrumentationDetectorImage.repository` | Repository of the instrumentation detector image | `"logzio/instrumentation-detector"` |
-| `kubernetesInstrumentor.instrumentationDetectorImage.tag` | Tag of the instrumentation detector image | `"v1.0.3"` |
+| `kubernetesInstrumentor.instrumentationDetectorImage.tag` | Tag of the instrumentation detector image | `"v1.0.4"` |
 | `kubernetesInstrumentor.javaAgentImage.repository` | Repository of the Java agent image | `"logzio/otel-agent-java"` |
-| `kubernetesInstrumentor.javaAgentImage.tag` | Tag of the Java agent image | `"v1.0.3"` |
+| `kubernetesInstrumentor.javaAgentImage.tag` | Tag of the Java agent image | `"v1.0.4"` |
 | `kubernetesInstrumentor.dotnetAgentImage.repository` | Repository of the .Net agent image | `"logzio/otel-agent-dotnet"` |
-| `kubernetesInstrumentor.dotnetAgentImage.tag` | Tag of the .Net agent image | `"v1.0.3"` |
+| `kubernetesInstrumentor.dotnetAgentImage.tag` | Tag of the .Net agent image | `"v1.0.4"` |
 | `kubernetesInstrumentor.nodejsAgentImage.repository` | Repository of the Node.js agent image | `"logzio/otel-agent-nodejs"` |
-| `kubernetesInstrumentor.nodejsAgentImage.tag` | Tag of the Node.js agent image | `"v1.0.3"` |
+| `kubernetesInstrumentor.nodejsAgentImage.tag` | Tag of the Node.js agent image | `"v1.0.4"` |
 | `kubernetesInstrumentor.pythonAgentImage.repository` | Repository of the Python agent image | `"logzio/otel-agent-python"` |
-| `kubernetesInstrumentor.pythonAgentImage.tag` | Tag of the Python agent image | `"v1.0.3"` |
+| `kubernetesInstrumentor.pythonAgentImage.tag` | Tag of the Python agent image | `"v1.0.4"` |
 | `kubernetesInstrumentor.ports.metricsPort` | Metrics port for the instrumentor | `8080` |
 | `kubernetesInstrumentor.ports.healthProbePort` | Health probe port for the instrumentor | `8081` |
 | `kubernetesInstrumentor.resources.limits.cpu` | CPU limit for the instrumentor | `"500m"` |
@@ -70,7 +70,7 @@ serviceAccount
 | `ezkonnectServer.service.port` | Service port for the server | `5050` |
 | `ezkonnectServer.service.targetPort` | Target port for the server service | `5050` |
 | `ezkonnectUi.image.repository` | Repository of the UI image | `"logzio/ezkonnect-ui"` |
-| `ezkonnectUi.image.tag` | Tag of the UI image | `"v0.0.3"` |
+| `ezkonnectUi.image.tag` | Tag of the UI image | `"v0.0.5"` |
 | `ezkonnectUi.ports.http` | HTTP port for the UI | `8080` |
 | `ezkonnectUi.service.name` | Name of the UI service | `"ezkonnect-ui-service"` |
 | `ezkonnectUi.service.type` | Type of the UI service | `"LoadBalancer"` |
