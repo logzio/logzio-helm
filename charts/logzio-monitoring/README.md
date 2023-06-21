@@ -140,8 +140,11 @@ In these cases we can use the following `--set` commands to use an alternative i
 ```
 
 ## Changelog
+- **0.6.1**:
+	- Upgrade `logzio-k8s-telemetry` to `0.1.1`:
+		- Added resourcedetection processor, span dimensions.
 - **0.6.0**:
-	- Upgrade `logzio-k8s-telemetry` to `0.0.29`:
+	- Upgrade `logzio-k8s-telemetry` to `0.1.0`:
 		- **BREAKING CHANGES**:
 			- Split prometheus scrape jobs to separate pipelines:
 				- Infrastrucutre: includes kubernetes-service-endpoints, windows-metrics, collector-metrics & cadvisor jobs.
@@ -153,6 +156,12 @@ In these cases we can use the following `--set` commands to use an alternative i
 - **0.5.8**:
 	- Upgrade `logzio-fluentd` Chart to `0.20.3`:
 	 - Added `logz.io/application_type` annotation detection. 
+
+
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
 - **0.5.7**:
 	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.29`:
     - Upgrade traces and metrics otel image `0.70.0` -> `0.78.0`
@@ -166,12 +175,6 @@ In these cases we can use the following `--set` commands to use an alternative i
 - **0.5.5**:
 	- Upgrade `logzio-fluentd` Chart to `0.20.2`:
 		- Use fluentd's retry instead of retry in code (raise exception on non-2xx response).
-
-
-
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
-
 - **0.5.4**:
 	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.27`:
 		- Removed duplicate `prometheus.io/scrape` annotation from `kube-state-metrics`(@dlip)
