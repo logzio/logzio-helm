@@ -154,6 +154,11 @@ baseCollectorConfig:
         - k8s.deployment.name
         - k8s.namespace.name
         - k8s.node.name
+        - k8s.statefulset.name
+        - k8s.replicaset.name
+        - k8s.daemonset.name
+        - k8s.cronjob.name
+        - k8s.job.name
     resource/k8s:
       attributes:
       # Rename
@@ -172,6 +177,21 @@ baseCollectorConfig:
       - key: pod_ip
         action: insert
         from_attribute: k8s.pod.ip
+      - key: statefulset
+        action: insert
+        from_attribute: k8s.statefulset.name
+      - key: replicaset
+        action: insert
+        from_attribute: k8s.replicaset.name
+      - key: cronjob
+        action: insert
+        from_attribute: k8s.cronjob.name
+      - key: daemonset
+        action: insert
+        from_attribute: k8s.daemonset.name
+      - key: job
+        action: insert
+        from_attribute: k8s.job.name
       # Delete old
       - key: k8s.deployment.name
         action: delete
@@ -182,6 +202,16 @@ baseCollectorConfig:
       - key: k8s.node.name
         action: delete
       - key: k8s.pod.ip
+        action: delete
+      - key: k8s.statefulset.name
+        action: delete
+      - key: k8s.replicaset.name
+        action: delete
+      - key: k8s.daemonset.name
+        action: delete
+      - key: k8s.job.name
+        action: delete
+      - key: k8s.cronjob.name
         action: delete
     batch: {}
     attributes/env_id:
@@ -231,6 +261,8 @@ tracesConfig:
     zipkin:
       endpoint: "0.0.0.0:9411"
   processors:
+    resourcedetection/all:
+      detectors: [ec2, azure, gcp]
     tail_sampling:
       policies:
         [
@@ -258,7 +290,7 @@ tracesConfig:
     pipelines:
       traces:
         receivers: [jaeger, zipkin, otlp]
-        processors: [attributes/env_id, k8sattributes, resource/k8s, tail_sampling, batch]
+        processors: [resourcedetection/all,attributes/env_id, k8sattributes, resource/k8s, tail_sampling, batch]
         exporters: [logging, logzio]
     telemetry:
       logs:
@@ -274,7 +306,7 @@ spmForwarderConfig:
     pipelines:
       traces/spm:
         receivers: [jaeger, zipkin, otlp]
-        processors: [attributes/env_id, k8sattributes, batch]
+        processors: [attributes/env_id, k8sattributes,batch]
         exporters: [logging, otlp]
 
 metricsConfig:
@@ -564,8 +596,19 @@ spanMetricsAgregator:
         aggregation_temporality: AGGREGATION_TEMPORALITY_CUMULATIVE
         dimensions:
           - name: http.method
+          - name: k8s.pod.name
+          - name: k8s.deployment.name
+          - name: k8s.namespace.name
+          - name: k8s.node.name
+          - name: k8s.statefulset.name
+          - name: k8s.replicaset.name
+          - name: k8s.daemonset.name
+          - name: k8s.cronjob.name
+          - name: k8s.job.name
           - name: env_id
             default: ${ENV_ID}
+      resourcedetection/all:
+        detectors: [ec2, azure, gcp]
     receivers:
       # Dummy recivier 
       otlp/spm:
@@ -616,9 +659,11 @@ spanMetricsAgregator:
           # Dummy recivier 
           receivers: [otlp/spm ]
           exporters: [logging, prometheus/spm]
+          processors: [resourcedetection/all]
         metrics/spm-logzio:
           receivers: [prometheus/spm-logzio]
           exporters: [prometheusremotewrite/spm-logzio]
+          processors: [resourcedetection/all]
   # service values        
   service:
     type: ClusterIP
@@ -772,6 +817,8 @@ daemonsetConfig:
   extensions:
     health_check: {}
   processors:
+    resourcedetection/all:
+      detectors: [ec2, azure, gcp]
     filter/kubernetes360:
       metrics:
         datapoint:

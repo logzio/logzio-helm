@@ -332,6 +332,9 @@ helm uninstall logzio-k8s-telemetry
 
 
 ## Change log
+* 0.1.1
+  - Added added resourcedetection processor - added kubernetes spm labels and traces fields.
+
 * 0.1.0 
   - **BREAKING CHANGES**:
     - Split prometheus scrape jobs to separate pipelines:
@@ -339,12 +342,16 @@ helm uninstall logzio-k8s-telemetry
       - Applications: includes applications jobs
     - Improved prometheus filters mechanism:
       - Users can now easily add custom filters for metrics, namesapces & services
-      using `prometheusFilters` in `values.md`. For more information view [Adding additional filters](#adding-addiotional-filters-for-metrics-scraping) 
+      using `prometheusFilters` in `values.yaml`. For more information view [Adding additional filters](#adding-addiotional-filters-for-metrics-scraping) 
     - Added spot labels for kube-state-metrics.
 * 0.0.29
   - Upgrade traces and metrics otel image `0.70.0` -> `0.78.0`
   - Upgrade spm image `0.70.0` -> `0.73.0`
   - Added values for seprate spm iamge
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+  
 * 0.0.28
   - Change default metrics scrape and export values to handle more cases
   - Reorder processors
@@ -355,9 +362,6 @@ helm uninstall logzio-k8s-telemetry
   - Added `applications` scrape job for `daemonset` collector mode.
   - Added `secrets.enabled` value.
 
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
-
 * 0.0.25
   - Added affinity condition to the daemonset collector.
   - Added opencost duplicate metrics filtering. NOTE: Opencost can be enabled with [Logzio Monitorig Helm Chart](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-monitoring)
@@ -365,10 +369,6 @@ helm uninstall logzio-k8s-telemetry
   - Improved naming of the collector deployments:
     - Daemonset pods now have the "ds" suffix.
     - Standalone pod now have the "standalone" suffix.
-
-
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
 
 * 0.0.24
   - Added `collector.mode` flag - now supports `standalone` and `daemonset`, default is `daemonset`.
