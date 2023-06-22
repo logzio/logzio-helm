@@ -339,8 +339,9 @@ helm uninstall logzio-k8s-telemetry
 
 ## Change log
 
-* 0.1.2
-  - Added `applicationMetrics.enabled` value
+* 0.2.0
+  - **BREAKING CHANGES**:
+   - Added `applicationMetrics.enabled` value (defaults to `false`)
 * 0.1.1
   - Added added resourcedetection processor - added kubernetes spm labels and traces fields.
 * 0.1.0 
