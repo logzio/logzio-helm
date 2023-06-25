@@ -10,7 +10,8 @@ metrics:
   enabled: false
 spm:
   enabled: false
-
+applicationMetrics:
+  enabled: false
 nameOverride: "otel-collector"
 fullnameOverride: ""
 
@@ -472,14 +473,6 @@ metricsConfig:
     extensions:
       - health_check
     pipelines:
-      metrics/applications:
-        exporters:
-          - prometheusremotewrite/applications
-        processors:
-          - attributes/env_id
-          - filter/kubernetes360
-        receivers:
-          - prometheus/applications
       metrics/infrastructure:
         exporters:
           - prometheusremotewrite/infrastructure
@@ -997,14 +990,6 @@ daemonsetConfig:
     extensions:
       - health_check
     pipelines:
-      metrics/applications:
-        exporters:
-          - prometheusremotewrite/applications
-        processors:
-          - attributes/env_id
-          - filter/kubernetes360
-        receivers:
-          - prometheus/applications
       metrics/infrastructure:
         exporters:
           - prometheusremotewrite/infrastructure

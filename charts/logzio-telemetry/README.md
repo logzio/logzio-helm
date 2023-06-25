@@ -210,7 +210,13 @@ The default configuration uses the Prometheus receiver with the following scrape
 
 To customize your configuration, edit the `config` section in the `values.yaml` file.
 
+### Adding application metrics
 
+To enable applications metrics scraping set the `applicationMetrics.enabled` value to `true`
+```bash
+--set applicationMetrics.enabled=true
+```
+This will enable the `metrics/applications` pipline and will scrape metrics from pods with the `prometheus.io/scrape=true` annotation
 ### Using Out of the box metrics filters for Logzio dashboards
 
 You can use predefined metrics filters to prevent unnecessary metrics being sent to Logz.io and reduce usage cost.
@@ -332,9 +338,12 @@ helm uninstall logzio-k8s-telemetry
 
 
 ## Change log
+
+* 0.2.0
+  - **BREAKING CHANGES**:
+   - Added `applicationMetrics.enabled` value (defaults to `false`)
 * 0.1.1
   - Added added resourcedetection processor - added kubernetes spm labels and traces fields.
-
 * 0.1.0 
   - **BREAKING CHANGES**:
     - Split prometheus scrape jobs to separate pipelines:

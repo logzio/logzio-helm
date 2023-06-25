@@ -83,6 +83,10 @@ Build config file for standalone OpenTelemetry Collector
       {{- end -}}
     {{- end -}} 
   {{- end -}}
+  {{- if .Values.applicationMetrics.enabled -}}
+    {{- $metricsApplications := dict "exporters" (list "prometheusremotewrite/applications") "processors" (list "attributes/env_id" "filter/kubernetes360") "receivers" (list "prometheus/applications") -}}
+    {{- $_ := set .Values.metricsConfig.service.pipelines "metrics/applications" $metricsApplications -}}
+  {{- end -}}
 {{- end -}}
 {{- .Values.standaloneCollector.configOverride | merge $configData | mustMergeOverwrite $config | toYaml}}
 {{- end -}}
@@ -230,6 +234,10 @@ Build config file for standalone OpenTelemetry Collector daemonset
         {{- $_ := set $job ("relabel_configs" | toYaml)  ( append $job.relabel_configs ($filter)) -}}
       {{- end -}}
     {{- end -}} 
+  {{- end -}}
+  {{- if .Values.applicationMetrics.enabled -}}
+    {{- $metricsApplications := dict "exporters" (list "prometheusremotewrite/applications") "processors" (list "attributes/env_id" "filter/kubernetes360") "receivers" (list "prometheus/applications") -}}
+    {{- $_ := set .Values.daemonsetConfig.service.pipelines "metrics/applications" $metricsApplications -}}
   {{- end -}}
 {{- end -}}
 
