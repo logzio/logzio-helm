@@ -141,7 +141,9 @@ In these cases we can use the following `--set` commands to use an alternative i
 
 ## Changelog
 - **0.6.1**:
-	- Upgrade `logzio-k8s-telemetry` to `0.1.1`:
+	- Upgrade `logzio-k8s-telemetry` to `0.2.0`:
+		- **BREAKING CHANGES**:
+   			- Added `applicationMetrics.enabled` value (defaults to `false`)
 		- Added resourcedetection processor, span dimensions.
 - **0.6.0**:
 	- Upgrade `logzio-k8s-telemetry` to `0.1.0`:
