@@ -140,7 +140,7 @@ In these cases we can use the following `--set` commands to use an alternative i
 ```
 
 ## Changelog
-- **0.6.1**:
+- **0.7.0**:
 	- Upgrade `logzio-k8s-telemetry` to `0.2.0`:
 		- **BREAKING CHANGES**:
    			- Added `applicationMetrics.enabled` value (defaults to `false`)
