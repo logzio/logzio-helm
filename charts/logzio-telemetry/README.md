@@ -341,6 +341,7 @@ helm uninstall logzio-k8s-telemetry
 
 * 0.2.1
   - Rename k8s attributes for traces pipeline.
+  - SPM: add dimension `http.status_code`.
 * 0.2.0
   - **BREAKING CHANGES**:
    - Added `applicationMetrics.enabled` value (defaults to `false`)
