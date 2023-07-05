@@ -140,11 +140,20 @@ In these cases we can use the following `--set` commands to use an alternative i
 ```
 
 ## Changelog
+- **0.7.1**:
+	- Upgrade `logzio-k8s-telemetry` to `0.2.1`:
+		- Rename k8s attributes for traces pipeline.
+  	- SPM: add dimension `http.status_code`.
 - **0.7.0**:
 	- Upgrade `logzio-k8s-telemetry` to `0.2.0`:
 		- **BREAKING CHANGES**:
    			- Added `applicationMetrics.enabled` value (defaults to `false`)
 		- Added resourcedetection processor, span dimensions.
+
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
 - **0.6.0**:
 	- Upgrade `logzio-k8s-telemetry` to `0.1.0`:
 		- **BREAKING CHANGES**:
@@ -158,12 +167,6 @@ In these cases we can use the following `--set` commands to use an alternative i
 - **0.5.8**:
 	- Upgrade `logzio-fluentd` Chart to `0.20.3`:
 	 - Added `logz.io/application_type` annotation detection. 
-
-
-
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
-
 - **0.5.7**:
 	- Upgrade `logzio-k8s-telemetry` Chart to `0.0.29`:
     - Upgrade traces and metrics otel image `0.70.0` -> `0.78.0`
