@@ -339,11 +339,19 @@ helm uninstall logzio-k8s-telemetry
 
 ## Change log
 
+* 0.2.1
+  - Rename k8s attributes for traces pipeline.
+  - SPM: add dimension `http.status_code`.
 * 0.2.0
   - **BREAKING CHANGES**:
    - Added `applicationMetrics.enabled` value (defaults to `false`)
 * 0.1.1
   - Added added resourcedetection processor - added kubernetes spm labels and traces fields.
+
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
 * 0.1.0 
   - **BREAKING CHANGES**:
     - Split prometheus scrape jobs to separate pipelines:
@@ -356,11 +364,7 @@ helm uninstall logzio-k8s-telemetry
 * 0.0.29
   - Upgrade traces and metrics otel image `0.70.0` -> `0.78.0`
   - Upgrade spm image `0.70.0` -> `0.73.0`
-  - Added values for seprate spm iamge
-
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
-  
+  - Added values for seprate spm iamge  
 * 0.0.28
   - Change default metrics scrape and export values to handle more cases
   - Reorder processors
