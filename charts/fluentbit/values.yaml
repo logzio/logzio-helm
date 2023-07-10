@@ -12,7 +12,7 @@ replicaCount: 1
 image:
   repository: logzio/fluent-bit-output
   # Overrides the image tag whose default is {{ .Chart.AppVersion }}
-  tag: "0.3.0"
+  tag: "0.4.0"
   pullPolicy: Always
 
 testFramework:
@@ -225,6 +225,10 @@ config:
         dedot_enabled true
         dedot_nested true
         dedot_new_seperator _
+        proxy_url http://{{ .Values.logzio.proxyUrl }}
+        proxy_user {{ .Values.logzio.proxyUser }}
+        proxy_pass {{ .Values.logzio.proxyPass }}
+        
   ## https://docs.fluentbit.io/manual/pipeline/parsers
   customParsers: |
     [PARSER]
