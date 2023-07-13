@@ -225,7 +225,7 @@ config:
         dedot_enabled true
         dedot_nested true
         dedot_new_seperator _
-        proxy_url http://{{ .Values.logzio.proxyUrl }}
+        proxy_host  {{ .Values.logzio.proxyHost }}
         proxy_user {{ .Values.logzio.proxyUser }}
         proxy_pass {{ .Values.logzio.proxyPass }}
         

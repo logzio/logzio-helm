@@ -35,6 +35,30 @@ helm install  \
 logzio-fluent-bit logzio-helm/logzio-fluent-bit
 ```
 
+
+#### Sending logs using HTTP Proxy server
+
+*Note that HTTPS is not currently supported. It is recommended not to set this and to configure the [HTTP_PROXY environment variables](https://docs.fluentbit.io/manual/administration/http-proxy) instead as they support both HTTP and HTTPS.* 
+
+If you want to ship logs and route them through a Proxy HTTP server please set the following Helm chart parameters:
+
+Replace the parameter `<<PROXY_HOST>>` (optional) with your HTTP Proxy server host address. # `<<IP_OR_HOST>>:<<PORT>>`
+
+If you'd like to use basic authentication please replace the parameter `<<PROXY_USERNAME>>` (optional) with the Proxy server username and replace the parameter `<<PROXY_PASSWORD>>` (optional) with the user's password.
+
+###### Run the Helm deployment code with Proxy configuration
+```sh
+helm install  \
+--set logzio.token=<<LOGZIO_TOKEN>> \
+--set logzio.listenerHost=<<LISTENER_HOST>> \
+--set logzio.logType=<<LOG_TYPE>> \
+--set logzio.proxyHost=<<PROXY_HOST>> \
+--set logzio.proxyUser=<<PROXY_USERNAME>> \
+--set logzio.proxyPass=<<PROXY_PASSWORD>> \
+logzio-fluent-bit logzio-helm/logzio-fluent-bit
+```
+
+
 ##### Check Logz.io for your logs
 
 Give your logs some time to get from your system to ours, then open [Logz.io](https://app.logz.io/).
@@ -87,7 +111,6 @@ To determine if a node uses taints as well as to display the taint keys, run:
 ```sh
 kubectl get nodes -o json | jq ".items[]|{name:.metadata.name, taints:.spec.taints}"
 ```
-
 
 ## Change log
 * 0.0.4 - Upgrade docker image to 0.3.0, adding dedot filter
