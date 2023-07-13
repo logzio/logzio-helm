@@ -75,7 +75,7 @@ helm uninstall logzio-fluent-bit
 
 If you want to ship logs and route them through a Proxy HTTP server please set the following Helm chart parameters:
 
-Replace the parameter `<<PROXY_HOST>>` (optional) with your HTTP Proxy server host address. # `<<IP_OR_HOST>>:<<PORT>>`
+Replace the parameter `<<PROXY_HOST>>` with your HTTP Proxy server host address. # `<<IP_OR_HOST>>:<<PORT>>`
 
 If you'd like to use basic authentication please replace the parameter `<<PROXY_USERNAME>>` (optional) with the Proxy server username and replace the parameter `<<PROXY_PASSWORD>>` (optional) with the user's password.
 
