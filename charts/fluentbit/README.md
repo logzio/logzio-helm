@@ -1,4 +1,4 @@
-# Logzio fluentbit helm chart
+# Logz.io FluentBit Helm Chart
 
 ##  Overview
 
