@@ -339,7 +339,7 @@ helm uninstall logzio-k8s-telemetry
 
 ## Change log
 
-* 3.0.0 
+* 1.0.0 
   - Fixed an issue where when enabling `enableMetricsFilter.kubeSystem` installation failes.
   - **BREAKING CHANGES**:
     - Rename `enableMetricsFilter.kubeSystem` to `enableMetricsFilter.dropKubeSystem`, in order to avoid confusion between functionality of filters.
