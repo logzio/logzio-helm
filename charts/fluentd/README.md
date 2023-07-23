@@ -276,19 +276,26 @@ When enabling promehteus configuration, the pod collects and exposes fluentd met
 
 ## Change log
 
+ - **0.21.0**:
+  - Bump docker image to `1.5.0`:
+    - Upgrade fluentd to `1.16`.
+    - Upgrade gem `fluent-plugin-logzio` to `0.2.2`:
+      - Do not retry on 400 and 401. For 400 - try to fix log and resend.
+      - Generate a metric (`logzio_status_codes`) for response codes from Logz.io.
  - **0.20.3**:
    - ezKonnect support: Added `logz.io/application_type` to type annotation check .
+
+
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
  - **0.20.2**:
    - Upgrade docker image `logzio/logzio-fluentd` to `1.4.0`:
      - Use fluentd's retry instead of retry in code (raise exception on non-2xx response).
  - **0.20.1**:
    - Added log level detection for fargate log router
    - Remove `namespace` value, replaced by `Realese.namespace` in all templates
-
-
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
-
  - **0.20.0**:
    - Upgraded windows image to `logzio/windows:0.0.2`:
      - Added prometheus monitor plugin
