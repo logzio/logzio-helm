@@ -4,10 +4,10 @@ kubernetesInstrumentor:
   serviceAccount: "kubernetes-instrumentor"
   image:
     repository: "logzio/instrumentor"
-    tag: "v1.0.4"
+    tag: "v1.0.5"
   instrumentationDetectorImage:
     repository: "logzio/instrumentation-detector"
-    tag: "v1.0.4"
+    tag: "v1.0.5"
   javaAgentImage:
     repository: "logzio/otel-agent-java"
     tag: "v1.0.4"
@@ -41,9 +41,9 @@ ezkonnectServer:
   serviceAccount: "ezkonnect-server"
   image:
     repository: "logzio/ezkonnect-server"
-    tag: "v1.0.4"
+    tag: "v1.0.6"
   ports:
-    http: 5050
+    http: 8080
   service:
     name: "ezkonnect-server"
     port: 5050
@@ -54,11 +54,11 @@ ezkonnectUi:
     repository: "logzio/ezkonnect-ui"
     tag: "v0.0.5"
   ports:
-    http: 8080
+    http: 31032
   service:
     name: "ezkonnect-ui"
-    port: 8080
-    targetPort: 8080
+    port: 31032
+    targetPort: 31032
 
 rbac:
   clusterRoles:
