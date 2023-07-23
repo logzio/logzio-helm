@@ -803,7 +803,7 @@ enableMetricsFilter:
   gke: false
   eks: false
   aks: false
-  kubeSystem: false
+  dropKubeSystem: false
 
 disableKubeDnsScraping: false
 

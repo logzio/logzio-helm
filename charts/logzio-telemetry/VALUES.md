@@ -40,7 +40,7 @@ logzio-k8s-telemetry allows you to ship metrics and traces from your Kubernetes 
 | enableMetricsFilter.aks | bool | `false` | Enable metric filtering for aks clusters - only base metrics will be sent. (general cluster,nodes,pods and container metrics)|
 | enableMetricsFilter.eks | bool | `false` | Enable metric filtering for eks clusters - only base metrics will be sent. (general cluster,nodes,pods and container metrics) |
 | enableMetricsFilter.gke | bool | `false` | Enable metric filtering for gke clusters - only base metrics will be sent. (general cluster,nodes,pods and container metrics) |
-| enableMetricsFilter.kubeSystem | bool | `false` | Enable metric filtering for kube system metrics. |
+| enableMetricsFilter.dropKubeSystem | bool | `false` | Enable metric filtering for kube system metrics. |
 | image.pullPolicy | string | `"IfNotPresent"` | Image pull policy for the opentelemetry collector image. |
 | image.repository | string | `"otel/opentelemetry-collector-contrib"` | Opentelemetry collector image repository. |
 | image.tag | string | `"0.78.0"` |  Opentelemetry collector image tag. |
