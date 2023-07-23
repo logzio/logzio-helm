@@ -56,6 +56,8 @@ spec:
                     properties:
                       opentelemetryPreconfigured:
                         type: boolean
+                      activeServiceName:
+                        type: string
                       containerName:
                         type: string
                       language:

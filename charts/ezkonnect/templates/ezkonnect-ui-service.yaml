@@ -7,6 +7,6 @@ spec:
   selector:
     app: ezkonnect-ui
   ports:
-    - protocol: TCP
+    - name: http
       port: {{ .Values.ezkonnectUi.service.port }}
       targetPort: {{ .Values.ezkonnectUi.service.targetPort }}
