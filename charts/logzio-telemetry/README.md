@@ -250,7 +250,7 @@ For more information, view `prometheusFitlers` in [values.yaml](https://github.c
 To Filter out metrics from `kube-system` namesapce, set the following flag when deploying the chart.
 
 ```
---set enableMetricsFilter.kubeSystem=true
+--set enableMetricsFilter.dropKubeSystem=true
 ```
 
 ### Disabling kube-dns scraping for EKS clusters
@@ -339,19 +339,23 @@ helm uninstall logzio-k8s-telemetry
 
 ## Change log
 
+* 1.0.0 
+  - Fixed an issue where when enabling `enableMetricsFilter.kubeSystem` installation failes.
+  - **BREAKING CHANGES**:
+    - Rename `enableMetricsFilter.kubeSystem` to `enableMetricsFilter.dropKubeSystem`, in order to avoid confusion between functionality of filters.
 * 0.2.1
   - Rename k8s attributes for traces pipeline.
   - SPM: add dimension `http.status_code`.
 * 0.2.0
   - **BREAKING CHANGES**:
    - Added `applicationMetrics.enabled` value (defaults to `false`)
-* 0.1.1
-  - Added added resourcedetection processor - added kubernetes spm labels and traces fields.
 
 
 <details>
   <summary markdown="span"> Expand to check old versions </summary>
 
+* 0.1.1
+  - Added added resourcedetection processor - added kubernetes spm labels and traces fields.
 * 0.1.0 
   - **BREAKING CHANGES**:
     - Split prometheus scrape jobs to separate pipelines:

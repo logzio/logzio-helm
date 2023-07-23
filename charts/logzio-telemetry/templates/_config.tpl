@@ -285,8 +285,8 @@ Param 1: dict: "pipeline" infrastructure/applications & global context
 
 {{/*pipeline's namespace drop filters*/}}
 {{- $namespaceDropFilters := (dict "source_labels" (list "namespace") "action" "drop") -}}
-{{- if (and .Values.enableMetricsFilter.kubeSystem (eq $pipeline "infrastructure")) -}}
-  {{- $_ = set $namespaceDropFilters ("regex" ) .Values.prometheusFilters.namespaces.infrastructure.drop.kubeSystem -}}
+{{- if (and .Values.enableMetricsFilter.dropKubeSystem (eq $pipeline "infrastructure")) -}}
+  {{- $_ := set $namespaceDropFilters ("regex" ) .Values.prometheusFilters.namespaces.infrastructure.drop.kubeSystem -}}
 {{- end -}}
 {{- $customDrop = index .Values "prometheusFilters" "namespaces" $pipeline "drop" "custom" -}}
 {{- if $customDrop -}}
