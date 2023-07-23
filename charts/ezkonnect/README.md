@@ -71,7 +71,7 @@ serviceAccount
 | `ezkonnectServer.service.port` | Service port for the server | `5050` |
 | `ezkonnectServer.service.targetPort` | Target port for the server service | `5050` |
 | `ezkonnectUi.image.repository` | Repository of the UI image | `"logzio/ezkonnect-ui"` |
-| `ezkonnectUi.image.tag` | Tag of the UI image | `"v0.0.5"` |
+| `ezkonnectUi.image.tag` | Tag of the UI image | `"v1.0.0"` |
 | `ezkonnectUi.ports.http` | HTTP port for the UI | `31032` |
 | `ezkonnectUi.service.name` | Name of the UI service | `"ezkonnect-ui-service"` |
 | `ezkonnectUi.service.port` | Service port for the UI | `31032` |

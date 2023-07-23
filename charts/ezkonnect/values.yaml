@@ -52,7 +52,7 @@ ezkonnectServer:
 ezkonnectUi:
   image:
     repository: "logzio/ezkonnect-ui"
-    tag: "v0.0.5"
+    tag: "v1.0.0"
   ports:
     http: 31032
   service:
