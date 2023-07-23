@@ -16,10 +16,10 @@ spec:
         logz.io/skip: "true"
     spec:
       containers:
-        - name: ezkonnect-ui-container
+        - name: ezkonnect-ui
           image: "{{ .Values.ezkonnectUi.image.repository }}:{{ .Values.ezkonnectUi.image.tag }}"
           ports:
             - containerPort: {{ .Values.ezkonnectUi.ports.http }}
           env:
-            - name: VITE_ENDPOINT_API
-              value: "http://{{ .Values.ezkonnectServer.service.name }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.ezkonnectServer.service.port }}"
+            - name: EZ_KONNECT_SERVER_URL
+              value: "{{ .Values.ezkonnectServer.service.name }}"
