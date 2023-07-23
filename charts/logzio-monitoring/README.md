@@ -141,6 +141,11 @@ In these cases we can use the following `--set` commands to use an alternative i
 
 ## Changelog
 - **0.7.1**:
+  - Upgrade `logzio-k8s-telemetry` to `1.0.0`:
+	- Fixed an issue where when enabling `enableMetricsFilter.kubeSystem` installation failes.
+  - **BREAKING CHANGES**:
+    - Rename `enableMetricsFilter.kubeSystem` to `enableMetricsFilter.dropKubeSystem`, in order to avoid confusion between functionality of filters.
+- **0.7.1**:
 	- Upgrade `logzio-k8s-telemetry` to `0.2.1`:
 		- Rename k8s attributes for traces pipeline.
   	- SPM: add dimension `http.status_code`.
