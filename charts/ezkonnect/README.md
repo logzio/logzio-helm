@@ -15,6 +15,13 @@ Supported languages:
 - python
 - dotnet
 
+Before you start you will need:
+------------
+- Opentelemetry collector installed on your cluster
+  - works out of the box with [logzio-monitoring](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-monitoring) chart installed with traces and logs enabled (version `0.5.8` or higher for log_type)
+  - to send the data to a custom collector change the `kubernetesInstrumentor.env.monitoringServiceEndpoint` value
+
+
 Installation
 ------------
 
