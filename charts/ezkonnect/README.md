@@ -88,5 +88,9 @@ Here, `my_values.yaml` is your custom configuration file.
 
 Change log
 -------------
+* 0.0.2
+  - New user interface
+  - Add `activeServiceName` to crd
+  - New images for `ezkonnect-server` & `kubernetes-instrumentor`
 * 0.0.1
   - Easily add otel auto instrumentation and log types to your Kubernetes applications
