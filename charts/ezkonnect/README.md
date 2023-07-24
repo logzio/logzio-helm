@@ -49,17 +49,17 @@ serviceAccount
 | --- | --- | --- |
 | `kubernetesInstrumentor.serviceAccount` | Service account name of the instrumentor deployment | `"kubernetes-instrumentor"` |
 | `kubernetesInstrumentor.image.repository` | Repository of the instrumentor image | `"logzio/instrumentor"` |
-| `kubernetesInstrumentor.image.tag` | Tag of the instrumentor image | `"v1.0.5"` |
+| `kubernetesInstrumentor.image.tag` | Tag of the instrumentor image | `"v1.0.6"` |
 | `kubernetesInstrumentor.instrumentationDetectorImage.repository` | Repository of the instrumentation detector image | `"logzio/instrumentation-detector"` |
-| `kubernetesInstrumentor.instrumentationDetectorImage.tag` | Tag of the instrumentation detector image | `"v1.0.5"` |
+| `kubernetesInstrumentor.instrumentationDetectorImage.tag` | Tag of the instrumentation detector image | `"v1.0.6"` |
 | `kubernetesInstrumentor.javaAgentImage.repository` | Repository of the Java agent image | `"logzio/otel-agent-java"` |
-| `kubernetesInstrumentor.javaAgentImage.tag` | Tag of the Java agent image | `"v1.0.5"` |
+| `kubernetesInstrumentor.javaAgentImage.tag` | Tag of the Java agent image | `"v1.0.6"` |
 | `kubernetesInstrumentor.dotnetAgentImage.repository` | Repository of the .Net agent image | `"logzio/otel-agent-dotnet"` |
-| `kubernetesInstrumentor.dotnetAgentImage.tag` | Tag of the .Net agent image | `"v1.0.5"` |
+| `kubernetesInstrumentor.dotnetAgentImage.tag` | Tag of the .Net agent image | `"v1.0.6"` |
 | `kubernetesInstrumentor.nodejsAgentImage.repository` | Repository of the Node.js agent image | `"logzio/otel-agent-nodejs"` |
-| `kubernetesInstrumentor.nodejsAgentImage.tag` | Tag of the Node.js agent image | `"v1.0.5"` |
+| `kubernetesInstrumentor.nodejsAgentImage.tag` | Tag of the Node.js agent image | `"v1.0.6"` |
 | `kubernetesInstrumentor.pythonAgentImage.repository` | Repository of the Python agent image | `"logzio/otel-agent-python"` |
-| `kubernetesInstrumentor.pythonAgentImage.tag` | Tag of the Python agent image | `"v1.0.5"` |
+| `kubernetesInstrumentor.pythonAgentImage.tag` | Tag of the Python agent image | `"v1.0.6"` |
 | `kubernetesInstrumentor.ports.metricsPort` | Metrics port for the instrumentor | `8080` |
 | `kubernetesInstrumentor.ports.healthProbePort` | Health probe port for the instrumentor | `8081` |
 | `kubernetesInstrumentor.resources.limits.cpu` | CPU limit for the instrumentor | `"500m"` |
@@ -95,6 +95,8 @@ Here, `my_values.yaml` is your custom configuration file.
 
 Change log
 -------------
+* 1.0.1
+  - Update `instrumentor` image version `v1.0.5` -> `v1.0.6`
 * 1.0.1
   - New user interface
   - Add `activeServiceName` to crd
