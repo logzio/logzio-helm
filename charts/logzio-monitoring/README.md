@@ -140,11 +140,22 @@ In these cases we can use the following `--set` commands to use an alternative i
 ```
 
 ## Changelog
-- **0.7.1**:
+
+- **1.1.0**:
+	- Upgrade `logzio-fluentd` to `0.21.0`:
+		- Upgrade fluentd to `1.16`.
+		- Upgrade gem `fluent-plugin-logzio` to `0.2.2`:
+			- Do not retry on 400 and 401. For 400 - try to fix log and resend.
+			- Generate a metric (`logzio_status_codes`) for response codes from Logz.io.
+- **1.0.0**:
   - Upgrade `logzio-k8s-telemetry` to `1.0.0`:
 	- Fixed an issue where when enabling `enableMetricsFilter.kubeSystem` installation failes.
   - **BREAKING CHANGES**:
     - Rename `enableMetricsFilter.kubeSystem` to `enableMetricsFilter.dropKubeSystem`, in order to avoid confusion between functionality of filters.
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
 - **0.7.1**:
 	- Upgrade `logzio-k8s-telemetry` to `0.2.1`:
 		- Rename k8s attributes for traces pipeline.
@@ -154,11 +165,6 @@ In these cases we can use the following `--set` commands to use an alternative i
 		- **BREAKING CHANGES**:
    			- Added `applicationMetrics.enabled` value (defaults to `false`)
 		- Added resourcedetection processor, span dimensions.
-
-
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
-
 - **0.6.0**:
 	- Upgrade `logzio-k8s-telemetry` to `0.1.0`:
 		- **BREAKING CHANGES**:
