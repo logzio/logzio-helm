@@ -6,6 +6,8 @@ securityReport:
   enabled: false
 finops:
   enabled: false
+ezkonnect:
+  enabled: false
 
 logzio-fluentd:
   daemonset:
