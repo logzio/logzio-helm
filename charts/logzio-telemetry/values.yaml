@@ -292,7 +292,7 @@ tracesConfig:
       traces:
         receivers: [jaeger, zipkin, otlp]
         processors: [resourcedetection/all,attributes/env_id, k8sattributes, resource/k8s, tail_sampling, batch]
-        exporters: [logging, logzio]
+        exporters: [logzio]
     telemetry:
       logs:
         level: "info"  
@@ -307,7 +307,7 @@ spmForwarderConfig:
     pipelines:
       traces/spm:
         receivers: [jaeger, zipkin, otlp]
-        processors: [attributes/env_id, k8sattributes,batch]
+        processors: [attributes/env_id, k8sattributes, resource/k8s ,batch]
         exporters: [logging, otlp]
 
 metricsConfig:
@@ -590,15 +590,15 @@ spanMetricsAgregator:
         dimensions:
           - name: http.method
           - name: http.status_code
-          - name: k8s.pod.name
-          - name: k8s.deployment.name
-          - name: k8s.namespace.name
-          - name: k8s.node.name
-          - name: k8s.statefulset.name
-          - name: k8s.replicaset.name
-          - name: k8s.daemonset.name
-          - name: k8s.cronjob.name
-          - name: k8s.job.name
+          - name: pod
+          - name: kubernetes_deployment
+          - name: kubernetes_namespace
+          - name: kubernetes_node
+          - name: kubernetes_statefulset
+          - name: kubernetes_replicaset
+          - name: kubernetes_daemonset
+          - name: kubernetes_cronjob
+          - name: kubernetes_job
           - name: env_id
             default: ${ENV_ID}
       resourcedetection/all:
@@ -652,7 +652,7 @@ spanMetricsAgregator:
         metrics/spm:
           # Dummy recivier 
           receivers: [otlp/spm ]
-          exporters: [logging, prometheus/spm]
+          exporters: [prometheus/spm]
           processors: [resourcedetection/all]
         metrics/spm-logzio:
           receivers: [prometheus/spm-logzio]
