@@ -12,12 +12,12 @@ spec:
   selector:
     matchLabels:
       {{- include "opentelemetry-collector.selectorLabels" . | nindent 6 }}
-      component: standalone-collector
+      component: standalone-collector-spm
   template:
     metadata:
       labels:
         {{- include "opentelemetry-collector.selectorLabels" . | nindent 8 }}
-        component: standalone-collector
+        component: standalone-collector-spm
         {{- with .Values.standaloneCollector.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}  
