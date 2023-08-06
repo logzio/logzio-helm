@@ -168,7 +168,10 @@ In these cases we can use the following `--set` commands to use an alternative i
 ```
 
 ## Changelog
-- **1.2.0**:
+- **1.2.1**:
+  - Fixed `spm` service component name
+  - Add `spm` cloud metadata
+  - Rename `spm` k8s metadata fields- **1.2.0**:
 	- Add `ezkonnect` chart as a dependency
 - **1.1.0**:
 	- Upgrade `logzio-fluentd` to `0.21.0`:
