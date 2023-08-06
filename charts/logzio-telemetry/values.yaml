@@ -307,7 +307,7 @@ spmForwarderConfig:
     pipelines:
       traces/spm:
         receivers: [jaeger, zipkin, otlp]
-        processors: [attributes/env_id, k8sattributes, resource/k8s ,batch]
+        processors: [resourcedetection/all, attributes/env_id, k8sattributes, resource/k8s]
         exporters: [logging, otlp]
 
 metricsConfig:
@@ -599,10 +599,10 @@ spanMetricsAgregator:
           - name: kubernetes_daemonset
           - name: kubernetes_cronjob
           - name: kubernetes_job
+          - name: cloud.provider
+          - name: cloud.region
           - name: env_id
             default: ${ENV_ID}
-      resourcedetection/all:
-        detectors: [ec2, azure, gcp]
     receivers:
       # Dummy recivier 
       otlp/spm:
@@ -635,7 +635,8 @@ spanMetricsAgregator:
       zipkin:
         endpoint: "0.0.0.0:9411"
     exporters:
-      logging: {}
+      logging:
+        loglevel: info
       prometheus/spm:
         endpoint: "0.0.0.0:8889"
       prometheusremotewrite/spm-logzio:
@@ -651,13 +652,11 @@ spanMetricsAgregator:
           exporters: [logging]
         metrics/spm:
           # Dummy recivier 
-          receivers: [otlp/spm ]
+          receivers: [otlp/spm]
           exporters: [prometheus/spm]
-          processors: [resourcedetection/all]
         metrics/spm-logzio:
           receivers: [prometheus/spm-logzio]
           exporters: [prometheusremotewrite/spm-logzio]
-          processors: [resourcedetection/all]
   # service values        
   service:
     type: ClusterIP
@@ -1070,7 +1069,6 @@ prometheusFilters:
       drop:
         kubeDns: kube-dns # need to also enable the flag: disableKubeDnsScraping=true
         custom:
-    
 
 
 
