@@ -338,7 +338,10 @@ helm uninstall logzio-k8s-telemetry
 
 
 ## Change log
-
+* 1.0.1
+  - Fixed `spm` service component name
+  - Add `spm` cloud metadata
+  - Rename `spm` k8s metadata fields
 * 1.0.0 
   - Fixed an issue where when enabling `enableMetricsFilter.kubeSystem` installation failes.
   - **BREAKING CHANGES**:
