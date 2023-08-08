@@ -338,6 +338,8 @@ helm uninstall logzio-k8s-telemetry
 
 
 ## Change log
+* 1.0.2
+  - Rename `spm` k8s metadata fields
 * 1.0.1
   - Fixed `spm` service component name
   - Add `spm` cloud metadata
