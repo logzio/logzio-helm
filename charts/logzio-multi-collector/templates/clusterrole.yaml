@@ -1,0 +1,14 @@
+{{ if or .Values.managedServiceAccount .Values.clusterRole.create }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "opentelemetry-collector.clusterRoleName" $ }}
+  labels:
+    {{- include "opentelemetry-collector.labels" $ | nindent 4 }}
+    k8s-app: otel-collector
+  {{- with $.Values.clusterRole.annotations }}
+  annotations:
+    {{- toYaml $ | nindent 4 }}
+  {{- end }}
+rules: {{ toYaml $.Values.clusterRoleRules | nindent 2 }}
+{{- end -}}
