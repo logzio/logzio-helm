@@ -95,6 +95,8 @@ Here, `my_values.yaml` is your custom configuration file.
 
 Change log
 -------------
+* 1.0.3
+  - Refactor `ezkonnect` -> `easy-connect`
 * 1.0.2
   - Update `instrumentor` image version `v1.0.5` -> `v1.0.6`
 * 1.0.1
