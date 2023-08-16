@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.easyConnectUi.service.name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    app: easy-connect-ui
+  ports:
+    - name: http
+      port: {{ .Values.easyConnectUi.service.port }}
+      targetPort: {{ .Values.easyConnectUi.service.targetPort }}
