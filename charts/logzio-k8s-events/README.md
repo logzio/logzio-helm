@@ -35,7 +35,7 @@ Replace `<<LISTENER-HOST>>` with your region’s host address (for example, `lis
 Replace `<<ENV-ID>>` with your environment name.
 
 ```shell
-helm install --namespace=kube-system \
+helm install --namespace=monitoring \
 --set secrets.logzioShippingToken='<<SHIPPING-TOKEN>>' \
 --set secrets.logzioListener='<<LISTENER-HOST>>' \
 --set secrets.envID='<<ENV-ID>>' \
@@ -53,7 +53,7 @@ The command removes all the k8s components associated with the chart and deletes
 To uninstall the `logzio-k8s-events` deployment:
 
 ```shell
-helm uninstall --namespace=kube-system logzio-k8s-events
+helm uninstall --namespace=monitoring logzio-k8s-events
 ```
 
 ## Sending logs from nodes with taints
