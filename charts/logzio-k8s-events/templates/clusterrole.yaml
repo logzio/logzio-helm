@@ -1,0 +1,10 @@
+{{- if .Values.isRBAC }}
+apiVersion: {{ .Values.apiVersions.clusterRole }}
+kind: ClusterRole
+metadata:
+  name: {{ include "logzio-k8s-events.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    k8sApp: {{.Values.k8sApp}}
+rules: {{ toYaml .Values.clusterRole.rules | nindent 2 -}}
+{{- end }}

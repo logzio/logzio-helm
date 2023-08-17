@@ -1,0 +1,76 @@
+# Default values for logzio-k8s-events.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+image: ralatdocker/logzio-k8s-events
+imageTag: "0.1.0"
+
+apiVersions:
+  daemonset: apps/v1
+  serviceAccount: v1
+  clusterRole: rbac.authorization.k8s.io/v1
+  clusterRoleBinding: rbac.authorization.k8s.io/v1
+  configmap: v1
+  secret: v1
+
+nameOverride: ""
+fullnameOverride: "logzio-k8s-events"
+
+namespace: monitoring
+
+k8sApp: logzio-k8s-events
+
+isRBAC: true
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+daemonset:
+  nodeSelector:
+    os: linux
+  logType: "logzio-k8s-events"
+  extraEnv: []
+  resources:
+    limits:
+      memory: 500Mi
+    requests:
+      cpu: 100m
+      memory: 200Mi
+  extraVolumeMounts: []
+  terminationGracePeriodSeconds: 30
+  extraVolumes: []
+  init:
+    extraVolumeMounts: []
+  priorityClassName: ""
+
+secrets:
+  enabled: true
+  logzioShippingToken: ""
+  logzioListener: ""
+
+secretName: logzio-logs-secret
+
+clusterRole:
+  rules:
+    - apiGroups:
+        - ""
+        - "rbac.authorization.k8s.io"
+        - "apps"
+      resources:
+        - pods
+        - deployments
+        - daemonsets
+        - statefulsets
+        - clusterroles
+        - clusterrolebindings
+        - configmaps
+        - secrets
+        - serviceaccounts
+      verbs:
+        - get
+        - list
+        - watch

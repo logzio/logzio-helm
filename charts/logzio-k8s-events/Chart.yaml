@@ -1,0 +1,13 @@
+apiVersion: v2
+name: logzio-k8s-events
+description: A Helm chart for shipping Kubernetes event information logs to Logz.io.
+keywords:
+  - logging
+  - k8s
+  - kubernetes
+version: 0.1.0
+appVersion: 0.1.0
+maintainers:
+  - name: Raul Gurshumov
+    email: raul.gurshumo@logz.io
+  - name: Platform Connectivity
