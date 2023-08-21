@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: easy-connect-server
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: easy-connect-server
+  template:
+    metadata:
+      labels:
+        app: easy-connect-server
+    spec:
+      serviceAccountName: {{ .Values.easyConnectServer.serviceAccount }}
+      containers:
+      - name: easy-connect-server
+        image: "{{ .Values.easyConnectServer.image.repository }}:{{ .Values.easyConnectServer.image.tag }}"
+        ports:
+        - containerPort: {{ .Values.easyConnectServer.ports.http }}
