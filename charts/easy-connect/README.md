@@ -30,12 +30,12 @@ To install the easy-connect Helm chart, use the following command:
 ```bash
 helm repo add logzio-helm https://logzio.github.io/logzio-helm
 helm repo update
-helm install logzio-easy-connect logzio-helm/easy-connect -n easy-connect --create-namespace
+helm install logzio-easy-connect logzio-helm/easy-connect -n monitoring --create-namespace
 ``` 
 
 Then use `kubectl port-forward` to accsess the user intefrace in your browser
 ```
-kubectl port-forward svc/easy-connect-ui -n easy-connect 31032:31032
+kubectl port-forward svc/easy-connect-ui -n monitoring 31032:31032
 ```
 
 Go to http://localhost:31032 
