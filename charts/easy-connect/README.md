@@ -72,7 +72,7 @@ serviceAccount
 | `kubernetesInstrumentor.service.targetPort` | Target port for the instrumentor service | `8080` |
 | `easyConnectServer.serviceAccount` | Service account name of the instrumentor deployment | `"easy-connect-server"` |
 | `easyConnectServer.image.repository` | Repository of the server image | `"logzio/easy-connect-server"` |
-| `easyConnectServer.image.tag` | Tag of the server image | `"v1.0.6"` |
+| `easyConnectServer.image.tag` | Tag of the server image | `"v1.0.7"` |
 | `easyConnectServer.ports.http` | HTTP port for the server | `8080` |
 | `easyConnectServer.service.name` | Name of the server service | `"easy-connect-server"` |
 | `easyConnectServer.service.port` | Service port for the server | `5050` |
