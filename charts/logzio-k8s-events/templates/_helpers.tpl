@@ -30,25 +30,46 @@ Create chart name and version as used by the chart label.
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
+
 {{/*
 Common labels
 */}}
 {{- define "logzio-k8s-events.labels" -}}
 helm.sh/chart: {{ include "logzio-k8s-events.chart" . }}
+geo_region: {{ required "A valid Values.region is required!" .Values.region }}
+service: {{ include "logzio-k8s-events.name" . }}
 {{ include "logzio-k8s-events.selectorLabels" . }}
-{{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-{{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
+
+
+
+{{/*
+Fin ops labels
+*/}}
+{{- define "logzio-k8s-events.finopsLabels" -}}
+environment: {{ required "A valid Values.finopsLabels.environment is required!" .Values.finopsLabels.environment }}
+product: {{ required "A valid Values.finopsLabels.product is required!" .Values.finopsLabels.product }}
+traffic: {{ required "A valid Values.finopsLabels.traffic is required!" .Values.finopsLabels.traffic }}
+owner: {{ required "A valid Values.finopsLabels.owner is required!" .Values.finopsLabels.owner }}
+role: {{ required "A valid Values.finopsLabels.role is required!" .Values.finopsLabels.role }}
+{{- end }}
+
 
 {{/*
 Selector labels
 */}}
 {{- define "logzio-k8s-events.selectorLabels" -}}
+{{- if .Values.roleLabel -}}
+role: {{ .Values.roleLabel }}
+{{- else -}}
+role: {{ include "logzio-k8s-events.name" . }}
+{{- end }}
+helm-release: {{ .Release.Name }}
 app.kubernetes.io/name: {{ include "logzio-k8s-events.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
+
 
 {{/*
 Create the name of the service account to use

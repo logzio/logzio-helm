@@ -4,21 +4,39 @@ metadata:
   name: {{.Values.k8sApp}}
   labels:
     k8s-app: {{ .Values.k8sApp }}
-    version: v1
+    {{- include "logzio-k8s-events.labels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
       k8s-app: {{ .Values.k8sApp }}
+      {{- include "logzio-k8s-events.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
         k8s-app: {{ .Values.k8sApp }}
-        version: v1        
+        version: v1
+        {{- include "logzio-k8s-events.labels" . | nindent 4 }}
     spec:
+      {{- if .Values.isRBAC }}
+      serviceAccountName: {{ template "logzio-k8s-events.serviceAccountName" . }}
+      {{- end }}
+      terminationGracePeriodSeconds: {{ default "30" .Values.terminationGracePeriodSeconds }}
       containers:
         - name: {{ .Values.k8sApp }}
-          image:  "{{ .Values.image }}:{{ .Values.imageTag }}"
+          image: "{{ required "A valid .Values.image.repository is required!" .Values.image.repository }}:{{ tpl .Values.image.tag . }}"
+        {{- if (or .Values.secretName .Values.envVars) }}
           env:
+          {{- range .Values.envVars }}
+            - name: {{ .name | quote }}
+            {{- if .value }}
+              value: {{ with .value }}{{ tpl . $ | quote }}{{- end }}
+            {{- end }}
+            {{- if .valueFrom }}
+              valueFrom:
+            {{ .valueFrom | toYaml | indent 16 }}
+            {{- end }}
+          {{- end }}
+          {{- if .Values.secretName }}
             - name: LOGZIO_TOKEN
               valueFrom:
                 secretKeyRef:
@@ -33,8 +51,17 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.secretName }}
-                  key: env-id                  
-      {{- if .Values.isRBAC }}
-      serviceAccount: {{ template "logzio-k8s-events.serviceAccountName" . }}
-      serviceAccountName: {{ template "logzio-k8s-events.serviceAccountName" . }}
-      {{- end }}
+                  key: env-id     
+          {{- end }}
+        {{- end }}
+        {{$resources := .Values.resources }}
+        {{- if not $resources -}}
+          {{- $resources = dict "limits" (dict "memory" "500Mi") -}}
+        {{- else  -}}
+          {{- $memLimit := default (dig "requests" "memory" "500Mi" $resources) (dig "limits" "memory" "" $resources) -}}
+          {{- $resources = merge $resources (dict "limits" (dict "memory" $memLimit)) -}}
+        {{- end -}}
+        {{- with $resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+        {{- end}}

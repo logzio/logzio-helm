@@ -2,8 +2,14 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-image: ralatdocker/logzio-k8s-events
-imageTag: "0.1.0"
+
+image:
+  repository: ralatdocker/logzio-k8s-events
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "0.0.1"
+
+k8sApp: logzio-k8s-events
+namespace: monitoring
 
 apiVersions:
   daemonset: apps/v1
@@ -16,10 +22,6 @@ apiVersions:
 nameOverride: ""
 fullnameOverride: "logzio-k8s-events"
 
-namespace: monitoring
-
-k8sApp: logzio-k8s-events
-
 isRBAC: true
 
 serviceAccount:
@@ -30,27 +32,19 @@ serviceAccount:
   name: ""
 
 daemonset:
-  nodeSelector:
-    os: linux
-  logType: "logzio-k8s-events"
-  extraEnv: []
   resources:
     limits:
       memory: 500Mi
     requests:
       cpu: 100m
-      memory: 200Mi
-  extraVolumeMounts: []
+      memory: 500Mi
   terminationGracePeriodSeconds: 30
-  extraVolumes: []
-  init:
-    extraVolumeMounts: []
-  priorityClassName: ""
 
 secrets:
   enabled: true
   logzioShippingToken: ""
   logzioListener: ""
+  envID: ""
 
 secretName: logzio-logs-secret
 

@@ -4,7 +4,8 @@ kind: ClusterRoleBinding
 metadata:
   name: {{ include "logzio-k8s-events.fullname" . }}
   labels:
-    k8s-app: {{.Values.k8sApp}}
+    k8s-app: {{ .Values.k8sApp }}
+    {{- include "logzio-k8s-events.labels" . | nindent 4 }}
 roleRef:
   kind: ClusterRole
   name: {{ include "logzio-k8s-events.fullname" . }}
