@@ -1,5 +1,5 @@
-{{- range $i, $namespace := .Values.multiCollector.namespaces -}}
-{{- $_ := set $ "targetNamespace" $namespace -}}
+{{- range .Values.multiCollector.namespaces -}}
+{{- $_ := set $ "targetNamespace" . -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -12,8 +12,8 @@ data:
 
 ------
 {{ end }}
-
-{{- if .Values.multiCollector.cadvisorCollector.enabled -}}
+------
+{{ if .Values.multiCollector.cadvisorCollector.enabled -}}
 {{- $_ := set $ "targetNamespace" "cadvisor" -}}
 apiVersion: v1
 kind: ConfigMap
@@ -24,4 +24,4 @@ metadata:
 data:
   relay: |
     {{- include "opentelemetry-collector.cadvisorCollectorConfig" $ | nindent 4 }}
-{{- end }}
+{{ end }}

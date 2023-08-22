@@ -34,6 +34,7 @@ multiCollector:
 
 applicationMetrics:
   enabled: false
+
 nameOverride: "otel-collector"
 fullnameOverride: ""
 
@@ -489,8 +490,7 @@ prometheusFilters:
         keep:
           custom: ""
         drop:
-          custom: ""
-        
+          custom: ""      
 
 opencost:
   enabled: false

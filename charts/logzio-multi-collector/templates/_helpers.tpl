@@ -12,7 +12,7 @@ If release name contains chart name it will be used as a full name.
 */}}
 {{- define "opentelemetry-collector.fullname" -}}
 {{- if .Values.fullnameOverride }}
-{{- printf "%s-%s-%s" .Values.fullnameOverride .targetnamespace | trunc 63 | trimSuffix "-" }}
+{{- printf "%s-%s-%s" .Values.fullnameOverride .targetNamespace | trunc 63 | trimSuffix "-" }}
 {{- else }}
 {{- $name := default .Chart.Name ( printf "%s-%s" .Values.nameOverride .targetNamespace )}}
 {{- if contains $name .Release.Name }}
