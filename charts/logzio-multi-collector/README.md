@@ -108,11 +108,14 @@ In order to provide flexibility between the instaces deployed, you can define cu
 
 ### Adding application metrics
 
-To enable applications metrics scraping set the `applicationMetrics.<<namespace name>>.enabled` value to `true`
-```bash
---set applicationMetrics.<<namespace name>>.enabled=true
+To enable applications metrics scraping set the `applicationMetrics.enabled` value to `true`.
+
+```sh
+--set applicationMetrics.enabled=true
 ```
+
 This will enable the `metrics/applications` pipline and will scrape metrics from pods with the `prometheus.io/scrape=true` annotation
+
 ### Using Out of the box metrics filters for Logzio dashboards
 
 You can use predefined metrics filters to prevent unnecessary metrics being sent to Logz.io and reduce usage cost.
