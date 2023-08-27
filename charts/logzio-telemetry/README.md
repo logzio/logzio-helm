@@ -338,6 +338,8 @@ helm uninstall logzio-k8s-telemetry
 
 
 ## Change log
+* 1.0.3
+  - Fixed an issue when enabling dropKubeSystem filter where namespace label values were not filtered.
 * 1.0.2
   - Rename `spm` k8s metadata fields
 * 1.0.1

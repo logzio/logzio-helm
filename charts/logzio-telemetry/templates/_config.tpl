@@ -322,7 +322,7 @@ Param 1: dict: "pipeline" infrastructure/applications & global context
 
 {{/*remove empty filters*/}}
 {{/*use the "metric" prefix for dict keys to associate filter with "metric_relabel_config"*/}}
-{{- $allFilters := dict "metric1" $metricsKeepFilters "metric2" $metricsDropFilters "3" $namespaceKeepFilters "4" $namespaceDropFilters "5" $serviceDropFilters "6" $serviceKeepFilters -}}
+{{- $allFilters := dict "metric1" $metricsKeepFilters "metric2" $metricsDropFilters "metric3" $namespaceKeepFilters "metric4" $namespaceDropFilters "5" $serviceDropFilters "6" $serviceKeepFilters -}}
 {{- $checkedFilters := dict -}}
 {{- range $key,$filter := $allFilters -}}
 {{/*check if regex key exists, if so filter also exist*/}}
