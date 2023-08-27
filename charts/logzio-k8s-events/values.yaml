@@ -10,9 +10,9 @@ image:
 
 k8sApp: logzio-k8s-events
 namespace: monitoring
-
+  
 apiVersions:
-  daemonset: apps/v1
+  deployment: apps/v1
   serviceAccount: v1
   clusterRole: rbac.authorization.k8s.io/v1
   clusterRoleBinding: rbac.authorization.k8s.io/v1
@@ -20,7 +20,7 @@ apiVersions:
   secret: v1
 
 nameOverride: ""
-fullnameOverride: "logzio-k8s-events"
+fullnameOverride: ""
 
 isRBAC: true
 
@@ -31,20 +31,20 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
-daemonset:
-  resources:
-    limits:
-      memory: 500Mi
-    requests:
-      cpu: 100m
-      memory: 500Mi
-  terminationGracePeriodSeconds: 30
+resources:
+  limits:
+    memory: 200Mi
+  requests:
+    cpu: 100m
+    memory: 200Mi
+terminationGracePeriodSeconds: 30
 
 secrets:
   enabled: true
   logzioShippingToken: ""
-  logzioListener: ""
-  envID: ""
+  logzioListener: "" # Defaults to listener.logz.io
+  env_id: ""
+  customListener: "" # Overrides Logz.io listener
 
 secretName: logzio-logs-secret
 

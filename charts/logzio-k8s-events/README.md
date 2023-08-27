@@ -38,7 +38,7 @@ Replace `<<ENV-ID>>` with your environment name.
 helm install --namespace=monitoring \
 --set secrets.logzioShippingToken='<<SHIPPING-TOKEN>>' \
 --set secrets.logzioListener='<<LISTENER-HOST>>' \
---set secrets.envID='<<ENV-ID>>' \
+--set secrets.env_id='<<ENV-ID>>' \
 logzio-k8s-events logzio-helm/logzio-k8s-events
 ```
 
@@ -46,6 +46,19 @@ logzio-k8s-events logzio-helm/logzio-k8s-events
 Give your logs some time to get from your system to ours, and then open [Logz.io](https://app.logz.io/).
 
 </div>
+
+#### Optional Custom Listener
+If you have an HTTP/s endpoint that receives JSON input than you can override the Logz.io listener by setting the `customListener` secret. 
+
+Replace `<<CUSTOM-HOST>>` with your endpoint URL. 
+
+```shell
+helm install --namespace=monitoring \
+--set secrets.logzioShippingToken='<<SHIPPING-TOKEN>>' \
+--set secrets.customListener='<<CUSTOM-HOST>>' \
+--set secrets.env_id='<<ENV-ID>>' \
+logzio-k8s-events logzio-helm/logzio-k8s-events
+```
 
 ### Uninstalling the Chart
 

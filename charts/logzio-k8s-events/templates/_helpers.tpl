@@ -36,23 +36,12 @@ Common labels
 */}}
 {{- define "logzio-k8s-events.labels" -}}
 helm.sh/chart: {{ include "logzio-k8s-events.chart" . }}
-geo_region: {{ required "A valid Values.region is required!" .Values.region }}
-service: {{ include "logzio-k8s-events.name" . }}
-{{ include "logzio-k8s-events.selectorLabels" . }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
-
-
-
-{{/*
-Fin ops labels
-*/}}
-{{- define "logzio-k8s-events.finopsLabels" -}}
-environment: {{ required "A valid Values.finopsLabels.environment is required!" .Values.finopsLabels.environment }}
-product: {{ required "A valid Values.finopsLabels.product is required!" .Values.finopsLabels.product }}
-traffic: {{ required "A valid Values.finopsLabels.traffic is required!" .Values.finopsLabels.traffic }}
-owner: {{ required "A valid Values.finopsLabels.owner is required!" .Values.finopsLabels.owner }}
-role: {{ required "A valid Values.finopsLabels.role is required!" .Values.finopsLabels.role }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{ include "logzio-k8s-events.selectorLabels" . }}
 {{- end }}
 
 
@@ -60,12 +49,6 @@ role: {{ required "A valid Values.finopsLabels.role is required!" .Values.finops
 Selector labels
 */}}
 {{- define "logzio-k8s-events.selectorLabels" -}}
-{{- if .Values.roleLabel -}}
-role: {{ .Values.roleLabel }}
-{{- else -}}
-role: {{ include "logzio-k8s-events.name" . }}
-{{- end }}
-helm-release: {{ .Release.Name }}
 app.kubernetes.io/name: {{ include "logzio-k8s-events.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
@@ -86,9 +69,13 @@ Create the name of the service account to use
 Builds the full logzio listener host
 */}}
 {{- define "logzio.listenerHost" }}
-{{- if or ( eq $.Values.secrets.logzioListener "listener.logz.io" ) ( eq $.Values.secrets.logzioListener " " ) -}}
+{{- if not (eq .Values.secrets.customListener "") -}}
+{{- printf "%s" .Values.secrets.customListener -}}
+{{- else -}}
+{{- if or ( eq $.Values.secrets.logzioListener "listener.logz.io" ) ( eq $.Values.secrets.logzioListener "" ) -}}
 {{- printf "https://listener.logz.io:8071" }}
 {{- else }}
 {{- printf "https://%s:8071" .Values.secrets.logzioListener -}}
+{{- end -}}
 {{- end -}}
 {{- end -}}
