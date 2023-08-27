@@ -168,12 +168,21 @@ In these cases we can use the following `--set` commands to use an alternative i
 ```
 
 ## Changelog
+- **1.2.3**:
+  - Fixed an issue when enabling dropKubeSystem filter where namespace label values were not filtered.
+- **1.2.2**:
+  - Rename `spm` k8s metadata fields- 
 - **1.2.2**:
   - Rename `spm` k8s metadata fields- 
 - **1.2.1**:
   - Fixed `spm` service component name
   - Add `spm` cloud metadata
   - Rename `spm` k8s metadata fields- 
+
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
 - **1.2.0**:
 	- Add `ezkonnect` chart as a dependency
 - **1.1.0**:
@@ -187,10 +196,6 @@ In these cases we can use the following `--set` commands to use an alternative i
 	- Fixed an issue where when enabling `enableMetricsFilter.kubeSystem` installation failes.
   - **BREAKING CHANGES**:
     - Rename `enableMetricsFilter.kubeSystem` to `enableMetricsFilter.dropKubeSystem`, in order to avoid confusion between functionality of filters.
-
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
-
 - **0.7.1**:
 	- Upgrade `logzio-k8s-telemetry` to `0.2.1`:
 		- Rename k8s attributes for traces pipeline.
