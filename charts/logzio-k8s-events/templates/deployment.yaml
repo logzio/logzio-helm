@@ -23,7 +23,7 @@ spec:
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
       containers:
         - name: {{ .Values.k8sApp }}
-          image: "{{ .Values.image.repository }}:{{ tpl .Values.image.tag . }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag . }}"
         {{- if (or .Values.secretName .Values.envVars) }}
           env:
           {{- range .Values.envVars }}
