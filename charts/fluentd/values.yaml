@@ -129,6 +129,7 @@ secrets:
   enabled: true
   logzioShippingToken: ""
   logzioListener: ""
+  customEndpoint: ""
 
 secretName: logzio-logs-secret
 

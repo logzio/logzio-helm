@@ -35,6 +35,8 @@ Builds the full logzio listener host
 {{- define "logzio.listenerHost" }}
 {{- if or ( eq $.Values.secrets.logzioListener "listener.logz.io" ) ( eq $.Values.secrets.logzioListener " " ) -}}
 {{- printf "https://listener.logz.io:8071" }}
+{{- else if ne $.Values.secrets.customEndpoint "" -}}
+{{- printf "%s" .Values.secrets.customEndpoint  }}
 {{- else }}
 {{- printf "https://%s:8071" .Values.secrets.logzioListener -}}
 {{- end -}}
