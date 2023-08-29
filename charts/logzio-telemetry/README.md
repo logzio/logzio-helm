@@ -338,7 +338,7 @@ helm uninstall logzio-k8s-telemetry
 
 
 ## Change log
-* 1.0.4
+* 1.1.0
   - Add custom tracing endpoint option
 * 1.0.3
   - Fixed an issue when enabling dropKubeSystem filter where namespace label values were not filtered.
