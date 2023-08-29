@@ -152,9 +152,15 @@ Set fluetd `customEndpoint` value to send your logs to a custom endpoint
 ```
 
 ### Send Traces to a custom endpoint
-Set fluetd `CustomTracingEndpoint` value to send your spans to a custom endpoint
+Set logzio-k8s-telemetry `CustomTracingEndpoint` value to send your spans to a custom endpoint
 ```shell
 --set logzio-k8s-telemetry.secrets.CustomTracingEndpoint="<<CUSTOM_TRACING_ENDPOINT>>" 
+```
+
+### Send metrics to a custom endpoint
+Set logzio-k8s-telemetry `ListenerHost` value to send your metrics to a custom endpoint (example: "https://endpoint.com:8080")
+```shell
+--set logzio-k8s-telemetry.secrets.ListenerHost="<<CUSTOM_ENDPOINT>>"
 ```
 
 ## Changelog
