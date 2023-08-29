@@ -23,6 +23,7 @@ secrets:
   ListenerHost: ""
   env_id: "my_environment"
   LogzioRegion: "us"
+  CustomTracingEndpoint: ""
   p8s_logzio_name: ""
   windowsNodeUsername: ""
   windowsNodePassword: ""
@@ -233,6 +234,7 @@ baseCollectorConfig:
 tracesConfig:
   exporters:
     logzio:
+      endpoint: ${CUSTOM_TRACING_ENDPOINT}
       region: ${LOGZIO_LISTENER_REGION}
       account_token: ${TRACES_TOKEN}
     logging:

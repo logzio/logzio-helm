@@ -85,6 +85,11 @@ containers:
           secretKeyRef:
             name: logzio-secret
             key: logzio-listener-region
+      - name: CUSTOM_TRACING_ENDPOINT
+        valueFrom:
+          secretKeyRef:
+            name: logzio-secret
+            key: custom-tracing-endpoint
       - name: SAMPLING_PROBABILITY
         valueFrom:
           secretKeyRef:

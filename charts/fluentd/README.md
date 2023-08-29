@@ -134,6 +134,7 @@ helm install -n monitoring \
 | `clusterRole.rules` | Configurable [cluster role rules](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#role-and-clusterrole) that Fluentd uses to access Kubernetes resources. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
 | `secrets.logzioShippingToken` | Secret with your [logzio shipping token](https://app.logz.io/#/dashboard/settings/general). | `""` |
 | `secrets.logzioListener` | Secret with your logzio listener host. `listener.logz.io`. | `" "` |
+| `secrets.customEndpoint` | Secret with your custom endpoint, for example:`http://endpoint:8080`. Overrides `secrets.logzioListener` | `""` |
 | `secrets.enabled` | When `true`, the logzio secret will be created and managed by this Chart. If you're managing the logzio secret by yourself, set to `false`. | `true` |
 | `secretName` | Name of the secret in case it's placed from an external source. | `logzio-logs-secret` |
 | `configMapIncludes` | Initial includes for `fluent.conf`. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
@@ -276,6 +277,8 @@ When enabling promehteus configuration, the pod collects and exposes fluentd met
 
 ## Change log
 
+ - **0.22.0**:
+   - Add custom endpoint option with `secrets.customEndpoint`.
  - **0.21.0**:
   - Bump docker image to `1.5.0`:
     - Upgrade fluentd to `1.16`.
