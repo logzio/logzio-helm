@@ -145,6 +145,18 @@ In these cases we can use the following `--set` commands to use an alternative i
 --set logzio-trivy.image=public.ecr.aws/logzio/trivy-to-logzio
 ```
 
+### Send logs to a custom endpoint
+Set fluetd `customEndpoint` value to send your logs to a custom endpoint
+```shell
+--set logzio-fluentd.secrets.customEndpoint="<<CUSTOM_ENDPOINT>>" 
+```
+
+### Send Traces to a custom endpoint
+Set fluetd `CustomTracingEndpoint` value to send your spans to a custom endpoint
+```shell
+--set logzio-k8s-telemetry.secrets.CustomTracingEndpoint="<<CUSTOM_TRACING_ENDPOINT>>" 
+```
+
 ## Changelog
 - **1.3.0**:
   - Add the ability to send logs and traces to custom endpoints:
