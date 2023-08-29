@@ -23,10 +23,6 @@ dependencies:
     version: "1.3.0"
     repository: "https://opencost.github.io/opencost-helm-chart"
     condition: finops.enabled
-  - name: ezkonnect
-    version: "1.0.2"
-    repository: "https://logzio.github.io/logzio-helm/"
-    condition: ezkonnect.enabled
 
 maintainers:
 - name: tamirmich

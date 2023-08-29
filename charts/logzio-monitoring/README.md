@@ -127,28 +127,6 @@ helm install -n monitoring \
 logzio-monitoring logzio-helm/logzio-monitoring
 ```
 
-### EZkonnect 
-Ezkonnect is a set of microservices that helps you to tag your logs and add opentelemetry auto instrumentation to your applications. Use `--set ezkonnect.enabled=true` flag to enable it:
-
-```shell
-helm install -n monitoring \
---set ezkonnect.enabled=true \
---set logs.enabled=true \
---set logzio-fluentd.secrets.logzioShippingToken="<<LOG-SHIPPING-TOKEN>>" \
---set logzio-fluentd.secrets.logzioListener="<<LISTENER-HOST>>" \
---set logzio-fluentd.env_id="<<ENV-ID>>" \
---set metricsOrTraces.enabled=true \
---set logzio-k8s-telemetry.secrets.ListenerHost="https://<<LISTENER-HOST>>:8053" \
---set logzio-k8s-telemetry.secrets.p8s_logzio_name="<<ENV-TAG>>" \
---set logzio-k8s-telemetry.traces.enabled=true \
---set logzio-k8s-telemetry.secrets.TracesToken="<<TRACES-SHIPPING-TOKEN>>" \
---set logzio-k8s-telemetry.secrets.LogzioRegion="<<LOGZIO-REGION>>" \
---set logzio-k8s-telemetry.spm.enabled=true \
---set logzio-k8s-telemetry.secrets.env_id="<<ENV-ID>>" \
---set logzio-k8s-telemetry.secrets.SpmToken=<<SPM-SHIPPING-TOKEN>> \
-logzio-monitoring logzio-helm/logzio-monitoring
-```
-
 Then use `kubectl port-forward` to accsess the user intefrace in your browser
 ```
 kubectl port-forward svc/ezkonnect-ui -n monitoring 31032:31032
@@ -172,6 +150,7 @@ In these cases we can use the following `--set` commands to use an alternative i
   - Add the ability to send logs and traces to custom endpoints:
     - logzio-k8s-telemetry: Added `secrets.CustomTracingEndpoint` value
     - fluentd: Added `secrets.customEndpoint` value
+  - Update chart dependencies
 - **1.2.3**:
   - Fixed an issue when enabling dropKubeSystem filter where namespace label values were not filtered.
 - **1.2.2**:
