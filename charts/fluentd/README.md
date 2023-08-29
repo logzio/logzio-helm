@@ -278,7 +278,7 @@ When enabling promehteus configuration, the pod collects and exposes fluentd met
 ## Change log
 
  - **0.22.0**:
-   - Add custom endpoint option
+   - Add custom endpoint option with `secrets.customEndpoint`.
  - **0.21.0**:
   - Bump docker image to `1.5.0`:
     - Upgrade fluentd to `1.16`.
