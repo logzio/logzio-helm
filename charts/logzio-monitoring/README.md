@@ -168,6 +168,10 @@ In these cases we can use the following `--set` commands to use an alternative i
 ```
 
 ## Changelog
+- **1.3.0**:
+  - Add the ability to send logs and traces to custom endpoints:
+    - logzio-k8s-telemetry: Added `secrets.CustomTracingEndpoint` value
+    - fluentd: Added `secrets.customEndpoint` value
 - **1.2.3**:
   - Fixed an issue when enabling dropKubeSystem filter where namespace label values were not filtered.
 - **1.2.2**:
