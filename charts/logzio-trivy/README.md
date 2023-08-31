@@ -77,6 +77,8 @@ In these cases we can use the following `--set` command to use an alternative im
 
 ## Changelog
 
+- **0.2.2**:
+  - Bump Trivy-Operator version to `0.15.1`.
 - **0.2.1**:
   - Default to disable unused reports (config audit, rbac assessment, infra assessment, cluster compliance).
   - Bump Trivy-Operator version to `0.13.1`.
