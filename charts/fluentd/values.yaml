@@ -407,6 +407,8 @@ configmap:
       de_dot_nested     true
     </filter>
 
+    @include log-level-filter.conf
+
   system: |
     <system>
       log_level "#{ENV['LOGZIO_LOG_LEVEL']}"
@@ -559,3 +561,4 @@ configmap:
     
   customSources: ""
   customFilters: ""
+logLevelFilter: ""

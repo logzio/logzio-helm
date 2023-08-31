@@ -77,3 +77,13 @@ Builds the list for exclude paths in the tail for the containers - windows
 {{- print .Values.windowsDaemonset.excludeFluentdPath }}
 {{- end -}}
 {{- end -}}
+
+
+{{/*
+Builds a filter based on log levels
+*/}}
+{{- define "logzio.logLevelFilter" }}
+{{- if .Values.logLevelFilter }}
+{{- cat "<filter **>\n    @type grep\n    regexp1 log_level" .Values.logLevelFilter "\n</filter>" | replace "\"" "" }}
+{{- end -}}
+{{- end -}}
