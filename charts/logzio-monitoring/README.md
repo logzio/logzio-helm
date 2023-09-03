@@ -164,6 +164,12 @@ Set logzio-k8s-telemetry `ListenerHost` value to send your metrics to a custom e
 ```
 
 ## Changelog
+
+- **1.4.0**:
+	- Upgrage `logzio-fluentd` to `0.23.0`:
+		- Allow filtering logs by log level with `logLevelFilter`.
+	- Upgrade `logzio-trivy` to `0.3.0`:
+		- Upgrade to Trivy-Operator 0.15.1.
 - **1.3.0**:
   - Add the ability to send logs and traces to custom endpoints:
     - logzio-k8s-telemetry: Added `secrets.CustomTracingEndpoint` value
@@ -171,19 +177,17 @@ Set logzio-k8s-telemetry `ListenerHost` value to send your metrics to a custom e
   - Update chart dependencies
 - **1.2.3**:
   - Fixed an issue when enabling dropKubeSystem filter where namespace label values were not filtered.
-- **1.2.2**:
-  - Rename `spm` k8s metadata fields- 
+
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
 - **1.2.2**:
   - Rename `spm` k8s metadata fields- 
 - **1.2.1**:
   - Fixed `spm` service component name
   - Add `spm` cloud metadata
   - Rename `spm` k8s metadata fields- 
-
-
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
-
 - **1.2.0**:
 	- Add `ezkonnect` chart as a dependency
 - **1.1.0**:
