@@ -151,7 +151,7 @@ helm install -n monitoring \
 | `configmap.envId` | Config snippet for adding `env_id` field to logs | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
 | `configmap.customSources` | Add sources to the Fluentd configuration | `""` |
 | `configmap.customFilters` | Add filters to the Fluentd configuration | `""` |
-| `logLevelFilter` | Add log level filter. Regex of the log level(s) you want to ship. For example, if you want to ship warning and error logs, use `WARNING|ERROR`. Possible levels are: `DEBUG`, `INFO`, `WARNING`, `ERROR`, `TRACE`. | `""` |
+| `logLevelFilter` | Add log level filter. Regex of the log level(s) you want to ship. For example, if you want to ship warning and error logs, use `WARNING\|ERROR`. Possible levels are: `DEBUG`, `INFO`, `WARNING`, `ERROR`, `TRACE`. | `""` |
 
 **Note:** If you're adding your own configuration file via `configmap.extraConfig`:
 - Add a `--set-file` flag to your `helm install` command, as seen in the [example above](https://github.com/logzio/logzio-helm/tree/master/charts/fluentd#configuration).
