@@ -12,11 +12,6 @@ Logzio-K8S-Events helm chart allows you to deploy a daemonset that will ship dep
 * Allow outgoing traffic to destination port 8071
 
 
-**Note:** Helm 2 will reach [EOL on November 2020](https://helm.sh/blog/2019-10-22-helm-2150-released/#:~:text=6%20months%20after%20Helm%203's,Helm%202%20will%20formally%20end). This document follows the command syntax recommended for Helm 3, but the Chart will work with both Helm 2 and Helm 3. 
-
-
-<div id="standard-config">
-
 ### Configuration deployment:
 
 #### 1. Add logzio-helm repo to your helm repo list
@@ -32,7 +27,7 @@ Replace `<<SHIPPING-TOKEN>>` with the [token](https://app.logz.io/#/dashboard/se
 
 Replace `<<LISTENER-HOST>>` with your region’s host address (for example, `listener-eu.logz.io`). For more information on finding your account’s region, see [Account region](https://docs.logz.io/user-guide/accounts/account-region.html).
 
-Replace `<<ENV-ID>>` with your environment name.
+Replace `<<ENV-ID>>` with your Kubernetes cluster name.
 
 ```shell
 helm install --namespace=monitoring \
@@ -45,7 +40,6 @@ logzio-k8s-events logzio-helm/logzio-k8s-events
 #### 3. Check Logz.io for your logs
 Give your logs some time to get from your system to ours, and then open [Logz.io](https://app.logz.io/).
 
-</div>
 
 #### Optional Custom Listener
 If you have an HTTP/s endpoint that receives JSON input than you can override the Logz.io listener by setting the `customListener` secret. 

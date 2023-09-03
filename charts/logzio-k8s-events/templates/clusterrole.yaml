@@ -3,7 +3,7 @@ apiVersion: {{ .Values.apiVersions.clusterRole }}
 kind: ClusterRole
 metadata:
   name: {{ include "logzio-k8s-events.fullname" . }}
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Release.Namespace }} 
   labels:
     k8s-app: {{ .Values.k8sApp }}
     {{- include "logzio-k8s-events.labels" . | nindent 4 }}

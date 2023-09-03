@@ -4,12 +4,12 @@
 
 
 image:
-  repository: ralatdocker/logzio-k8s-events
+  repository: logzio/logzio-k8s-events
   # Overrides the image tag whose default is the chart appVersion.
   tag: "0.0.1"
 
 k8sApp: logzio-k8s-events
-namespace: monitoring
+namespace: {{ .Release.Namespace }} 
   
 apiVersions:
   deployment: apps/v1

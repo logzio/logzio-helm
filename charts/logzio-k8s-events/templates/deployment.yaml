@@ -2,6 +2,7 @@ apiVersion: {{ .Values.apiVersions.deployment }}
 kind: Deployment
 metadata:
   name: {{.Values.k8sApp}}
+  namespace: {{ .Release.Namespace }} 
   labels:
     k8s-app: {{ .Values.k8sApp }}
     {{- include "logzio-k8s-events.labels" . | nindent 4 }}
@@ -23,7 +24,7 @@ spec:
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
       containers:
         - name: {{ .Values.k8sApp }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag . }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         {{- if (or .Values.secretName .Values.envVars) }}
           env:
           {{- range .Values.envVars }}
