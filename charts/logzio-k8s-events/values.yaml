@@ -9,7 +9,6 @@ image:
   tag: "0.0.1"
 
 k8sApp: logzio-k8s-events
-namespace: {{ .Release.Namespace }} 
   
 apiVersions:
   deployment: apps/v1
