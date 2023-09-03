@@ -151,6 +151,7 @@ helm install -n monitoring \
 | `configmap.envId` | Config snippet for adding `env_id` field to logs | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
 | `configmap.customSources` | Add sources to the Fluentd configuration | `""` |
 | `configmap.customFilters` | Add filters to the Fluentd configuration | `""` |
+| `logLevelFilter` | Add log level filter. Regex of the log level(s) you want to ship. For example, if you want to ship warning and error logs, use `WARNING|ERROR`. Possible levels are: `DEBUG`, `INFO`, `WARNING`, `ERROR`, `TRACE`. | `""` |
 
 **Note:** If you're adding your own configuration file via `configmap.extraConfig`:
 - Add a `--set-file` flag to your `helm install` command, as seen in the [example above](https://github.com/logzio/logzio-helm/tree/master/charts/fluentd#configuration).
@@ -277,6 +278,8 @@ When enabling promehteus configuration, the pod collects and exposes fluentd met
 
 ## Change log
 
+ - **0.23.0**:
+   - Allow filtering logs by log level with `logLevelFilter`.
  - **0.22.0**:
    - Add custom endpoint option with `secrets.customEndpoint`.
  - **0.21.0**:
@@ -285,14 +288,12 @@ When enabling promehteus configuration, the pod collects and exposes fluentd met
     - Upgrade gem `fluent-plugin-logzio` to `0.2.2`:
       - Do not retry on 400 and 401. For 400 - try to fix log and resend.
       - Generate a metric (`logzio_status_codes`) for response codes from Logz.io.
- - **0.20.3**:
-   - ezKonnect support: Added `logz.io/application_type` to type annotation check .
-
-
 
 <details>
   <summary markdown="span"> Expand to check old versions </summary>
 
+ - **0.20.3**:
+   - ezKonnect support: Added `logz.io/application_type` to type annotation check .
  - **0.20.2**:
    - Upgrade docker image `logzio/logzio-fluentd` to `1.4.0`:
      - Use fluentd's retry instead of retry in code (raise exception on non-2xx response).
