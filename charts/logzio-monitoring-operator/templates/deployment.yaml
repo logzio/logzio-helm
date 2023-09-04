@@ -1,0 +1,53 @@
+apiVersion: {{ .Values.apiVersions.deployment }}
+kind: Deployment
+metadata:
+  name: {{ include "logzio-monitoring-operator.fullname" . }}
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      monitoring-operator: {{ include "logzio-monitoring-operator.fullname" . }}
+  template:
+    metadata:
+      labels:
+        monitoring-operator: {{ include "logzio-monitoring-operator.fullname" . }}
+    spec:
+      containers:
+        - name: {{ .Values.monitoringOperatorContainer.name }}
+          image: {{ .Values.monitoringOperatorContainer.image }}
+          env:
+            - name: NAMESPACE
+              value: {{ .Values.monitoringOperatorContainer.env.namespace }}
+            - name: TIME_INTERVAL
+              value: {{ .Values.monitoringOperatorContainer.env.timeInterval | quote }}
+            - name: MEMCACHED_NAME
+              value: {{ .Values.monitoringOperatorContainer.env.memcachedName }}
+            - name: DAEMONSET_COLLECTOR_NAME_SUFFIX
+              value: {{ .Values.monitoringOperatorContainer.env.daemonSetCollectorNameSuffix }}
+            - name: STANDALONE_COLLECTOR_NAME_SUFFIX
+              value: {{ .Values.monitoringOperatorContainer.env.standaloneCollectorNameSuffix }}
+            - name: CONFIGMAP_DAEMONSET_COLLECTOR_NAME_SUFFIX
+              value: {{ .Values.monitoringOperatorContainer.env.configMapDaemonSetCollectorNameSuffix }}
+            - name: CONFIGMAP_STANDALONE_COLLECTOR_NAME_SUFFIX
+              value: {{ .Values.monitoringOperatorContainer.env.configMapStandaloneCollectorNameSuffix }}
+            - name: WORKERS_NUM
+              value: {{ .Values.monitoringOperatorContainer.env.workersNum | quote }}
+            - name: RECEIVER_SCRAPE_INTERVAL
+              value: {{ .Values.monitoringOperatorContainer.env.receiverScrapeInterval | quote }}
+            - name: RESOURCES_CONDITIONS_CONFIG_PATH
+              value: {{ .Values.monitoringOperatorContainer.env.resourcesConditionsConfigPath }}
+            - name: DAEMONSET_COLLECTOR_CONTAINER_NAME
+              value: {{ .Values.monitoringOperatorContainer.env.daemonSetCollectorContainerName }}
+            - name: STANDALONE_COLLECTOR_CONTAINER_NAME
+              value: {{ .Values.monitoringOperatorContainer.env.standaloneCollectorContainerName }}
+          volumeMounts:
+            - mountPath: /etc/configs
+              name: resources-conditions-config
+      volumes:
+        - name: resources-conditions-config
+          configMap:
+            name: {{ include "logzio-monitoring-operator.fullname" . }}
+            items:
+              - key: resources_conditions_config.yaml
+                path: resources_conditions_config.yaml

@@ -1,0 +1,91 @@
+nameOverride: ""
+fullnameOverride: ""
+
+apiVersions:
+  deployment: apps/v1
+  configmap: v1
+  serviceAccount: v1
+
+namespace: monitoring
+
+replicaCount: 1
+
+serviceAccount:
+  name: ""
+  create: true
+
+clusterRole:
+  name: ""
+  create: true
+
+clusterRoleBinding:
+  name: ""
+  create: true
+
+monitoringOperatorContainer:
+  name: "logzio-monigoting-operator"
+  image: "shiranavidovlogzio/kubernetes-operator:latest"
+  env:
+    namespace: monitoring
+    timeInterval: 5
+    memcachedName: monitoring-operator-memcached 
+    daemonSetCollectorNameSuffix: otel-collector-ds
+    standaloneCollectorNameSuffix: otel-collector-standalone
+    configMapDaemonSetCollectorNameSuffix: otel-collector-ds
+    configMapStandaloneCollectorNameSuffix: otel-collector-standalone
+    workersNum: 10
+    receiverScrapeInterval: 20
+    resourcesConditionsConfigPath: /etc/configs/resources_conditions_config.yaml
+    daemonSetCollectorContainerName: logzio-k8s-telemetry
+    standaloneCollectorContainerName: logzio-k8s-telemetry
+
+configMap:
+  resourcesConditionsConfig: |
+    daemonset:
+      default:
+        values:
+          memory: 250Mi
+          cpu: 150m
+      conditions:
+        - metrics_count: 30000
+          values:
+            memory: 700Mi
+            cpu: 200m
+        - metrics_count: 50000
+          values:
+            memory: 800Mi
+            cpu: 250m
+        - metrics_count: 100000
+          values:
+            memory: 1250Mi
+            cpu: 600m
+        - metrics_count: 150000
+          values:
+            memory: 1800Mi
+            cpu: 750m
+    standalone:
+      default:
+        values:
+          memory: 512Mi
+          cpu: 200m
+      conditions:
+        - metrics_count: 50000
+          values:
+            memory: 2000Mi
+            cpu: 200m
+        - metrics_count: 150000
+          values:
+            memory: 4000Mi
+            cpu: 200m
+        - metrics_count: 250000
+          values:
+            memory: 4000Mi
+            cpu: 400m
+        - metrics_count: 500000
+          values:
+            memory: 6000Mi
+            cpu: 1000m
+        - metrics_count: 750000
+          values:
+            memory: 7000Mi
+            cpu: 1000m

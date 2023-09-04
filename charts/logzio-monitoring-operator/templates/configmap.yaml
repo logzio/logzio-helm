@@ -1,0 +1,7 @@
+apiVersion: {{ .Values.apiVersions.configmap }}
+kind: ConfigMap
+metadata:
+  name: {{ include "logzio-monitoring-operator.fullname" . }}
+  namespace: {{ .Values.namespace }}
+data:
+  resources_conditions_config.yaml: {{ toYaml .Values.configMap.resourcesConditionsConfig | indent 2 }}

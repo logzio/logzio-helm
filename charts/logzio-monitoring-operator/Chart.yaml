@@ -1,0 +1,8 @@
+apiVersion: v2
+name: logzio-monitoring-operator
+description: 
+version: 0.0.1
+appVersion: 0.0.1
+maintainers:
+  - name: Shiran Avidov
+    email: shiran.avidov@logz.io
