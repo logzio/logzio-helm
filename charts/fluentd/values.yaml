@@ -410,6 +410,8 @@ configmap:
 
     @include log-level-filter.conf
 
+    @include custom-filters-after.conf
+
   system: |
     <system>
       log_level "#{ENV['LOGZIO_LOG_LEVEL']}"
@@ -562,4 +564,6 @@ configmap:
     
   customSources: ""
   customFilters: ""
+  customFilterAfter: ""
 logLevelFilter: ""
+
