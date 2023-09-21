@@ -281,6 +281,7 @@ When enabling promehteus configuration, the pod collects and exposes fluentd met
 
  - **0.24.0**:
    - Add parameter `configmap.customFilterAfter` that allows adding filters AFTER built-in filter configuration.
+   - Added `daemonset.init.containerImage` customization.
  - **0.23.0**:
    - Allow filtering logs by log level with `logLevelFilter`.
  - **0.22.0**:
