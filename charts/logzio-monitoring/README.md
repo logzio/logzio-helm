@@ -164,7 +164,11 @@ Set logzio-k8s-telemetry `ListenerHost` value to send your metrics to a custom e
 ```
 
 ## Changelog
-
+- **1.5.0**:
+	- Upgrade `logzio-fluentd` to `0.24.0`:
+		- Add parameter `configmap.customFilterAfter` that allows adding filters AFTER built-in filter configuration.
+   	- Added `daemonset.init.containerImage` customization.
+   	- Added fluentd image for windows server 2022.
 - **1.4.0**:
 	- Upgrage `logzio-fluentd` to `0.23.0`:
 		- Allow filtering logs by log level with `logLevelFilter`.
@@ -175,13 +179,12 @@ Set logzio-k8s-telemetry `ListenerHost` value to send your metrics to a custom e
     - logzio-k8s-telemetry: Added `secrets.CustomTracingEndpoint` value
     - fluentd: Added `secrets.customEndpoint` value
   - Update chart dependencies
-- **1.2.3**:
-  - Fixed an issue when enabling dropKubeSystem filter where namespace label values were not filtered.
-
 
 <details>
   <summary markdown="span"> Expand to check old versions </summary>
 
+- **1.2.3**:
+  - Fixed an issue when enabling dropKubeSystem filter where namespace label values were not filtered.
 - **1.2.2**:
   - Rename `spm` k8s metadata fields- 
 - **1.2.1**:
