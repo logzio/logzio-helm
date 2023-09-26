@@ -43,7 +43,7 @@ spec:
       # See https://github.com/fluent/fluentd-kubernetes-daemonset/issues/90
       initContainers:
         - name: copy-fluentd-config
-          image: busybox
+          image: {{ .Values.daemonset.init.containerImage }}
           command: ['sh', '-c', 'cp /config-volume/..data/* /fluentd/etc']
           volumeMounts:
             - name: config-volume

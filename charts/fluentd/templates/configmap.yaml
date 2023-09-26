@@ -30,6 +30,10 @@ data:
   log-level-filter.conf : {{ include "logzio.logLevelFilter" . | toYaml }}
   {{- end }}
 
+  {{- if .Values.configmap.customFilterAfter }}
+  custom-filters-after.conf : {{ toYaml .Values.configmap.customFilterAfter | indent 2 }}
+  {{- end }}
+
   {{- if .Values.env_id }}
   env-id.conf : {{ toYaml .Values.configmap.envId | indent 2 }}
   {{- end }}

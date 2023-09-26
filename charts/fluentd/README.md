@@ -151,6 +151,7 @@ helm install -n monitoring \
 | `configmap.envId` | Config snippet for adding `env_id` field to logs | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
 | `configmap.customSources` | Add sources to the Fluentd configuration | `""` |
 | `configmap.customFilters` | Add filters to the Fluentd configuration | `""` |
+| `configmap.customFilterAfter` | Add filters to the Fluentd configuration, after default filters | `""` |
 | `logLevelFilter` | Add log level filter. Regex of the log level(s) you want to ship. For example, if you want to ship warning and error logs, use `WARNING\|ERROR`. Possible levels are: `DEBUG`, `INFO`, `WARNING`, `ERROR`, `TRACE`. | `""` |
 
 **Note:** If you're adding your own configuration file via `configmap.extraConfig`:
@@ -275,23 +276,36 @@ enable prometheus configuration with the `daemonset.fluentdPrometheusConf` and `
 When enabling promehteus configuration, the pod collects and exposes fluentd metrics on port `24231`, `/metrics` endpoint. The templates contains annotations to easly ship when using promehteus shipper or `logzio-telemetry` chart. Monitoring Windows fluentd is not supported.
 
 
+## Fluentd images for windows server
+By default the fluentd image for windows-server supports windows server 2019.
+If needed, the fluentd image can be changed to support windows server 2022 with the following commands:
+
+```yaml
+--set windowsImage=logzio/fluentd-windows-2022 \
+--set windowsImageTag=0.0.1
+```
+
 
 ## Change log
 
+ - **0.24.0**:
+   - Add parameter `configmap.customFilterAfter` that allows adding filters AFTER built-in filter configuration.
+   - Added `daemonset.init.containerImage` customization.
+   - Added fluentd image for windows server 2022.
  - **0.23.0**:
    - Allow filtering logs by log level with `logLevelFilter`.
  - **0.22.0**:
    - Add custom endpoint option with `secrets.customEndpoint`.
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
  - **0.21.0**:
   - Bump docker image to `1.5.0`:
     - Upgrade fluentd to `1.16`.
     - Upgrade gem `fluent-plugin-logzio` to `0.2.2`:
       - Do not retry on 400 and 401. For 400 - try to fix log and resend.
       - Generate a metric (`logzio_status_codes`) for response codes from Logz.io.
-
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
-
  - **0.20.3**:
    - ezKonnect support: Added `logz.io/application_type` to type annotation check .
  - **0.20.2**:
