@@ -107,6 +107,7 @@ helm install -n monitoring \
 | `daemonset.terminationGracePeriodSeconds` | Termination period (in seconds) to wait before killing Fluentd pod process on pod shutdown. | `30` |
 | `daemonset.extraVolumes` | If needed, more volumes can be added with this field. | `[]` |
 | `daemonset.init.extraVolumeMounts` | If needed, more volume mounts to the init container can be added with this field. | `[]` |
+| `daemonset.init.containerImage` | Init container image for the fluentd daemonset. | `busybox` |
 | `daemonset.priorityClassName` | Set [priorityClassName](https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/) for all DaemonSet pods. | `""` |
 | `windowsDaemonset.kubernetesVerifySsl` | Enables to validate SSL certificates (windows). | `true` |
 | `windowsDaemonset.auditLogFormat` | Match Fluentd's format for kube-apiserver audit logs. Set to `audit-json` if your audit logs are in json format. (windows) | `audit` |
@@ -177,6 +178,11 @@ In these cases we can use the following `--set` command to use an alternative im
 ```shell
 --set image=public.ecr.aws/logzio/logzio-fluentd
 ```
+
+```shell
+--set daemonset.init.containerImage=public.ecr.aws/docker/library/busybox
+```
+
 
 ### Adding a custom log_type field from attribute
 To add a `log_type` field with a custom value to each log, you can use the annotation key `log_type` with a custom value. The annotation will be automatically parsed into a `log_type` field with the provided value.
