@@ -276,12 +276,22 @@ enable prometheus configuration with the `daemonset.fluentdPrometheusConf` and `
 When enabling promehteus configuration, the pod collects and exposes fluentd metrics on port `24231`, `/metrics` endpoint. The templates contains annotations to easly ship when using promehteus shipper or `logzio-telemetry` chart. Monitoring Windows fluentd is not supported.
 
 
+## Fluentd images for windows server
+By default the fluentd image for windows-server supports windows server 2019.
+If needed, the fluentd image can be changed to support windows server 2022 with the following commands:
+
+```yaml
+--set windowsImage=logzio/fluentd-windows-2022 \
+--set windowsImageTag=0.0.1
+```
+
 
 ## Change log
 
  - **0.24.0**:
    - Add parameter `configmap.customFilterAfter` that allows adding filters AFTER built-in filter configuration.
    - Added `daemonset.init.containerImage` customization.
+   - Added fluentd image for windows server 2022.
  - **0.23.0**:
    - Allow filtering logs by log level with `logLevelFilter`.
  - **0.22.0**:
