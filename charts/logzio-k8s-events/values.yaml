@@ -45,7 +45,7 @@ secrets:
   env_id: ""
   customListener: "" # Overrides Logz.io listener
 
-secretName: logzio-logs-secret
+secretName: logzio-k8s-events-secret
 
 clusterRole:
   rules:
