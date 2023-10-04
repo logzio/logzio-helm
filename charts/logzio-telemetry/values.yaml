@@ -819,7 +819,6 @@ daemonsetConfig:
         datapoint:
           - 'IsMatch(metric.name, "(${K8S_360_METRICS})") == true and attributes["logzio_app"] != "kubernetes360"'
           - 'IsMatch(metric.name, "(${K8S_360_METRICS})") == true and attributes["kubernetes_node"] == nil'
-
   exporters:
     prometheusremotewrite/applications:
       timeout: 30s
