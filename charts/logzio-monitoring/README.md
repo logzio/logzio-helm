@@ -164,6 +164,10 @@ Set logzio-k8s-telemetry `ListenerHost` value to send your metrics to a custom e
 ```
 
 ## Changelog
+- **1.6.0**:
+	- Upgrade `logzio-k8s-telenetry` to `1.2.0`:
+	  - Upgraded collector image to `0.80.0`.
+	  - Changed condition to filter duplicate metrics collected by daemonset collector.
 - **1.5.0**:
 	- Upgrade `logzio-fluentd` to `0.24.0`:
 		- Add parameter `configmap.customFilterAfter` that allows adding filters AFTER built-in filter configuration.
