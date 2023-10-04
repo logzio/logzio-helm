@@ -494,7 +494,7 @@ image:
   repository: otel/opentelemetry-collector-contrib
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.78.0"
+  tag: "0.80.0"
 nginxWindowsImage:
   # Reverse proxy image to enable metrics scraping from windows nodes
   repository: logzio/logzio-windows-node-reverse-proxy
@@ -818,7 +818,8 @@ daemonsetConfig:
       metrics:
         datapoint:
           - 'IsMatch(metric.name, "(${K8S_360_METRICS})") == true and attributes["logzio_app"] != "kubernetes360"'
-          - 'IsMatch(metric.name, "(${K8S_360_METRICS})") == true and IsMatch(attributes["kubernetes_node"], "(.+)") == false'
+          - 'IsMatch(metric.name, "(${K8S_360_METRICS})") == true and attributes["kubernetes_node"] == nil'
+
   exporters:
     prometheusremotewrite/applications:
       timeout: 30s
@@ -987,7 +988,7 @@ daemonsetConfig:
             - source_labels: [__meta_kubernetes_service_annotation_logz_io_app]
               action: replace
               target_label: logzio_app                 
-          metric_relabel_configs: []   
+          metric_relabel_configs: []
   service:
     extensions:
       - health_check

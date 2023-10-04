@@ -338,10 +338,18 @@ helm uninstall logzio-k8s-telemetry
 
 
 ## Change log
+
+* 1.2.0
+  - Upgraded collector image to `0.80.0`.
+  - Changed condition to filter duplicate metrics collected by daemonset collector.
 * 1.1.0
   - Add custom tracing endpoint option
 * 1.0.3
   - Fixed an issue when enabling dropKubeSystem filter where namespace label values were not filtered.
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
 * 1.0.2
   - Rename `spm` k8s metadata fields
 * 1.0.1
@@ -358,11 +366,6 @@ helm uninstall logzio-k8s-telemetry
 * 0.2.0
   - **BREAKING CHANGES**:
    - Added `applicationMetrics.enabled` value (defaults to `false`)
-
-
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
-
 * 0.1.1
   - Added added resourcedetection processor - added kubernetes spm labels and traces fields.
 * 0.1.0 
