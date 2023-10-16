@@ -15,3 +15,4 @@ Please look in the chart directories for the documentation for each chart.
 * [Fluentd](https://github.com/logzio/logzio-helm/tree/master/charts/fluentd)
 * [Logzio-Trivy](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-trivy)
 * [Cloudwatch-fetcher](https://github.com/logzio/logzio-helm/tree/master/charts/cloudwatch-fetcher)
+* [Logzio K8S Events](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-k8s-events)

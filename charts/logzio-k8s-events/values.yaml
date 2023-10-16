@@ -1,0 +1,69 @@
+# Default values for logzio-k8s-events.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+
+image:
+  repository: logzio/logzio-k8s-events
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "0.0.1"
+
+k8sApp: logzio-k8s-events
+  
+apiVersions:
+  deployment: apps/v1
+  serviceAccount: v1
+  clusterRole: rbac.authorization.k8s.io/v1
+  clusterRoleBinding: rbac.authorization.k8s.io/v1
+  configmap: v1
+  secret: v1
+
+nameOverride: ""
+fullnameOverride: ""
+
+isRBAC: true
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+resources:
+  limits:
+    memory: 200Mi
+  requests:
+    cpu: 100m
+    memory: 200Mi
+terminationGracePeriodSeconds: 30
+
+secrets:
+  enabled: true
+  logzioShippingToken: ""
+  logzioListener: "" # Defaults to listener.logz.io
+  env_id: ""
+  customListener: "" # Overrides Logz.io listener
+
+secretName: logzio-k8s-events-secret
+
+clusterRole:
+  rules:
+    - apiGroups:
+        - ""
+        - "rbac.authorization.k8s.io"
+        - "apps"
+      resources:
+        - pods
+        - deployments
+        - daemonsets
+        - statefulsets
+        - clusterroles
+        - clusterrolebindings
+        - configmaps
+        - secrets
+        - serviceaccounts
+      verbs:
+        - get
+        - list
+        - watch

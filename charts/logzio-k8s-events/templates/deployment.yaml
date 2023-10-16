@@ -1,0 +1,62 @@
+apiVersion: {{ .Values.apiVersions.deployment }}
+kind: Deployment
+metadata:
+  name: {{.Values.k8sApp}}
+  namespace: {{ .Release.Namespace }} 
+  labels:
+    k8s-app: {{ .Values.k8sApp }}
+    {{- include "logzio-k8s-events.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: {{ .Values.k8sApp }}
+      {{- include "logzio-k8s-events.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        k8s-app: {{ .Values.k8sApp }}
+        {{- include "logzio-k8s-events.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- if .Values.isRBAC }}
+      serviceAccountName: {{ template "logzio-k8s-events.serviceAccountName" . }}
+      {{- end }}
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+      containers:
+        - name: {{ .Values.k8sApp }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        {{- if (or .Values.secretName .Values.envVars) }}
+          env:
+          {{- range .Values.envVars }}
+            - name: {{ .name | quote }}
+            {{- if .value }}
+              value: {{ with .value }}{{ tpl . $ | quote }}{{- end }}
+            {{- end }}
+            {{- if .valueFrom }}
+              valueFrom:
+            {{ .valueFrom | toYaml | indent 16 }}
+            {{- end }}
+          {{- end }}
+          {{- if .Values.secretName }}
+            - name: LOGZIO_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{.Values.secretName}}
+                  key: logzio-log-shipping-token
+            - name: LOGZIO_LISTENER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secretName }}
+                  key: logzio-log-listener
+            - name: ENV_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secretName }}
+                  key: env-id     
+          {{- end }}
+        {{- end }}
+        {{$resources := .Values.resources }}
+        {{- with $resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+        {{- end}}
