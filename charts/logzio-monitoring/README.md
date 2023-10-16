@@ -14,7 +14,7 @@ This project packages 3 Helm Charts:
 ## Instructions for standard deployment:
 
 ### Before installing the chart
-Check if you have any taints on your nodes:
+* Check if you have any taints on your nodes:
 
 ```sh
 kubectl get nodes -o json | jq '"\(.items[].metadata.name) \(.items[].spec.taints)"'
@@ -22,6 +22,7 @@ kubectl get nodes -o json | jq '"\(.items[].metadata.name) \(.items[].spec.taint
 
 if you do, please add them as tolerations. For further explenation about modifying the chart, see the [further configuration section](#Further-configuration).
 
+* You are using `Helm` client with version `v3.9.0` or above
 
 ### 1. Add the Helm Chart:
 

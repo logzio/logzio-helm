@@ -16,13 +16,14 @@ To disable the dependency during installation, set `kubeStateMetrics.enabled` an
 
 
 #### Before installing the chart
-Check if you have any taints on your nodes:
+* Check if you have any taints on your nodes:
 
 ```
 kubectl get nodes -o json | jq '"\(.items[].metadata.name) \(.items[].spec.taints)"'
 ```
 if you do, please add them as tolerations in values.yaml tolerations.
 
+* You are using `Helm` client with version `v3.9.0` or above
 
 #### Standard configuration
 

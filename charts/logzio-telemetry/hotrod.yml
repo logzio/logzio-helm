@@ -22,8 +22,8 @@ spec:
     spec:
       containers:
       - env:
-        - name: JAEGER_ENDPOINT
-          value: http://<<otel-cluster-ip>>:14268/api/traces
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: http://<<otel-cluster-ip>>:4318
         image: jaegertracing/example-hotrod:latest
         imagePullPolicy: Always
         livenessProbe:
