@@ -6,10 +6,10 @@
 image:
   repository: logzio/logzio-k8s-events
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.0.1"
+  tag: "latest"
 
 k8sApp: logzio-k8s-events
-  
+
 apiVersions:
   deployment: apps/v1
   serviceAccount: v1
@@ -32,12 +32,15 @@ serviceAccount:
 
 resources:
   limits:
+    cpu: 100m
     memory: 200Mi
   requests:
     cpu: 100m
     memory: 200Mi
 terminationGracePeriodSeconds: 30
-
+nodeArchitectures: 
+  - arm64
+  - amd64
 secrets:
   enabled: true
   logzioShippingToken: ""

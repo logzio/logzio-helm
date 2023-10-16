@@ -18,6 +18,17 @@ spec:
         k8s-app: {{ .Values.k8sApp }}
         {{- include "logzio-k8s-events.selectorLabels" . | nindent 8 }}
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/arch
+                operator: In
+                values: 
+                {{- range .Values.nodeArchitectures }}
+                  - {{ . }}
+                {{- end }}
       {{- if .Values.isRBAC }}
       serviceAccountName: {{ template "logzio-k8s-events.serviceAccountName" . }}
       {{- end }}
