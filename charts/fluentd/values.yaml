@@ -19,6 +19,7 @@ apiVersions:
 k8sApp: fluentd-logzio
 
 isRBAC: true
+isPrivileged: false
 
 serviceAccount:
   name: ""

@@ -56,6 +56,10 @@ spec:
       containers:
       - name: fluentd
         image: "{{ .Values.image }}:{{ .Values.imageTag }}"
+{{- if .Values.isPrivileged }}
+        securityContext:
+          privileged: true
+{{- end}}
 {{- if .Values.daemonset.fluentdPrometheusConf }}
         ports:
         - name: metrics

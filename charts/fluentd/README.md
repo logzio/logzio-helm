@@ -76,6 +76,7 @@ helm install -n monitoring \
 | `fargateLogRouter.enabled` | Boolen to decide if to configure fargate log router | `false` |
 | `env_id` | Add to your logs field `env_id` with identification of the environment you're shipping logs from. | `""` |
 | `isRBAC` | Specifies whether the Chart should be compatible to a RBAC cluster. If you're running on a non-RBAC cluster, set to `false`.  | `true` |
+| `isPrivileged` | Specifies whether to run the Damonset with priviliged security context | `false` |
 | `serviceAccount.name` | Name of the service account. | `""` |
 | `daemonset.tolerations` | Set [tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) for all DaemonSet pods. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
 | `daemonset.nodeSelector` | Set [nodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) for all DaemonSet pods. | `{}` |
@@ -293,19 +294,22 @@ If needed, the fluentd image can be changed to support windows server 2022 with 
 
 
 ## Change log
-
+ - **0.25.0*:
+   - Add parameter `isPrivileged` to allow running Daemonset with priviliged security context.
+   - **Bug fix**: Fix template for `fluentd.serviceAccount`, and fix use of template in service account.
  - **0.24.0**:
    - Add parameter `configmap.customFilterAfter` that allows adding filters AFTER built-in filter configuration.
    - Added `daemonset.init.containerImage` customization.
    - Added fluentd image for windows server 2022.
  - **0.23.0**:
    - Allow filtering logs by log level with `logLevelFilter`.
- - **0.22.0**:
-   - Add custom endpoint option with `secrets.customEndpoint`.
+
 
 <details>
   <summary markdown="span"> Expand to check old versions </summary>
 
+ - **0.22.0**:
+   - Add custom endpoint option with `secrets.customEndpoint`.
  - **0.21.0**:
   - Bump docker image to `1.5.0`:
     - Upgrade fluentd to `1.16`.
