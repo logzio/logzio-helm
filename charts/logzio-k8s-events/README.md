@@ -54,6 +54,19 @@ helm install --namespace=monitoring \
 logzio-k8s-events logzio-helm/logzio-k8s-events
 ```
 
+#### Deployment Events Versioning
+
+In order to add an indication for the versioning in our K8S 360 and Service Overview UI, the following annotation should be added to the metadata of each resource you'd like to track its versioning. 
+Commit URL structure: `https://github.com/<account>/<repository>/commit/<commit-hash>`
+
+Example: `https://github.com/logzio/logzio-k8s-events/commit/069c75c95caeca58dd0776405bb8dfb4eed3acb2`
+
+```yaml
+metadata:
+  annotations:
+    logzio/commit_url: ""  
+```
+
 ### Uninstalling the Chart
 
 The command removes all the k8s components associated with the chart and deletes the release.
