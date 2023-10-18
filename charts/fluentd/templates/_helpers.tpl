@@ -21,7 +21,7 @@ If release name contains chart name it will be used as a full name.
 Create the name of the service account to use
 */}}
 {{- define "fluentd.serviceAccount" -}}
-{{- if .Values.serviceAccount.create -}}
+{{- if .Values.isRBAC -}}
     {{ default (include "fluentd.fullname" .) .Values.serviceAccount.name }}
 {{- else -}}
     {{ default "default" .Values.serviceAccount.name }}
