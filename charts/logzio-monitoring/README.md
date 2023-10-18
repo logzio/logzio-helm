@@ -165,8 +165,12 @@ Set logzio-k8s-telemetry `ListenerHost` value to send your metrics to a custom e
 ```
 
 ## Changelog
+- **1.7.0**:
+	- Upgrade `logzio-fluentd` to `0.25.0`:
+   - Add parameter `isPrivileged` to allow running Daemonset with priviliged security context.
+   - **Bug fix**: Fix template for `fluentd.serviceAccount`, and fix use of template in service account.
 - **1.6.0**:
-	- Upgrade `logzio-k8s-telenetry` to `1.2.0`:
+	- Upgrade `logzio-k8s-telemetry` to `1.2.0`:
 	  - Upgraded collector image to `0.80.0`.
 	  - Changed condition to filter duplicate metrics collected by daemonset collector.
 - **1.5.0**:
@@ -174,6 +178,12 @@ Set logzio-k8s-telemetry `ListenerHost` value to send your metrics to a custom e
 		- Add parameter `configmap.customFilterAfter` that allows adding filters AFTER built-in filter configuration.
    	- Added `daemonset.init.containerImage` customization.
    	- Added fluentd image for windows server 2022.
+
+  - Update chart dependencies
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
 - **1.4.0**:
 	- Upgrage `logzio-fluentd` to `0.23.0`:
 		- Allow filtering logs by log level with `logLevelFilter`.
@@ -183,11 +193,6 @@ Set logzio-k8s-telemetry `ListenerHost` value to send your metrics to a custom e
   - Add the ability to send logs and traces to custom endpoints:
     - logzio-k8s-telemetry: Added `secrets.CustomTracingEndpoint` value
     - fluentd: Added `secrets.customEndpoint` value
-  - Update chart dependencies
-
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
-
 - **1.2.3**:
   - Fixed an issue when enabling dropKubeSystem filter where namespace label values were not filtered.
 - **1.2.2**:
