@@ -90,6 +90,10 @@ kubectl get nodes -o json | jq ".items[]|{name:.metadata.name, taints:.spec.tain
 
 
 ## Change log
+* 0.0.5 - Upgrade docker image to 0.4.1
+  * Trim the compiler build path from stack traces.
+  * Add timestamp decode support for new fluentbit versions.
+  * Update to fluent-bit 2.1.9 in docker image.
 * 0.0.4 - Upgrade docker image to 0.3.0, adding dedot filter
           in Logzio Output config, added memory and cpu requirements.
 * 0.0.3 - Upgrade docker image to 0.1.3.
