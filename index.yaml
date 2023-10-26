@@ -712,11 +712,11 @@ entries:
     version: 0.0.1
   logzio-k8s-events:
   - apiVersion: v2
-    appVersion: 0.0.1
-    created: "2023-10-18T12:56:01.759269+03:00"
+    appVersion: 0.0.2
+    created: "2023-10-26T12:48:59.1551+03:00"
     description: A Helm chart for shipping Kubernetes deployments event information
       logs to Logz.io.
-    digest: 37a3f3eac6502efcf371b2535c9a9cca9f992aa6fbcb457280a9da03b974fde6
+    digest: fa3e20e51133d573fcc03cec9b1556fb741757f5443308af9c72a0a65795778c
     keywords:
     - logging
     - k8s
@@ -726,8 +726,9 @@ entries:
       name: Raul Gurshumov
     name: logzio-k8s-events
     urls:
-    - https://logzio.github.io/logzio-helm/logzio-k8s-events-0.0.1.tgz
-    version: 0.0.1
+    - https://logzio.github.io/logzio-helm/logzio-k8s-events-0.0.2.tgz
+    version: 0.0.2
+generated: "2023-10-26T12:48:59.151572+03:00"
   logzio-k8s-logs:
   - apiVersion: v1
     appVersion: 7.8.1
