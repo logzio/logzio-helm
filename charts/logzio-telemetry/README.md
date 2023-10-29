@@ -339,7 +339,11 @@ helm uninstall logzio-k8s-telemetry
 
 
 ## Change log
-
+* 1.3.0
+  - Upgraded SPM collector image to version `0.80.0`.
+  - Added service graph connector metrics.
+  - Refactored span metrics processor to a connector.
+    - Added metrics transform processor to modify the data for Logz.io backwards compatibility.
 * 1.2.0
   - Upgraded collector image to `0.80.0`.
   - Changed condition to filter duplicate metrics collected by daemonset collector.
