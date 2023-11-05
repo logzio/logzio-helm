@@ -1,5 +1,5 @@
 {{- if and .Values.autoscaling.enabled .Values.standaloneCollector.enabled }}
-apiVersion: autoscaling/v2beta1
+apiVersion: {{ if semverCompare ">=1.23-0" .Capabilities.KubeVersion.GitVersion }}autoscaling/v2{{ else }}autoscaling/v2beta2{{ end }}
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ include "opentelemetry-collector.fullname" . }}
@@ -17,12 +17,24 @@ spec:
     - type: Resource
       resource:
         name: cpu
+        {{- if semverCompare ">=1.23-0" .Capabilities.KubeVersion.GitVersion }}
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.autoscaling.targetCPUUtilizationPercentage }}
+        {{- else }}
         targetAverageUtilization: {{ .Values.autoscaling.targetCPUUtilizationPercentage }}
+        {{- end }}
   {{- end }}
   {{- if .Values.autoscaling.targetMemoryUtilizationPercentage }}
     - type: Resource
       resource:
         name: memory
+        {{- if semverCompare ">=1.23-0" .Capabilities.KubeVersion.GitVersion }}
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.autoscaling.targetMemoryUtilizationPercentage }}
+        {{- else }}
         targetAverageUtilization: {{ .Values.autoscaling.targetMemoryUtilizationPercentage }}
+        {{- end }}
   {{- end }}
 {{- end }}
