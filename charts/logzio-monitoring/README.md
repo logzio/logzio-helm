@@ -168,6 +168,7 @@ Set logzio-k8s-telemetry `ListenerHost` value to send your metrics to a custom e
 - **1.7.1**:
 	- Upgrade `logzio-k8s-telemetry` to `1.3.0`:
 		- Upgraded horizontal pod autoscaler API group version.
+	- Remove replicasCount from daemonset.
 - **1.7.0**:
 	- Upgrade `logzio-fluentd` to `0.25.0`:
    - Add parameter `isPrivileged` to allow running Daemonset with priviliged security context.
