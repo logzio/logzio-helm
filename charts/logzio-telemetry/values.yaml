@@ -629,6 +629,8 @@ spanMetricsAgregator:
           - name: k8s.job.name
           - name: cloud.provider
           - name: cloud.region
+          - name: db.system
+          - name: messaging.system          
           - name: env_id
             default: ${ENV_ID}
       servicegraph:
