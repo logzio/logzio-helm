@@ -339,7 +339,8 @@ helm uninstall logzio-k8s-telemetry
 
 
 ## Change log
-
+* 1.3.0
+  - Upgraded horizontal pod autoscaler API group version.
 * 1.2.0
   - Upgraded collector image to `0.80.0`.
   - Changed condition to filter duplicate metrics collected by daemonset collector.
