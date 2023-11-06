@@ -165,7 +165,7 @@ Set logzio-k8s-telemetry `ListenerHost` value to send your metrics to a custom e
 ```
 
 ## Changelog
-- **1.7.1**:
+- **1.8.0**:
 	- Upgrade `logzio-k8s-telemetry` to `1.3.0`:
 		- Upgraded horizontal pod autoscaler API group version.
 	- Remove replicasCount from daemonset.
