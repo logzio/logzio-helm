@@ -24,7 +24,7 @@ dependencies:
     repository: "https://opencost.github.io/opencost-helm-chart"
     condition: finops.enabled
   - name: logzio-k8s-events
-    version: "0.0.2"
+    version: "0.0.3"
     repository: "https://logzio.github.io/logzio-helm/"
     condition: deployEvents.enabled
 
