@@ -172,7 +172,7 @@ Set logzio-k8s-telemetry `ListenerHost` value to send your metrics to a custom e
 
 ## Changelog
 - **2.0.0**:
-	- Add `logzio-k8s-events` sub chart version `0.0.2`:
+	- Add `logzio-k8s-events` sub chart version `0.0.3`:
 		- Sends Kubernetes deploy events logs.
 - **1.8.0**:
 	- Upgrade `logzio-k8s-telemetry` to `1.3.0`:
