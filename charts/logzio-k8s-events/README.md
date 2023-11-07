@@ -96,6 +96,8 @@ kubectl get nodes -o json | jq ".items[]|{name:.metadata.name, taints:.spec.tain
 
 
 ## Change log
+ - **0.0.3**:
+    - Rename listener template.
  - **0.0.2**:
     - Ignore internal event changes.
  - **0.0.1**:
