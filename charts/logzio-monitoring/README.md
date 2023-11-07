@@ -56,6 +56,10 @@ helm install -n monitoring \
 --set logzio-trivy.env_id="<<ENV-ID>>" \
 --set logzio-trivy.secrets.logzioShippingToken="<<LOG-SHIPPING-TOKEN>>" \
 --set logzio-trivy.secrets.logzioListener="<<LISTENER-HOST>>" \
+--set deployEvents.enabled=true \
+--set logzio-k8s-events.secrets.env_id="<<ENV-ID>>" \
+--set logzio-k8s-events.secrets.logzioShippingToken="<<LOG-SHIPPING-TOKEN>>" \
+--set logzio-k8s-events.secrets.logzioListener="<<LISTENER-HOST>>" \
 logzio-monitoring logzio-helm/logzio-monitoring
 ```
 
@@ -80,7 +84,9 @@ However, you can modify the Chart by using the `--set` flag in your `helm instal
 | Parameter	| Description | Default |
 | --- | --- | --- |
 | `logs.enabled` | Enable to send k8s logs | `false` |
-| `metricsOrTraces` | Enable to send k8s metrics or traces | `false` |
+| `metricsOrTraces.enabled` | Enable to send k8s metrics or traces | `false` |
+| `securityReport.enabled` | Enable to send k8s security logs | `false` |
+| `deployEvents.enabled` | Enable to send k8s deploy events logs | `false` |
 
 #### To modify the logs Chart configuration:
 
@@ -165,6 +171,9 @@ Set logzio-k8s-telemetry `ListenerHost` value to send your metrics to a custom e
 ```
 
 ## Changelog
+- **2.0.0**:
+	- Add `logzio-k8s-events` sub chart version `0.0.2`:
+		- Sends Kubernetes deploy events logs.
 - **1.8.0**:
 	- Upgrade `logzio-k8s-telemetry` to `1.3.0`:
 		- Upgraded horizontal pod autoscaler API group version.

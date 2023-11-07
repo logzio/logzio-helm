@@ -68,7 +68,7 @@ Create the name of the service account to use
 {{/*
 Builds the full logzio listener host
 */}}
-{{- define "logzio.listenerHost" }}
+{{- define "logzio-k8s-events.listenerHost" }}
 {{- if not (eq .Values.secrets.customListener "") -}}
 {{- printf "%s" .Values.secrets.customListener -}}
 {{- else -}}
