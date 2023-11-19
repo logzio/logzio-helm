@@ -38,22 +38,22 @@ containers:
       - name: LISTENER_URL
         valueFrom:
           secretKeyRef:
-            name: logzio-secret
+            name: {{ .Values.secrets.name }}
             key: logzio-metrics-listener
       - name: P8S_LOGZIO_NAME
         valueFrom:
           secretKeyRef:
-            name: logzio-secret
+            name: {{ .Values.secrets.name }}
             key: p8s-logzio-name
       - name: SPM_TOKEN
         valueFrom:
           secretKeyRef:
-            name: logzio-secret
+            name: {{ .Values.secrets.name }}
             key: logzio-spm-shipping-token
       - name: ENV_ID
         valueFrom:
           secretKeyRef:
-            name: logzio-secret
+            name: {{ .Values.secrets.name }}
             key: env_id
     resources:
     {{- toYaml .Values.spanMetricsAgregator.resources | nindent 6 }}

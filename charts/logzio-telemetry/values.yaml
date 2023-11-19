@@ -16,6 +16,7 @@ nameOverride: "otel-collector"
 fullnameOverride: ""
 
 secrets:
+  name: logzio-secret
   enabled: true
   MetricsToken: ""
   TracesToken: ""
@@ -1004,6 +1005,7 @@ daemonsetConfig:
           - prometheus/infrastructure
           - prometheus/cadvisor
           - prometheus/collector
+
          
 opencost:
   enabled: false
