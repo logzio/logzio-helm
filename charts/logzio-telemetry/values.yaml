@@ -119,6 +119,8 @@ clusterRoleRules:
   - get
   - list
   - watch
+
+
 tags:
   kubeStateMetrics:
     ## If false, kube-state-metrics sub-chart will not be installed
@@ -129,16 +131,16 @@ tags:
     ## If false, pushGateway sub-chart will not be installed
     ##
     enabled: true
-  prometheus-pushgateway:
-    serviceAnnotations:
-      prometheus.io/scrape: "true"
-    nodeSelector:
-      kubernetes.io/os: linux
-
   nodeExporter:
     ## If false, node-exporter will not be installed
     ##
     enabled: true
+    
+prometheus-pushgateway:
+  serviceAnnotations:
+    prometheus.io/scrape: "true"
+  nodeSelector:
+    kubernetes.io/os: linux
 
 emptyConfig: {}
 
