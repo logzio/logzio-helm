@@ -11,6 +11,12 @@ This project packages 3 Helm Charts:
 - [logzio-telemetry](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-telemetry) for metrics and traces (via OpenTelemetry Collector).
 - [logzio-trivy](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-trivy) for security reports (via Trivy operator).
 
+### Kubernetes Versions Compatibility
+| Chart Version | Kubernetes Version |
+|---|---|
+| 3.0.0 | v1.22.0 - v1.28.0 |
+| < 2.0.0 | <= v1.22.0 |
+
 ## Instructions for standard deployment:
 
 ### Before installing the chart
@@ -171,6 +177,12 @@ Set logzio-k8s-telemetry `ListenerHost` value to send your metrics to a custom e
 ```
 
 ## Changelog
+- **3.0.0**:
+	- Upgrade `logzio-k8s-telemetry` to `2.0.0`:
+		- Upgrade its sub charts to latest versions.
+			- `kube-state-metrics` to `4.24.0`
+			- `prometheus-node-exporter` to `4.23.2`
+			- `prometheus-pushgateway` to `2.4.2`
 - **2.0.0**:
 	- Add `logzio-k8s-events` sub chart version `0.0.3`:
 		- Sends Kubernetes deploy events logs.

@@ -14,6 +14,11 @@ It is also dependent on the [kube-state-metrics](https://github.com/kubernetes/k
 To disable the dependency during installation, set `kubeStateMetrics.enabled` and `nodeExporter` to `false`.
 
 
+### Kubernetes Versions Compatibility
+| Chart Version | Kubernetes Version |
+|---|---|
+| 2.0.0 | v1.22.0 - v1.28.0 |
+| < 1.3.0 | <= v1.22.0 |
 
 #### Before installing the chart
 * Check if you have any taints on your nodes:
@@ -339,6 +344,11 @@ helm uninstall logzio-k8s-telemetry
 
 
 ## Change log
+* 2.0.0
+  - Upgrade sub charts to their latest versions.
+    - `kube-state-metrics` to `4.24.0`
+    - `prometheus-node-exporter` to `4.23.2`
+    - `prometheus-pushgateway` to `2.4.2`
 * 1.3.0
   - Upgraded horizontal pod autoscaler API group version.
 * 1.2.0
