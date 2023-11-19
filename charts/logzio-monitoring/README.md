@@ -171,6 +171,12 @@ Set logzio-k8s-telemetry `ListenerHost` value to send your metrics to a custom e
 ```
 
 ## Changelog
+- **3.0.0**:
+	- Upgrade `logzio-k8s-telemetry` to `2.0.0`:
+		- Upgrade its sub charts to latest versions.
+			- `kube-state-metrics` to `4.24.0`
+			- `prometheus-node-exporter` to `4.23.2`
+			- `prometheus-pushgateway` to `2.4.2`
 - **2.0.0**:
 	- Add `logzio-k8s-events` sub chart version `0.0.3`:
 		- Sends Kubernetes deploy events logs.

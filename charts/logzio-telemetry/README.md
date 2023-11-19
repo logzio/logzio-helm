@@ -339,6 +339,11 @@ helm uninstall logzio-k8s-telemetry
 
 
 ## Change log
+* 2.0.0
+  - Upgrade sub charts to their latest versions.
+    - `kube-state-metrics` to `4.24.0`
+    - `prometheus-node-exporter` to `4.23.2`
+    - `prometheus-pushgateway` to `2.4.2`
 * 1.3.0
   - Upgraded horizontal pod autoscaler API group version.
 * 1.2.0
