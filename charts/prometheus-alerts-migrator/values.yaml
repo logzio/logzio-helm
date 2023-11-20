@@ -10,8 +10,7 @@ replicaCount: 1
 image:
   repository: logzio/prometheus-alerts-migrator
   pullPolicy: IfNotPresent
-  # still not official release
-  tag: "v1.0.0-test"
+  tag: "v1.0.0"
 
 serviceAccount:
   create: true
@@ -25,6 +24,12 @@ config:
   rulesDS: ""
   envID: "my-env"
   workerCount: 2
+
+rbac:
+  rules:
+    - apiGroups: [""]
+      resources: ["configmaps"]
+      verbs: ["get", "list", "watch"]
 
 resources:
   limits:

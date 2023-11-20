@@ -2,8 +2,5 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: {{ include "prometheus-alerts-migrator.fullname" . }}
-  namespace: {{ .Release.Namespace }}
-rules:
-- apiGroups: [""]
-  resources: ["pods", "pods/log"]
-  verbs: ["get", "list"]
+rules: 
+{{ toYaml .Values.rbac.rules | nindent 2 }}
