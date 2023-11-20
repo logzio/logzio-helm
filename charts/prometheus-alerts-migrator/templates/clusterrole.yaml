@@ -4,7 +4,6 @@ metadata:
   name: {{ include "prometheus-alerts-migrator.fullname" . }}
   namespace: {{ .Release.Namespace }}
 rules:
-# You need to fill these rules with actual permissions required by your application
 - apiGroups: [""]
   resources: ["pods", "pods/log"]
   verbs: ["get", "list"]
