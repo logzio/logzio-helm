@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "prometheus-alerts-migrator.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "prometheus-alerts-migrator.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "prometheus-alerts-migrator.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "prometheus-alerts-migrator.selectorLabels" . | nindent 8 }}
+      annotations:
+        {{- toYaml .Values.podAnnotations | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "prometheus-alerts-migrator.serviceAccountName" . }}
+      containers:
+        - name: prometheus-alerts-migrator
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: ANNOTATION
+              value: "{{ .Values.config.annotation }}"
+            - name: LOGZIO_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: logzio-api-token
+                  key: token
+            - name: LOGZIO_API_URL
+              value: "{{ .Values.config.logzioAPIURL }}"
+            - name: RULES_DS
+              value: "{{ .Values.config.rulesDS }}"
+            - name: ENV_ID
+              value: "{{ .Values.config.envID }}"
+            - name: WORKER_COUNT
+              value: "{{ .Values.config.workerCount }}"
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}

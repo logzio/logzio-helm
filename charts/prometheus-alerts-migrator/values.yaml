@@ -1,0 +1,41 @@
+# Default values for prometheus-alerts-migrator.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+fullnameOverride: ""
+nameOverride: ""
+
+replicaCount: 1
+
+image:
+  repository: logzio/prometheus-alerts-migrator
+  pullPolicy: IfNotPresent
+  # still not official release
+  tag: "v1.0.0-test"
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+config:
+  annotation: "prometheus.io/kube-rules"
+  logzioAPIToken: ""
+  logzioAPIURL: "https://api.logz.io/"
+  rulesDS: ""
+  envID: "my-env"
+  workerCount: 2
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

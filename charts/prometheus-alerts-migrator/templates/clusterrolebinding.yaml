@@ -1,0 +1,14 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "prometheus-alerts-migrator.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "prometheus-alerts-migrator.fullname" . }}
+subjects:
+- kind: ServiceAccount
+  name: {{ include "prometheus-alerts-migrator.serviceAccountName" . }}
+  namespace: {{ .Release.Namespace }}
