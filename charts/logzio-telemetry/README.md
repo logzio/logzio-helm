@@ -14,6 +14,11 @@ It is also dependent on the [kube-state-metrics](https://github.com/kubernetes/k
 To disable the dependency during installation, set `kubeStateMetrics.enabled` and `nodeExporter` to `false`.
 
 
+### Kubernetes Versions Compatibility
+| Chart Version | Kubernetes Version |
+|---|---|
+| 2.0.0 | v1.22.0 - v1.28.0 |
+| < 1.3.0 | <= v1.22.0 |
 
 #### Before installing the chart
 * Check if you have any taints on your nodes:

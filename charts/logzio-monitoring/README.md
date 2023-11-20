@@ -11,6 +11,12 @@ This project packages 3 Helm Charts:
 - [logzio-telemetry](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-telemetry) for metrics and traces (via OpenTelemetry Collector).
 - [logzio-trivy](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-trivy) for security reports (via Trivy operator).
 
+### Kubernetes Versions Compatibility
+| Chart Version | Kubernetes Version |
+|---|---|
+| 3.0.0 | v1.22.0 - v1.28.0 |
+| < 2.0.0 | <= v1.22.0 |
+
 ## Instructions for standard deployment:
 
 ### Before installing the chart
