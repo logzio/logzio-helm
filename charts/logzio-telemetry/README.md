@@ -344,6 +344,7 @@ helm uninstall logzio-k8s-telemetry
     - `kube-state-metrics` to `4.24.0`
     - `prometheus-node-exporter` to `4.23.2`
     - `prometheus-pushgateway` to `2.4.2`
+    - Secrets resource name is now changeable via `secrets.name` in `values.yaml`.
 * 1.3.0
   - Upgraded horizontal pod autoscaler API group version.
 * 1.2.0
