@@ -17,6 +17,10 @@ serviceAccount:
   annotations: {}
   name: ""
 
+secret:
+  create: true
+  name: logzio-api-token
+
 config:
   configMapAnnotation: "prometheus.io/kube-rules"
   logzioAPIToken: ""

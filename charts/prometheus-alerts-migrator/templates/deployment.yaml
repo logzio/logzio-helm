@@ -28,7 +28,7 @@ spec:
             - name: LOGZIO_API_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: logzio-api-token
+                  name:  {{ .Values.secret.name }}
                   key: token
             - name: LOGZIO_API_URL
               value: "{{ .Values.config.logzioAPIURL }}"
