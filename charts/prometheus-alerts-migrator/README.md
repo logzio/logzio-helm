@@ -100,6 +100,7 @@ data:
       description: "The OpenTelemetry collector has been down for more than 5 minutes."
       summary: "Instance down"
 ```
+
 - Replace `prometheus.io/kube-rules` with the actual annotation you use to identify relevant ConfigMaps. The data section should contain your Prometheus alert rules in YAML format.
 - Deploy the configmap to your cluster `kubectl apply -f <configmap-file>.yml`
 
