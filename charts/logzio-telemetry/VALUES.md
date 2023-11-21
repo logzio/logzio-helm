@@ -44,13 +44,13 @@ logzio-k8s-telemetry allows you to ship metrics and traces from your Kubernetes 
 | image.pullPolicy | string | `"IfNotPresent"` | Image pull policy for the opentelemetry collector image. |
 | image.repository | string | `"otel/opentelemetry-collector-contrib"` | Opentelemetry collector image repository. |
 | image.tag | string | `"0.78.0"` |  Opentelemetry collector image tag. |
-| kubeStateMetrics.enabled | bool | `true` | Controlles the deployment of the kube-state-metrics sub chart. |
+| tags.kubeStateMetrics.enabled | bool | `true` | Controlles the deployment of the kube-state-metrics sub chart. |
 | applicationMetrics.enabled | bool | `false` | wheter or not to enable `applications` scrape job. |
 | metrics.enabled | bool | `false` | Controlles the activation of metrics collection. |
 | traces.enabled | bool | `false` | Controlles the activation of traces collection. |
 | nameOverride | string | `"otel-collector"` | Name override for the opentelemetry collector. |
-| nodeExporter.enabled | bool | `true` | Controlles the deployment of the node-exporter sub chart. |
-| pushGateway.enabled | bool | `true` | Controlles the deployment of the prometheus-pushgateway sub chart. |
+| tags.nodeExporter.enabled | bool | `true` | Controlles the deployment of the node-exporter sub chart. |
+| tags.pushGateway.enabled | bool | `true` | Controlles the deployment of the prometheus-pushgateway sub chart. |
 | secrets.ListenerHost | string | `""` | Logzio listener host. |
 | secrets.LogzioRegion | string | `"us"` | Logzio listener region. |
 | secrets.MetricsToken | string | `""` | Logzio metrics token. |
