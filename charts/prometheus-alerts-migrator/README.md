@@ -48,8 +48,8 @@ The chart can optionally create a Kubernetes Secret to store sensitive informati
 
 | Parameter       | Description                                                        | Default             |
 | --------------- | ------------------------------------------------------------------ | ------------------- |
-| `secret.enabled` | Determines whether a Secret should be created by the Helm chart.  | `true`              |
-| `secret.name`    | Specifies the name of the Secret to be used.                      | `logzio-api-token`  |
+| `secret.create` | Determines whether a Secret should be created by the Helm chart.  | `true`              |
+| `secret.name`   | Specifies the name of the Secret to be used.                      | `logzio-api-token`  |
 
 
 ### Using an Existing Secret
