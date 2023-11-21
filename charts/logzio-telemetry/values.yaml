@@ -16,6 +16,7 @@ nameOverride: "otel-collector"
 fullnameOverride: ""
 
 secrets:
+  name: logzio-secret
   enabled: true
   MetricsToken: ""
   TracesToken: ""
@@ -120,25 +121,27 @@ clusterRoleRules:
   - list
   - watch
 
-kubeStateMetrics:
-  ## If false, kube-state-metrics sub-chart will not be installed
-  ##
-  enabled: true
 
-pushGateway:
-  ## If false, pushGateway sub-chart will not be installed
-  ##
-  enabled: true
+tags:
+  kubeStateMetrics:
+    ## If false, kube-state-metrics sub-chart will not be installed
+    ##
+    enabled: true
+
+  pushGateway:
+    ## If false, pushGateway sub-chart will not be installed
+    ##
+    enabled: true
+  nodeExporter:
+    ## If false, node-exporter will not be installed
+    ##
+    enabled: true
+    
 prometheus-pushgateway:
   serviceAnnotations:
     prometheus.io/scrape: "true"
   nodeSelector:
     kubernetes.io/os: linux
-
-nodeExporter:
-  ## If false, node-exporter will not be installed
-  ##
-  enabled: true
 
 emptyConfig: {}
 
@@ -1002,6 +1005,7 @@ daemonsetConfig:
           - prometheus/infrastructure
           - prometheus/cadvisor
           - prometheus/collector
+
          
 opencost:
   enabled: false
