@@ -31,7 +31,7 @@ The following table lists the configurable parameters of the Prometheus Alerts M
 | `replicaCount` | Number of controller replicas | 1 |
 | `image.repository` | Container image repository | logzio/prometheus-alerts-migrator |
 | `image.pullPolicy` | Container image pull policy | IfNotPresent |
-| `image.tag`| Container image tag | v1.0.0-test |
+| `image.tag`| Container image tag | v1.0.0 |
 | `serviceAccount.create` | Specifies whether a service account should be created | true |
 | `serviceAccount.name` | The name of the service account to use | "" |
 | `config.configMapAnnotation` | ConfigMap annotation for rules | prometheus.io/kube-rules |
