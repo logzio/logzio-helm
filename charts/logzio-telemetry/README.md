@@ -223,6 +223,27 @@ To enable applications metrics scraping set the `applicationMetrics.enabled` val
 --set applicationMetrics.enabled=true
 ```
 This will enable the `metrics/applications` pipline and will scrape metrics from pods with the `prometheus.io/scrape=true` annotation
+### Removing kube-state-metrics metrics
+
+To disable kube-state-metrics metrics scraping set the `tags.kubeStateMetrics.enabled` value to `true`
+```bash
+--set tags.kubeStateMetrics.enabled=true
+```
+This will disable the `kube-state-metrics` sub chart installation so it won't scrape its metrics.
+### Removing prometheus-pushgateway metrics
+
+To disable prometheus-pushgateway metrics scraping set the `tags.pushGateway.enabled` value to `true`
+```bash
+--set tags.pushGateway.enabled=true
+```
+This will disable the `prometheus-pushgateway` sub chart installation so it won't scrape its metrics.
+### Removing prometheus-node-exporter metrics
+
+To disable prometheus-node-exporter metrics scraping set the `tags.nodeExporter.enabled` value to `true`
+```bash
+--set tags.nodeExporter.enabled=true
+```
+This will disable the `prometheus-node-exporter` sub chart installation so it won't scrape its metrics.
 ### Using Out of the box metrics filters for Logzio dashboards
 
 You can use predefined metrics filters to prevent unnecessary metrics being sent to Logz.io and reduce usage cost.
