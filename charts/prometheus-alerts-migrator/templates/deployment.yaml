@@ -23,8 +23,8 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
-            - name: ANNOTATION
-              value: "{{ .Values.config.annotation }}"
+            - name: CONFIGMAP_ANNOTATION
+              value: "{{ .Values.config.configMapAnnotation }}"
             - name: LOGZIO_API_TOKEN
               valueFrom:
                 secretKeyRef:
@@ -35,7 +35,7 @@ spec:
             - name: RULES_DS
               value: "{{ .Values.config.rulesDS }}"
             - name: ENV_ID
-              value: "{{ .Values.config.envID }}"
+              value: "{{ .Values.config.env_id }}"
             - name: WORKER_COUNT
               value: "{{ .Values.config.workerCount }}"
           resources:

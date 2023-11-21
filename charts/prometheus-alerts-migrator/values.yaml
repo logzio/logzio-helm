@@ -18,11 +18,11 @@ serviceAccount:
   name: ""
 
 config:
-  annotation: "prometheus.io/kube-rules"
+  configMapAnnotation: "prometheus.io/kube-rules"
   logzioAPIToken: ""
   logzioAPIURL: "https://api.logz.io/"
   rulesDS: ""
-  envID: "my-env"
+  env_id: "my-env"
   workerCount: 2
 
 rbac:
