@@ -1,0 +1,13 @@
+apiVersion: v2
+name: prometheus-alerts-migrator
+description: This Helm chart serves as a Kubernetes controller that automates the migration of Prometheus alert rules to Logz.io's alert format, facilitating monitoring and alert management in a Logz.io integrated environment.
+
+type: application
+
+version: 1.0.0
+
+appVersion: "1.0.0"
+
+maintainers:
+- name: yotamloe
+  email: yotam.loewenbach@logz.io
