@@ -14,12 +14,12 @@ To install the chart with the release name `logzio-prometheus-alerts-migrator`:
 
 ```sh
 helm install \
-  --set applicationConfig.annotation="prometheus.io/kube-rules" \
-  --set applicationConfig.logzioAPIToken="your-logzio-api-token" \
-  --set applicationConfig.logzioAPIURL="https://api.logz.io/" \
-  --set applicationConfig.rulesDS="<<logzio_metrics_data_source_name>>" \
-  --set applicationConfig.envID="<<env_id>>" \
-  --set applicationConfig.workerCount=2 \
+  --set config.configMapAnnotation="prometheus.io/kube-rules" \
+  --set config.logzioAPIToken="your-logzio-api-token" \
+  --set config.logzioAPIURL="https://api.logz.io/" \
+  --set config.rulesDS="<<logzio_metrics_data_source_name>>" \
+  --set config.env_id="<<env_id>>" \
+  --set config.workerCount=2 \
   logzio-prometheus-alerts-migrator logzio-helm/prometheus-alerts-migrator
 ```
 
@@ -34,12 +34,12 @@ The following table lists the configurable parameters of the Prometheus Alerts M
 | image.tag | Container image tag | v1.0.0-test |
 | serviceAccount.create | Specifies whether a service account should be created | true |
 | serviceAccount.name | The name of the service account to use | "" |
-| applicationConfig.annotation | ConfigMap annotation for rules | prometheus.io/kube-rules |
-| applicationConfig.logzioAPIToken | Logz.io API token | "" |
-| applicationConfig.logzioAPIURL | Logz.io API URL | https://api.logz.io/ |
-| applicationConfig.rulesDS | Data source for rules | IntegrationsTeamTesting_metrics |
-| applicationConfig.envID | Environment ID | my-env-yotam |
-| applicationConfig.workerCount | Number of workers | 2 |
+| config.configMapAnnotation | ConfigMap annotation for rules | prometheus.io/kube-rules |
+| config.logzioAPIToken | Logz.io API token | "" |
+| config.logzioAPIURL | Logz.io API URL | https://api.logz.io/ |
+| config.rulesDS | Data source for rules | IntegrationsTeamTesting_metrics |
+| config.env_id | Environment ID | my-env-yotam |
+| config.workerCount | Number of workers | 2 |
 | rbac.rules | Custom rules for the Kubernetes cluster role | [{apiGroups: [""], resources: ["configmaps"], verbs: ["get", "list", "watch"]}] |
 
 ### ConfigMap Format
