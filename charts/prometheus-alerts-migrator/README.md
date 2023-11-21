@@ -28,19 +28,50 @@ The following table lists the configurable parameters of the Prometheus Alerts M
 
 | Parameter | Description | Default |
 |---|---|---|
-| replicaCount | Number of controller replicas | 1 |
-| image.repository | Container image repository | logzio/prometheus-alerts-migrator |
-| image.pullPolicy | Container image pull policy | IfNotPresent |
-| image.tag | Container image tag | v1.0.0-test |
-| serviceAccount.create | Specifies whether a service account should be created | true |
-| serviceAccount.name | The name of the service account to use | "" |
-| config.configMapAnnotation | ConfigMap annotation for rules | prometheus.io/kube-rules |
-| config.logzioAPIToken | Logz.io API token | "" |
-| config.logzioAPIURL | Logz.io API URL | https://api.logz.io/ |
-| config.rulesDS | Data source for rules | IntegrationsTeamTesting_metrics |
-| config.env_id | Environment ID | my-env-yotam |
-| config.workerCount | Number of workers | 2 |
-| rbac.rules | Custom rules for the Kubernetes cluster role | [{apiGroups: [""], resources: ["configmaps"], verbs: ["get", "list", "watch"]}] |
+| `replicaCount` | Number of controller replicas | 1 |
+| `image.repository` | Container image repository | logzio/prometheus-alerts-migrator |
+| `image.pullPolicy` | Container image pull policy | IfNotPresent |
+| `image.tag`| Container image tag | v1.0.0-test |
+| `serviceAccount.create` | Specifies whether a service account should be created | true |
+| `serviceAccount.name` | The name of the service account to use | "" |
+| `config.configMapAnnotation` | ConfigMap annotation for rules | prometheus.io/kube-rules |
+| `config.logzioAPIToken` | Logz.io API token | "" |
+| `config.logzioAPIURL` | Logz.io API URL | https://api.logz.io/ |
+| `config.rulesDS` | Data source for rules | IntegrationsTeamTesting_metrics |
+| `config.env_id` | Environment ID | my-env-yotam |
+| `config.workerCount` | Number of workers | 2 |
+| `rbac.rules` | Custom rules for the Kubernetes cluster role | [{apiGroups: [""], resources: ["configmaps"], verbs: ["get", "list", "watch"]}] |
+
+## Secret Management
+
+The chart can optionally create a Kubernetes Secret to store sensitive information like the Logz.io API token. You can control the creation and naming of this Secret through the following configurations in the `values.yaml` file.
+
+| Parameter       | Description                                                        | Default             |
+| --------------- | ------------------------------------------------------------------ | ------------------- |
+| `secret.enabled` | Determines whether a Secret should be created by the Helm chart.  | `true`              |
+| `secret.name`    | Specifies the name of the Secret to be used.                      | `logzio-api-token`  |
+
+
+### Using an Existing Secret
+By default, the chart will create a Secret named `logzio-api-token`. You can change the name by setting `secret.name` to your preferred name. If you enable Secret creation, make sure to provide the actual token value in the `values.yaml` or via the `--set` flag:
+```sh
+helm install \
+  --set logzioAPIToken=your-logzio-api-token \
+  logzio-prometheus-alerts-migrator logzio-helm/prometheus-alerts-migrator
+```
+
+If you prefer to manage the Secret outside of the Helm chart (e.g., for security reasons or to use an existing Secret), set `secret.enabled` to `false` and provide the name of your existing Secret in `secret.name`.
+
+Example of disabling Secret creation and using an existing Secret:
+
+```sh
+helm install \
+  --set secret.enabled=false \
+  --set secret.name=my-existing-secret \
+  logzio-prometheus-alerts-migrator logzio-helm/prometheus-alerts-migrator
+```
+In this case, ensure that your existing Secret my-existing-secret contains the necessary key (`token` in this context) with the appropriate value (Logz.io API token).
+
 
 ### ConfigMap Format
 The controller is designed to process ConfigMaps containing Prometheus alert rules. These ConfigMaps must be annotated with a specific key that matches the value of the `ANNOTATION` environment variable for the controller to process them.
