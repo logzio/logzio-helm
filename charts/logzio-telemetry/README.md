@@ -11,7 +11,7 @@ The Helm tool is used to manage packages of pre-configured Kubernetes resources 
 
 **Note:** This chart is a fork of the [opentelemtry-collector](https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-collector) Helm chart. 
 It is also dependent on the [kube-state-metrics](https://github.com/kubernetes/kube-state-metrics/tree/master/charts/kube-state-metrics) and [prometheus-node-exporter](https://github.com/helm/charts/tree/master/stable/prometheus-node-exporter) charts, which are installed by default. 
-To disable the dependency during installation, set `kubeStateMetrics.enabled` and `nodeExporter` to `false`.
+To disable the dependency during installation, set any of these values: `tags.kubeStateMetrics.enabled`, `tags.pushGateway.enabled` and `tags.nodeExporter.enabled` to `false`.
 
 
 ### Kubernetes Versions Compatibility

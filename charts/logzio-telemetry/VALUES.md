@@ -1,6 +1,6 @@
 # logzio-k8s-telemetry
 
-![Version: 0.0.24](https://img.shields.io/badge/Version-0.0.24-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.70.0](https://img.shields.io/badge/AppVersion-0.70.0-informational?style=flat-square)
+![Version: 2.0.0](https://img.shields.io/badge/Version-2.0.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.70.0](https://img.shields.io/badge/AppVersion-0.80.0-informational?style=flat-square)
 
 logzio-k8s-telemetry allows you to ship metrics and traces from your Kubernetes cluster using the OpenTelemetry collector.
 
@@ -20,9 +20,9 @@ logzio-k8s-telemetry allows you to ship metrics and traces from your Kubernetes 
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://prometheus-community.github.io/helm-charts | kube-state-metrics | 4.13.0 |
-| https://prometheus-community.github.io/helm-charts | prometheus-node-exporter | 3.3.0 |
-| https://prometheus-community.github.io/helm-charts | prometheus-pushgateway | 1.18.2 |
+| https://prometheus-community.github.io/helm-charts | kube-state-metrics | 4.24.0 |
+| https://prometheus-community.github.io/helm-charts | prometheus-node-exporter | 4.23.2 |
+| https://prometheus-community.github.io/helm-charts | prometheus-pushgateway | 2.4.2 |
 
 ## Values
 
