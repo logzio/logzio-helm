@@ -368,9 +368,12 @@ helm uninstall logzio-k8s-telemetry
 * 2.0.0
   - Upgrade sub charts to their latest versions.
     - `kube-state-metrics` to `4.24.0`
+      - Upgraded horizontal pod autoscaler API group version.
     - `prometheus-node-exporter` to `4.23.2`
     - `prometheus-pushgateway` to `2.4.2`
-    - Secrets resource name is now changeable via `secrets.name` in `values.yaml`.
+  - Secrets resource name is now changeable via `secrets.name` in `values.yaml`.
+  - Fix sub charts conditional installation. 
+  - Add conditional creation of `CustomTracingEndpoint` secret key. 
 * 1.3.0
   - Upgraded horizontal pod autoscaler API group version.
 * 1.2.0
