@@ -44,7 +44,7 @@ containers:
       - name: K8S_360_METRICS
         valueFrom:
           secretKeyRef:
-            name: logzio-secret
+            name: {{ .Values.secrets.name }}
             key: kubernetes-360-metrics
       - name: LOGZIO_AGENT_VERSION
         value: {{.Chart.Version}}
@@ -55,28 +55,28 @@ containers:
       - name: METRICS_TOKEN
         valueFrom:
           secretKeyRef:
-            name: logzio-secret
+            name: {{ .Values.secrets.name }}
             key: logzio-metrics-shipping-token
       - name: LISTENER_URL
         valueFrom:
           secretKeyRef:
-            name: logzio-secret
+            name: {{ .Values.secrets.name }}
             key: logzio-metrics-listener
       - name: P8S_LOGZIO_NAME
         valueFrom:
           secretKeyRef:
-            name: logzio-secret
+            name: {{ .Values.secrets.name }}
             key: p8s-logzio-name
       - name: ENV_ID
         valueFrom:
           secretKeyRef:
-            name: logzio-secret
+            name: {{ .Values.secrets.name }}
             key: env_id
 {{- if .Values.opencost.enabled }}
       - name: OPENCOST_DUPLICATES
         valueFrom:
           secretKeyRef:
-            name: logzio-secret
+            name: {{ .Values.secrets.name }}
             key: opencost-duplicates
 {{- end }}
 

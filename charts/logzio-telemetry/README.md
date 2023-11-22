@@ -11,9 +11,14 @@ The Helm tool is used to manage packages of pre-configured Kubernetes resources 
 
 **Note:** This chart is a fork of the [opentelemtry-collector](https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-collector) Helm chart. 
 It is also dependent on the [kube-state-metrics](https://github.com/kubernetes/kube-state-metrics/tree/master/charts/kube-state-metrics) and [prometheus-node-exporter](https://github.com/helm/charts/tree/master/stable/prometheus-node-exporter) charts, which are installed by default. 
-To disable the dependency during installation, set `kubeStateMetrics.enabled` and `nodeExporter` to `false`.
+To disable the dependency during installation, set any of these values: `tags.kubeStateMetrics.enabled`, `tags.pushGateway.enabled` and `tags.nodeExporter.enabled` to `false`.
 
 
+### Kubernetes Versions Compatibility
+| Chart Version | Kubernetes Version |
+|---|---|
+| 2.0.0 | v1.22.0 - v1.28.0 |
+| < 1.3.0 | <= v1.22.0 |
 
 #### Before installing the chart
 * Check if you have any taints on your nodes:
@@ -218,6 +223,27 @@ To enable applications metrics scraping set the `applicationMetrics.enabled` val
 --set applicationMetrics.enabled=true
 ```
 This will enable the `metrics/applications` pipline and will scrape metrics from pods with the `prometheus.io/scrape=true` annotation
+### Removing kube-state-metrics metrics
+
+To disable kube-state-metrics metrics scraping set the `tags.kubeStateMetrics.enabled` value to `false`
+```bash
+--set tags.kubeStateMetrics.enabled=false
+```
+This will disable the `kube-state-metrics` sub chart installation so it won't scrape its metrics.
+### Removing prometheus-pushgateway metrics
+
+To disable prometheus-pushgateway metrics scraping set the `tags.pushGateway.enabled` value to `false`
+```bash
+--set tags.pushGateway.enabled=false
+```
+This will disable the `prometheus-pushgateway` sub chart installation so it won't scrape its metrics.
+### Removing prometheus-node-exporter metrics
+
+To disable prometheus-node-exporter metrics scraping set the `tags.nodeExporter.enabled` value to `false`
+```bash
+--set tags.nodeExporter.enabled=false
+```
+This will disable the `prometheus-node-exporter` sub chart installation so it won't scrape its metrics.
 ### Using Out of the box metrics filters for Logzio dashboards
 
 You can use predefined metrics filters to prevent unnecessary metrics being sent to Logz.io and reduce usage cost.
@@ -339,6 +365,15 @@ helm uninstall logzio-k8s-telemetry
 
 
 ## Change log
+* 2.0.0
+  - Upgrade sub charts to their latest versions.
+    - `kube-state-metrics` to `4.24.0`
+      - Upgraded horizontal pod autoscaler API group version.
+    - `prometheus-node-exporter` to `4.23.2`
+    - `prometheus-pushgateway` to `2.4.2`
+  - Secrets resource name is now changeable via `secrets.name` in `values.yaml`.
+  - Fix sub charts conditional installation. 
+  - Add conditional creation of `CustomTracingEndpoint` secret key. 
 * 1.3.0
   - Upgraded horizontal pod autoscaler API group version.
 * 1.2.0
