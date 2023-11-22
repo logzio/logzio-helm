@@ -85,11 +85,13 @@ containers:
           secretKeyRef:
             name: {{ .Values.secrets.name }}
             key: logzio-listener-region
+      {{ if .Values.secrets.CustomTracingEndpoint}}
       - name: CUSTOM_TRACING_ENDPOINT
         valueFrom:
           secretKeyRef:
             name: {{ .Values.secrets.name }}
             key: custom-tracing-endpoint
+      {{ end }}
       - name: SAMPLING_PROBABILITY
         valueFrom:
           secretKeyRef:
