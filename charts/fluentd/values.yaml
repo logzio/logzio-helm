@@ -62,6 +62,7 @@ daemonset:
   excludeFluentdPath: "/var/log/containers/*fluentd*.log"
   extraExclude: ""
   containersPath: "/var/log/containers/*.log"
+  posFile: "/var/log/fluentd-containers.log.pos"
   logType: "k8s"
   extraEnv: []
   resources:
@@ -188,7 +189,7 @@ configmap:
       @type tail
       @id in_tail_container_logs
       path "#{ENV['CONTAINERS_PATH']}"
-      pos_file /var/log/fluentd-containers.log.pos
+      pos_file "#{ENV['POS_FILE_PATH']}"
       # The following line removes fluentd containers logs:
       exclude_path "#{ENV['EXCLUDE_PATH'].split(',')}"
       tag logzio.kubernetes.*

@@ -101,6 +101,7 @@ helm install -n monitoring \
 | `daemonset.excludeFluentdPath` | Path to fluentd logs file, to exclude them from the logs that Fluent tails. | `/var/log/containers/*fluentd*.log` |
 | `daemonset.extraExclude` | A comma-seperated list (no spaces), of more paths to exclude from the Fluentd source that tails containers logs. For example - /path/one.log,/path/two.log | `""` |
 | `daemonset.containersPath` | Path for containers logs. | `"/var/log/containers/*.log"` |
+| `daemonset.posFile` | Path for containers logs pos file. | `"/var/log/fluentd-containers.log.pos"` |
 | `daemonset.logType` | Set log type for the logs. | `"k8s"` |
 | `daemonset.extraEnv` | If needed, more env vars can be added with this field. | `[]` |
 | `daemonset.resources` | Allows you to set the resources for Fluentd Daemonset. |  See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
@@ -294,6 +295,9 @@ If needed, the fluentd image can be changed to support windows server 2022 with 
 
 
 ## Change log
+ - **0.26.0**:
+   - Bump docker image to `1.5.1`.
+   - Add ability to configure pos file for containers logs.
  - **0.25.0*:
    - Add parameter `isPrivileged` to allow running Daemonset with priviliged security context.
    - **Bug fix**: Fix template for `fluentd.serviceAccount`, and fix use of template in service account.
@@ -301,13 +305,12 @@ If needed, the fluentd image can be changed to support windows server 2022 with 
    - Add parameter `configmap.customFilterAfter` that allows adding filters AFTER built-in filter configuration.
    - Added `daemonset.init.containerImage` customization.
    - Added fluentd image for windows server 2022.
- - **0.23.0**:
-   - Allow filtering logs by log level with `logLevelFilter`.
-
 
 <details>
   <summary markdown="span"> Expand to check old versions </summary>
 
+ - **0.23.0**:
+   - Allow filtering logs by log level with `logLevelFilter`.
  - **0.22.0**:
    - Add custom endpoint option with `secrets.customEndpoint`.
  - **0.21.0**:
