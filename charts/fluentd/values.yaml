@@ -1,5 +1,5 @@
 image: logzio/logzio-fluentd
-imageTag: 1.5.0
+imageTag: 1.5.1
 
 windowsImage: logzio/fluentd-windows
 windowsImageTag: 0.0.2
