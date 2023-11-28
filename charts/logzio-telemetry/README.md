@@ -362,6 +362,13 @@ To uninstall the `logzio-k8s-telemetry` deployment, use the following command:
 helm uninstall logzio-k8s-telemetry
 ```
 
+### Upgrade logzio-telemetry to v2.0.0
+
+Before upgrading your logzio-telemetry Chart to v2.0.0 with `helm upgrade`, note that you may encounter an error for some of its sub-charts.
+
+There are two possible approaches to the upgrade you can choose from:
+- Reinstall the chart.
+- Before running the `helm upgrade` command, delete the old subcharts resources: `logzio-monitoring-prometheus-pushgateway` deployment and the `logzio-monitoring-prometheus-node-exporter` daemonset.
 
 
 ## Change log

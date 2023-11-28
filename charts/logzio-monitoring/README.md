@@ -176,6 +176,15 @@ Set logzio-k8s-telemetry `ListenerHost` value to send your metrics to a custom e
 --set logzio-k8s-telemetry.secrets.ListenerHost="<<CUSTOM_ENDPOINT>>"
 ```
 
+### Upgrade logzio-monitoring to v3.0.0
+
+Before upgrading your logzio-monitoring Chart to v3.0.0 with `helm upgrade`, note that you may encounter an error for some of the logzio-telemetry sub-charts.
+
+There are two possible approaches to the upgrade you can choose from:
+- Reinstall the chart.
+- Before running the `helm upgrade` command, delete the old subcharts resources: `logzio-monitoring-prometheus-pushgateway` deployment and the `logzio-monitoring-prometheus-node-exporter` daemonset.
+
+
 ## Changelog
 - **3.1.0**:
 	- Upgrade `logzio-fluentd` to `0.26.0`:
