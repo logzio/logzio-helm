@@ -113,6 +113,8 @@ spec:
           value: {{ .Values.daemonset.containersPath | quote }}
         - name: LOG_TYPE
           value: {{ .Values.daemonset.logType | quote }}
+        - name: POS_FILE_PATH
+          value: {{ .Values.daemonset.posFile | quote }}
         {{- if .Values.env_id }}
         - name: ENV_ID
           value: {{ .Values.env_id }}
