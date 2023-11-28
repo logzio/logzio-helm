@@ -177,6 +177,11 @@ Set logzio-k8s-telemetry `ListenerHost` value to send your metrics to a custom e
 ```
 
 ## Changelog
+- **3.1.0**:
+	- Upgrade `logzio-fluentd` to `0.26.0`:
+		- Bump docker image to `1.5.1`.
+	  	- Add the ability to configure pos file for containers logs.
+ 
 - **3.0.0**:
 	- Upgrade `logzio-k8s-telemetry` to `2.0.0`:
 		- Upgrade sub charts to their latest versions.
@@ -190,6 +195,10 @@ Set logzio-k8s-telemetry `ListenerHost` value to send your metrics to a custom e
 - **2.0.0**:
 	- Add `logzio-k8s-events` sub chart version `0.0.3`:
 		- Sends Kubernetes deploy events logs.
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
 - **1.8.0**:
 	- Upgrade `logzio-k8s-telemetry` to `1.3.0`:
 		- Upgraded horizontal pod autoscaler API group version.
@@ -207,12 +216,6 @@ Set logzio-k8s-telemetry `ListenerHost` value to send your metrics to a custom e
 		- Add parameter `configmap.customFilterAfter` that allows adding filters AFTER built-in filter configuration.
    	- Added `daemonset.init.containerImage` customization.
    	- Added fluentd image for windows server 2022.
-
-  - Update chart dependencies
-
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
-
 - **1.4.0**:
 	- Upgrage `logzio-fluentd` to `0.23.0`:
 		- Allow filtering logs by log level with `logLevelFilter`.
