@@ -364,14 +364,11 @@ helm uninstall logzio-k8s-telemetry
 
 ### Upgrade logzio-telemetry to v2.0.0
 
-The logzio-telemetry chart was upgraded with breaking changes in version 2.0.0. Upon attempting to upgrade the chart using `helm upgrade -n monitoring --version 2.0.0 logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry`, an error occurs that correlates with the version upgrade of the subcharts.
+Before upgrading your logzio-telemetry Chart to v2.0.0 with `helm upgrade`, note that you may encounter an error for some of its sub-charts.
 
 There are two possible approaches to the upgrade you can choose from:
-
+- Reinstall the chart.
 - Before running the `helm upgrade` command, delete the old subcharts resources: `logzio-monitoring-prometheus-pushgateway` deployment and the `logzio-monitoring-prometheus-node-exporter` daemonset.
-
-- Reinstall the chart. 
-
 
 
 ## Change log
