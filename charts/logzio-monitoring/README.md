@@ -6,7 +6,7 @@ The logzio-monitoring Helm Chart ships your Kubernetes telemetry (logs, metrics,
 
 ## Overview
 
-This project packages 3 Helm Charts:
+This project packages the following Helm Charts:
 - [logzio-fluentd](https://github.com/logzio/logzio-helm/tree/master/charts/fluentd) for logs shipping (via Fluentd).
 - [logzio-telemetry](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-telemetry) for metrics and traces (via OpenTelemetry Collector).
 - [logzio-trivy](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-trivy) for security reports (via Trivy operator).
