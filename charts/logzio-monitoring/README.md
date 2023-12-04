@@ -187,11 +187,17 @@ There are two possible approaches to the upgrade you can choose from:
 
 
 ## Changelog
+- **3.2.0**:
+	- Upgrade `logzio-k8s-telemetry` to `2.1.0`:
+		- Update SPM labels
+			- Add `rpc_grpc_status_code` dimension
+			- Add `unified_status_code` dimension
+				- Takes value of `rpc_grpc_status_code` / `http_status_code`
+		- Add `containerSecurityContext` configuration option for container based policies. 
 - **3.1.0**:
 	- Upgrade `logzio-fluentd` to `0.26.0`:
 		- Bump docker image to `1.5.1`.
 	  	- Add the ability to configure pos file for containers logs.
- 
 - **3.0.0**:
 	- Upgrade `logzio-k8s-telemetry` to `2.0.0`:
 		- Upgrade sub charts to their latest versions.

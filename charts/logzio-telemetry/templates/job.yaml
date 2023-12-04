@@ -36,6 +36,7 @@ spec:
                  "$(SECRET_PASSWORD)"]
           securityContext:
             privileged: true
+            {{- toYaml .Values.containerSecurityContext | nindent 6 }}            
       nodeSelector:
         kubernetes.io/os: linux
       {{- if .Values.tolerations }}
@@ -84,6 +85,7 @@ spec:
                      "$(SECRET_PASSWORD)"]
               securityContext:
                 privileged: true
+                {{- toYaml .Values.containerSecurityContext | nindent 6 }}                      
           nodeSelector:
             kubernetes.io/os: linux
           {{- if .Values.tolerations }}

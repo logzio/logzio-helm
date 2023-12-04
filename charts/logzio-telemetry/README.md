@@ -372,6 +372,12 @@ There are two possible approaches to the upgrade you can choose from:
 
 
 ## Change log
+* 2.1.0
+  - Update SPM labels
+    - Add `rpc_grpc_status_code` dimension
+    - Add `unified_status_code` dimension
+      - Takes value of `rpc_grpc_status_code` / `http_status_code`
+  - Add `containerSecurityContext` configuration option for container based policies. 
 * 2.0.0
   - Upgrade sub charts to their latest versions.
     - `kube-state-metrics` to `4.24.0`
