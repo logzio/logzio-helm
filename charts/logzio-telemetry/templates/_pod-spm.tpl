@@ -15,6 +15,8 @@ containers:
       {{- end }}
     image: "{{ .Values.spmImage.repository }}:{{ .Values.spmImage.tag | default .Chart.AppVersion }}"
     imagePullPolicy: {{ .Values.spmImage.pullPolicy }}
+    securityContext:
+      {{- toYaml .Values.containerSecurityContext | nindent 6 }}    
     ports:
       {{- range $key, $port := .Values.spanMetricsAgregator.ports }}
       {{- if $port.enabled }}
@@ -59,7 +61,7 @@ containers:
     {{- toYaml .Values.spanMetricsAgregator.resources | nindent 6 }}
     volumeMounts:
       - mountPath: /conf
-        name: {{ .Chart.Name }}-configmap-spm
+        name: {{ .Chart.Name }}-configmap-spm    
 volumes:
   - name: {{ .Chart.Name }}-configmap-spm
     configMap:
