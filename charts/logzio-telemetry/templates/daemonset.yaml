@@ -41,11 +41,14 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
+        securityContext:
+          {{- toYaml .Values.containerSecurityContext | nindent 6 }}             
       {{- if .Values.tolerations }}            
       tolerations: {{- .Values.tolerations | toYaml | trim | nindent 8 }}
       {{- end }}     
       securityContext:
         runAsNonRoot: false
+        {{- toYaml .Values.securityContext | nindent 6 }}
       nodeSelector:
         kubernetes.io/os: windows
 {{- end }}

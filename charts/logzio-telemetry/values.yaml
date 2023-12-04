@@ -530,6 +530,7 @@ serviceAccount:
 
 podSecurityContext: {}
 securityContext: {}
+containerSecurityContext: {}
 
 nodeSelector: {}
 linuxNodeSelector: {

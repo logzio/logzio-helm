@@ -15,7 +15,7 @@ containers:
       - {{ . }}
       {{- end }}
     securityContext:
-      {{- toYaml .Values.securityContext | nindent 6 }}
+      {{- toYaml .Values.containerSecurityContext | nindent 6 }}
     image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
     imagePullPolicy: {{ .Values.image.pullPolicy }}
 {{- if .Values.traces.enabled }}
