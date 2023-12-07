@@ -16,6 +16,7 @@ nameOverride: "otel-collector"
 fullnameOverride: ""
 
 secrets:
+  name: logzio-secret
   enabled: true
   MetricsToken: ""
   TracesToken: ""
@@ -120,25 +121,27 @@ clusterRoleRules:
   - list
   - watch
 
-kubeStateMetrics:
-  ## If false, kube-state-metrics sub-chart will not be installed
-  ##
-  enabled: true
 
-pushGateway:
-  ## If false, pushGateway sub-chart will not be installed
-  ##
-  enabled: true
+tags:
+  kubeStateMetrics:
+    ## If false, kube-state-metrics sub-chart will not be installed
+    ##
+    enabled: true
+
+  pushGateway:
+    ## If false, pushGateway sub-chart will not be installed
+    ##
+    enabled: true
+  nodeExporter:
+    ## If false, node-exporter will not be installed
+    ##
+    enabled: true
+    
 prometheus-pushgateway:
   serviceAnnotations:
     prometheus.io/scrape: "true"
   nodeSelector:
     kubernetes.io/os: linux
-
-nodeExporter:
-  ## If false, node-exporter will not be installed
-  ##
-  enabled: true
 
 emptyConfig: {}
 
@@ -527,6 +530,7 @@ serviceAccount:
 
 podSecurityContext: {}
 securityContext: {}
+containerSecurityContext: {}
 
 nodeSelector: {}
 linuxNodeSelector: {
@@ -616,6 +620,7 @@ spanMetricsAgregator:
         dimensions_cache_size: 100000
         aggregation_temporality: AGGREGATION_TEMPORALITY_CUMULATIVE
         dimensions:
+          - name: rpc.grpc.status_code
           - name: http.method
           - name: http.status_code
           - name: k8s.pod.name
@@ -653,6 +658,11 @@ spanMetricsAgregator:
             scrape_interval: 30s
             static_configs:
             - targets: [ "0.0.0.0:8889" ]
+            metric_relabel_configs:
+            - source_labels: [http_status_code]
+              target_label: unified_status_code
+            - source_labels: [rpc_grpc_status_code]
+              target_label: unified_status_code              
       jaeger:
         protocols:
           thrift_compact:
@@ -1037,6 +1047,7 @@ daemonsetConfig:
           - prometheus/infrastructure
           - prometheus/cadvisor
           - prometheus/collector
+
          
 opencost:
   enabled: false

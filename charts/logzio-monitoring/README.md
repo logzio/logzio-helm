@@ -6,10 +6,17 @@ The logzio-monitoring Helm Chart ships your Kubernetes telemetry (logs, metrics,
 
 ## Overview
 
-This project packages 3 Helm Charts:
+This project packages the following Helm Charts:
 - [logzio-fluentd](https://github.com/logzio/logzio-helm/tree/master/charts/fluentd) for logs shipping (via Fluentd).
 - [logzio-telemetry](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-telemetry) for metrics and traces (via OpenTelemetry Collector).
 - [logzio-trivy](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-trivy) for security reports (via Trivy operator).
+- [logzio-k8s-events](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-k8s-events) for k8s deployment events.
+
+### Kubernetes Versions Compatibility
+| Chart Version | Kubernetes Version |
+|---|---|
+| 3.0.0 | v1.22.0 - v1.28.0 |
+| < 2.0.0 | <= v1.22.0 |
 
 ## Instructions for standard deployment:
 
@@ -56,6 +63,10 @@ helm install -n monitoring \
 --set logzio-trivy.env_id="<<ENV-ID>>" \
 --set logzio-trivy.secrets.logzioShippingToken="<<LOG-SHIPPING-TOKEN>>" \
 --set logzio-trivy.secrets.logzioListener="<<LISTENER-HOST>>" \
+--set deployEvents.enabled=true \
+--set logzio-k8s-events.secrets.env_id="<<ENV-ID>>" \
+--set logzio-k8s-events.secrets.logzioShippingToken="<<LOG-SHIPPING-TOKEN>>" \
+--set logzio-k8s-events.secrets.logzioListener="<<LISTENER-HOST>>" \
 logzio-monitoring logzio-helm/logzio-monitoring
 ```
 
@@ -80,7 +91,9 @@ However, you can modify the Chart by using the `--set` flag in your `helm instal
 | Parameter	| Description | Default |
 | --- | --- | --- |
 | `logs.enabled` | Enable to send k8s logs | `false` |
-| `metricsOrTraces` | Enable to send k8s metrics or traces | `false` |
+| `metricsOrTraces.enabled` | Enable to send k8s metrics or traces | `false` |
+| `securityReport.enabled` | Enable to send k8s security logs | `false` |
+| `deployEvents.enabled` | Enable to send k8s deploy events logs | `false` |
 
 #### To modify the logs Chart configuration:
 
@@ -164,7 +177,48 @@ Set logzio-k8s-telemetry `ListenerHost` value to send your metrics to a custom e
 --set logzio-k8s-telemetry.secrets.ListenerHost="<<CUSTOM_ENDPOINT>>"
 ```
 
+### Upgrade logzio-monitoring to v3.0.0
+
+Before upgrading your logzio-monitoring Chart to v3.0.0 with `helm upgrade`, note that you may encounter an error for some of the logzio-telemetry sub-charts.
+
+There are two possible approaches to the upgrade you can choose from:
+- Reinstall the chart.
+- Before running the `helm upgrade` command, delete the old subcharts resources: `logzio-monitoring-prometheus-pushgateway` deployment and the `logzio-monitoring-prometheus-node-exporter` daemonset.
+
+
 ## Changelog
+- **3.2.0**:
+	- Upgrade `logzio-k8s-telemetry` to `2.1.0`:
+		- Update SPM labels
+			- Add `rpc_grpc_status_code` dimension
+			- Add `unified_status_code` dimension
+				- Takes value of `rpc_grpc_status_code` / `http_status_code`
+		- Add `containerSecurityContext` configuration option for container based policies. 
+- **3.1.0**:
+	- Upgrade `logzio-fluentd` to `0.26.0`:
+		- Bump docker image to `1.5.1`.
+	  	- Add the ability to configure pos file for containers logs.
+- **3.0.0**:
+	- Upgrade `logzio-k8s-telemetry` to `2.0.0`:
+		- Upgrade sub charts to their latest versions.
+			- `kube-state-metrics` to `4.24.0`
+			- Upgraded horizontal pod autoscaler API group version.
+			- `prometheus-node-exporter` to `4.23.2`
+			- `prometheus-pushgateway` to `2.4.2`
+		- Secrets resource name is now changeable via `secrets.name` in `values.yaml`.
+		- Fix sub charts conditional installation. 
+		- Add conditional creation of `CustomTracingEndpoint` secret key. 
+- **2.0.0**:
+	- Add `logzio-k8s-events` sub chart version `0.0.3`:
+		- Sends Kubernetes deploy events logs.
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
+- **1.8.0**:
+	- Upgrade `logzio-k8s-telemetry` to `1.3.0`:
+		- Upgraded horizontal pod autoscaler API group version.
+	- Remove replicasCount from daemonset.
 - **1.7.0**:
 	- Upgrade `logzio-fluentd` to `0.25.0`:
    - Add parameter `isPrivileged` to allow running Daemonset with priviliged security context.
@@ -178,12 +232,6 @@ Set logzio-k8s-telemetry `ListenerHost` value to send your metrics to a custom e
 		- Add parameter `configmap.customFilterAfter` that allows adding filters AFTER built-in filter configuration.
    	- Added `daemonset.init.containerImage` customization.
    	- Added fluentd image for windows server 2022.
-
-  - Update chart dependencies
-
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
-
 - **1.4.0**:
 	- Upgrage `logzio-fluentd` to `0.23.0`:
 		- Allow filtering logs by log level with `logLevelFilter`.

@@ -89,6 +89,16 @@ filebeatConfig:
 
       processors:
         - add_cloud_metadata: ~
+        - rename:
+            fields:
+            - from: "agent"
+              to: "filebeat_agent"
+            ignore_missing: true
+        - rename:
+            fields:
+            - from: "log.file.path"
+              to: "source"
+            ignore_missing: true        
       fields:
         logzio_codec: ${LOGZIO_CODEC}
         token: ${LOGZIO_LOGS_SHIPPING_TOKEN}
@@ -116,6 +126,16 @@ filebeatConfig:
 
       processors:
         - add_cloud_metadata: ~
+        - rename:
+            fields:
+            - from: "agent"
+              to: "filebeat_agent"
+            ignore_missing: true
+        - rename:
+            fields:
+            - from: "log.file.path"
+              to: "source"
+            ignore_missing: true      
       fields:
         logzio_codec: ${LOGZIO_CODEC}
         token: ${LOGZIO_LOGS_SHIPPING_TOKEN}
@@ -218,6 +238,16 @@ filebeatWindowsConfig:
 
       processors:
         - add_cloud_metadata: ~
+        - rename:
+            fields:
+            - from: "agent"
+              to: "filebeat_agent"
+            ignore_missing: true
+        - rename:
+            fields:
+            - from: "log.file.path"
+              to: "source"
+            ignore_missing: true        
       fields:
         logzio_codec: ${LOGZIO_CODEC}
         token: ${LOGZIO_LOGS_SHIPPING_TOKEN}
