@@ -656,7 +656,7 @@ spanMetricsAgregator:
           - name: db.system
           - name: messaging.system          
           - name: env_id
-            default: ${ENV_ID}           
+            default: ${ENV_ID}
     receivers:
       # Dummy recivier 
       otlp/spm:
