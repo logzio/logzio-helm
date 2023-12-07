@@ -59,6 +59,7 @@ helm install -n monitoring \
 --set logzio-k8s-telemetry.spm.enabled=true \
 --set logzio-k8s-telemetry.secrets.env_id="<<ENV-ID>>" \
 --set logzio-k8s-telemetry.secrets.SpmToken=<<SPM-SHIPPING-TOKEN>> \
+--set logzio-k8s-telemetry.serviceGraph.enabled=true \
 --set securityReport.enabled=true \
 --set logzio-trivy.env_id="<<ENV-ID>>" \
 --set logzio-trivy.secrets.logzioShippingToken="<<LOG-SHIPPING-TOKEN>>" \
@@ -187,6 +188,13 @@ There are two possible approaches to the upgrade you can choose from:
 
 
 ## Changelog
+- **3.3.0**:
+	- Upgrade `logzio-k8s-telemetry` to `2.2.0`:
+		- Upgraded SPM collector image to version `0.80.0`.
+		- Added service graph connector metrics.
+			- `serviceGraph.enabled` option.
+		- Refactored span metrics processor to a connector.
+			- Added metrics transform processor to modify the data for Logz.io backwards compatibility.
 - **3.2.0**:
 	- Upgrade `logzio-k8s-telemetry` to `2.1.0`:
 		- Update SPM labels

@@ -585,6 +585,25 @@ ports:
     hostPort: 9411
     protocol: TCP
 
+# Span and service graph metrics
+serviceGraph:
+  enabled: true
+  config:
+    connectors:
+      servicegraph:
+        latency_histogram_buckets: [2ms, 8ms, 50ms, 100ms, 200ms, 500ms, 1s, 5s, 10s]
+        dimensions:
+          - env_id
+        store:
+          ttl: 5s
+          max_items: 100000
+    service:
+      pipelines:
+        traces:
+          exporters: [servicegraph]      
+        metrics/spm-logzio:
+          receivers: [servicegraph]
+
 spanMetricsAgregator:
   config:
     processors:
@@ -637,14 +656,7 @@ spanMetricsAgregator:
           - name: db.system
           - name: messaging.system          
           - name: env_id
-            default: ${ENV_ID}
-      servicegraph:
-        latency_histogram_buckets: [2ms, 8ms, 50ms, 100ms, 200ms, 500ms, 1s, 5s, 10s]
-        dimensions:
-          - env_id
-        store:
-          ttl: 5s
-          max_items: 100000            
+            default: ${ENV_ID}           
     receivers:
       # Dummy recivier 
       otlp/spm:
@@ -695,13 +707,13 @@ spanMetricsAgregator:
       pipelines:
         traces:
           receivers: [jaeger, zipkin, otlp]
-          exporters: [logging, spanmetrics, servicegraph]
+          exporters: [logging, spanmetrics]
         metrics/spm:
           # Dummy recivier 
           receivers: [otlp/spm]
           exporters: [prometheus/spm]
         metrics/spm-logzio:
-          receivers: [prometheus/spm-logzio, spanmetrics, servicegraph]
+          receivers: [prometheus/spm-logzio, spanmetrics]
           processors: [metricstransform]
           exporters: [prometheusremotewrite/spm-logzio]
   # service values        

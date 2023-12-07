@@ -1,5 +1,14 @@
 {{- if and .Values.spm.enabled .Values.traces.enabled }}
 {{ $config := .Values.spanMetricsAgregator.config }}
+{{/* Handle serviceGraph config */}}
+{{- if .Values.serviceGraph.enabled -}}
+{{ $serviceGraphConfig := .Values.serviceGraph.config }}
+{{- $config := deepCopy $serviceGraphConfig | merge $config | mustMergeOverwrite -}}
+{{- $_ := set (index $config "service" "pipelines" "metrics/spm-logzio") "receivers" (concat (index $config "service" "pipelines" "metrics/spm-logzio" "receivers") (index $serviceGraphConfig "service" "pipelines" "metrics/spm-logzio" "receivers" )) -}}
+{{- $_ := set (index $config "service" "pipelines" "traces") "exporters" (concat (index $config "service" "pipelines" "traces" "exporters") (index $serviceGraphConfig "service" "pipelines" "traces" "exporters" )) -}}
+{{- end -}}
+{{- end -}}
+
 {{- $configYaml := toYaml $config }}
 apiVersion: v1
 kind: ConfigMap

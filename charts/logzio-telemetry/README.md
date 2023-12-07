@@ -117,7 +117,23 @@ helm install  \
 --set secrets.env_id=<<ENV-ID>> \
 logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry
 ```
-
+#### Deploy both charts with span metrics and service graph
+**Note** `serviceGraph.enabled=true` will have no effect unless `traces.enabled` & `spm.enabled=true` is also set to `true`
+```
+helm install  \
+--set traces.enabled=true \
+--set spm.enabled=true \
+--set serviceGraph.enabled=true \
+--set secrets.TracesToken=<<TRACES-SHIPPING-TOKEN>> \
+--set secrets.SpmToken=<<SPM-SHIPPING-TOKEN>> \
+--set secrets.LogzioRegion=<<logzio-region>> \
+--set metrics.enabled=true \
+--set secrets.MetricsToken=<<PROMETHEUS-METRICS-SHIPPING-TOKEN>> \
+--set secrets.ListenerHost=<<LISTENER-HOST>> \
+--set secrets.p8s_logzio_name=<<P8S-LOGZIO-NAME>> \
+--set secrets.env_id=<<ENV-ID>> \
+logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry
+```
 #### Handling image pull rate limit
 In some cases (i.e spot clusters) where the pods/nodes are replaced frequently, the pull rate limit for images pulled from dockerhub might be reached, with an error:
 `You have reached your pull rate limit. You may increase the limit by authenticating and upgrading: https://www.docker.com/increase-rate-limits`.
