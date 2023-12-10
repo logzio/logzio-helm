@@ -511,7 +511,7 @@ windowsExporterInstallerImage:
 spmImage:
   repository: otel/opentelemetry-collector-contrib
   pullPolicy: IfNotPresent
-  tag: "0.73.0"
+  tag: "0.80.0"
 imagePullSecrets: []
 
 # OpenTelemetry Collector executable
@@ -585,12 +585,57 @@ ports:
     hostPort: 9411
     protocol: TCP
 
+# Span and service graph metrics
+serviceGraph:
+  enabled: true
+  config:
+    connectors:
+      servicegraph:
+        latency_histogram_buckets: [2ms, 8ms, 50ms, 100ms, 200ms, 500ms, 1s, 5s, 10s]
+        dimensions:
+          - env_id
+        store:
+          ttl: 5s
+          max_items: 100000
+    service:
+      pipelines:
+        traces:
+          exporters: [servicegraph]      
+        metrics/spm-logzio:
+          receivers: [servicegraph]
+
 spanMetricsAgregator:
   config:
     processors:
+      # Modify the data to support Logz.io backwards compatibility
+      metricstransform:
+        transforms:
+          - include: '^duration.*'
+            action: update
+            match_type: regexp
+            new_name: 'latency.$1'
+          - include: calls
+            action: update
+            new_name: calls_total 
+          - include: ^latency
+            action: update
+            match_type: regexp            
+            operations:
+              - action: update_label
+                label: span.name
+                new_label: operation 
+          - include: ^calls
+            action: update
+            match_type: regexp            
+            operations:
+              - action: update_label
+                label: span.name
+                new_label: operation     
+    connectors:
       spanmetrics:
-        metrics_exporter: prometheus/spm
-        latency_histogram_buckets: [2ms, 8ms, 50ms, 100ms, 200ms, 500ms, 1s, 5s, 10s]
+        histogram:
+          explicit:
+            buckets: [2ms, 8ms, 50ms, 100ms, 200ms, 500ms, 1s, 5s, 10s]
         dimensions_cache_size: 100000
         aggregation_temporality: AGGREGATION_TEMPORALITY_CUMULATIVE
         dimensions:
@@ -608,6 +653,8 @@ spanMetricsAgregator:
           - name: k8s.job.name
           - name: cloud.provider
           - name: cloud.region
+          - name: db.system
+          - name: messaging.system          
           - name: env_id
             default: ${ENV_ID}
     receivers:
@@ -660,14 +707,14 @@ spanMetricsAgregator:
       pipelines:
         traces:
           receivers: [jaeger, zipkin, otlp]
-          processors: [spanmetrics]
-          exporters: [logging]
+          exporters: [logging, spanmetrics]
         metrics/spm:
           # Dummy recivier 
           receivers: [otlp/spm]
           exporters: [prometheus/spm]
         metrics/spm-logzio:
-          receivers: [prometheus/spm-logzio]
+          receivers: [prometheus/spm-logzio, spanmetrics]
+          processors: [metricstransform]
           exporters: [prometheusremotewrite/spm-logzio]
   # service values        
   service:
