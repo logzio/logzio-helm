@@ -8,9 +8,6 @@ windowsImageTag: 0.0.2
 nameOverride: ""
 fullnameOverride: ""
 
-
-# securityContext: {}
-
 apiVersions:
   daemonset: apps/v1
   serviceAccount: v1
