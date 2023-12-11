@@ -78,6 +78,8 @@ helm install -n monitoring \
 | `isRBAC` | Specifies whether the Chart should be compatible to a RBAC cluster. If you're running on a non-RBAC cluster, set to `false`.  | `true` |
 | `isPrivileged` | Specifies whether to run the Damonset with priviliged security context | `false` |
 | `serviceAccount.name` | Name of the service account. | `""` |
+| `daemonset.podSecurityContext` | Security context for the pod level | `{}` |
+| `daemonset.podSecurityContext` | Security context for the pod level | `{}` |
 | `daemonset.tolerations` | Set [tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) for all DaemonSet pods. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
 | `daemonset.nodeSelector` | Set [nodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) for all DaemonSet pods. | `{}` |
 | `daemonset.affinity` | Set [affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity) rules for the scheduler to determine where all DaemonSet pods can be placed. |  |
@@ -295,20 +297,23 @@ If needed, the fluentd image can be changed to support windows server 2022 with 
 
 
 ## Change log
+ - **0.27.0**:
+   - Added `daemonset.podSecurityContext`, `daemonset.securityContext` customization.
  - **0.26.0**:
    - Bump docker image to `1.5.1`.
    - Add ability to configure pos file for containers logs.
  - **0.25.0*:
    - Add parameter `isPrivileged` to allow running Daemonset with priviliged security context.
    - **Bug fix**: Fix template for `fluentd.serviceAccount`, and fix use of template in service account.
- - **0.24.0**:
-   - Add parameter `configmap.customFilterAfter` that allows adding filters AFTER built-in filter configuration.
-   - Added `daemonset.init.containerImage` customization.
-   - Added fluentd image for windows server 2022.
+
 
 <details>
   <summary markdown="span"> Expand to check old versions </summary>
 
+ - **0.24.0**:
+   - Add parameter `configmap.customFilterAfter` that allows adding filters AFTER built-in filter configuration.
+   - Added `daemonset.init.containerImage` customization.
+   - Added fluentd image for windows server 2022.
  - **0.23.0**:
    - Allow filtering logs by log level with `logLevelFilter`.
  - **0.22.0**:
