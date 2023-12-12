@@ -188,6 +188,9 @@ There are two possible approaches to the upgrade you can choose from:
 
 
 ## Changelog
+- **3.4.0**:
+	- Upgrade `logzio-fluentd` to `0.27.0`:
+		- Added `daemonset.podSecurityContext`, `daemonset.securityContext` customization.
 - **3.3.0**:
 	- Upgrade `logzio-k8s-telemetry` to `2.2.0`:
 		- Upgraded SPM collector image to version `0.80.0`.
@@ -202,6 +205,10 @@ There are two possible approaches to the upgrade you can choose from:
 			- Add `unified_status_code` dimension
 				- Takes value of `rpc_grpc_status_code` / `http_status_code`
 		- Add `containerSecurityContext` configuration option for container based policies. 
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
 - **3.1.0**:
 	- Upgrade `logzio-fluentd` to `0.26.0`:
 		- Bump docker image to `1.5.1`.
@@ -219,10 +226,6 @@ There are two possible approaches to the upgrade you can choose from:
 - **2.0.0**:
 	- Add `logzio-k8s-events` sub chart version `0.0.3`:
 		- Sends Kubernetes deploy events logs.
-
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
-
 - **1.8.0**:
 	- Upgrade `logzio-k8s-telemetry` to `1.3.0`:
 		- Upgraded horizontal pod autoscaler API group version.

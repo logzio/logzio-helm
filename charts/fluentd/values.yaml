@@ -30,6 +30,8 @@ fargateLogRouter:
 env_id: "my_environment"
 
 daemonset:
+  podSecurityContext: {}
+  securityContext: {}
   tolerations:
   - key: node-role.kubernetes.io/master
     effect: NoSchedule

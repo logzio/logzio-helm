@@ -36,6 +36,9 @@ spec:
       tolerations:
 {{ toYaml .Values.daemonset.tolerations | indent 6 }}
       {{- end }}
+      {{- if .Values.daemonset.podSecurityContext }}
+      securityContext: {{ toYaml .Values.daemonset.podSecurityContext | nindent 8 }}
+      {{- end }}
       nodeSelector:
         kubernetes.io/os: {{ .Values.daemonset.nodeSelector.os }}
       # Because the image's entrypoint requires to write on /fluentd/etc but we mount configmap there which is read-only,
@@ -59,6 +62,10 @@ spec:
 {{- if .Values.isPrivileged }}
         securityContext:
           privileged: true
+{{- else }}
+{{- if .Values.daemonset.securityContext }}
+        securityContext: {{ toYaml .Values.daemonset.securityContext | nindent 10 }}
+{{- end }}
 {{- end}}
 {{- if .Values.daemonset.fluentdPrometheusConf }}
         ports:
