@@ -79,7 +79,7 @@ helm install -n monitoring \
 | `isPrivileged` | Specifies whether to run the Damonset with priviliged security context | `false` |
 | `serviceAccount.name` | Name of the service account. | `""` |
 | `daemonset.podSecurityContext` | Security context for the pod level | `{}` |
-| `daemonset.podSecurityContext` | Security context for the pod level | `{}` |
+| `daemonset.securityContext` | Security context for the container level | `{}` |
 | `daemonset.tolerations` | Set [tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) for all DaemonSet pods. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
 | `daemonset.nodeSelector` | Set [nodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) for all DaemonSet pods. | `{}` |
 | `daemonset.affinity` | Set [affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity) rules for the scheduler to determine where all DaemonSet pods can be placed. |  |
