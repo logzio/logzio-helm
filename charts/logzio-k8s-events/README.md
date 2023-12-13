@@ -56,7 +56,7 @@ logzio-k8s-events logzio-helm/logzio-k8s-events
 
 #### Deployment Events Versioning
 
-In order to add an indication for the versioning in our K8S 360 and Service Overview UI, the following annotation should be added to the metadata of each resource you'd like to track its versioning. The 'View commit' button will link your version control system(VCS) commit URL from the `logzio/commit_url` annotation value. 
+To add a versioning indicator to our K8S 360 and Service Overview UI, the specified annotation must be included in the metadata of each resource whose versioning you wish to track. The 'View commit' button will link to the commit URL in your version control system (VCS) from the logzio/commit_url annotation value.
 
 ```yaml
 metadata:
@@ -64,7 +64,8 @@ metadata:
     logzio/commit_url: ""  
 ```
 
-##### GitHub VCS Example: 
+##### GitHub VCS Example 
+
 Commit URL structure: `https://github.com/<account>/<repository>/commit/<commit-hash>`
    - Example: `https://github.com/logzio/logzio-k8s-events/commit/069c75c95caeca58dd0776405bb8dfb4eed3acb2`
 
