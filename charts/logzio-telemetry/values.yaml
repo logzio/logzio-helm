@@ -875,7 +875,13 @@ daemonsetConfig:
       metrics:
         datapoint:
           - 'IsMatch(metric.name, "(${K8S_360_METRICS})") == true and attributes["logzio_app"] != "kubernetes360"'
-          - 'IsMatch(metric.name, "(${K8S_360_METRICS})") == true and attributes["kubernetes_node"] == nil'
+          # Workaround for an issue where metrics are scraped multiple times
+          - 'attributes["job_dummy"] == "kubernetes-service-endpoints" and attributes["kubernetes_node"] == nil'
+    # Removes label needed for duplicate metrics checks
+    attributes/remove_job_dummy:
+      actions:
+        - key: job_dummy
+          action: delete
   exporters:
     prometheusremotewrite/applications:
       timeout: 30s
@@ -1011,6 +1017,11 @@ daemonsetConfig:
             - role: pod
               field: "spec.nodeName=$KUBE_NODE_NAME"
           relabel_configs:
+            # Adding a dummy job label to enable filtering for duplicate metrics using daemonset collector
+            # "job" label is only added in the prometheusremotewrite and cannot be added before
+            - action: replace
+              replacement: kubernetes-service-endpoints
+              target_label: job_dummy
             - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scrape]
               action: keep
               regex: true|"true"
@@ -1055,6 +1066,8 @@ daemonsetConfig:
         processors:
           - attributes/env_id
           - filter/kubernetes360
+          # workaround for duplicate metrics sent from kubernetes-service-endpoints job
+          - attributes/remove_job_dummy
         receivers:
           - prometheus/infrastructure
           - prometheus/cadvisor

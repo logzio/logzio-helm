@@ -1,9 +1,7 @@
 apiVersion: v2
 name: logzio-k8s-telemetry
 description: logzio-k8s-telemetry allows you to ship metrics and traces from your Kubernetes cluster using the OpenTelemetry collector.
-
 type: application
-
 sources:
   - https://github.com/prometheus/node_exporter
   - https://github.com/kubernetes/kube-state-metrics
@@ -30,14 +28,12 @@ dependencies:
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 2.2.0
-
+version: 2.2.1
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to
 # follow Semantic Versioning. They should reflect the version the application is using.
 appVersion: 0.80.0
-
 maintainers:
 - name: yotamloe
   email: yotam.loewenbach@logz.io

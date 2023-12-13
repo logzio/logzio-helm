@@ -388,6 +388,9 @@ There are two possible approaches to the upgrade you can choose from:
 
 
 ## Change log
+* 2.2.1
+  - Updated K360 metrics list in `secrets.yaml` - now created dynamically from OOB filters.
+  - Added `job_dummy` relabel and processtor - Fixing an issue were duplicate metrics were being sent if the metrics were not in the `K8S_360_METRICS` environment variable.
 * 2.2.0
   - Upgraded SPM collector image to version `0.80.0`.
   - Added service graph connector metrics.
@@ -400,6 +403,11 @@ There are two possible approaches to the upgrade you can choose from:
     - Add `unified_status_code` dimension
       - Takes value of `rpc_grpc_status_code` / `http_status_code`
   - Add `containerSecurityContext` configuration option for container based policies. 
+
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
 * 2.0.0
   - Upgrade sub charts to their latest versions.
     - `kube-state-metrics` to `4.24.0`
@@ -418,10 +426,6 @@ There are two possible approaches to the upgrade you can choose from:
   - Add custom tracing endpoint option
 * 1.0.3
   - Fixed an issue when enabling dropKubeSystem filter where namespace label values were not filtered.
-
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
-
 * 1.0.2
   - Rename `spm` k8s metadata fields
 * 1.0.1
