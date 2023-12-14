@@ -50,17 +50,16 @@ However, you can modify the Chart by using the `--set` flag in your `helm instal
 | `nameOverride` | Overrides the Chart name for resources. | `""` |
 | `fullnameOverride` | Overrides the full name of the resources. | `""` |
 | `schedule` | Time for daily scanning for security reports and send them to Logz.io, in format "HH:MM" | `"07:00"` |
-| `restartPolicy` | Container restart policy | `OnFailure` |
 | `image` | Container image | `logzio/trivy-to-logzio` |
 | `imageTag` | Container image tag | `0.2.1` |
 | `env_id` | The name for your environment's identifier, to easily identify the telemetry data for each environment | `""` |
 | `terminationGracePeriodSeconds` | Termination period (in seconds) to wait before killing Fluentd pod process on pod shutdown. | `30` |
-| `serviceAccount.create` | Specifies whether to create a service account for the cron job | `true` |
+| `serviceAccount.create` | Specifies whether to create a service account for the Deployment | `true` |
 | `serviceAccount.name` | Name of the service account. | `""` |
 | `secrets.enabled` | Specifies wheter to create a secret for the deployment | `true` |
 | `secrets.name` | Secret name | `"logzio-logs-secret-trivy"` |
 | `secrets.logzioShippingToken` | Your logz.io log shipping token | `""` |
-| `secrets.logzioListener` | Your logz.io listener host | `""` (defaults to us region) |
+| `secrets.logzioListener` | Your logz.io listener host, for example - `listener.logz.io` | `""` (defaults to us region) |
 | `scriptLogLevel` | Log level of the script that sends security risk to Logz.io. Can be one of: `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`. | `INFO` |
 
 ### Handling image pull rate limit
