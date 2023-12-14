@@ -147,5 +147,5 @@ If any OOB filters is being used the function return the OOB filter concatenated
 {{- if .Values.prometheusFilters.metrics.infrastructure.keep.custom }}
     {{- $metrics = print $metrics "|" .Values.prometheusFilters.metrics.infrastructure.keep.custom }}
 {{- end }}
-{{ $metrics }}
+{{- $metrics }}
 {{- end }}
