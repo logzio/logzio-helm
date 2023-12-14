@@ -390,7 +390,7 @@ There are two possible approaches to the upgrade you can choose from:
 ## Change log
 * 2.2.1
   - Updated K360 metrics list in `secrets.yaml` - now created dynamically from OOB filters.
-  - Added `job_dummy` relabel and processtor - Fixing an issue were duplicate metrics were being sent if the metrics were not in the `K8S_360_METRICS` environment variable.
+  - Added `job_dummy` relabel and processtor - Fixing an issue where duplicate metrics were being sent if the metrics were not in the `K8S_360_METRICS` environment variable.
 * 2.2.0
   - Upgraded SPM collector image to version `0.80.0`.
   - Added service graph connector metrics.
