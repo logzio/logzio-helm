@@ -1,43 +1,66 @@
+# Fluentd image in daemonset
 image: logzio/logzio-fluentd
+# Fluentd image tag
 imageTag: 1.5.1
 
+# Fluentd image in daemonset for windows nodes
 windowsImage: logzio/fluentd-windows
+# Fluentd image tag for windows nodes
 windowsImageTag: 0.0.2
 
-
+# Overrides the Chart name for resources
 nameOverride: ""
+# Overrides the full name of the resources
 fullnameOverride: ""
 
+# API versions for the resources
 apiVersions:
+  # Daemonset API version
   daemonset: apps/v1
+  # Service Account API version
   serviceAccount: v1
+  # Cluster Role API version
   clusterRole: rbac.authorization.k8s.io/v1
+  # Cluster Role Binding API version
   clusterRoleBinding: rbac.authorization.k8s.io/v1
+  # Configmap API version
   configmap: v1
+  # Secret API version
   secret: v1
 
+# Value for k8s-app label
 k8sApp: fluentd-logzio
 
+# Specifies whether the Chart should be compatible to a RBAC cluster
 isRBAC: true
+# Specifies whether to run the Damonset with priviliged security context
 isPrivileged: false
 
 serviceAccount:
+  # Override the name of the service account
   name: ""
 
 fargateLogRouter:
+  # Boolen to decide if to configure fargate log router
   enabled: false
 
+# Add to your logs field env_id with identification of the environment you're shipping logs from, usually your k8s cluster name
 env_id: "my_environment"
 
 daemonset:
+  # Security context for the pod level
   podSecurityContext: {}
+  # Security context for the container level
   securityContext: {}
+  # Set tolerations for all DaemonSet pods
   tolerations:
   - key: node-role.kubernetes.io/master
     effect: NoSchedule
+  # Set nodeSelector for all DaemonSet pods
   nodeSelector:
     os: linux
-  # Prevent node exporter deamonset deploymment on fargate nodes
+  # Set affinity rules for the scheduler to determine where all DaemonSet pods can be placed.
+  # The following configuration prevent node exporter deamonset deploymment on fargate nodes
   affinity:
     nodeAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
