@@ -168,7 +168,9 @@ spec:
       {{- if .Values.daemonset.extraVolumes }}
 {{ toYaml .Values.daemonset.extraVolumes | indent 6 }}
       {{- end }}
-
+  {{- if .Values.daemonset.updateStrategy }}
+  updateStrategy: {{ toYaml .Values.daemonset.updateStrategy | nindent 4 }}
+  {{- end }}
 
 ---
 apiVersion: {{ .Values.apiVersions.daemonset }}
@@ -306,3 +308,6 @@ spec:
       {{- if .Values.windowsDaemonset.extraVolumes }}
 {{ toYaml .Values.windowsDaemonset.extraVolumes | indent 6 }}
       {{- end }}
+  {{- if .Values.windowsDaemonset.updateStrategy }}
+  updateStrategy: {{ toYaml .Values.windowsDaemonset.updateStrategy | nindent 4 }}
+  {{- end }}

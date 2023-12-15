@@ -80,6 +80,7 @@ daemonset:
     containerImage: "busybox"
     extraVolumeMounts: []
   priorityClassName: ""
+  updateStrategy: {}
 
 windowsDaemonset:
   tolerations:
@@ -117,6 +118,7 @@ windowsDaemonset:
   terminationGracePeriodSeconds: 30
   extraVolumes: []
   priorityClassName: ""
+  updateStrategy: {}
 
 clusterRole:
   rules:
