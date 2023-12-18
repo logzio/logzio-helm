@@ -3,22 +3,22 @@
 kubernetesInstrumentor:
   serviceAccount: "kubernetes-instrumentor"
   image:
-    repository: "public.ecr.aws/logzio/instrumentor"
+    repository: "logzio/instrumentor"
     tag: "v1.0.8"
   instrumentationDetectorImage:
-    repository: "public.ecr.aws/logzio/instrumentation-detector"
+    repository: "logzio/instrumentation-detector"
     tag: "v1.0.8"
   javaAgentImage:
-    repository: "public.ecr.aws/logzio/otel-agent-java"
+    repository: "logzio/otel-agent-java"
     tag: "v1.0.8"
   dotnetAgentImage:
-    repository: "public.ecr.aws/logzio/otel-agent-dotnet"
+    repository: "logzio/otel-agent-dotnet"
     tag: "v1.0.8"
   nodejsAgentImage:
-    repository: "public.ecr.aws/logzio/otel-agent-nodejs"
+    repository: "logzio/otel-agent-nodejs"
     tag: "v1.0.8"
   pythonAgentImage:
-    repository: "public.ecr.aws/logzio/otel-agent-python"
+    repository: "logzio/otel-agent-python"
     tag: "v1.0.8"
   ports:
     metricsPort: 8080

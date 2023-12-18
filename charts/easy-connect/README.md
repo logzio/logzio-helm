@@ -48,17 +48,17 @@ serviceAccount
 | Parameter | Description | Default |
 | --- | --- | --- |
 | `kubernetesInstrumentor.serviceAccount` | Service account name of the instrumentor deployment | `"kubernetes-instrumentor"` |
-| `kubernetesInstrumentor.image.repository` | Repository of the instrumentor image | `"public.ecr.aws/logzio/instrumentor"` |
+| `kubernetesInstrumentor.image.repository` | Repository of the instrumentor image | `"logzio/instrumentor"` |
 | `kubernetesInstrumentor.image.tag` | Tag of the instrumentor image | `"v1.0.8"` |
-| `kubernetesInstrumentor.instrumentationDetectorImage.repository` | Repository of the instrumentation detector image | `"public.ecr.aws/logzio/instrumentation-detector"` |
+| `kubernetesInstrumentor.instrumentationDetectorImage.repository` | Repository of the instrumentation detector image | `"logzio/instrumentation-detector"` |
 | `kubernetesInstrumentor.instrumentationDetectorImage.tag` | Tag of the instrumentation detector image | `"v1.0.8"` |
-| `kubernetesInstrumentor.javaAgentImage.repository` | Repository of the Java agent image | `"public.ecr.aws/logzio/otel-agent-java"` |
+| `kubernetesInstrumentor.javaAgentImage.repository` | Repository of the Java agent image | `"logzio/otel-agent-java"` |
 | `kubernetesInstrumentor.javaAgentImage.tag` | Tag of the Java agent image | `"v1.0.8"` |
-| `kubernetesInstrumentor.dotnetAgentImage.repository` | Repository of the .Net agent image | `"public.ecr.aws/logzio/otel-agent-dotnet"` |
+| `kubernetesInstrumentor.dotnetAgentImage.repository` | Repository of the .Net agent image | `"logzio/otel-agent-dotnet"` |
 | `kubernetesInstrumentor.dotnetAgentImage.tag` | Tag of the .Net agent image | `"v1.0.8"` |
-| `kubernetesInstrumentor.nodejsAgentImage.repository` | Repository of the Node.js agent image | `"public.ecr.aws/logzio/otel-agent-nodejs"` |
+| `kubernetesInstrumentor.nodejsAgentImage.repository` | Repository of the Node.js agent image | `"logzio/otel-agent-nodejs"` |
 | `kubernetesInstrumentor.nodejsAgentImage.tag` | Tag of the Node.js agent image | `"v1.0.8"` |
-| `kubernetesInstrumentor.pythonAgentImage.repository` | Repository of the Python agent image | `"public.ecr.aws/logzio/otel-agent-python"` |
+| `kubernetesInstrumentor.pythonAgentImage.repository` | Repository of the Python agent image | `"logzio/otel-agent-python"` |
 | `kubernetesInstrumentor.pythonAgentImage.tag` | Tag of the Python agent image | `"v1.0.8"` |
 | `kubernetesInstrumentor.ports.metricsPort` | Metrics port for the instrumentor | `8080` |
 | `kubernetesInstrumentor.ports.healthProbePort` | Health probe port for the instrumentor | `8081` |
@@ -92,11 +92,14 @@ You can override the default values by creating your own `values.yaml` file and 
 
 Here, `my_values.yaml` is your custom configuration file.
 
+Alternative images
+-------------
+you can find alternative to `dockerhub` images in `public.ecr.aws/logzio/` with the same image name (example: `public.ecr.aws/logzio/instrumentor`)
 
 Change log
 -------------
 * 1.0.4
-  - Use images from `public.aws.ecr`
+  - add images to `public.aws.ecr`
   - Update `dotnet` agent:
     - use `otlp` exporter instead of `zipkin`
     - upgrade version `v0.5.0` -> `v1.2.0`
