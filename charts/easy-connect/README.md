@@ -96,6 +96,7 @@ Here, `my_values.yaml` is your custom configuration file.
 Change log
 -------------
 * 1.0.4
+  - Use images from `public.aws.ecr`
   - Update `dotnet` agent:
     - use `otlp` exporter instead of `zipkin`
     - upgrade version `v0.5.0` -> `v1.2.0`
