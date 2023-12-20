@@ -14,7 +14,8 @@ To install the chart with the release name `logzio-prometheus-alerts-migrator`:
 
 ```sh
 helm install \
-  --set config.configMapAnnotation="prometheus.io/kube-rules" \
+  --set config.rulesConfigMapAnnotation="prometheus.io/kube-rules" \
+  --set config.alerManagerConfigMapAnnotation="prometheus.io/kube-alertmanager" \
   --set config.logzioAPIToken="your-logzio-api-token" \
   --set config.logzioAPIURL="https://api.logz.io/" \
   --set config.rulesDS="<<logzio_metrics_data_source_name>>" \
@@ -34,12 +35,15 @@ The following table lists the configurable parameters of the Prometheus Alerts M
 | `image.tag`| Container image tag | v1.0.0 |
 | `serviceAccount.create` | Specifies whether a service account should be created | true |
 | `serviceAccount.name` | The name of the service account to use | "" |
-| `config.configMapAnnotation` | ConfigMap annotation for rules | prometheus.io/kube-rules |
+| `config.rulesConfigMapAnnotation` | ConfigMap annotation for rules | prometheus.io/kube-rules |
+| `config.alerManagerConfigMapAnnotation` | ConfigMap annotation for alert manager configuration | prometheus.io/kube-alertmanager |
 | `config.logzioAPIToken` | Logz.io API token | "" |
 | `config.logzioAPIURL` | Logz.io API URL | https://api.logz.io/ |
 | `config.rulesDS` | Data source for rules | IntegrationsTeamTesting_metrics |
 | `config.env_id` | Environment ID | my-env-yotam |
 | `config.workerCount` | Number of workers | 2 |
+| `config.ignoreSlackText` | Ignore slack contact points `title` field. | false |
+| `config.ignoreSlackTitle` | Ignore slack contact points `text` field. | false |
 | `rbac.rules` | Custom rules for the Kubernetes cluster role | [{apiGroups: [""], resources: ["configmaps"], verbs: ["get", "list", "watch"]}] |
 
 ## Secret Management
@@ -73,12 +77,13 @@ helm install \
 In this case, ensure that your existing Secret my-existing-secret contains the necessary key (`token` in this context) with the appropriate value (Logz.io API token).
 
 
-### ConfigMap Format
-The controller is designed to process ConfigMaps containing Prometheus alert rules. These ConfigMaps must be annotated with a specific key that matches the value of the `ANNOTATION` environment variable for the controller to process them.
+### Rules configMap Format
+The controller is designed to process ConfigMaps containing Prometheus alert rules and promethium alert manager configuration. These ConfigMaps must be annotated with a specific key that matches the value of the `RULES_CONFIGMAP_ANNOTATION` or `ALERTMANAGER_CONFIGMAP_ANNOTATION` environment variables for the controller to process them.
 
-### Example ConfigMap
 
-Below is an example of how a ConfigMap should be structured:
+### Example rules ConfigMap
+
+Below is an example of how a rules configMap should be structured:
 
 ```yaml
 apiVersion: v1
@@ -104,7 +109,71 @@ data:
 - Replace `prometheus.io/kube-rules` with the actual annotation you use to identify relevant ConfigMaps. The data section should contain your Prometheus alert rules in YAML format.
 - Deploy the configmap to your cluster `kubectl apply -f <configmap-file>.yml`
 
+Below is an example of how a alert manager ConfigMap should be structured:
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: logzio-rules
+  namespace: monitoring
+  annotations:
+    prometheus.io/kube-alertmanager: "true"
+data:
+  all_instances_down_otel_collector: |
+    global:
+      # Global configurations, adjust these to your SMTP server details
+      smtp_smarthost: 'smtp.example.com:587'
+      smtp_from: 'alertmanager@example.com'
+      smtp_auth_username: 'alertmanager'
+      smtp_auth_password: 'password'
+    # The root route on which each incoming alert enters.
+    route:
+      receiver: 'default-receiver'
+      group_by: ['alertname', 'env']
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 1h
+      # Child routes
+      routes:
+        - match:
+            env: production
+          receiver: 'slack-production'
+          continue: true
+        - match:
+            env: staging
+          receiver: 'slack-staging'
+          continue: true
+    
+    # Receivers defines ways to send notifications about alerts.
+    receivers:
+      - name: 'default-receiver'
+        email_configs:
+          - to: 'alerts@example.com'
+      - name: 'slack-production'
+        slack_configs:
+          - api_url: 'https://hooks.slack.com/services/T00000000/B00000000/'
+            channel: '#prod-alerts'
+      - name: 'slack-staging'
+        slack_configs:
+          - api_url: 'https://hooks.slack.com/services/T00000000/B11111111/'
+            channel: '#staging-alerts'
+
+```
+- Replace `prometheus.io/kube-alertmanager` with the actual annotation you use to identify relevant ConfigMaps. The data section should contain your Prometheus alert rules in YAML format.
+- Deploy the configmap to your cluster `kubectl apply -f <configmap-file>.yml`
+
 
 ## Changelog
-- 1.0.0
+- v2.0.0
+  - values.yaml:
+    - Added: `config.alerManagerConfigMapAnnotation`, `config.ingnoreSlackText`, `config.ingnoreSlackTitle` values
+    - Refactor: `config.configMapAnnotation`->`config.rulesConfigMapAnnotation`
+  - Upgrade `logzio/prometheus-alerts-migrator` image `v1.0.0`->`v1.0.3`:
+    - Handle Prometheus alert manager configuration file
+    - Add CRUD operations for contact points and notification policies
+    - Add `reduce` query to alerts (grafana alerts can evaluate alerts only from reduced data)
+    - Update `logzio_terraform_client`: `1.18.0` -> `1.19.0`
+    - Use data source uid instead of name
+- v1.0.0
   - initial release
