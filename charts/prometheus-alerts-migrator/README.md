@@ -42,8 +42,8 @@ The following table lists the configurable parameters of the Prometheus Alerts M
 | `config.rulesDS` | Data source for rules | IntegrationsTeamTesting_metrics |
 | `config.env_id` | Environment ID | my-env-yotam |
 | `config.workerCount` | Number of workers | 2 |
-| `config.ingnoreSlackText` | Ignore slack contact points `title` field. | false |
-| `config.ingnoreSlackTitle` | Ignore slack contact points `text` field. | false |
+| `config.ignoreSlackText` | Ignore slack contact points `title` field. | false |
+| `config.ignoreSlackTitle` | Ignore slack contact points `text` field. | false |
 | `rbac.rules` | Custom rules for the Kubernetes cluster role | [{apiGroups: [""], resources: ["configmaps"], verbs: ["get", "list", "watch"]}] |
 
 ## Secret Management
@@ -165,7 +165,7 @@ data:
 
 
 ## Changelog
-- v1.0.1
+- v2.0.0
   - values.yaml:
     - Added: `config.alerManagerConfigMapAnnotation`, `config.ingnoreSlackText`, `config.ingnoreSlackTitle` values
     - Refactor: `config.configMapAnnotation`->`config.rulesConfigMapAnnotation`

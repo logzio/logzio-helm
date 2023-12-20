@@ -41,8 +41,8 @@ spec:
             - name: WORKER_COUNT
               value: "{{ .Values.config.workerCount }}"
             - name: IGNORE_SLACK_TEXT
-              value: "{{ .Values.config.ingoreSlackText }}"
+              value: "{{ .Values.config.ignoreSlackText }}"
             - name: IGNORE_SLACK_TITLE
-              value: "{{ .Values.config.ingoreSlackTitle }}"
+              value: "{{ .Values.config.ignoreSlackTitle }}"
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
