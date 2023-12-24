@@ -303,6 +303,7 @@ If needed, the fluentd image can be changed to support windows server 2022 with 
 
  - **0.28.0**:
    - Added `daemonset.initContainerSecurityContext` customization.
+   - Added `daemonset.updateStrategy` customization.
  - **0.27.0**:
    - Added `daemonset.podSecurityContext`, `daemonset.securityContext` customization.
  - **0.26.0**:
