@@ -80,6 +80,7 @@ helm install -n monitoring \
 | `serviceAccount.name` | Name of the service account. | `""` |
 | `daemonset.podSecurityContext` | Security context for the pod level | `{}` |
 | `daemonset.securityContext` | Security context for the container level | `{}` |
+| `daemonset.initContainerSecurityContext` | Security context for the init container | `{}` |
 | `daemonset.tolerations` | Set [tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) for all DaemonSet pods. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
 | `daemonset.nodeSelector` | Set [nodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) for all DaemonSet pods. | `{}` |
 | `daemonset.affinity` | Set [affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity) rules for the scheduler to determine where all DaemonSet pods can be placed. |  |
@@ -297,19 +298,21 @@ If needed, the fluentd image can be changed to support windows server 2022 with 
 
 
 ## Change log
+
+ - **0.28.0**:
+   - Added `daemonset.initContainerSecurityContext` customization.
  - **0.27.0**:
    - Added `daemonset.podSecurityContext`, `daemonset.securityContext` customization.
  - **0.26.0**:
    - Bump docker image to `1.5.1`.
    - Add ability to configure pos file for containers logs.
- - **0.25.0*:
-   - Add parameter `isPrivileged` to allow running Daemonset with priviliged security context.
-   - **Bug fix**: Fix template for `fluentd.serviceAccount`, and fix use of template in service account.
-
 
 <details>
   <summary markdown="span"> Expand to check old versions </summary>
 
+ - **0.25.0*:
+   - Add parameter `isPrivileged` to allow running Daemonset with priviliged security context.
+   - **Bug fix**: Fix template for `fluentd.serviceAccount`, and fix use of template in service account.
  - **0.24.0**:
    - Add parameter `configmap.customFilterAfter` that allows adding filters AFTER built-in filter configuration.
    - Added `daemonset.init.containerImage` customization.

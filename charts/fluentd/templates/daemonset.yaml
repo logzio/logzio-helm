@@ -48,6 +48,9 @@ spec:
         - name: copy-fluentd-config
           image: {{ .Values.daemonset.init.containerImage }}
           command: ['sh', '-c', 'cp /config-volume/..data/* /fluentd/etc']
+{{- if .Values.daemonset.initContainerSecurityContext }}
+          securityContext: {{ toYaml .Values.daemonset.initContainerSecurityContext | nindent 12 }}
+{{- end }}
           volumeMounts:
             - name: config-volume
               mountPath: /config-volume
