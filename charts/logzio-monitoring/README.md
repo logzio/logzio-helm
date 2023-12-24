@@ -188,6 +188,10 @@ There are two possible approaches to the upgrade you can choose from:
 
 
 ## Changelog
+- **3.5.0**:
+	- Upgrade `logzio-fluentd` to `0.28.0`:
+   - Added `daemonset.initContainerSecurityContext` customization.
+   - Added `daemonset.updateStrategy` customization.
 - **3.4.0**:
 	- Upgrade `logzio-fluentd` to `0.27.0`:
 		- Added `daemonset.podSecurityContext`, `daemonset.securityContext` customization.
@@ -198,6 +202,10 @@ There are two possible approaches to the upgrade you can choose from:
 			- `serviceGraph.enabled` option.
 		- Refactored span metrics processor to a connector.
 			- Added metrics transform processor to modify the data for Logz.io backwards compatibility.
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
 - **3.2.0**:
 	- Upgrade `logzio-k8s-telemetry` to `2.1.0`:
 		- Update SPM labels
@@ -205,10 +213,6 @@ There are two possible approaches to the upgrade you can choose from:
 			- Add `unified_status_code` dimension
 				- Takes value of `rpc_grpc_status_code` / `http_status_code`
 		- Add `containerSecurityContext` configuration option for container based policies. 
-
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
-
 - **3.1.0**:
 	- Upgrade `logzio-fluentd` to `0.26.0`:
 		- Bump docker image to `1.5.1`.
