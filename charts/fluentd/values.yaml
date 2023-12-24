@@ -32,6 +32,7 @@ env_id: "my_environment"
 daemonset:
   podSecurityContext: {}
   securityContext: {}
+  initContainerSecurityContext: {}
   tolerations:
   - key: node-role.kubernetes.io/master
     effect: NoSchedule
