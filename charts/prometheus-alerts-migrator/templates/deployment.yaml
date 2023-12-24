@@ -23,8 +23,10 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
-            - name: CONFIGMAP_ANNOTATION
-              value: "{{ .Values.config.configMapAnnotation }}"
+            - name: RULES_CONFIGMAP_ANNOTATION
+              value: "{{ .Values.config.rulesConfigMapAnnotation }}"
+            - name: ALERTMANAGER_CONFIGMAP_ANNOTATION
+              value: "{{ .Values.config.alerManagerConfigMapAnnotation }}"
             - name: LOGZIO_API_TOKEN
               valueFrom:
                 secretKeyRef:
@@ -38,5 +40,9 @@ spec:
               value: "{{ .Values.config.env_id }}"
             - name: WORKER_COUNT
               value: "{{ .Values.config.workerCount }}"
+            - name: IGNORE_SLACK_TEXT
+              value: "{{ .Values.config.ignoreSlackText }}"
+            - name: IGNORE_SLACK_TITLE
+              value: "{{ .Values.config.ignoreSlackTitle }}"
           resources:
             {{- toYaml .Values.resources | nindent 12 }}

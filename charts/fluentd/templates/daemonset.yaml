@@ -48,6 +48,9 @@ spec:
         - name: copy-fluentd-config
           image: {{ .Values.daemonset.init.containerImage }}
           command: ['sh', '-c', 'cp /config-volume/..data/* /fluentd/etc']
+{{- if .Values.daemonset.initContainerSecurityContext }}
+          securityContext: {{ toYaml .Values.daemonset.initContainerSecurityContext | nindent 12 }}
+{{- end }}
           volumeMounts:
             - name: config-volume
               mountPath: /config-volume
@@ -168,7 +171,9 @@ spec:
       {{- if .Values.daemonset.extraVolumes }}
 {{ toYaml .Values.daemonset.extraVolumes | indent 6 }}
       {{- end }}
-
+  {{- if .Values.daemonset.updateStrategy }}
+  updateStrategy: {{ toYaml .Values.daemonset.updateStrategy | nindent 4 }}
+  {{- end }}
 
 ---
 apiVersion: {{ .Values.apiVersions.daemonset }}
@@ -306,3 +311,6 @@ spec:
       {{- if .Values.windowsDaemonset.extraVolumes }}
 {{ toYaml .Values.windowsDaemonset.extraVolumes | indent 6 }}
       {{- end }}
+  {{- if .Values.windowsDaemonset.updateStrategy }}
+  updateStrategy: {{ toYaml .Values.windowsDaemonset.updateStrategy | nindent 4 }}
+  {{- end }}

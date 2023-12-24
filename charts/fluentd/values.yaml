@@ -52,6 +52,8 @@ daemonset:
   podSecurityContext: {}
   # Security context for the container level
   securityContext: {}
+  # Security context for the init container
+  initContainerSecurityContext: {}
   # Set tolerations for all DaemonSet pods
   tolerations:
   - key: node-role.kubernetes.io/master
@@ -139,6 +141,8 @@ daemonset:
     extraVolumeMounts: []
   # Set priorityClassName for all DaemonSet pods
   priorityClassName: ""
+  # Update strategy for the daemonset
+  updateStrategy: {}
 
 windowsDaemonset:
   # Tolerations for the Daemonset for Windows nodes
@@ -208,6 +212,7 @@ windowsDaemonset:
   extraVolumes: []
   # Set priorityClassName for all DaemonSet pods
   priorityClassName: ""
+  updateStrategy: {}
 
 clusterRole:
   # Configurable cluster role rules that Fluentd uses to access Kubernetes resources
