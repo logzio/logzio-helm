@@ -396,7 +396,7 @@ If you don't want the sub charts to installed add the relevant flag per sub char
 ## Change log
 * 3.0.0
   - Updated K360 metrics list in `secrets.yaml` - now created dynamically from OOB filters.
-  - Added `job_dummy` relabel and processtor - Fixing an issue where duplicate metrics were being sent if the metrics were not in the `K8S_360_METRICS` environment variable.
+  - Added `job_dummy` relabel and processor - Fixing an issue where duplicate metrics were being sent if the metrics were not in the `K8S_360_METRICS` environment variable.
   - Use attributes processor to create the `unified_status_code` dimension as it supports connectors.
   - **BREAKING CHANGES**:
     - Instead of having the global `metrics.enabled` option of disabling installation of all logzio-telemetry sub charts, each sub chart has its own flag and by default will be installed.
