@@ -241,21 +241,21 @@ To enable applications metrics scraping set the `applicationMetrics.enabled` val
 This will enable the `metrics/applications` pipline and will scrape metrics from pods with the `prometheus.io/scrape=true` annotation
 ### Removing kube-state-metrics metrics
 
-To disable kube-state-metrics metrics scraping set the `tags.kubeStateMetrics.enabled` value to `false`
+To disable kube-state-metrics metrics scraping set the `kubeStateMetrics.enabled` value to `false`
 ```bash
 --set tags.kubeStateMetrics.enabled=false
 ```
 This will disable the `kube-state-metrics` sub chart installation so it won't scrape its metrics.
 ### Removing prometheus-pushgateway metrics
 
-To disable prometheus-pushgateway metrics scraping set the `tags.pushGateway.enabled` value to `false`
+To disable prometheus-pushgateway metrics scraping set the `pushGateway.enabled` value to `false`
 ```bash
 --set tags.pushGateway.enabled=false
 ```
 This will disable the `prometheus-pushgateway` sub chart installation so it won't scrape its metrics.
 ### Removing prometheus-node-exporter metrics
 
-To disable prometheus-node-exporter metrics scraping set the `tags.nodeExporter.enabled` value to `false`
+To disable prometheus-node-exporter metrics scraping set the `nodeExporter.enabled` value to `false`
 ```bash
 --set tags.nodeExporter.enabled=false
 ```
@@ -391,9 +391,7 @@ There are two possible approaches to the upgrade you can choose from:
 Before upgrading your logzio-telemetry Chart to v3.0.0 with `helm upgrade`, note that you may encounter different functionality in the installation of the sub charts as they will be installed by default regardless of the `metrics.enabled` flag.
 
 If you don't want the sub charts to installed add the relevant flag per sub chart and set it to `false`.
-- `kubeStateMetrics.enabled=false`
-- `pushGateway.enabled=false`
-- `nodeExporter.enabled=false`
+
 
 ## Change log
 * 3.0.0
@@ -402,6 +400,9 @@ If you don't want the sub charts to installed add the relevant flag per sub char
   - Use attributes processor to create the `unified_status_code` dimension as it supports connectors.
   - **BREAKING CHANGES**:
     - Instead of having the global `metrics.enabled` option of disabling installation of all logzio-telemetry sub charts, each sub chart has its own flag and by default will be installed.
+      - `kubeStateMetrics.enabled`
+      - `pushGateway.enabled`
+      - `nodeExporter.enabled`
 * 2.2.0
   - Upgraded SPM collector image to version `0.80.0`.
   - Added service graph connector metrics.
