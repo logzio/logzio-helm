@@ -78,6 +78,9 @@ helm install -n monitoring \
 | `isRBAC` | Specifies whether the Chart should be compatible to a RBAC cluster. If you're running on a non-RBAC cluster, set to `false`.  | `true` |
 | `isPrivileged` | Specifies whether to run the Damonset with priviliged security context | `false` |
 | `serviceAccount.name` | Name of the service account. | `""` |
+| `daemonset.podSecurityContext` | Security context for the pod level | `{}` |
+| `daemonset.securityContext` | Security context for the container level | `{}` |
+| `daemonset.initContainerSecurityContext` | Security context for the init container | `{}` |
 | `daemonset.tolerations` | Set [tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) for all DaemonSet pods. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
 | `daemonset.nodeSelector` | Set [nodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) for all DaemonSet pods. | `{}` |
 | `daemonset.affinity` | Set [affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity) rules for the scheduler to determine where all DaemonSet pods can be placed. |  |
@@ -111,6 +114,7 @@ helm install -n monitoring \
 | `daemonset.init.extraVolumeMounts` | If needed, more volume mounts to the init container can be added with this field. | `[]` |
 | `daemonset.init.containerImage` | Init container image for the fluentd daemonset. | `busybox` |
 | `daemonset.priorityClassName` | Set [priorityClassName](https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/) for all DaemonSet pods. | `""` |
+| `daemonset.updateStrategy` | Strategy to use when updating the Daemonset. | `{}` |
 | `windowsDaemonset.kubernetesVerifySsl` | Enables to validate SSL certificates (windows). | `true` |
 | `windowsDaemonset.auditLogFormat` | Match Fluentd's format for kube-apiserver audit logs. Set to `audit-json` if your audit logs are in json format. (windows) | `audit` |
 | `windowsDaemonset.containerdRuntime` | **Deprecated from chart version 0.1.0.** Determines whether to use a configuration for a Containerd runtime. Set to `false` if your cluster doesn't use Containerd as CRI. (windows) | `true` |
@@ -134,6 +138,7 @@ helm install -n monitoring \
 | `daemonset.terminationGracePeriodSeconds` | Termination period (in seconds) to wait before killing Fluentd pod process on pod shutdown. | `30` |
 | `windowsDaemonset.extraVolumes` | If needed, more volumes can be added with this field. (windows) | `[]` |
 | `windowsDaemonset.priorityClassName` | Set [priorityClassName](https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/) for all DaemonSet pods. (windows) | `""` |
+| `windowsDaemonset.updateStrategy` | Strategy to use when updating the Daemonset. | `{}` |
 | `clusterRole.rules` | Configurable [cluster role rules](https://kubernetes.io/docs/reference/access-authn-authz/rbac/#role-and-clusterrole) that Fluentd uses to access Kubernetes resources. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
 | `secrets.logzioShippingToken` | Secret with your [logzio shipping token](https://app.logz.io/#/dashboard/settings/general). | `""` |
 | `secrets.logzioListener` | Secret with your logzio listener host. `listener.logz.io`. | `" "` |
@@ -295,9 +300,19 @@ If needed, the fluentd image can be changed to support windows server 2022 with 
 
 
 ## Change log
+
+ - **0.28.0**:
+   - Added `daemonset.initContainerSecurityContext` customization.
+   - Added `daemonset.updateStrategy` customization.
+ - **0.27.0**:
+   - Added `daemonset.podSecurityContext`, `daemonset.securityContext` customization.
  - **0.26.0**:
    - Bump docker image to `1.5.1`.
    - Add ability to configure pos file for containers logs.
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
  - **0.25.0*:
    - Add parameter `isPrivileged` to allow running Daemonset with priviliged security context.
    - **Bug fix**: Fix template for `fluentd.serviceAccount`, and fix use of template in service account.
@@ -305,10 +320,6 @@ If needed, the fluentd image can be changed to support windows server 2022 with 
    - Add parameter `configmap.customFilterAfter` that allows adding filters AFTER built-in filter configuration.
    - Added `daemonset.init.containerImage` customization.
    - Added fluentd image for windows server 2022.
-
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
-
  - **0.23.0**:
    - Allow filtering logs by log level with `logLevelFilter`.
  - **0.22.0**:

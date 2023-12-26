@@ -30,6 +30,9 @@ fargateLogRouter:
 env_id: "my_environment"
 
 daemonset:
+  podSecurityContext: {}
+  securityContext: {}
+  initContainerSecurityContext: {}
   tolerations:
   - key: node-role.kubernetes.io/master
     effect: NoSchedule
@@ -78,6 +81,7 @@ daemonset:
     containerImage: "busybox"
     extraVolumeMounts: []
   priorityClassName: ""
+  updateStrategy: {}
 
 windowsDaemonset:
   tolerations:
@@ -115,6 +119,7 @@ windowsDaemonset:
   terminationGracePeriodSeconds: 30
   extraVolumes: []
   priorityClassName: ""
+  updateStrategy: {}
 
 clusterRole:
   rules:

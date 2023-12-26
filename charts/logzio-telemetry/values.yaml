@@ -122,21 +122,18 @@ clusterRoleRules:
   - watch
 
 
-tags:
-  kubeStateMetrics:
-    ## If false, kube-state-metrics sub-chart will not be installed
-    ##
-    enabled: true
+kubeStateMetrics:
+  ## If false, kube-state-metrics sub-chart will not be installed
+  enabled: true
 
-  pushGateway:
-    ## If false, pushGateway sub-chart will not be installed
-    ##
-    enabled: true
-  nodeExporter:
-    ## If false, node-exporter will not be installed
-    ##
-    enabled: true
-    
+pushGateway:
+  ## If false, prometheus-push-gateway sub-chart will not be installed
+  enabled: true
+
+nodeExporter:
+  ## If false, prometheus-node-exporter will not be installed
+  enabled: true
+
 prometheus-pushgateway:
   serviceAnnotations:
     prometheus.io/scrape: "true"
@@ -630,7 +627,15 @@ spanMetricsAgregator:
             operations:
               - action: update_label
                 label: span.name
-                new_label: operation     
+                new_label: operation
+      attributes/spm:
+        actions:
+        - key: unified_status_code
+          action: update
+          from_attribute: http.status_code
+        - key: unified_status_code
+          action: update
+          from_attribute: rpc.grpc.status_code          
     connectors:
       spanmetrics:
         histogram:
@@ -669,12 +674,7 @@ spanMetricsAgregator:
           - job_name: 'spm'
             scrape_interval: 30s
             static_configs:
-            - targets: [ "0.0.0.0:8889" ]
-            metric_relabel_configs:
-            - source_labels: [http_status_code]
-              target_label: unified_status_code
-            - source_labels: [rpc_grpc_status_code]
-              target_label: unified_status_code              
+            - targets: [ "0.0.0.0:8889" ] 
       jaeger:
         protocols:
           thrift_compact:
@@ -714,7 +714,7 @@ spanMetricsAgregator:
           exporters: [prometheus/spm]
         metrics/spm-logzio:
           receivers: [prometheus/spm-logzio, spanmetrics]
-          processors: [metricstransform]
+          processors: [metricstransform,attributes/spm]
           exporters: [prometheusremotewrite/spm-logzio]
   # service values        
   service:

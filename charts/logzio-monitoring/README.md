@@ -188,6 +188,13 @@ There are two possible approaches to the upgrade you can choose from:
 
 
 ## Changelog
+- **3.5.0**:
+	- Upgrade `logzio-fluentd` to `0.28.0`:
+   - Added `daemonset.initContainerSecurityContext` customization.
+   - Added `daemonset.updateStrategy` customization.
+- **3.4.0**:
+	- Upgrade `logzio-fluentd` to `0.27.0`:
+		- Added `daemonset.podSecurityContext`, `daemonset.securityContext` customization.
 - **3.3.0**:
 	- Upgrade `logzio-k8s-telemetry` to `2.2.0`:
 		- Upgraded SPM collector image to version `0.80.0`.
@@ -195,6 +202,10 @@ There are two possible approaches to the upgrade you can choose from:
 			- `serviceGraph.enabled` option.
 		- Refactored span metrics processor to a connector.
 			- Added metrics transform processor to modify the data for Logz.io backwards compatibility.
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
 - **3.2.0**:
 	- Upgrade `logzio-k8s-telemetry` to `2.1.0`:
 		- Update SPM labels
@@ -219,10 +230,6 @@ There are two possible approaches to the upgrade you can choose from:
 - **2.0.0**:
 	- Add `logzio-k8s-events` sub chart version `0.0.3`:
 		- Sends Kubernetes deploy events logs.
-
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
-
 - **1.8.0**:
 	- Upgrade `logzio-k8s-telemetry` to `1.3.0`:
 		- Upgraded horizontal pod autoscaler API group version.
