@@ -17,7 +17,7 @@ To disable the dependency during installation, set any of these values: `tags.ku
 ### Kubernetes Versions Compatibility
 | Chart Version | Kubernetes Version |
 |---|---|
-| 2.0.0 | v1.22.0 - v1.28.0 |
+| > 2.0.0 | v1.22.0 - v1.28.0 |
 | < 1.3.0 | <= v1.22.0 |
 
 #### Before installing the chart
@@ -386,11 +386,20 @@ There are two possible approaches to the upgrade you can choose from:
 - Reinstall the chart.
 - Before running the `helm upgrade` command, delete the old subcharts resources: `logzio-monitoring-prometheus-pushgateway` deployment and the `logzio-monitoring-prometheus-node-exporter` daemonset.
 
+### Upgrade logzio-telemetry to v3.0.0
+
+Before upgrading your logzio-telemetry Chart to v3.0.0 with `helm upgrade`, note that you may encounter different functionality in the installation of the sub charts as they will be installed by default regardless of the `metrics.enabled` flag.
+
+If you don't want the sub charts to installed add the relevant flag per sub chart.
+
 
 ## Change log
-* 2.2.1
+* 3.0.0
   - Updated K360 metrics list in `secrets.yaml` - now created dynamically from OOB filters.
   - Added `job_dummy` relabel and processtor - Fixing an issue where duplicate metrics were being sent if the metrics were not in the `K8S_360_METRICS` environment variable.
+  - Use attributes processor to create the `unified_status_code` dimension as it supports connectors.
+  - **BREAKING CHANGES**:
+    - Instead of having the global `metrics.enabled` option of disabling installation of all logzio-telemetry sub charts, each sub chart has its own flag and by default will be installed.
 * 2.2.0
   - Upgraded SPM collector image to version `0.80.0`.
   - Added service graph connector metrics.
