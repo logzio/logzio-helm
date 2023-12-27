@@ -128,24 +128,3 @@ Create the name of the clusterRole to use
 {{- default "default" .Values.clusterRole.name }}
 {{- end }}
 {{- end }}
-
-
-{{/*
-Create k360 metrics list - will be used for K360 promethetus filters
-If any OOB filters is being used the function return the OOB filter concatenated with custom keep infrastrucre filter
-*/}}
-{{- define "opentelemetry-collector.k360Metrics" -}}
-{{- $metrics := "" }}
-{{- if .Values.enableMetricsFilter.aks }}
-    {{ $metrics = .Values.prometheusFilters.metrics.infrastructure.keep.aks  }}
-{{- else if .Values.enableMetricsFilter.gke}}
-    {{- $metrics = .Values.prometheusFilters.metrics.infrastructure.keep.gke }}
-{{- else }}
-    {{- $metrics = .Values.prometheusFilters.metrics.infrastructure.keep.eks }}
-{{- end -}}
-
-{{- if .Values.prometheusFilters.metrics.infrastructure.keep.custom }}
-    {{- $metrics = print $metrics "|" .Values.prometheusFilters.metrics.infrastructure.keep.custom }}
-{{- end }}
-{{- $metrics }}
-{{- end }}

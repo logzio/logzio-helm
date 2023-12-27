@@ -11,13 +11,13 @@ The Helm tool is used to manage packages of pre-configured Kubernetes resources 
 
 **Note:** This chart is a fork of the [opentelemtry-collector](https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-collector) Helm chart. 
 It is also dependent on the [kube-state-metrics](https://github.com/kubernetes/kube-state-metrics/tree/master/charts/kube-state-metrics) and [prometheus-node-exporter](https://github.com/helm/charts/tree/master/stable/prometheus-node-exporter) charts, which are installed by default. 
-To disable the dependency during installation, set any of these values: `kubeStateMetrics.enabled`, `pushGateway.enabled` and `nodeExporter.enabled` to `false`.
+To disable the dependency during installation, set any of these values: `tags.kubeStateMetrics.enabled`, `tags.pushGateway.enabled` and `tags.nodeExporter.enabled` to `false`.
 
 
 ### Kubernetes Versions Compatibility
 | Chart Version | Kubernetes Version |
 |---|---|
-| > 2.0.0 | v1.22.0 - v1.28.0 |
+| 2.0.0 | v1.22.0 - v1.28.0 |
 | < 1.3.0 | <= v1.22.0 |
 
 #### Before installing the chart
@@ -241,21 +241,21 @@ To enable applications metrics scraping set the `applicationMetrics.enabled` val
 This will enable the `metrics/applications` pipline and will scrape metrics from pods with the `prometheus.io/scrape=true` annotation
 ### Removing kube-state-metrics metrics
 
-To disable kube-state-metrics metrics scraping set the `kubeStateMetrics.enabled` value to `false`
+To disable kube-state-metrics metrics scraping set the `tags.kubeStateMetrics.enabled` value to `false`
 ```bash
 --set tags.kubeStateMetrics.enabled=false
 ```
 This will disable the `kube-state-metrics` sub chart installation so it won't scrape its metrics.
 ### Removing prometheus-pushgateway metrics
 
-To disable prometheus-pushgateway metrics scraping set the `pushGateway.enabled` value to `false`
+To disable prometheus-pushgateway metrics scraping set the `tags.pushGateway.enabled` value to `false`
 ```bash
 --set tags.pushGateway.enabled=false
 ```
 This will disable the `prometheus-pushgateway` sub chart installation so it won't scrape its metrics.
 ### Removing prometheus-node-exporter metrics
 
-To disable prometheus-node-exporter metrics scraping set the `nodeExporter.enabled` value to `false`
+To disable prometheus-node-exporter metrics scraping set the `tags.nodeExporter.enabled` value to `false`
 ```bash
 --set tags.nodeExporter.enabled=false
 ```
@@ -386,23 +386,8 @@ There are two possible approaches to the upgrade you can choose from:
 - Reinstall the chart.
 - Before running the `helm upgrade` command, delete the old subcharts resources: `logzio-monitoring-prometheus-pushgateway` deployment and the `logzio-monitoring-prometheus-node-exporter` daemonset.
 
-### Upgrade logzio-telemetry to v3.0.0
-
-Before upgrading your logzio-telemetry Chart to v3.0.0 with `helm upgrade`, note that you may encounter different functionality in the installation of the sub charts as they will be installed by default regardless of the `metrics.enabled` flag.
-
-If you don't want the sub charts to installed add the relevant flag per sub chart and set it to `false`.
-
 
 ## Change log
-* 3.0.0
-  - Updated K360 metrics list in `secrets.yaml` - now created dynamically from OOB filters.
-  - Added `job_dummy` relabel and processor - Fixing an issue where duplicate metrics were being sent if the metrics were not in the `K8S_360_METRICS` environment variable.
-  - Use attributes processor to create the `unified_status_code` dimension as it supports connectors.
-  - **BREAKING CHANGES**:
-    - Instead of having the global `metrics.enabled` option of disabling installation of all logzio-telemetry sub charts, each sub chart has its own flag and by default will be installed.
-      - `kubeStateMetrics.enabled`
-      - `pushGateway.enabled`
-      - `nodeExporter.enabled`
 * 2.2.0
   - Upgraded SPM collector image to version `0.80.0`.
   - Added service graph connector metrics.
@@ -415,11 +400,6 @@ If you don't want the sub charts to installed add the relevant flag per sub char
     - Add `unified_status_code` dimension
       - Takes value of `rpc_grpc_status_code` / `http_status_code`
   - Add `containerSecurityContext` configuration option for container based policies. 
-
-
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
-
 * 2.0.0
   - Upgrade sub charts to their latest versions.
     - `kube-state-metrics` to `4.24.0`
@@ -438,6 +418,10 @@ If you don't want the sub charts to installed add the relevant flag per sub char
   - Add custom tracing endpoint option
 * 1.0.3
   - Fixed an issue when enabling dropKubeSystem filter where namespace label values were not filtered.
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
 * 1.0.2
   - Rename `spm` k8s metadata fields
 * 1.0.1
