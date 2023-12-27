@@ -15,7 +15,7 @@ This project packages the following Helm Charts:
 ### Kubernetes Versions Compatibility
 | Chart Version | Kubernetes Version |
 |---|---|
-| 3.0.0 | v1.22.0 - v1.28.0 |
+| > 3.0.0 | v1.22.0 - v1.28.0 |
 | < 2.0.0 | <= v1.22.0 |
 
 ## Instructions for standard deployment:
@@ -188,6 +188,11 @@ There are two possible approaches to the upgrade you can choose from:
 
 
 ## Changelog
+- **4.0.0**:
+	- Upgrade `logzio-k8s-telemetry` to `3.0.0`:
+		- Updated K360 metrics list in `secrets.yaml` - now created dynamically from OOB filters.
+		- Added `job_dummy` relabel and processor - Fixing an issue where duplicate metrics were being sent if the metrics were not in the `K8S_360_METRICS` environment variable.
+		- Use attributes processor to create the `unified_status_code` dimension as it supports connectors.
 - **3.5.0**:
 	- Upgrade `logzio-fluentd` to `0.28.0`:
    - Added `daemonset.initContainerSecurityContext` customization.
