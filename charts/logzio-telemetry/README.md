@@ -243,21 +243,21 @@ This will enable the `metrics/applications` pipline and will scrape metrics from
 
 To disable kube-state-metrics metrics scraping set the `kubeStateMetrics.enabled` value to `false`
 ```bash
---set kubeStateMetrics.enabled=false
+--set tags.kubeStateMetrics.enabled=false
 ```
 This will disable the `kube-state-metrics` sub chart installation so it won't scrape its metrics.
 ### Removing prometheus-pushgateway metrics
 
 To disable prometheus-pushgateway metrics scraping set the `pushGateway.enabled` value to `false`
 ```bash
---set pushGateway.enabled=false
+--set tags.pushGateway.enabled=false
 ```
 This will disable the `prometheus-pushgateway` sub chart installation so it won't scrape its metrics.
 ### Removing prometheus-node-exporter metrics
 
 To disable prometheus-node-exporter metrics scraping set the `nodeExporter.enabled` value to `false`
 ```bash
---set nodeExporter.enabled=false
+--set tags.nodeExporter.enabled=false
 ```
 This will disable the `prometheus-node-exporter` sub chart installation so it won't scrape its metrics.
 ### Using Out of the box metrics filters for Logzio dashboards
