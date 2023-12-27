@@ -630,12 +630,12 @@ spanMetricsAgregator:
                 new_label: operation
       attributes/spm:
         actions:
-        - key: unified_status_code
-          action: update
+        - action: upsert
+          from_attribute: rpc.grpc.status_code
+          key: unified_status_code
+        - action: upsert
           from_attribute: http.status_code
-        - key: unified_status_code
-          action: update
-          from_attribute: rpc.grpc.status_code          
+          key: unified_status_code           
     connectors:
       spanmetrics:
         histogram:
