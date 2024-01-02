@@ -20,7 +20,7 @@ kubernetesInstrumentor:
   pythonAgentImage:
     repository: "logzio/otel-agent-python"
     tag: "v1.0.9"
-  deleteDetectionPods: false
+  deleteDetectionPods: true
   ports:
     metricsPort: 8080
     healthProbePort: 8081
