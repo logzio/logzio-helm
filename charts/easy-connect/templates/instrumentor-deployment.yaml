@@ -45,6 +45,7 @@ spec:
             - "--leader-elect"
             - "--instrumentation-detector-tag={{ .Values.kubernetesInstrumentor.instrumentationDetectorImage.tag }}"
             - "--instrumentation-detector-image={{ .Values.kubernetesInstrumentor.instrumentationDetectorImage.repository }}"
+            - "--delete-detection-pods={{ .Values.kubernetesInstrumentor.deleteDetectionPods }}"
         - name: kube-rbac-proxy
           image: gcr.io/kubebuilder/kube-rbac-proxy:v0.11.0
           args:
