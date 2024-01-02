@@ -92,12 +92,29 @@ You can override the default values by creating your own `values.yaml` file and 
 
 Here, `my_values.yaml` is your custom configuration file.
 
+Manual actions
+-------------
+The `logzio-instrumetor` microservice can be deployed to your cluster to discover applications, inject opentelemetry instrumentation, add log types and more. You can manually control the discovery process with annotations.
+- `logz.io/traces_instrument = true` - will instrument the application with opentelemetry
+- `logz.io/traces_instrument = rollback` - will delete the opentelemetry instrumentation
+- `logz.io/service-name = <string>` - will set active service name for your opentelemetry instrumentation
+- `logz.io/application_type = <string>` - will set log type to send to logz.io (**dependent on logz.io fluentd helm chart**)
+- `logz.io/skip = true` - will skip the application from instrumentation or app detection
+
 Alternative images
 -------------
 you can find alternative to `dockerhub` images in `public.ecr.aws/logzio/` with the same image name (example: `public.ecr.aws/logzio/instrumentor`)
 
 Change log
 -------------
+* 1.0.5
+  - Add `deleteDetectionPods` value
+  - Add `easy.conect.version` resource attributes to spans
+  - Enrich detection pod logs
+  - Add easy connect instrumentation detection
+  - Reduce the amount of instrumentor logs
+  - Handle conflicts from different reconciles gracefully
+  - Update `nodejs` agent
 * 1.0.4
   - add images to `public.aws.ecr`
   - Update `dotnet` agent:
