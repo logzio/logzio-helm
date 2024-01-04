@@ -67,6 +67,7 @@ Builds the list for exclude paths in the tail for the containers
 {{- end -}}
 {{- end -}}
 
+{{- if .Values.windowsDaemonset.enabled }}
 {{/*
 Builds the list for exclude paths in the tail for the containers - windows
 */}}
@@ -75,6 +76,7 @@ Builds the list for exclude paths in the tail for the containers - windows
 {{- cat .Values.windowsDaemonset.excludeFluentdPath "," .Values.windowsDaemonset.extraExclude | nospace }}
 {{- else }}
 {{- print .Values.windowsDaemonset.excludeFluentdPath }}
+{{- end -}}
 {{- end -}}
 {{- end -}}
 

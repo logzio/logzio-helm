@@ -175,6 +175,7 @@ spec:
   updateStrategy: {{ toYaml .Values.daemonset.updateStrategy | nindent 4 }}
   {{- end }}
 
+{{- if .Values.windowsDaemonset.enabled }}
 ---
 apiVersion: {{ .Values.apiVersions.daemonset }}
 kind: DaemonSet
@@ -314,3 +315,4 @@ spec:
   {{- if .Values.windowsDaemonset.updateStrategy }}
   updateStrategy: {{ toYaml .Values.windowsDaemonset.updateStrategy | nindent 4 }}
   {{- end }}
+{{- end }}
