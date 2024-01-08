@@ -1,44 +1,68 @@
+# Fluentd image in daemonset
 image: logzio/logzio-fluentd
+# Fluentd image tag
 imageTag: 1.5.1
 
+# Fluentd image in daemonset for windows nodes
 windowsImage: logzio/fluentd-windows
+# Fluentd image tag for windows nodes
 windowsImageTag: 0.0.2
 
-
+# Overrides the Chart name for resources
 nameOverride: ""
+# Overrides the full name of the resources
 fullnameOverride: ""
 
+# API versions for the resources
 apiVersions:
+  # Daemonset API version
   daemonset: apps/v1
+  # Service Account API version
   serviceAccount: v1
+  # Cluster Role API version
   clusterRole: rbac.authorization.k8s.io/v1
+  # Cluster Role Binding API version
   clusterRoleBinding: rbac.authorization.k8s.io/v1
+  # Configmap API version
   configmap: v1
+  # Secret API version
   secret: v1
 
+# Value for k8s-app label
 k8sApp: fluentd-logzio
 
+# Specifies whether the Chart should be compatible to a RBAC cluster
 isRBAC: true
+# Specifies whether to run the Damonset with priviliged security context
 isPrivileged: false
 
 serviceAccount:
+  # Override the name of the service account
   name: ""
 
 fargateLogRouter:
+  # Boolen to decide if to configure fargate log router
   enabled: false
 
+# Add to your logs field env_id with identification of the environment you're shipping logs from, usually your k8s cluster name
 env_id: "my_environment"
 
 daemonset:
+  # Security context for the pod level
   podSecurityContext: {}
+  # Security context for the container level
   securityContext: {}
+  # Security context for the init container
   initContainerSecurityContext: {}
+  # Set tolerations for all DaemonSet pods
   tolerations:
   - key: node-role.kubernetes.io/master
     effect: NoSchedule
+  # Set nodeSelector for all DaemonSet pods
   nodeSelector:
     os: linux
-  # Prevent node exporter deamonset deploymment on fargate nodes
+  # Set affinity rules for the scheduler to determine where all DaemonSet pods can be placed.
+  # The following configuration prevent node exporter deamonset deploymment on fargate nodes
   affinity:
     nodeAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
@@ -46,82 +70,152 @@ daemonset:
           - matchExpressions:
               - key: eks.amazonaws.com/compute-type
                 operator: DoesNotExist
+
+  # Controls whether Fluentd system messages will be enabled
   fluentdSystemdConf: disable
+  # Controls the launch of a prometheus plugin that monitors Fluentd
   fluentdPrometheusConf: false
+  # Use if you wish to send logs from specific k8s namespaces, space delimited.
+  # Should be in the following format:
+  # kubernetes.var.log.containers.**_<<NAMESPACE-TO-INCLUDE>>_** kubernetes.var.log.containers.**_<<ANOTHER-NAMESPACE>>_**.
   includeNamespace: ""
+  # Enables to validate SSL certificates
   kubernetesVerifySsl: true
+  # Match Fluentd's format for kube-apiserver audit logs.
+  # Set to audit-json if your audit logs are in json format
   auditLogFormat: audit
+  # Container runtime interface of the cluster. Used to determine which configuration to use when concatenating partial logs.
+  # Valid options are: docker, containerd
   cri: containerd
+  # Specifies which plugin to use as the backend
   logzioBufferType: file
+  # Path of the buffer
   logzioBufferPath: /var/log/fluentd-buffers/stackdriver.buffer
+  # Controls the behavior when the queue becomes full. Can be one of: throw_exception, block, drop_oldest_chunk
   logzioOverflowAction: block
+  # Maximum size of a chunk allowed
   logzioChunkLimitSize: 2M
+  # Maximum length of the output queue
   logzioQueueLimitLength: 6
+  # Interval, in seconds, to wait before invoking the next buffer flush
   logzioFlushInterval: 5s
+  # Maximum interval, in seconds, to wait between retries
   logzioRetryMaxInterval: 30
+  # If true, plugin will retry flushing forever
   logzioRetryForever: true
+  # Number of threads to flush the buffer
   logzioFlushThreadCount: 2
+  # The log level for the Fluentd logs
   logzioLogLevel: info
+  # Path to fluentd logs file, to exclude them from the logs that Fluent tails
   excludeFluentdPath: "/var/log/containers/*fluentd*.log"
+  # A comma-seperated list (no spaces), of more paths to exclude from the Fluentd source that tails containers logs.
+  # For example - /path/one.log,/path/two.log
   extraExclude: ""
+  # Path for containers logs
   containersPath: "/var/log/containers/*.log"
+  # Path for containers logs pos file
   posFile: "/var/log/fluentd-containers.log.pos"
+  # Set log type for the logs
   logType: "k8s"
+  # If needed, more env vars can be added with this field
   extraEnv: []
+  # Allows you to set the resources for Fluentd Daemonset.
   resources:
     limits:
       memory: 500Mi
     requests:
       cpu: 200m
       memory: 500Mi
+  # If needed, more volume mounts can be added with this field
   extraVolumeMounts: []
+  # Termination period (in seconds) to wait before killing Fluentd pod process on pod shutdown
   terminationGracePeriodSeconds: 30
+  # If needed, more volumes can be added with this field
   extraVolumes: []
+  # Values for init container
   init:
+    # Docker image for the init container
     containerImage: "busybox"
+    # If needed, more volume mounts to the init container can be added with this field
     extraVolumeMounts: []
+  # Set priorityClassName for all DaemonSet pods
   priorityClassName: ""
+  # Update strategy for the daemonset
   updateStrategy: {}
 
 windowsDaemonset:
+  # Tolerations for the Daemonset for Windows nodes
   tolerations:
   - key: node-role.kubernetes.io/master
     effect: NoSchedule
+  # Deploy the pods only on Windows nodes
   nodeSelector:
     os: windows
+  # Controls whether Fluentd system messages will be enabled
   fluentdSystemdConf: disable
+  # Controls the launch of a prometheus plugin that monitors Fluentd
   fluentdPrometheusConf: false
+  # Use if you wish to send logs from specific k8s namespaces, space delimited.
+  # Should be in the following format:
+  # kubernetes.var.log.containers.**_<<NAMESPACE-TO-INCLUDE>>_** kubernetes.var.log.containers.**_<<ANOTHER-NAMESPACE>>_**.
   includeNamespace: ""
+  # Enables to validate SSL certificates
   kubernetesVerifySsl: true
+  # Match Fluentd's format for kube-apiserver audit logs.
+  # Set to audit-json if your audit logs are in json format
   auditLogFormat: audit
+  # Container runtime interface of the cluster. Used to determine which configuration to use when concatenating partial logs.
+  # Valid options are: docker, containerd
   cri: containerd
+  # Specifies which plugin to use as the backend
   logzioBufferType: file
+  # Path of the buffer
   logzioBufferPath: C:\var\log\fluentd-buffers\stackdriver.buffer
+  # Controls the behavior when the queue becomes full. Can be one of: throw_exception, block, drop_oldest_chunk
   logzioOverflowAction: block
+  # Maximum size of a chunk allowed
   logzioChunkLimitSize: 2M
+  # Maximum length of the output queue
   logzioQueueLimitLength: 6
+  # Interval, in seconds, to wait before invoking the next buffer flush
   logzioFlushInterval: 5s
+  # Maximum interval, in seconds, to wait between retries
   logzioRetryMaxInterval: 30
+  # If true, plugin will retry flushing forever
   logzioRetryForever: true
+  # Number of threads to flush the buffer
   logzioFlushThreadCount: 2
+  # The log level for the Fluentd logs
   logzioLogLevel: info
+  # Path to fluentd logs file, to exclude them from the logs that Fluent tails
   excludeFluentdPath: "/var/log/containers/*fluentd*.log"
+  # A comma-seperated list (no spaces), of more paths to exclude from the Fluentd source that tails containers logs.
+  # For example - /path/one.log,/path/two.log
   extraExclude: ""
+  # Path for containers logs
   containersPath: "/var/log/containers/*.log"
+  # If needed, more env vars can be added with this field
   extraEnv: []
+  # Allows you to set the resources for Fluentd Daemonset.
   resources:
     limits:
       memory: 500Mi
     requests:
       cpu: 100m
       memory: 200Mi
+  # If needed, more volume mounts can be added with this field
   extraVolumeMounts: []
+  # Termination period (in seconds) to wait before killing Fluentd pod process on pod shutdown
   terminationGracePeriodSeconds: 30
+  # If needed, more volumes can be added with this field
   extraVolumes: []
+  # Set priorityClassName for all DaemonSet pods
   priorityClassName: ""
   updateStrategy: {}
 
 clusterRole:
+  # Configurable cluster role rules that Fluentd uses to access Kubernetes resources
   rules:
   - apiGroups:
     - ""
@@ -134,13 +228,19 @@ clusterRole:
     - watch
 
 secrets:
+  # When true, the logzio secret will be created and managed by this Chart. If you're managing the logzio secret by yourself, set to false
   enabled: true
+  # Secret with your logzio shipping token
   logzioShippingToken: ""
+  # Secret with your logzio listener host. For example - listener.logz.io
   logzioListener: ""
+  # Secret with your custom endpoint, for example:http://endpoint:8080. Overrides secrets.logzioListener
   customEndpoint: ""
 
+# Name of the secret, can be configured in case it's placed from an external source
 secretName: logzio-logs-secret
 
+# Initial includes for fluent.conf
 configMapIncludes: |
   @include "#{ENV['FLUENTD_SYSTEMD_CONF'] || 'systemd'}.conf"
   @include prometheus.conf
@@ -149,7 +249,9 @@ configMapIncludes: |
   @include conf.d/*.conf
 
 configmap:
+  # If needed, more Fluentd configuration can be added with this field
   extraConfig: {}
+  # Configuration for fluent.conf
   fluent: |
     <match "#{ENV['INCLUDE_NAMESPACE'] || '**'}">
       @type logzio_buffered
@@ -181,6 +283,7 @@ configmap:
       </buffer>
     </match>
 
+  # Configuration for kubernetes.conf
   kubernetes: |
     <label @FLUENT_LOG>
       <match fluent.**>
@@ -419,11 +522,13 @@ configmap:
 
     @include custom-filters-after.conf
 
+  # Configuration for system.conf
   system: |
     <system>
       log_level "#{ENV['LOGZIO_LOG_LEVEL']}"
     </system>
 
+  # Configuration for systemd.conf
   systemd: |
     # Logs from systemd-journal for interesting services.
     <source>
@@ -467,6 +572,7 @@ configmap:
       tag bootkube
     </source>
 
+  # Configuration for audit.conf
   audit: |
     # Example:
     # 2017-02-09T00:15:57.992775796Z AUDIT: id="90c73c7c-97d6-4b65-9461-f94606ff825f" ip="104.132.1.72" method="GET" user="kubecfg" as="<self>" asgroups="<lookup>" namespace="default" uri="/api/v1/namespaces/default/pods"
@@ -492,6 +598,7 @@ configmap:
       </parse>
     </source>
 
+  # Configuration for audit-json.conf. This is the configuration that's being used when daemonset.auditLogFormat is set to audit-json
   auditJson: |
     <source>
       @type tail
@@ -508,6 +615,7 @@ configmap:
       </parse>
     </source>
 
+  # Configuration for partial-docker.conf. Used to concatenate partial logs that split due to large size, for docker cri
   partialDocker: |
     # Concat docker cri partial log
     # https://github.com/fluent-plugins-nursery/fluent-plugin-concat
@@ -520,6 +628,7 @@ configmap:
       separator ""
     </filter>
 
+  # Configuration for partial-containerd.conf. Used to concatenate partial logs that split due to large size, for containerd cri
   partialContainerd: |
     # Concat containerd cri partial log
     # https://github.com/fluent/fluentd-kubernetes-daemonset/issues/412#issuecomment-636536767
@@ -532,6 +641,7 @@ configmap:
       separator ""
     </filter>
 
+  # Config snippet for adding env_id field to logs
   envId: |
     <filter **>
         @type record_modifier
@@ -540,6 +650,7 @@ configmap:
         </record>
       </filter>
   
+  # Config for prometheus.conf
   prometheus: |
     <source>
       @type prometheus
@@ -568,9 +679,15 @@ configmap:
       @type prometheus_output_monitor
       @id in_prometheus_output_monitor
     </source>
-    
+  
+  # Add sources to the Fluentd configuration
   customSources: ""
+  # Add filters to the Fluentd configuration, before default filters
   customFilters: ""
+  # Add filters to the Fluentd configuration, after default filters
   customFilterAfter: ""
+
+# Add log level filter. Regex of the log level(s) you want to ship.
+# For example, if you want to ship warning and error logs, use WARNING|ERROR. Possible levels are: DEBUG, INFO, WARNING, ERROR, TRACE.
 logLevelFilter: ""
 
