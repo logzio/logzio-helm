@@ -1,18 +1,29 @@
 logs:
-  enabled: false
-metricsOrTraces:
-  enabled: false
-securityReport:
-  enabled: false
-finops:
-  enabled: false
-deployEvents:
+  # Enables the deployment of the sub chart for sending logs
   enabled: false
 
+metricsOrTraces:
+  # Enables the deployment of the sub chart for sending metrics and traces (and SPM)
+  enabled: false
+
+securityReport:
+  # Enables the deployment of the sub chart for creating and sending security reports
+  enabled: false
+
+finops:
+  # Enables the deployment of the sub chart for finops
+  enabled: false
+
+deployEvents:
+  # Enables the deployment of the sub chart for sending k8s deployment events
+  enabled: false
+
+# Override values for the Fluentd sub-chart
 logzio-fluentd:
   daemonset:
     logType: "agent-k8s"
 
+# Override values for the opencost sub-chart
 opencost:
   opencost:
     ui:
