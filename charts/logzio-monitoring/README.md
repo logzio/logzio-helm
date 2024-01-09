@@ -189,6 +189,11 @@ There are two possible approaches to the upgrade you can choose from:
 
 ## Changelog
 - **4.0.0**:
+	- Upgrade `logzio-k8s-telemetry` to `4.0.0`:
+		- Removed the `kubernetes-360-metrics` key from the `logzio-secret`.
+			- Populate the pods containers `K8S_360_METRICS` environment variable directly using the opentelemetry-collector.k8s360 definition to inherit the list from values file instead.
+		- Added `logzio_app` label with `kubernetes360` value to cadvisor metrics pipeline to avoid dropping specific metrics by matching the k8s 360 filter.
+- **4.0.0**:
 	- Upgrade `logzio-k8s-telemetry` to `3.0.0`:
 		- Updated K360 metrics list in `secrets.yaml` - now created dynamically from OOB filters.
 		- Added `job_dummy` relabel and processor - Fixing an issue where duplicate metrics were being sent if the metrics were not in the `K8S_360_METRICS` environment variable.
