@@ -42,10 +42,7 @@ containers:
           fieldRef:
             fieldPath: spec.nodeName
       - name: K8S_360_METRICS
-        valueFrom:
-          secretKeyRef:
-            name: {{ .Values.secrets.name }}
-            key: kubernetes-360-metrics
+        value: {{ include "opentelemetry-collector.k360Metrics" . }}
       - name: LOGZIO_AGENT_VERSION
         value: {{.Chart.Version}}
       - name: REALESE_NAME
