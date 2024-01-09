@@ -394,9 +394,10 @@ If you don't want the sub charts to installed add the relevant flag per sub char
 
 
 ## Change log
-* 3.1.0
-  - Removed the `kubernetes-360-metrics` key from the `logzio-secret`.
-    - Populate the pods containers `K8S_360_METRICS` environment variable directly using the opentelemetry-collector.k8s360 definition to inherit the list from values file instead.
+* 4.0.0
+  - **BREAKING CHANGES**:
+    - Removed the `kubernetes-360-metrics` key from the `logzio-secret`.
+      - Populate the pods containers `K8S_360_METRICS` environment variable directly using the opentelemetry-collector.k8s360 definition to inherit the list from values file instead.
   - Added `logzio_app` label with `kubernetes360` value to cadvisor metrics pipeline to avoid dropping specific metrics by matching the k8s 360 filter.
 * 3.0.0
   - Updated K360 metrics list in `secrets.yaml` - now created dynamically from OOB filters.
