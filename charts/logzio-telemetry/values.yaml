@@ -969,6 +969,9 @@ daemonsetConfig:
           relabel_configs:
           - action: labelmap
             regex: __meta_kubernetes_node_label_(.+) 
+          - action: replace
+            replacement: kubernetes360
+            target_label: logzio_app            
           metric_relabel_configs: []
     prometheus/collector:
       config:
