@@ -188,6 +188,10 @@ There are two possible approaches to the upgrade you can choose from:
 
 
 ## Changelog
+
+- **5.0.1**:
+	- Upgrade `logzio-fluentd` to `0.28.1`:
+		- Added `windowsDaemonset.enabled` customization.
 - **5.0.0**:
 	- Upgrade `logzio-k8s-telemetry` to `4.0.0`:
 		- **BREAKING CHANGES**:
@@ -199,6 +203,11 @@ There are two possible approaches to the upgrade you can choose from:
 		- Updated K360 metrics list in `secrets.yaml` - now created dynamically from OOB filters.
 		- Added `job_dummy` relabel and processor - Fixing an issue where duplicate metrics were being sent if the metrics were not in the `K8S_360_METRICS` environment variable.
 		- Use attributes processor to create the `unified_status_code` dimension as it supports connectors.
+
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
 - **3.5.0**:
 	- Upgrade `logzio-fluentd` to `0.28.0`:
    - Added `daemonset.initContainerSecurityContext` customization.
@@ -213,10 +222,6 @@ There are two possible approaches to the upgrade you can choose from:
 			- `serviceGraph.enabled` option.
 		- Refactored span metrics processor to a connector.
 			- Added metrics transform processor to modify the data for Logz.io backwards compatibility.
-
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
-
 - **3.2.0**:
 	- Upgrade `logzio-k8s-telemetry` to `2.1.0`:
 		- Update SPM labels
