@@ -8,7 +8,7 @@ sources:
   - https://github.com/logzio/logzio-helm
 dependencies:
   - name: logzio-fluentd
-    version: "0.28.0"
+    version: "0.28.1"
     repository: "https://logzio.github.io/logzio-helm/"
     condition: logs.enabled
   - name: logzio-k8s-telemetry
