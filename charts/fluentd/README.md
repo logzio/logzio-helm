@@ -115,6 +115,7 @@ helm install -n monitoring \
 | `daemonset.init.containerImage` | Init container image for the fluentd daemonset. | `busybox` |
 | `daemonset.priorityClassName` | Set [priorityClassName](https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/) for all DaemonSet pods. | `""` |
 | `daemonset.updateStrategy` | Strategy to use when updating the Daemonset. | `{}` |
+| `windowsDaemonset.enabled` | Enables Fluentd Daemonset for Windows. | `true` |
 | `windowsDaemonset.kubernetesVerifySsl` | Enables to validate SSL certificates (windows). | `true` |
 | `windowsDaemonset.auditLogFormat` | Match Fluentd's format for kube-apiserver audit logs. Set to `audit-json` if your audit logs are in json format. (windows) | `audit` |
 | `windowsDaemonset.containerdRuntime` | **Deprecated from chart version 0.1.0.** Determines whether to use a configuration for a Containerd runtime. Set to `false` if your cluster doesn't use Containerd as CRI. (windows) | `true` |
@@ -300,7 +301,8 @@ If needed, the fluentd image can be changed to support windows server 2022 with 
 
 
 ## Change log
-
+ - **0.28.1**:
+   - Added `windowsDaemonset.enabled` customization.
  - **0.28.0**:
    - Added `daemonset.initContainerSecurityContext` customization.
    - Added `daemonset.updateStrategy` customization.

@@ -71,10 +71,12 @@ Builds the list for exclude paths in the tail for the containers
 Builds the list for exclude paths in the tail for the containers - windows
 */}}
 {{- define "logzio.windowsExcludePath" }}
+{{- if .Values.windowsDaemonset.enabled }}
 {{- if .Values.windowsDaemonset.extraExclude }}
 {{- cat .Values.windowsDaemonset.excludeFluentdPath "," .Values.windowsDaemonset.extraExclude | nospace }}
 {{- else }}
 {{- print .Values.windowsDaemonset.excludeFluentdPath }}
+{{- end -}}
 {{- end -}}
 {{- end -}}
 

@@ -145,6 +145,8 @@ daemonset:
   updateStrategy: {}
 
 windowsDaemonset:
+  # Controls whether the Daemonset is enabled for Windows
+  enabled: true
   # Tolerations for the Daemonset for Windows nodes
   tolerations:
   - key: node-role.kubernetes.io/master
