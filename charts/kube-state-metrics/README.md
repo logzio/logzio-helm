@@ -39,7 +39,7 @@ _See [helm uninstall](https://helm.sh/docs/helm/helm_uninstall/) for command doc
 ## Upgrading Chart
 
 ```console
-helm upgrade [RELEASE_NAME] prometheus-community/kube-state-metrics [flags]
+helm upgrade [RELEASE_NAME] logzio-helm/kube-state-metrics [flags]
 ```
 
 _See [helm upgrade](https://helm.sh/docs/helm/helm_upgrade/) for command documentation._
@@ -67,7 +67,7 @@ The upgraded chart now the following changes:
 See [Customizing the Chart Before Installing](https://helm.sh/docs/intro/using_helm/#customizing-the-chart-before-installing). To see all configurable options with detailed comments:
 
 ```console
-helm show values prometheus-community/kube-state-metrics
+helm show values logzio-helm/kube-state-metrics
 ```
 
 You may also run `helm show values` on this chart's [dependencies](#dependencies) for additional options.
