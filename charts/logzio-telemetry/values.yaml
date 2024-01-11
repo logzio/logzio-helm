@@ -836,7 +836,8 @@ kube-state-metrics:
   podSecurityPolicy:
     enabled: false
   extraArgs: ["--metric-labels-allowlist=nodes=[kubernetes.azure.com/scalesetpriority,eks.amazonaws.com/capacityType,cloud.google.com/gke-preemptible]"]
-
+  daemonset:
+    enabled: true
 prometheus-node-exporter:
   service:
     port: 9101
