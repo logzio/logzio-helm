@@ -1,11 +1,16 @@
-# kube-state-metrics Helm Chart
+# Logz.io fork
+The kube-state-metrics helm chart was forked in order to divide the load of pods metrics collection by creating a daemonset with `daemonset.enabled` flag. 
+The rest of the resources metrics will be collected by the deployment.
+
+# kube-state-metrics Helm Chart 
 
 Installs the [kube-state-metrics agent](https://github.com/kubernetes/kube-state-metrics).
+
 
 ## Get Repo Info
 
 ```console
-helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo add logzio-helm https://logzio.github.io/logzio-helm
 helm repo update
 ```
 
@@ -14,7 +19,7 @@ _See [helm repo](https://helm.sh/docs/helm/helm_repo/) for command documentation
 ## Install Chart
 
 ```console
-helm install [RELEASE_NAME] prometheus-community/kube-state-metrics [flags]
+helm install [RELEASE_NAME] logzio-helm/kube-state-metrics [flags]
 ```
 
 _See [configuration](#configuration) below._
