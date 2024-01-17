@@ -4,22 +4,22 @@ kubernetesInstrumentor:
   serviceAccount: "kubernetes-instrumentor"
   image:
     repository: "logzio/instrumentor"
-    tag: "v1.0.9"
+    tag: "v1.0.10"
   instrumentationDetectorImage:
     repository: "logzio/instrumentation-detector"
-    tag: "v1.0.9"
+    tag: "v1.0.10"
   javaAgentImage:
     repository: "logzio/otel-agent-java"
-    tag: "v1.0.9"
+    tag: "v1.0.10"
   dotnetAgentImage:
     repository: "logzio/otel-agent-dotnet"
-    tag: "v1.0.9"
+    tag: "v1.0.10"
   nodejsAgentImage:
     repository: "logzio/otel-agent-nodejs"
-    tag: "v1.0.9"
+    tag: "v1.0.10"
   pythonAgentImage:
     repository: "logzio/otel-agent-python"
-    tag: "v1.0.9"
+    tag: "v1.0.10"
   deleteDetectionPods: true
   ports:
     metricsPort: 8080

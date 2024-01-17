@@ -49,17 +49,17 @@ serviceAccount
 | --- | --- | --- |
 | `kubernetesInstrumentor.serviceAccount` | Service account name of the instrumentor deployment | `"kubernetes-instrumentor"` |
 | `kubernetesInstrumentor.image.repository` | Repository of the instrumentor image | `"logzio/instrumentor"` |
-| `kubernetesInstrumentor.image.tag` | Tag of the instrumentor image | `"v1.0.9"` |
+| `kubernetesInstrumentor.image.tag` | Tag of the instrumentor image | `"v1.0.10"` |
 | `kubernetesInstrumentor.instrumentationDetectorImage.repository` | Repository of the instrumentation detector image | `"logzio/instrumentation-detector"` |
-| `kubernetesInstrumentor.instrumentationDetectorImage.tag` | Tag of the instrumentation detector image | `"v1.0.8"` |
+| `kubernetesInstrumentor.instrumentationDetectorImage.tag` | Tag of the instrumentation detector image | `"v1.0.10"` |
 | `kubernetesInstrumentor.javaAgentImage.repository` | Repository of the Java agent image | `"logzio/otel-agent-java"` |
-| `kubernetesInstrumentor.javaAgentImage.tag` | Tag of the Java agent image | `"v1.0.9"` |
+| `kubernetesInstrumentor.javaAgentImage.tag` | Tag of the Java agent image | `"v1.0.10"` |
 | `kubernetesInstrumentor.dotnetAgentImage.repository` | Repository of the .Net agent image | `"logzio/otel-agent-dotnet"` |
-| `kubernetesInstrumentor.dotnetAgentImage.tag` | Tag of the .Net agent image | `"v1.0.9"` |
+| `kubernetesInstrumentor.dotnetAgentImage.tag` | Tag of the .Net agent image | `"v1.0.10"` |
 | `kubernetesInstrumentor.nodejsAgentImage.repository` | Repository of the Node.js agent image | `"logzio/otel-agent-nodejs"` |
-| `kubernetesInstrumentor.nodejsAgentImage.tag` | Tag of the Node.js agent image | `"v1.0.9"` |
+| `kubernetesInstrumentor.nodejsAgentImage.tag` | Tag of the Node.js agent image | `"v1.0.10"` |
 | `kubernetesInstrumentor.pythonAgentImage.repository` | Repository of the Python agent image | `"logzio/otel-agent-python"` |
-| `kubernetesInstrumentor.pythonAgentImage.tag` | Tag of the Python agent image | `"v1.0.9"` |
+| `kubernetesInstrumentor.pythonAgentImage.tag` | Tag of the Python agent image | `"v1.0.10"` |
 | `kubernetesInstrumentor.deleteDetectionPods` | Delete detection pods after detection | `true` |
 | `kubernetesInstrumentor.ports.metricsPort` | Metrics port for the instrumentor | `8080` |
 | `kubernetesInstrumentor.ports.healthProbePort` | Health probe port for the instrumentor | `8081` |
@@ -108,6 +108,10 @@ you can find alternative to `dockerhub` images in `public.ecr.aws/logzio/` with 
 
 Change log
 -------------
+* 1.0.6
+  - Improve `nodejs` instrumentation:
+    - Use `BatchSpanProcessor`
+    - Disable `@opentelemetry/instrumentation-fs` To improve performance and avoid high memory usage on startup (https://github.com/open-telemetry/opentelemetry-js-contrib/issues/1344)
 * 1.0.5
   - Add `deleteDetectionPods` value
   - Add `easy.conect.version` resource attributes to spans
