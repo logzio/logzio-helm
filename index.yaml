@@ -14,6 +14,19 @@ entries:
     version: 0.0.1
   easy-connect:
   - apiVersion: v2
+    created: "2024-01-17T08:11:53.044913639Z"
+    description: Easily add otel auto instrumentation and log types to your Kubernetes
+      applications
+    digest: 033ec70aed9b2826b9c2099413b80239a7130c333d9e33c2d4c5a7d4e95c0f1e
+    maintainers:
+    - email: yotam.loewenbach@logz.io
+      name: yotamloe
+    name: easy-connect
+    type: application
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/easy-connect-1.0.6/easy-connect-1.0.6.tgz
+    version: 1.0.6
+  - apiVersion: v2
     created: "2024-01-02T17:30:55.8283+07:00"
     description: Easily add otel auto instrumentation and log types to your Kubernetes
       applications
@@ -5269,4 +5282,4 @@ entries:
     urls:
     - https://logzio.github.io/logzio-helm/prometheus-alerts-migrator-1.0.0.tgz
     version: 1.0.0
-generated: "2024-01-10T14:02:22.39952914Z"
+generated: "2024-01-17T08:11:53.045199323Z"
