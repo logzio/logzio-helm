@@ -54,46 +54,14 @@ Build config file for standalone OpenTelemetry Collector
 
 
 {{- if (and (eq .Values.collector.mode "standalone") (.Values.metrics.enabled)) -}}
-  {{- range $job := (index $configData "receivers" "prometheus/infrastructure" "config" "scrape_configs") -}}
-    {{- range $key,$filter := ($infraFilters | fromJson) -}}
-      {{- if contains "metric" $key -}}
-        {{- $_ := set $job ("metric_relabel_configs" | toYaml)  ( append $job.metric_relabel_configs ($filter)) -}}
-      {{- else -}}
-        {{- $_ := set $job ("relabel_configs" | toYaml)  ( append $job.relabel_configs ($filter)) -}}
-      {{- end -}}
-    {{- end -}} 
-  {{- end -}}
 
-  {{- range $job := (index $configData "receivers" "prometheus/cadvisor" "config" "scrape_configs") -}}
-    {{- range $key,$filter := ($infraFilters | fromJson) -}}
-      {{- if contains "metric" $key -}}
-        {{- $_ := set $job ("metric_relabel_configs" | toYaml)  ( append $job.metric_relabel_configs ($filter)) -}}
-      {{- else -}}
-        {{- $_ := set $job ("relabel_configs" | toYaml)  ( append $job.relabel_configs ($filter)) -}}
-      {{- end -}}
-    {{- end -}} 
-  {{- end -}}
-
-  {{- range $job := (index $configData "receivers" "prometheus/applications" "config" "scrape_configs") -}}
-    {{- range $key,$filter := ($applicationsFilters | fromJson) -}}
-      {{- if contains "metric" $key -}}
-        {{- $_ := set $job ("metric_relabel_configs" | toYaml)  ( append $job.metric_relabel_configs ($filter)) -}}
-      {{- else -}}
-        {{- $_ := set $job ("relabel_configs" | toYaml)  ( append $job.relabel_configs ($filter)) -}}
-      {{- end -}}
-    {{- end -}} 
-  {{- end -}}
-  {{- if .Values.applicationMetrics.enabled -}}
-    {{- $metricsApplications := dict "exporters" (list "prometheusremotewrite/applications") "processors" (list "attributes/env_id" "filter/kubernetes360") "receivers" (list "prometheus/applications") -}}
-    {{- $_ := set .Values.metricsConfig.service.pipelines "metrics/applications" $metricsApplications -}}
-  {{- end -}}
 {{- end -}}
 {{- .Values.standaloneCollector.configOverride | merge $configData | mustMergeOverwrite $config | toYaml}}
 {{- end -}}
 
 {{- define "opentelemetry-collector.spanMetricsAggregatorConfig" -}}
 {{- $configData := .Values.emptyConfig }}
-{{- $spmConfig := deepCopy .Values.spanMetricsAgregator.config | mustMergeOverwrite }}
+{{- $spmConfig := deepCopy .Values.spanMetricsAggregator.config | mustMergeOverwrite }}
 {{- $configData = merge $spmConfig | mustMergeOverwrite }}
 {{- end -}}
 
@@ -206,41 +174,7 @@ Build config file for standalone OpenTelemetry Collector daemonset
 {{- end }}
 
 {{- if .Values.metrics.enabled -}}
-  {{- range $job := (index $configData "receivers" "prometheus/infrastructure" "config" "scrape_configs") -}}
-    {{- range $key,$filter := ($infraFilters | fromJson) -}}
-      {{- if contains "metric" $key -}}
-        {{- $_ := set $job ("metric_relabel_configs" | toYaml)  ( append $job.metric_relabel_configs ($filter)) -}}
-      {{- else -}}
-        {{- $_ := set $job ("relabel_configs" | toYaml)  ( append $job.relabel_configs ($filter)) -}}
-      {{- end -}}
-    {{- end -}} 
-  {{- end -}}
-
-  {{- range $job := (index $configData "receivers" "prometheus/cadvisor" "config" "scrape_configs") -}}
-    {{- range $key,$filter := ($infraFilters | fromJson) -}}
-      {{- if contains "metric" $key -}}
-        {{- $_ := set $job ("metric_relabel_configs" | toYaml)  ( append $job.metric_relabel_configs ($filter)) -}}
-      {{- else -}}
-        {{- $_ := set $job ("relabel_configs" | toYaml)  ( append $job.relabel_configs ($filter)) -}}
-      {{- end -}}
-    {{- end -}} 
-  {{- end -}}
-
-  {{- range $job := (index $configData "receivers" "prometheus/applications" "config" "scrape_configs") -}}
-    {{- range $key,$filter := ($applicationsFilters | fromJson) -}}
-      {{- if contains "metric" $key -}}
-        {{- $_ := set $job ("metric_relabel_configs" | toYaml)  ( append $job.metric_relabel_configs ($filter)) -}}
-      {{- else -}}
-        {{- $_ := set $job ("relabel_configs" | toYaml)  ( append $job.relabel_configs ($filter)) -}}
-      {{- end -}}
-    {{- end -}} 
-  {{- end -}}
-  {{- if .Values.applicationMetrics.enabled -}}
-    {{- $metricsApplications := dict "exporters" (list "prometheusremotewrite/applications") "processors" (list "attributes/env_id" "filter/kubernetes360") "receivers" (list "prometheus/applications") -}}
-    {{- $_ := set .Values.daemonsetConfig.service.pipelines "metrics/applications" $metricsApplications -}}
-  {{- end -}}
 {{- end -}}
-
 {{- .Values.daemonsetCollector.configOverride | merge $configData | mustMergeOverwrite $config | toYaml}}
 {{- end -}}
 

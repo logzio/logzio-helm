@@ -601,7 +601,7 @@ serviceGraph:
         metrics/spm-logzio:
           receivers: [servicegraph]
 
-spanMetricsAgregator:
+spanMetricsAggregator:
   config:
     processors:
       # Modify the data to support Logz.io backwards compatibility
@@ -1076,6 +1076,9 @@ daemonsetConfig:
           - prometheus/infrastructure
           - prometheus/cadvisor
           - prometheus/collector
+    telemetry:
+      logs:
+        level: "debug"            
 
          
 opencost:

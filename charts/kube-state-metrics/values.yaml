@@ -8,8 +8,8 @@ image:
 
 imagePullSecrets: []
 # - name: "image-pull-secret"
-daemonset:
-  enabled: true
+daemonset: # Deploy kube-state-metrics as a daemonset for pod metrics collection 
+  enabled: false 
 # If set to true, this will deploy kube-state-metrics as a StatefulSet and the data
 # will be automatically sharded across <.Values.replicas> pods using the built-in
 # autodiscovery feature: https://github.com/kubernetes/kube-state-metrics#automated-sharding
@@ -224,6 +224,7 @@ collectors:
   - storageclasses
   - validatingwebhookconfigurations
   - volumeattachments
+  # - pods # Un-comment if you run in deployment mode
   # - verticalpodautoscalers # not a default resource, see also: https://github.com/kubernetes/kube-state-metrics#enabling-verticalpodautoscalers
 
 # Enabling kubeconfig will pass the --kubeconfig argument to the container

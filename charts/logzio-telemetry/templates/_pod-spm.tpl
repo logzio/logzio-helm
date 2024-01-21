@@ -18,7 +18,7 @@ containers:
     securityContext:
       {{- toYaml .Values.containerSecurityContext | nindent 6 }}    
     ports:
-      {{- range $key, $port := .Values.spanMetricsAgregator.ports }}
+      {{- range $key, $port := .Values.spanMetricsAggregator.ports }}
       {{- if $port.enabled }}
       - name: {{ $key }}
         containerPort: {{ $port.containerPort }}
@@ -58,7 +58,7 @@ containers:
             name: {{ .Values.secrets.name }}
             key: env_id
     resources:
-    {{- toYaml .Values.spanMetricsAgregator.resources | nindent 6 }}
+    {{- toYaml .Values.spanMetricsAggregator.resources | nindent 6 }}
     volumeMounts:
       - mountPath: /conf
         name: {{ .Chart.Name }}-configmap-spm    

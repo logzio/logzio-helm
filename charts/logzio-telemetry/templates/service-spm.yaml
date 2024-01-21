@@ -5,18 +5,18 @@ metadata:
   name:  {{ include "opentelemetry-spm.fullname" . }}
   labels:
     {{- include "opentelemetry-collector.labels" . | nindent 4 }}
-  {{- if .Values.spanMetricsAgregator.service.annotations }}
+  {{- if .Values.spanMetricsAggregator.service.annotations }}
   annotations:
-    {{ toYaml .Values.spanMetricsAgregator.service.annotations | nindent 4 }}
+    {{ toYaml .Values.spanMetricsAggregator.service.annotations | nindent 4 }}
   {{- end }}
 spec:
-  type: {{ .Values.spanMetricsAgregator.service.type }}
-  {{- if .Values.spanMetricsAgregator.service.clusterIP }}
-  clusterIP: {{ .Values.spanMetricsAgregator.service.clusterIP }}
+  type: {{ .Values.spanMetricsAggregator.service.type }}
+  {{- if .Values.spanMetricsAggregator.service.clusterIP }}
+  clusterIP: {{ .Values.spanMetricsAggregator.service.clusterIP }}
   {{- end }}
   # Check ports of otel-traces
   ports:
-    {{- range $key, $port := .Values.spanMetricsAgregator.ports }}
+    {{- range $key, $port := .Values.spanMetricsAggregator.ports }}
     {{- if $port.enabled }}
     - name: {{ $key }}
       port: {{ $port.servicePort }}
