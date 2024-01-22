@@ -95,6 +95,27 @@ entries:
   kube-state-metrics:
   - apiVersion: v2
     appVersion: 2.7.0
+    created: "2024-01-22T11:41:20.834490103Z"
+    description: Install kube-state-metrics to generate and expose cluster-level metrics
+    digest: e7f71c6010bad87e2453d48e3b6b9d4ca5225249287b71b56c8495166ccf8a93
+    home: https://github.com/kubernetes/kube-state-metrics/
+    keywords:
+    - metric
+    - monitoring
+    - prometheus
+    - kubernetes
+    maintainers:
+    - email: raul.gurshumo@logz.io
+      name: ralongit
+    name: kube-state-metrics
+    sources:
+    - https://github.com/kubernetes/kube-state-metrics/
+    type: application
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/kube-state-metrics-4.24.0/kube-state-metrics-4.24.0.tgz
+    version: 4.24.0
+  - apiVersion: v2
+    appVersion: 2.7.0
     created: "2024-01-22T13:28:21.712253+02:00"
     description: Install kube-state-metrics to generate and expose cluster-level metrics
     digest: 11fd2f71b6ed7d9a10027501d1b2dedf5e8fcc7e8fcca00150768d704e15bcc5
@@ -5156,4 +5177,4 @@ entries:
     urls:
     - https://logzio.github.io/logzio-helm/prometheus-alerts-migrator-1.0.0.tgz
     version: 1.0.0
-generated: "2024-01-22T13:28:21.706368+02:00"
+generated: "2024-01-22T11:41:20.834850679Z"
