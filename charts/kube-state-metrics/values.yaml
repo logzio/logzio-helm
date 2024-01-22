@@ -22,7 +22,7 @@ replicas: 1
 # List of additional cli arguments to configure kube-state-metrics
 # for example: --enable-gzip-encoding, --log-file, etc.
 # all the possible args can be found here: https://github.com/kubernetes/kube-state-metrics/blob/master/docs/cli-arguments.md
-extraArgs: []
+extraArgs: ["--metric-labels-allowlist=nodes=[kubernetes.azure.com/scalesetpriority,eks.amazonaws.com/capacityType,cloud.google.com/gke-preemptible]"]
 
 service:
   port: 8080
@@ -33,7 +33,8 @@ service:
   # Only allow access to the loadBalancerIP from these IPs
   loadBalancerSourceRanges: []
   clusterIP: ""
-  annotations: {}
+  annotations:
+    logz.io/app: "kubernetes360"
 
 ## Additional labels to add to all resources
 customLabels: {}
@@ -140,8 +141,8 @@ containerSecurityContext: {}
 
 ## Node labels for pod assignment
 ## Ref: https://kubernetes.io/docs/user-guide/node-selection/
-nodeSelector: {}
-
+nodeSelector:
+  kubernetes.io/os: linux
 ## Affinity settings for pod assignment
 ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
 affinity: {}
