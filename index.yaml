@@ -105,6 +105,28 @@ entries:
     urls:
     - https://logzio.github.io/logzio-helm/ezkonnect-1.0.0.tgz
     version: 1.0.0
+  kube-state-metrics:
+  - apiVersion: v2
+    appVersion: 2.7.0
+    created: "2024-01-22T10:03:19.491107901Z"
+    description: Install kube-state-metrics to generate and expose cluster-level metrics
+    digest: 11fd2f71b6ed7d9a10027501d1b2dedf5e8fcc7e8fcca00150768d704e15bcc5
+    home: https://github.com/kubernetes/kube-state-metrics/
+    keywords:
+    - metric
+    - monitoring
+    - prometheus
+    - kubernetes
+    maintainers:
+    - email: raul.gurshumo@logz.io
+      name: ralongit
+    name: kube-state-metrics
+    sources:
+    - https://github.com/kubernetes/kube-state-metrics/
+    type: application
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/kube-state-metrics-4.24.0-logzio/kube-state-metrics-4.24.0-logzio.tgz
+    version: 4.24.0-logzio
   logzio-dotnet-monitor:
   - apiVersion: v2
     appVersion: 1.0.0
@@ -5282,4 +5304,4 @@ entries:
     urls:
     - https://logzio.github.io/logzio-helm/prometheus-alerts-migrator-1.0.0.tgz
     version: 1.0.0
-generated: "2024-01-17T08:11:53.045199323Z"
+generated: "2024-01-22T10:03:19.654007642Z"
