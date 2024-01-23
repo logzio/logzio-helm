@@ -5,7 +5,7 @@ The rest of the resources metrics will be collected by the deployment pod.
 ## Disable DaemonSet Pods Metrics Sharding 
 
 ```console
-helm install logzio-kube-state-metrics logzio-helm/kube-state-metrics --set daemonset.enabled=false
+helm install logzio-monitoring-kube-state-metrics logzio-helm/kube-state-metrics -n monitoring --set daemonset.enabled=false
 ```
 
 Un-comment the `pods` metrics in the `collectors` configuraiton.
@@ -27,7 +27,8 @@ _See [helm repo](https://helm.sh/docs/helm/helm_repo/) for command documentation
 ## Install Chart
 
 ```console
-helm install logzio-kube-state-metrics logzio-helm/kube-state-metrics [flags]
+helm install -n monitoring --create-namespace \
+logzio-monitoring-kube-state-metrics logzio-helm/kube-state-metrics 
 ```
 
 _See [configuration](#configuration) below._
@@ -37,7 +38,7 @@ _See [helm install](https://helm.sh/docs/helm/helm_install/) for command documen
 ## Uninstall Chart
 
 ```console
-helm uninstall logzio-kube-state-metrics
+helm uninstall logzio-monitoring-kube-state-metrics -n monitoring 
 ```
 
 This removes all the Kubernetes components associated with the chart and deletes the release.
@@ -47,7 +48,7 @@ _See [helm uninstall](https://helm.sh/docs/helm/helm_uninstall/) for command doc
 ## Upgrading Chart
 
 ```console
-helm upgrade logzio-kube-state-metrics logzio-helm/kube-state-metrics [flags]
+helm upgrade logzio-monitoring-kube-state-metrics logzio-helm/kube-state-metrics -n monitoring [flags]
 ```
 
 _See [helm upgrade](https://helm.sh/docs/helm/helm_upgrade/) for command documentation._
@@ -75,7 +76,7 @@ The upgraded chart now the following changes:
 See [Customizing the Chart Before Installing](https://helm.sh/docs/intro/using_helm/#customizing-the-chart-before-installing). To see all configurable options with detailed comments:
 
 ```console
-helm show values logzio-helm/kube-state-metrics
+helm show values logzio-helm/kube-state-metrics -n monitoring
 ```
 
 You may also run `helm show values` on this chart's [dependencies](#dependencies) for additional options.
