@@ -38,7 +38,7 @@ _See [helm install](https://helm.sh/docs/helm/helm_install/) for command documen
 ## Uninstall Chart
 
 ```console
-helm uninstall logzio-monitoring-kube-state-metrics
+helm uninstall logzio-monitoring-kube-state-metrics -n monitoring 
 ```
 
 This removes all the Kubernetes components associated with the chart and deletes the release.
