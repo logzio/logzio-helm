@@ -301,6 +301,9 @@ If needed, the fluentd image can be changed to support windows server 2022 with 
 
 
 ## Change log
+ - **0.29.0**:
+   - EKS Fargate logging:
+    - Send logs to port `8070` in logzio listener (instead of port `5050`)
  - **0.28.1**:
    - Added `windowsDaemonset.enabled` customization.
  - **0.28.0**:
