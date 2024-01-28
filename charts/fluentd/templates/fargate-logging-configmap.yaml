@@ -39,6 +39,9 @@ data:
       Name  es
       Match *
       Host  {{ .Values.secrets.logzioListener }}
-      Port  5050
+      HTTP_User token
+      HTTP_Passwd {{ .Values.secrets.logzioShippingToken }}
+      Port  8070
+      Retry_Limit no_retries
       Index logzioCustomerIndex
 {{ end }}
