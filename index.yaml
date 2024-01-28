@@ -263,6 +263,23 @@ entries:
   logzio-fluentd:
   - apiVersion: v2
     appVersion: 1.5.1
+    created: "2024-01-28T10:51:38.488545964Z"
+    description: A Helm chart for shipping Kubernetes logs via Fluentd.
+    digest: 0a8d233cac7baec07ed3c03daf23c1a50ba33cf888df787c2829c6270100650b
+    keywords:
+    - logging
+    - fluentd
+    maintainers:
+    - email: miri.ignatiev@logz.io
+      name: Miri Bar
+    - email: tamir.michaeli@logz.io
+      name: Tamir Michaeli
+    name: logzio-fluentd
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/logzio-fluentd-0.29.0/logzio-fluentd-0.29.0.tgz
+    version: 0.29.0
+  - apiVersion: v2
+    appVersion: 1.5.1
     created: "2024-01-10T12:55:55.395650828Z"
     description: A Helm chart for shipping Kubernetes logs via Fluentd.
     digest: 01f6ea4b042b7b93967b41b16149b272082476f2ac0779ac2e1778c83069e5e5
@@ -5317,4 +5334,4 @@ entries:
     urls:
     - https://logzio.github.io/logzio-helm/prometheus-alerts-migrator-1.0.0.tgz
     version: 1.0.0
-generated: "2024-01-28T10:42:37.093757485Z"
+generated: "2024-01-28T10:51:38.488950268Z"
