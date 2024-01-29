@@ -2633,6 +2633,49 @@ entries:
     version: 0.0.1
   logzio-monitoring:
   - apiVersion: v2
+    created: "2024-01-29T03:28:50.993204291Z"
+    dependencies:
+    - condition: logs.enabled
+      name: logzio-fluentd
+      repository: https://logzio.github.io/logzio-helm/
+      version: 0.29.0
+    - condition: metricsOrTraces.enabled
+      name: logzio-k8s-telemetry
+      repository: https://logzio.github.io/logzio-helm/
+      version: 4.0.0
+    - condition: securityReport.enabled
+      name: logzio-trivy
+      repository: https://logzio.github.io/logzio-helm/
+      version: 0.3.0
+    - condition: finops.enabled
+      name: opencost
+      repository: https://opencost.github.io/opencost-helm-chart
+      version: 1.3.0
+    - condition: deployEvents.enabled
+      name: logzio-k8s-events
+      repository: https://logzio.github.io/logzio-helm/
+      version: 0.0.3
+    description: logzio-monitoring allows you to ship logs, metrics, traces and security
+      reports from your Kubernetes cluster using the OpenTelemetry collector for metrics
+      and traces, Fluentd for logs, and Trivy for security reports.
+    digest: 28c61841b73ede28dea8bdb82ba7e42ca801c3f33d8fedfcabacd661c8f1ee00
+    maintainers:
+    - email: tamir.michaeli@logz.io
+      name: tamirmich
+    - email: yotam.loewenbach@logz.io
+      name: yotamloe
+    - email: miri.ignatiev@logz.io
+      name: miriig
+    - email: raul.gurshumo@logz.io
+      name: ralongit
+    name: logzio-monitoring
+    sources:
+    - https://github.com/logzio/logzio-helm
+    type: application
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/logzio-monitoring-5.1.0/logzio-monitoring-5.1.0.tgz
+    version: 5.1.0
+  - apiVersion: v2
     created: "2024-01-10T14:02:22.399146156Z"
     dependencies:
     - condition: logs.enabled
@@ -5334,4 +5377,4 @@ entries:
     urls:
     - https://logzio.github.io/logzio-helm/prometheus-alerts-migrator-1.0.0.tgz
     version: 1.0.0
-generated: "2024-01-28T10:51:38.488950268Z"
+generated: "2024-01-29T03:28:50.993542571Z"
