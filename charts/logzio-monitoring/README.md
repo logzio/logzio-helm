@@ -188,7 +188,9 @@ There are two possible approaches to the upgrade you can choose from:
 
 
 ## Changelog
-
+- **5.1.0**
+  - Upgrade `logzio-fluentd` -> `0.29.0`:
+    - EKS Fargate logging: Send logs to port `8070` in logzio listener (instead of port `5050`)
 - **5.0.1**:
 	- Upgrade `logzio-fluentd` to `0.28.1`:
 		- Added `windowsDaemonset.enabled` customization.
