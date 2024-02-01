@@ -32,7 +32,7 @@ The following table lists the configurable parameters of the Prometheus Alerts M
 | `replicaCount` | Number of controller replicas | 1 |
 | `image.repository` | Container image repository | logzio/prometheus-alerts-migrator |
 | `image.pullPolicy` | Container image pull policy | IfNotPresent |
-| `image.tag`| Container image tag | v1.0.0 |
+| `image.tag`| Container image tag | v1.0.3 |
 | `serviceAccount.create` | Specifies whether a service account should be created | true |
 | `serviceAccount.name` | The name of the service account to use | "" |
 | `config.rulesConfigMapAnnotation` | ConfigMap annotation for rules | prometheus.io/kube-rules |
@@ -44,7 +44,7 @@ The following table lists the configurable parameters of the Prometheus Alerts M
 | `config.workerCount` | Number of workers | 2 |
 | `config.ignoreSlackText` | Ignore slack contact points `title` field. | false |
 | `config.ignoreSlackTitle` | Ignore slack contact points `text` field. | false |
-| `rbac.rules` | Custom rules for the Kubernetes cluster role | [{apiGroups: [""], resources: ["configmaps"], verbs: ["get", "list", "watch"]}] |
+| `rbac.rules` | Custom rules for the Kubernetes cluster role | [{apiGroups: [""], resources: ["configmaps"], verbs: ["get", "list", "watch"]},{apiGroups: [""], resources: ["events"], verbs: ["create", "get", "list", "watch"]}] |
 
 ## Secret Management
 
@@ -165,6 +165,9 @@ data:
 
 
 ## Changelog
+- v2.0.1
+  - values.yaml:
+    - Added rbac permissions to create `events`
 - v2.0.0
   - values.yaml:
     - Added: `config.alerManagerConfigMapAnnotation`, `config.ingnoreSlackText`, `config.ingnoreSlackTitle` values
