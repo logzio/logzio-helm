@@ -1,25 +1,49 @@
+# Override values for the Trivy Operator sub-chart
 trivy-operator:
   trivy:
+    # Whether to show only fixed vulnerabilities in vulnerabilities reported by Trivy.
     ignoreUnfixed: false
   operator:
+    # The flag to enable configuration audit scanner
     configAuditScannerEnabled: false
+    # The flag to enable rbac assessment scanner
     rbacAssessmentScannerEnabled: false
+    # The flag to enable infra assessment scanner
     infraAssessmentScannerEnabled: false
+    # The flag to enable cluster compliance scanner
     clusterComplianceEnabled: false
 
+# Overrides the Chart name for resources
 nameOverride: ""
+# Overrides the full name of the resources
 fullnameOverride: ""
+
+# Time for daily scanning for security reports and send them to Logz.io, in format "HH:MM"
 schedule: "07:00"
+
+# Container image
 image: logzio/trivy-to-logzio
+# Container image tag
 imageTag: 0.2.1
+# The name for your environment's identifier (cluster name), to easily identify the telemetry data for each environment
 env_id: ""
+# Termination period (in seconds) to wait before killing Fluentd pod process on pod shutdown
 terminationGracePeriodSeconds: 30
 serviceAccount:
+  # Specifies whether to create a service account for the Deployment
   create: true
+  # Name of the service account
   name: ""
+
 secrets:
+  # Specifies wheter to create a secret for the Deployment
   enabled: true
+  # Secret name
   name: "logzio-logs-secret-trivy"
+  # Your logz.io log shipping token
   logzioShippingToken: ""
+  # Your logz.io listener host, for example - listener.logz.io
   logzioListener: ""
+
+# Log level of the script that sends security risk to Logz.io. Can be one of: DEBUG, INFO, WARNING, ERROR, CRITICAL.
 scriptLogLevel: INFO
