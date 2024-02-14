@@ -137,7 +137,7 @@ If any OOB filters is being used the function return the OOB filter concatenated
 {{- define "opentelemetry-collector.k360Metrics" -}}
 {{- $metrics := "" }}
 {{- if .Values.enableMetricsFilter.aks }}
-    {{ $metrics = .Values.prometheusFilters.metrics.infrastructure.keep.aks  }}
+    {{- $metrics = .Values.prometheusFilters.metrics.infrastructure.keep.aks }}
 {{- else if .Values.enableMetricsFilter.gke}}
     {{- $metrics = .Values.prometheusFilters.metrics.infrastructure.keep.gke }}
 {{- else }}
