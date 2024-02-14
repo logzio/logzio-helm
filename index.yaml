@@ -140,6 +140,17 @@ entries:
     urls:
     - https://github.com/logzio/logzio-helm/releases/download/kube-state-metrics-4.24.0/kube-state-metrics-4.24.0.tgz
     version: 4.24.0
+  go-log-generator:
+  - apiVersion: v2
+    appVersion: "1.0"
+    created: "2024-02-14T14:43:02.077275+07:00"
+    description: A Helm chart for the Go Log Generator application
+    digest: 127dd4e112e055d39f68edc334bb130bf9ef084462bfd32d492b27d60b8c79d4
+    name: go-log-generator
+    type: application
+    urls:
+    - https://logzio.github.io/logzio-helm/go-log-generator-0.1.0.tgz
+    version: 0.1.0
   logzio-dotnet-monitor:
   - apiVersion: v2
     appVersion: 1.0.0
