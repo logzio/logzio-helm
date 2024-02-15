@@ -394,6 +394,10 @@ If you don't want the sub charts to installed add the relevant flag per sub char
 
 
 ## Change log
+* 4.1.0
+  - Upgraded prometheus-node-exporter version to `4.29.0`
+  - Fixed bug with AKS metrics filter
+  - Remove unified_status_code label from SPM
 * 4.0.0
   - **BREAKING CHANGES**:
     - Removed the `kubernetes-360-metrics` key from the `logzio-secret`.
