@@ -188,6 +188,11 @@ There are two possible approaches to the upgrade you can choose from:
 
 
 ## Changelog
+- **5.2.0**:
+	- Upgrade `logzio-k8s-telemetry` to `4.1.0`:
+		- Upgraded prometheus-node-exporter version to `4.29.0`
+		- Fixed bug with AKS metrics filter
+		- Remove unified_status_code label from SPM
 - **5.1.0**
   - Upgrade `logzio-fluentd` -> `0.29.0`:
     - EKS Fargate logging: Send logs to port `8070` in logzio listener (instead of port `5050`)
