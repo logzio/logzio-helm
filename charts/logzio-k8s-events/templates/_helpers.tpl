@@ -36,7 +36,6 @@ Common labels
 */}}
 {{- define "logzio-k8s-events.labels" -}}
 helm.sh/chart: {{ include "logzio-k8s-events.chart" . }}
-app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
