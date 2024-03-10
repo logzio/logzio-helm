@@ -37,6 +37,9 @@ rbac:
     - apiGroups: [""]
       resources: ["configmaps"]
       verbs: ["get", "list", "watch"]
+    - apiGroups: [""]
+      resources: ["events"]
+      verbs: ["create", "get", "list", "watch"]
 
 resources:
   limits:
