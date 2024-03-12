@@ -1,0 +1,66 @@
+{{- range $i, $namespace := .Values.multiCollector.namespaces -}}
+{{- $_ := set $ "targetNamespace" $namespace -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "opentelemetry-collector.fullname" $ }}
+  labels:
+    {{- include "opentelemetry-collector.labels" $ | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "opentelemetry-collector.selectorLabels" $ | nindent 6 }}
+      component: multi-collector
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") $ | sha256sum }}
+        {{- with $.Values.multiCollector.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "opentelemetry-collector.selectorLabels" $ | nindent 8 }}
+        component: multi-collector
+        {{- with $.Values.multiCollector.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- $podValues := deepCopy $.Values.multiCollector | mustMergeOverwrite (deepCopy $.Values) }}
+      {{- $podData := dict "Values" $podValues "configmapSuffix" "" "isAgent" false }}
+      {{- $_ := set $podData "targetNamespace" $namespace -}}
+      {{- include "opentelemetry-collector.multicollector-pod" ($podData | mustMergeOverwrite (deepCopy $) ) | nindent 6 }}
+------
+{{ end  }}
+------
+{{ if .Values.multiCollector.cadvisorCollector.enabled -}}
+{{- $_ := set $ "targetNamespace" "cadvisor" -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "opentelemetry-collector.fullname" $ }}
+  labels:
+    {{- include "opentelemetry-collector.labels" $ | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "opentelemetry-collector.selectorLabels" $ | nindent 6 }}
+      component: multi-collector
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") $ | sha256sum }}
+        {{- with $.Values.multiCollector.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "opentelemetry-collector.selectorLabels" $ | nindent 8 }}
+        component: multi-collector
+        {{- with $.Values.multiCollector.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- $podValues := deepCopy $.Values.multiCollector | mustMergeOverwrite (deepCopy $.Values) }}
+      {{- $podData := dict "Values" $podValues "configmapSuffix" "" "isAgent" false }}
+      {{- $_ := set $podData "targetNamespace" "cadvisor" -}}
+      {{- include "opentelemetry-collector.multicollector-pod" ($podData | mustMergeOverwrite (deepCopy $) ) | nindent 6 }}
+{{- end -}}
