@@ -22,29 +22,153 @@ configMap:
 config:
   exporters:
     debug: {}
-    # Will be removed in a future release.
-    # Use the debug exporter instead.
-    logging: {}
+    logzio/logs:
+      account_token: ${env:LOGZIO_LOGS_TOKEN}
+      region: us
   extensions:
-    # The health_check extension is mandatory for this chart.
-    # Without the health_check extension the collector will fail the readiness and liveliness probes.
-    # The health_check extension can be modified, but should never be removed.
-    health_check:
-      endpoint: ${env:MY_POD_IP}:13133
-    memory_ballast: {}
+    health_check: {}
   processors:
+    attributes/env_id:
+      actions:
+        - action: insert
+          key: env_id
+          value: ${env:ENV_ID} 
+    transform/log_level:
+      error_mode: ignore
+      log_statements:
+        - context: log
+          statements:
+            # set log_level
+            - set(attributes["log.level"], "INFO")
+            - set(attributes["log.level"], "DEBUG") where (IsMatch(body, ".*\\b(?i:debug)\\b.*"))
+            - set(attributes["log.level"], "WARNING") where (IsMatch(body, ".*\\b(?i:warning|warn)\\b.*"))
+            - set(attributes["log.level"], "ERROR") where (IsMatch(body, ".*\\b(?i:error|failure|failed|exception|panic)\\b.*"))
+    transform/log_type:
+      error_mode: ignore
+      log_statements:
+        - context: resource
+          statements:
+            # Set type based on Kubernetes annotation or default
+            - set(attributes["type"], attributes["k8s.annotations.logz.io/application_type"]) where attributes["k8s.annotations.logz.io/application_type"] != nil
+            - set(attributes["type"], attributes["k8s.annotations.log_type"]) where attributes["k8s.annotations.log_type"] != nil and attributes["k8s.annotations.logz.io/application_type"] == nil
+            - set(attributes["type"], "k8s") where attributes["k8s.annotations.log_type"] == nil and attributes["k8s.annotations.logz.io/application_type"] == nil
     batch: {}
-    # If set to null, will be overridden with values based on k8s resource limits
-    memory_limiter: null
+    k8sattributes:
+      extract:
+        annotations:
+        - from: pod
+          key_regex: (.*)
+          tag_name: k8s.annotations.$$1
+        labels:
+        - from: pod
+          key_regex: (.*)
+          tag_name: k8s.labels.$$1
+        metadata:
+        - k8s.namespace.name
+        - k8s.deployment.name
+        - k8s.statefulset.name
+        - k8s.daemonset.name
+        - k8s.cronjob.name
+        - k8s.job.name
+        - k8s.node.name
+        - k8s.pod.name
+        - k8s.pod.uid
+        - k8s.pod.start_time
+      filter:
+        node_from_env_var: K8S_NODE_NAME
+      passthrough: false
+      pod_association:
+      - sources:
+        - from: resource_attribute
+          name: k8s.pod.ip
+      - sources:
+        - from: resource_attribute
+          name: k8s.pod.uid
+      - sources:
+        - from: connection
   receivers:
-    jaeger:
-      protocols:
-        grpc:
-          endpoint: ${env:MY_POD_IP}:14250
-        thrift_http:
-          endpoint: ${env:MY_POD_IP}:14268
-        thrift_compact:
-          endpoint: ${env:MY_POD_IP}:6831
+    filelog:
+      exclude: []
+      include:
+      - /var/log/pods/*/*/*.log
+      include_file_name: false
+      include_file_path: true
+      operators:
+      - id: get-format
+        routes:
+        - expr: body matches "^\\{"
+          output: parser-docker
+        - expr: body matches "^[^ Z]+ "
+          output: parser-crio
+        - expr: body matches "^[^ Z]+Z"
+          output: parser-containerd
+        type: router
+      - id: parser-crio
+        regex: ^(?P<time>[^ Z]+) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*) ?(?P<log>.*)$
+        timestamp:
+          layout: 2006-01-02T15:04:05.999999999Z07:00
+          layout_type: gotime
+          parse_from: attributes.time
+        type: regex_parser
+      - combine_field: attributes.log
+        combine_with: ""
+        id: crio-recombine
+        is_last_entry: attributes.logtag == 'F'
+        max_log_size: 102400
+        output: extract_metadata_from_filepath
+        source_identifier: attributes["log.file.path"]
+        type: recombine
+      - id: parser-containerd
+        regex: ^(?P<time>[^ ^Z]+Z) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*) ?(?P<log>.*)$
+        timestamp:
+          layout: '%Y-%m-%dT%H:%M:%S.%LZ'
+          parse_from: attributes.time
+        type: regex_parser
+      - combine_field: attributes.log
+        combine_with: ""
+        id: containerd-recombine
+        is_last_entry: attributes.logtag == 'F'
+        max_log_size: 102400
+        output: extract_metadata_from_filepath
+        source_identifier: attributes["log.file.path"]
+        type: recombine
+      - id: parser-docker
+        output: extract_metadata_from_filepath
+        timestamp:
+          layout: '%Y-%m-%dT%H:%M:%S.%LZ'
+          parse_from: attributes.time
+        type: json_parser
+      - id: extract_metadata_from_filepath
+        parse_from: attributes["log.file.path"]
+        regex: ^.*\/(?P<namespace>[^_]+)_(?P<pod_name>[^_]+)_(?P<uid>[a-f0-9\-]+)\/(?P<container_name>[^\._]+)\/(?P<restart_count>\d+)\.log$
+        type: regex_parser
+      - from: attributes.stream
+        to: attributes["iostream"]
+        type: move
+      - from: attributes.container_name
+        to: resource["k8s.container.name"]
+        type: move
+      - from: attributes.namespace
+        to: resource["k8s.namespace.name"]
+        type: move
+      - from: attributes.pod_name
+        to: resource["k8s.pod.name"]
+        type: move
+      - from: attributes.restart_count
+        to: resource["k8s.container.restart_count"]
+        type: move
+      - from: attributes.uid
+        to: resource["k8s.pod.uid"]
+        type: move
+      - from: attributes.log
+        to: body
+        type: move
+      - type: recombine
+        id: stack-errors-recombine
+        combine_field: body
+        is_first_entry: body matches "^[^\\s]"
+        source_identifier: attributes["log.file.path"]
+      start_at: end
     otlp:
       protocols:
         grpc:
@@ -54,48 +178,33 @@ config:
     prometheus:
       config:
         scrape_configs:
-          - job_name: opentelemetry-collector
-            scrape_interval: 10s
-            static_configs:
-              - targets:
-                  - ${env:MY_POD_IP}:8888
-    zipkin:
-      endpoint: ${env:MY_POD_IP}:9411
+        - job_name: opentelemetry-collector
+          scrape_interval: 15s
+          static_configs:
+          - targets:
+            - ${env:MY_POD_IP}:8888
   service:
-    telemetry:
-      metrics:
-        address: ${env:MY_POD_IP}:8888
     extensions:
       - health_check
-      - memory_ballast
     pipelines:
       logs:
         exporters:
-          - debug
+        - logzio/logs
+        - debug
         processors:
-          - memory_limiter
-          - batch
+        - k8sattributes
+        - transform/log_level
+        - transform/log_type
+        - attributes/env_id
+        - batch
         receivers:
-          - otlp
+        - otlp
+        - filelog
+    telemetry:
       metrics:
-        exporters:
-          - debug
-        processors:
-          - memory_limiter
-          - batch
-        receivers:
-          - otlp
-          - prometheus
-      traces:
-        exporters:
-          - debug
-        processors:
-          - memory_limiter
-          - batch
-        receivers:
-          - otlp
-          - jaeger
-          - zipkin
+        address: ${env:MY_POD_IP}:8888
+      logs:
+        level: info
 
 image:
   # If you want to use the core image `otel/opentelemetry-collector`, you also need to change `command.name` value to `otelcol`.
