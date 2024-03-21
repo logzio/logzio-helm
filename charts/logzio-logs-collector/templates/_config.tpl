@@ -55,34 +55,6 @@ Build config file for daemonset OpenTelemetry Collector
 {{- if .Values.presets.kubernetesAttributes.enabled }}
 {{- $config = (include "opentelemetry-collector.applyKubernetesAttributesConfig" (dict "Values" $data "config" $config) | fromYaml) }}
 {{- end }}
-{{- if .Values.presets.clusterMetrics.enabled }}
-{{- $config = (include "opentelemetry-collector.applyClusterMetricsConfig" (dict "Values" $data "config" $config) | fromYaml) }}
-{{- end }}
-{{- tpl (toYaml $config) . }}
-{{- end }}
-
-{{/*
-Build config file for deployment OpenTelemetry Collector
-*/}}
-{{- define "opentelemetry-collector.deploymentConfig" -}}
-{{- $values := deepCopy .Values }}
-{{- $data := dict "Values" $values | mustMergeOverwrite (deepCopy .) }}
-{{- $config := include "opentelemetry-collector.baseConfig" $data | fromYaml }}
-{{- if .Values.presets.logsCollection.enabled }}
-{{- $config = (include "opentelemetry-collector.applyLogsCollectionConfig" (dict "Values" $data "config" $config) | fromYaml) }}
-{{- end }}
-{{- if .Values.presets.hostMetrics.enabled }}
-{{- $config = (include "opentelemetry-collector.applyHostMetricsConfig" (dict "Values" $data "config" $config) | fromYaml) }}
-{{- end }}
-{{- if .Values.presets.kubeletMetrics.enabled }}
-{{- $config = (include "opentelemetry-collector.applyKubeletMetricsConfig" (dict "Values" $data "config" $config) | fromYaml) }}
-{{- end }}
-{{- if .Values.presets.kubernetesAttributes.enabled }}
-{{- $config = (include "opentelemetry-collector.applyKubernetesAttributesConfig" (dict "Values" $data "config" $config) | fromYaml) }}
-{{- end }}
-{{- if .Values.presets.clusterMetrics.enabled }}
-{{- $config = (include "opentelemetry-collector.applyClusterMetricsConfig" (dict "Values" $data "config" $config) | fromYaml) }}
-{{- end }}
 {{- tpl (toYaml $config) . }}
 {{- end }}
 
@@ -140,18 +112,6 @@ receivers:
               - tracefs
             match_type: strict
         network:
-{{- end }}
-
-{{- define "opentelemetry-collector.applyClusterMetricsConfig" -}}
-{{- $config := mustMergeOverwrite (include "opentelemetry-collector.clusterMetricsConfig" .Values | fromYaml) .config }}
-{{- $_ := set $config.service.pipelines.metrics "receivers" (append $config.service.pipelines.metrics.receivers "k8s_cluster" | uniq)  }}
-{{- $config | toYaml }}
-{{- end }}
-
-{{- define "opentelemetry-collector.clusterMetricsConfig" -}}
-receivers:
-  k8s_cluster:
-    collection_interval: 10s
 {{- end }}
 
 {{- define "opentelemetry-collector.applyKubeletMetricsConfig" -}}
