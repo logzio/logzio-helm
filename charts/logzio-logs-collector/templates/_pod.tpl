@@ -46,7 +46,7 @@ containers:
             apiVersion: v1
             fieldPath: status.podIP
             ## TODO change
-      {{- if and .Values.presets.kubernetesAttributes.enabled (eq .Values.mode "daemonset") }}
+      {{- if (eq .Values.mode "daemonset") }}
       - name: K8S_NODE_NAME
         valueFrom:
           fieldRef:

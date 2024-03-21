@@ -46,9 +46,6 @@ Build config file for daemonset OpenTelemetry Collector
 {{- if .Values.presets.logsCollection.enabled }}
 {{- $config = (include "opentelemetry-collector.applyLogsCollectionConfig" (dict "Values" $data "config" $config) | fromYaml) }}
 {{- end }}
-{{- if .Values.presets.kubernetesAttributes.enabled }}
-{{- $config = (include "opentelemetry-collector.applyKubernetesAttributesConfig" (dict "Values" $data "config" $config) | fromYaml) }}
-{{- end }}
 {{- tpl (toYaml $config) . }}
 {{- end }}
 
@@ -164,62 +161,6 @@ receivers:
         to: body
 {{- end }}
 
-{{- define "opentelemetry-collector.applyKubernetesAttributesConfig" -}}
-{{- $config := mustMergeOverwrite (include "opentelemetry-collector.kubernetesAttributesConfig" .Values | fromYaml) .config }}
-{{- if and ($config.service.pipelines.logs) (not (has "k8sattributes" $config.service.pipelines.logs.processors)) }}
-{{- $_ := set $config.service.pipelines.logs "processors" (prepend $config.service.pipelines.logs.processors "k8sattributes" | uniq)  }}
-{{- end }}
-{{- if and ($config.service.pipelines.metrics) (not (has "k8sattributes" $config.service.pipelines.metrics.processors)) }}
-{{- $_ := set $config.service.pipelines.metrics "processors" (prepend $config.service.pipelines.metrics.processors "k8sattributes" | uniq)  }}
-{{- end }}
-{{- if and ($config.service.pipelines.traces) (not (has "k8sattributes" $config.service.pipelines.traces.processors)) }}
-{{- $_ := set $config.service.pipelines.traces "processors" (prepend $config.service.pipelines.traces.processors "k8sattributes" | uniq)  }}
-{{- end }}
-{{- $config | toYaml }}
-{{- end }}
-
-{{- define "opentelemetry-collector.kubernetesAttributesConfig" -}}
-processors:
-  k8sattributes:
-  {{- if eq .Values.mode "daemonset" }}
-    filter:
-      node_from_env_var: K8S_NODE_NAME
-  {{- end }}
-    passthrough: false
-    pod_association:
-    - sources:
-      - from: resource_attribute
-        name: k8s.pod.ip
-    - sources:
-      - from: resource_attribute
-        name: k8s.pod.uid
-    - sources:
-      - from: connection
-    extract:
-      metadata:
-        - "k8s.namespace.name"
-        - "k8s.deployment.name"
-        - "k8s.statefulset.name"
-        - "k8s.daemonset.name"
-        - "k8s.cronjob.name"
-        - "k8s.job.name"
-        - "k8s.node.name"
-        - "k8s.pod.name"
-        - "k8s.pod.uid"
-        - "k8s.pod.start_time"
-      {{- if .Values.presets.kubernetesAttributes.extractAllPodLabels }}
-      labels:
-        - tag_name: $$1
-          key_regex: (.*)
-          from: pod
-      {{- end }}
-      {{- if .Values.presets.kubernetesAttributes.extractAllPodAnnotations }}
-      annotations:
-        - tag_name: $$1
-          key_regex: (.*)
-          from: pod
-      {{- end }}
-{{- end }}
 
 {{/* Build the list of port for service */}}
 {{- define "opentelemetry-collector.servicePortsConfig" -}}
