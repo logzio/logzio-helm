@@ -59,15 +59,6 @@ presets:
   # See https://opentelemetry.io/docs/kubernetes/collector/components/#kubeletstats-receiver for details on the receiver.
 
 
-  ## TODO remove as its not going to be used for log collection
-  kubeletMetrics:
-    enabled: false
-  # Configures the collector to collect kubernetes events.
-  # Adds the k8sobject receiver to the logs pipeline
-  # and collects kubernetes events by default.
-  # Best used with mode = deployment or statefulset.
-  # See https://opentelemetry.io/docs/kubernetes/collector/components/#kubernetes-objects-receiver for details on the receiver.
-
 
 configMap:
   # Specifies whether a configMap should be created (true by default)

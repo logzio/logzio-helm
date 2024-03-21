@@ -49,9 +49,6 @@ Build config file for daemonset OpenTelemetry Collector
 {{- if .Values.presets.hostMetrics.enabled }}
 {{- $config = (include "opentelemetry-collector.applyHostMetricsConfig" (dict "Values" $data "config" $config) | fromYaml) }}
 {{- end }}
-{{- if .Values.presets.kubeletMetrics.enabled }}
-{{- $config = (include "opentelemetry-collector.applyKubeletMetricsConfig" (dict "Values" $data "config" $config) | fromYaml) }}
-{{- end }}
 {{- if .Values.presets.kubernetesAttributes.enabled }}
 {{- $config = (include "opentelemetry-collector.applyKubernetesAttributesConfig" (dict "Values" $data "config" $config) | fromYaml) }}
 {{- end }}
@@ -114,19 +111,6 @@ receivers:
         network:
 {{- end }}
 
-{{- define "opentelemetry-collector.applyKubeletMetricsConfig" -}}
-{{- $config := mustMergeOverwrite (include "opentelemetry-collector.kubeletMetricsConfig" .Values | fromYaml) .config }}
-{{- $_ := set $config.service.pipelines.metrics "receivers" (append $config.service.pipelines.metrics.receivers "kubeletstats" | uniq)  }}
-{{- $config | toYaml }}
-{{- end }}
-
-{{- define "opentelemetry-collector.kubeletMetricsConfig" -}}
-receivers:
-  kubeletstats:
-    collection_interval: 20s
-    auth_type: "serviceAccount"
-    endpoint: "${env:K8S_NODE_NAME}:10250"
-{{- end }}
 
 {{- define "opentelemetry-collector.applyLogsCollectionConfig" -}}
 {{- $config := mustMergeOverwrite (include "opentelemetry-collector.logsCollectionConfig" .Values | fromYaml) .config }}
