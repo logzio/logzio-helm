@@ -317,13 +317,6 @@ dnsPolicy: ""
 # Custom DNS config. Required when DNS policy is None.
 dnsConfig: {}
 
-# only used with deployment mode
-## TODO remove as its not going to be used for log collection
-replicaCount: 1
-
-# only used with deployment mode
-## TODO remove as its not going to be used for log collection
-revisionHistoryLimit: 10
 
 annotations: {}
 
@@ -490,23 +483,6 @@ serviceMonitor:
   extraLabels: {}
   #  release: kube-prometheus-stack
 
-# PodDisruptionBudget is used only if deployment enabled
-## TODO remove as its not going to be used for log collection
-podDisruptionBudget:
-  enabled: false
-#   minAvailable: 2
-#   maxUnavailable: 1
-
-# autoscaling is used only if mode is "deployment" or "statefulset"
-## TODO remove as its not going to be used for log collection
-autoscaling:
-  enabled: false
-  minReplicas: 1
-  maxReplicas: 10
-  behavior: {}
-  targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
-
 rollout:
   rollingUpdate: {}
   # When 'mode: daemonset', maxSurge cannot be used when hostPort is set for any of the ports
@@ -524,17 +500,6 @@ prometheusRule:
   # additional labels for the PrometheusRule
   extraLabels: {}
 
-
-## TODO remove as its not going to be used for log collection
-statefulset:
-  # volumeClaimTemplates for a statefulset
-  volumeClaimTemplates: []
-  podManagementPolicy: "Parallel"
-  # Controls if and how PVCs created by the StatefulSet are deleted. Available in Kubernetes 1.23+.
-  persistentVolumeClaimRetentionPolicy:
-    enabled: false
-    whenDeleted: Retain
-    whenScaled: Retain
 
 networkPolicy:
   enabled: false
