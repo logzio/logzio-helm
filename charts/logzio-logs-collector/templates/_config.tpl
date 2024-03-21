@@ -46,69 +46,10 @@ Build config file for daemonset OpenTelemetry Collector
 {{- if .Values.presets.logsCollection.enabled }}
 {{- $config = (include "opentelemetry-collector.applyLogsCollectionConfig" (dict "Values" $data "config" $config) | fromYaml) }}
 {{- end }}
-{{- if .Values.presets.hostMetrics.enabled }}
-{{- $config = (include "opentelemetry-collector.applyHostMetricsConfig" (dict "Values" $data "config" $config) | fromYaml) }}
-{{- end }}
 {{- if .Values.presets.kubernetesAttributes.enabled }}
 {{- $config = (include "opentelemetry-collector.applyKubernetesAttributesConfig" (dict "Values" $data "config" $config) | fromYaml) }}
 {{- end }}
 {{- tpl (toYaml $config) . }}
-{{- end }}
-
-{{- define "opentelemetry-collector.applyHostMetricsConfig" -}}
-{{- $config := mustMergeOverwrite (include "opentelemetry-collector.hostMetricsConfig" .Values | fromYaml) .config }}
-{{- $_ := set $config.service.pipelines.metrics "receivers" (append $config.service.pipelines.metrics.receivers "hostmetrics" | uniq)  }}
-{{- $config | toYaml }}
-{{- end }}
-
-{{- define "opentelemetry-collector.hostMetricsConfig" -}}
-receivers:
-  hostmetrics:
-    root_path: /hostfs
-    collection_interval: 10s
-    scrapers:
-        cpu:
-        load:
-        memory:
-        disk:
-        filesystem:
-          exclude_mount_points:
-            mount_points:
-              - /dev/*
-              - /proc/*
-              - /sys/*
-              - /run/k3s/containerd/*
-              - /var/lib/docker/*
-              - /var/lib/kubelet/*
-              - /snap/*
-            match_type: regexp
-          exclude_fs_types:
-            fs_types:
-              - autofs
-              - binfmt_misc
-              - bpf
-              - cgroup2
-              - configfs
-              - debugfs
-              - devpts
-              - devtmpfs
-              - fusectl
-              - hugetlbfs
-              - iso9660
-              - mqueue
-              - nsfs
-              - overlay
-              - proc
-              - procfs
-              - pstore
-              - rpc_pipefs
-              - securityfs
-              - selinuxfs
-              - squashfs
-              - sysfs
-              - tracefs
-            match_type: strict
-        network:
 {{- end }}
 
 

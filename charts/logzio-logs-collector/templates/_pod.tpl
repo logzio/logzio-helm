@@ -126,12 +126,6 @@ containers:
         mountPath: /var/lib/otelcol
       {{- end }}
       {{- end }}
-      {{- if .Values.presets.hostMetrics.enabled }}
-      - name: hostfs
-        mountPath: /hostfs
-        readOnly: true
-        mountPropagation: HostToContainer
-      {{- end }}
       {{- if .Values.extraVolumeMounts }}
       {{- toYaml .Values.extraVolumeMounts | nindent 6 }}
       {{- end }}
@@ -167,11 +161,6 @@ volumes:
   - name: varlibdockercontainers
     hostPath:
       path: /var/lib/docker/containers
-  {{- end }}
-  {{- if .Values.presets.hostMetrics.enabled }}
-  - name: hostfs
-    hostPath:
-      path: /
   {{- end }}
   {{- if .Values.extraVolumes }}
   {{- toYaml .Values.extraVolumes | nindent 2 }}
