@@ -11,17 +11,6 @@ mode: "daemonset"
 # Specify which namespace should be used to deploy the resources into
 namespaceOverride: ""
 
-# Handles basic configuration of components that
-# also require k8s modifications to work correctly.
-# .Values.config can be used to modify/add to a preset
-# component configuration, but CANNOT be used to remove
-# preset configuration. If you require removal of any
-# sections of a preset configuration, you cannot use
-# the preset. Instead, configure the component manually in
-# .Values.config and use the other fields supplied in the
-# values.yaml to configure k8s as necessary.
-presets:
-
 
 configMap:
   # Specifies whether a configMap should be created (true by default)
