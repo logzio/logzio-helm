@@ -405,9 +405,7 @@ readinessProbe:
 
 service:
   # Enable the creation of a Service.
-  # By default, it's enabled on mode != daemonset.
-  # However, to enable it on mode = daemonset, its creation must be explicitly enabled
-  # enabled: true
+  enabled: true
 
   type: ClusterIP
   # type: LoadBalancer
@@ -470,18 +468,6 @@ podMonitor:
   # additional labels for the PodMonitor
   extraLabels: {}
   #   release: kube-prometheus-stack
-
-serviceMonitor:
-  # The service monitor by default scrapes the metrics port.
-  # The metrics port needs to be enabled as well.
-  enabled: false
-  metricsEndpoints:
-    - port: metrics
-      # interval: 15s
-
-  # additional labels for the ServiceMonitor
-  extraLabels: {}
-  #  release: kube-prometheus-stack
 
 rollout:
   rollingUpdate: {}
