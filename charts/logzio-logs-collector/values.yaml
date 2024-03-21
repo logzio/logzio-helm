@@ -5,8 +5,7 @@
 nameOverride: ""
 fullnameOverride: ""
 
-# Valid values are "daemonset", "deployment", and "statefulset".
-## TODO remove as its not going to be used for log collection
+# Valid value for log collection is "daemonset". More modes may be added in the future
 mode: "daemonset"
 
 # Specify which namespace should be used to deploy the resources into

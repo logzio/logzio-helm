@@ -14,14 +14,8 @@ Get component name
 */}}
 # TODO change
 {{- define "opentelemetry-collector.component" -}}
-{{- if eq .Values.mode "deployment" -}}
-component: standalone-collector
-{{- end -}}
 {{- if eq .Values.mode "daemonset" -}}
 component: agent-collector
-{{- end -}}
-{{- if eq .Values.mode "statefulset" -}}
-component: statefulset-collector
 {{- end -}}
 {{- end }}
 
@@ -203,16 +197,3 @@ Allow the release namespace to be overridden
 {{- printf "%dMiB" (divf $memlimitBytes 0x1p20 | floor | int64) -}}
 {{- end }}
 
-{{/*
-Get HPA kind from mode.
-The capitalization is important for StatefulSet.
-*/}}
-# TODO change
-{{- define "opentelemetry-collector.hpaKind" -}}
-{{- if eq .Values.mode "deployment" -}}
-{{- print "Deployment" -}}
-{{- end -}}
-{{- if eq .Values.mode "statefulset" -}}
-{{- print "StatefulSet" -}}
-{{- end -}}
-{{- end }}
