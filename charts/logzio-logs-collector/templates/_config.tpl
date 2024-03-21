@@ -12,6 +12,7 @@ limit_percentage: 80
 spike_limit_percentage: 25
 {{- end }}
 
+# TODO test this
 {{/*
 Merge user supplied config into memory limiter config.
 */}}
@@ -43,123 +44,18 @@ Build config file for daemonset OpenTelemetry Collector
 {{- $values := deepCopy .Values }}
 {{- $data := dict "Values" $values | mustMergeOverwrite (deepCopy .) }}
 {{- $config := include "opentelemetry-collector.baseConfig" $data | fromYaml }}
-{{- if .Values.presets.logsCollection.enabled }}
-{{- $config = (include "opentelemetry-collector.applyLogsCollectionConfig" (dict "Values" $data "config" $config) | fromYaml) }}
-{{- end }}
 {{- tpl (toYaml $config) . }}
 {{- end }}
 
 
-{{- define "opentelemetry-collector.applyLogsCollectionConfig" -}}
-{{- $config := mustMergeOverwrite (include "opentelemetry-collector.logsCollectionConfig" .Values | fromYaml) .config }}
-{{- $_ := set $config.service.pipelines.logs "receivers" (append $config.service.pipelines.logs.receivers "filelog" | uniq)  }}
-{{- if .Values.Values.presets.logsCollection.storeCheckpoints}}
-{{- $_ := set $config.service "extensions" (append $config.service.extensions "file_storage" | uniq)  }}
-{{- end }}
-{{- $config | toYaml }}
-{{- end }}
-
-{{- define "opentelemetry-collector.logsCollectionConfig" -}}
-{{- if .Values.presets.logsCollection.storeCheckpoints }}
-extensions:
-  file_storage:
-    directory: /var/lib/otelcol
-{{- end }}
-receivers:
-  filelog:
-    include: [ /var/log/pods/*/*/*.log ]
-    {{- if .Values.presets.logsCollection.includeCollectorLogs }}
-    exclude: []
-    {{- else }}
-    # Exclude collector container's logs. The file format is /var/log/pods/<namespace_name>_<pod_name>_<pod_uid>/<container_name>/<run_id>.log
-    exclude: [ /var/log/pods/{{ .Release.Namespace }}_{{ include "opentelemetry-collector.fullname" . }}*_*/{{ include "opentelemetry-collector.lowercase_chartname" . }}/*.log ]
-    {{- end }}
-    start_at: end
-    retry_on_failure:
-        enabled: true
-    {{- if .Values.presets.logsCollection.storeCheckpoints}}
-    storage: file_storage
-    {{- end }}
-    include_file_path: true
-    include_file_name: false
-    operators:
-      # Find out which format is used by kubernetes
-      - type: router
-        id: get-format
-        routes:
-          - output: parser-docker
-            expr: 'body matches "^\\{"'
-          - output: parser-crio
-            expr: 'body matches "^[^ Z]+ "'
-          - output: parser-containerd
-            expr: 'body matches "^[^ Z]+Z"'
-      # Parse CRI-O format
-      - type: regex_parser
-        id: parser-crio
-        regex: '^(?P<time>[^ Z]+) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*) ?(?P<log>.*)$'
-        timestamp:
-          parse_from: attributes.time
-          layout_type: gotime
-          layout: '2006-01-02T15:04:05.999999999Z07:00'
-      - type: recombine
-        id: crio-recombine
-        output: extract_metadata_from_filepath
-        combine_field: attributes.log
-        source_identifier: attributes["log.file.path"]
-        is_last_entry: "attributes.logtag == 'F'"
-        combine_with: ""
-        max_log_size: {{ $.Values.presets.logsCollection.maxRecombineLogSize }}
-      # Parse CRI-Containerd format
-      - type: regex_parser
-        id: parser-containerd
-        regex: '^(?P<time>[^ ^Z]+Z) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*) ?(?P<log>.*)$'
-        timestamp:
-          parse_from: attributes.time
-          layout: '%Y-%m-%dT%H:%M:%S.%LZ'
-      - type: recombine
-        id: containerd-recombine
-        output: extract_metadata_from_filepath
-        combine_field: attributes.log
-        source_identifier: attributes["log.file.path"]
-        is_last_entry: "attributes.logtag == 'F'"
-        combine_with: ""
-        max_log_size: {{ $.Values.presets.logsCollection.maxRecombineLogSize }}
-      # Parse Docker format
-      - type: json_parser
-        id: parser-docker
-        output: extract_metadata_from_filepath
-        timestamp:
-          parse_from: attributes.time
-          layout: '%Y-%m-%dT%H:%M:%S.%LZ'
-      # Extract metadata from file path
-      - type: regex_parser
-        id: extract_metadata_from_filepath
-        regex: '^.*\/(?P<namespace>[^_]+)_(?P<pod_name>[^_]+)_(?P<uid>[a-f0-9\-]+)\/(?P<container_name>[^\._]+)\/(?P<restart_count>\d+)\.log$'
-        parse_from: attributes["log.file.path"]
-      # Rename attributes
-      - type: move
-        from: attributes.stream
-        to: attributes["log.iostream"]
-      - type: move
-        from: attributes.container_name
-        to: resource["k8s.container.name"]
-      - type: move
-        from: attributes.namespace
-        to: resource["k8s.namespace.name"]
-      - type: move
-        from: attributes.pod_name
-        to: resource["k8s.pod.name"]
-      - type: move
-        from: attributes.restart_count
-        to: resource["k8s.container.restart_count"]
-      - type: move
-        from: attributes.uid
-        to: resource["k8s.pod.uid"]
-      # Clean up log body
-      - type: move
-        from: attributes.log
-        to: body
-{{- end }}
+## TODO need to add this to config and service extentions
+# extensions:
+#  file_storage:
+#    directory: /var/lib/otelcol
+#
+# TODO also this
+# filog.storage: file_storage
+#
 
 
 {{/* Build the list of port for service */}}

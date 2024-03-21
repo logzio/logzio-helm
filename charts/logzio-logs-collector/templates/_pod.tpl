@@ -21,7 +21,7 @@ containers:
       - {{ . }}
       {{- end }}
     securityContext:
-      {{- if and (not (.Values.securityContext)) (.Values.presets.logsCollection.storeCheckpoints) }}
+      {{- if not (.Values.securityContext) }}
       runAsUser: 0
       runAsGroup: 0
       {{- else -}}
@@ -114,18 +114,14 @@ containers:
       - mountPath: /conf
         name: {{ include "opentelemetry-collector.lowercase_chartname" . }}-configmap
       {{- end }}
-      {{- if .Values.presets.logsCollection.enabled }}
       - name: varlogpods
         mountPath: /var/log/pods
         readOnly: true
       - name: varlibdockercontainers
         mountPath: /var/lib/docker/containers
         readOnly: true
-      {{- if .Values.presets.logsCollection.storeCheckpoints}}
       - name: varlibotelcol
         mountPath: /var/lib/otelcol
-      {{- end }}
-      {{- end }}
       {{- if .Values.extraVolumeMounts }}
       {{- toYaml .Values.extraVolumeMounts | nindent 6 }}
       {{- end }}
@@ -148,20 +144,16 @@ volumes:
         - key: relay
           path: relay.yaml
   {{- end }}
-  {{- if .Values.presets.logsCollection.enabled }}
   - name: varlogpods
     hostPath:
       path: /var/log/pods
-  {{- if .Values.presets.logsCollection.storeCheckpoints}}
   - name: varlibotelcol
     hostPath:
       path: /var/lib/otelcol
       type: DirectoryOrCreate
-  {{- end }}
   - name: varlibdockercontainers
     hostPath:
       path: /var/lib/docker/containers
-  {{- end }}
   {{- if .Values.extraVolumes }}
   {{- toYaml .Values.extraVolumes | nindent 2 }}
   {{- end }}
