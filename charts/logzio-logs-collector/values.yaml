@@ -2,6 +2,9 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+# TODO add
+# enabled: false
+
 nameOverride: ""
 fullnameOverride: ""
 
@@ -11,6 +14,17 @@ mode: "daemonset"
 # Specify which namespace should be used to deploy the resources into
 namespaceOverride: ""
 
+secrets:
+  name: logzio-log-collector-secrets
+  # When true, the logzio secret will be created and managed by this Chart. If you're managing the logzio secret by yourself, set to false
+  enabled: true
+  env_id: "my_env"
+  # Secret with your logzio logs shipping token
+  logzioLogsToken: ""
+  # Secret with your logzio region
+  LogzioRegion: "us"
+  # Secret with your custom endpoint, for example:http://endpoint:8080. Overrides secrets.LogzioRegion listener adress
+  customEndpoint: ""
 
 configMap:
   # Specifies whether a configMap should be created (true by default)
@@ -234,7 +248,7 @@ clusterRole:
   # Specifies whether a clusterRole should be created
   # Some presets also trigger the creation of a cluster role and cluster role binding.
   # If using one of those presets, this field is no-op.
-  create: false
+  create: true
   # Annotations to add to the clusterRole
   # Can be used in combination with presets that create a cluster role.
   annotations: {}
@@ -566,9 +580,9 @@ networkPolicy:
   #        protocol: TCP
 
 # When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured
-# resources.limits.memory and remove the memory ballast extension.
+# resources.limits.memory
 # If no resources.limits.memory are defined enabling does nothing.
 # In a future release this setting will be enabled by default.
 # See https://github.com/open-telemetry/opentelemetry-helm-charts/issues/891
 # for more details.
-useGOMEMLIMIT: true
+useGOMEMLIMIT: false
