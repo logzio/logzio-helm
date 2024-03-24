@@ -14,6 +14,10 @@ mode: "daemonset"
 # Specify which namespace should be used to deploy the resources into
 namespaceOverride: ""
 
+fargateLogRouter:
+  # Boolen to decide if to configure fargate log router (eks fargate envirinments)
+  enabled: false
+
 secrets:
   # When true, the logzio secret will be created and managed by this Chart. If you're managing the logzio secrets by yourself, set to false, note that in order for the default configuration to work proprly you need to create the following env variables: ENV_ID LOG_TYPE LOGZIO_REGION LOGZIO_LOGS_TOKEN
   enabled: true
@@ -287,8 +291,15 @@ securityContext: {}
 
 nodeSelector: {}
 tolerations: []
-affinity: {}
-topologySpreadConstraints: []
+# Set affinity rules for the scheduler to determine where all DaemonSet pods can be placed.
+# The following configuration prevent logzio loi collector deamonset deploymment on fargate nodes
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: eks.amazonaws.com/compute-type
+              operator: DoesNotExist
 
 # Allows for pod scheduler prioritisation
 priorityClassName: ""
