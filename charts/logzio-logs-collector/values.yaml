@@ -49,6 +49,8 @@ config:
       endpoint: ${env:CUSTOM_ENDPOINT}
   extensions:
     health_check: {}
+    file_storage:
+      directory: /var/lib/otelcol
   processors:
     attributes/env_id:
       actions:
@@ -110,6 +112,8 @@ config:
         - from: connection
   receivers:
     filelog:
+      # store check point in `directory: /var/lib/otelcol`
+      storage: file_storage
       # Exclude collector container's logs. The file format is /var/log/pods/<namespace_name>_<pod_name>_<pod_uid>/<container_name>/<run_id>.log
       exclude: [ "/var/log/pods/{{ .Release.Namespace }}_{{ include \"opentelemetry-collector.fullname\" . }}*_*/{{ include \"opentelemetry-collector.lowercase_chartname\" . }}/*.log" ]
       include:
@@ -209,6 +213,7 @@ config:
   service:
     extensions:
       - health_check
+      - file_storage
     pipelines:
       logs:
         exporters:

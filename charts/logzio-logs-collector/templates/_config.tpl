@@ -12,17 +12,6 @@
 {{- tpl $config . -}}
 {{- end }}
 
-
-## TODO need to add this to config and service extentions
-# extensions:
-#  file_storage:
-#    directory: /var/lib/otelcol
-#
-# TODO also this
-# filog.storage: file_storage
-#
-
-
 {{/* Build the list of port for service */}}
 {{- define "opentelemetry-collector.servicePortsConfig" -}}
 {{- $ports := deepCopy .Values.ports }}
