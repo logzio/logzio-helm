@@ -6,7 +6,7 @@
 # enabled: false
 
 nameOverride: ""
-fullnameOverride: ""
+fullnameOverride: "logzio-logs-collector"
 
 # Valid value for log collection is "daemonset". More modes may be added in the future
 mode: "daemonset"
@@ -27,7 +27,7 @@ secrets:
   # defualt log type field
   logType: "k8s"
   # Secret with your logzio logs shipping token
-  logzioLogsToken: ""
+  logzioLogsToken: "token"
   # Secret with your logzio region
   LogzioRegion: "us"
   # Secret with your custom endpoint, for example:http://endpoint:8080. Overrides secrets.LogzioRegion listener adress
