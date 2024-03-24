@@ -187,3 +187,24 @@ Allow the release namespace to be overridden
 {{- printf "%dMiB" (divf $memlimitBytes 0x1p20 | floor | int64) -}}
 {{- end }}
 
+
+{{/*
+Calculate Logz.io listener address based on region
+*/}}
+{{- define "logzio.listenerAddress" -}}
+{{- $region := .Values.secrets.LogzioRegion -}}
+{{- if eq $region "us" -}}
+listener.logz.io
+{{- else if eq $region "au" -}}
+listener-au.logz.io
+{{- else if eq $region "ca" -}}
+listener-ca.logz.io
+{{- else if eq $region "eu" -}}
+listener-eu.logz.io
+{{- else if eq $region "uk" -}}
+listener-uk.logz.io
+{{- else -}}
+listener.logz.io  # Default to US if no match
+{{- end -}}
+{{- end }}
+
