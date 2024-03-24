@@ -70,11 +70,13 @@ containers:
           secretKeyRef:
             name: {{ .Values.secrets.name }}
             key: logzio-logs-token
+      {{- if .Values.secrets.customEndpoint }}
       - name: CUSTOM_ENDPOINT
         valueFrom:
           secretKeyRef:
             name: {{ .Values.secrets.name }}
             key: custom-endpoint
+      {{- end -}}
       {{ end }}
       {{- if and (.Values.useGOMEMLIMIT) ((((.Values.resources).limits).memory))  }}
       - name: GOMEMLIMIT
