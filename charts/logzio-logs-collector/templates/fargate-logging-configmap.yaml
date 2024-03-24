@@ -1,4 +1,3 @@
-# TODO remove {{ .Values.secrets.logzioListener }} and calculate listener adress based on region provided
 {{ if .Values.fargateLogRouter.enabled }}
 kind: ConfigMap
 apiVersion: v1
