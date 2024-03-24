@@ -12,27 +12,27 @@ limit_percentage: 80
 spike_limit_percentage: 25
 {{- end }}
 
-# TODO test this
+# TODO test
 {{/*
 Merge user supplied config into memory limiter config.
 */}}
 {{- define "opentelemetry-collector.baseConfig" -}}
-{{- $processorsConfig := get .Values.config "processors" }}
-{{- if not $processorsConfig.memory_limiter }}
-{{-   $_ := set $processorsConfig "memory_limiter" (include "opentelemetry-collector.memoryLimiter" . | fromYaml) }}
-{{- end }}
+# {{- $processorsConfig := get .Values.config "processors" }}
+# {{- if not $processorsConfig.memory_limiter }}
+# {{-   $_ := set $processorsConfig "memory_limiter" (include "opentelemetry-collector.memoryLimiter" . | fromYaml) }}
+# {{- end }}
 
-{{- if .Values.useGOMEMLIMIT }}
-  {{- if (((.Values.config).service).extensions) }}
-    {{- $_ := set .Values.config.service "extensions" (without .Values.config.service.extensions "memory_ballast") }}
-  {{- end}}
-  {{- $_ := unset (.Values.config.extensions) "memory_ballast" }}
-{{- else }}
-  {{- $memoryBallastConfig := get .Values.config.extensions "memory_ballast" }}
-  {{- if or (not $memoryBallastConfig) (not $memoryBallastConfig.size_in_percentage) }}
-  {{-   $_ := set $memoryBallastConfig "size_in_percentage" 40 }}
-  {{- end }}
-{{- end }}
+# {{- if .Values.useGOMEMLIMIT }}
+#   {{- if (((.Values.config).service).extensions) }}
+#     {{- $_ := set .Values.config.service "extensions" (without .Values.config.service.extensions "memory_ballast") }}
+#   {{- end}}
+#   {{- $_ := unset (.Values.config.extensions) "memory_ballast" }}
+# {{- else }}
+#   {{- $memoryBallastConfig := get .Values.config.extensions "memory_ballast" }}
+#   {{- if or (not $memoryBallastConfig) (not $memoryBallastConfig.size_in_percentage) }}
+#   {{-   $_ := set $memoryBallastConfig "size_in_percentage" 40 }}
+#   {{- end }}
+# {{- end }}
 
 {{- .Values.config | toYaml }}
 {{- end }}
@@ -90,6 +90,4 @@ Build config file for daemonset OpenTelemetry Collector
   {{- end }}
 {{- end }}
 {{- end }}
-{{- end }}
-
 {{- end }}

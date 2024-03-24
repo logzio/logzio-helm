@@ -1,4 +1,3 @@
-## TODO change
 {{- if and (eq .Values.mode "daemonset") (.Values.configMap.create) -}}
 apiVersion: v1
 kind: ConfigMap
