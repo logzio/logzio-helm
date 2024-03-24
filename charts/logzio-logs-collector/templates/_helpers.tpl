@@ -12,10 +12,9 @@ Expand the name of the chart.
 {{/*
 Get component name
 */}}
-# TODO change
 {{- define "opentelemetry-collector.component" -}}
 {{- if eq .Values.mode "daemonset" -}}
-component: agent-collector
+component: logs-collector
 {{- end -}}
 {{- end }}
 
