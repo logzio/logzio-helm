@@ -45,12 +45,37 @@ containers:
           fieldRef:
             apiVersion: v1
             fieldPath: status.podIP
-      {{- if (eq .Values.mode "daemonset") }}
       - name: K8S_NODE_NAME
         valueFrom:
           fieldRef:
             fieldPath: spec.nodeName
-      {{- end }}
+      {{ if .Values.secrets.enabled}}
+      - name: ENV_ID
+        valueFrom:
+          secretKeyRef:
+            name: {{ .Values.secrets.name }}
+            key: env-id
+      - name: LOG_TYPE
+        valueFrom:
+          secretKeyRef:
+            name: {{ .Values.secrets.name }}
+            key: log-type
+      - name: LOGZIO_REGION
+        valueFrom:
+          secretKeyRef:
+            name: {{ .Values.secrets.name }}
+            key: logzio-listener-region
+      - name: LOGZIO_LOGS_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: {{ .Values.secrets.name }}
+            key: logzio-logs-token
+      - name: CUSTOM_ENDPOINT
+        valueFrom:
+          secretKeyRef:
+            name: {{ .Values.secrets.name }}
+            key: custom-endpoint
+      {{ end }}
       {{- if and (.Values.useGOMEMLIMIT) ((((.Values.resources).limits).memory))  }}
       - name: GOMEMLIMIT
         value: {{ include "opentelemetry-collector.gomemlimit" .Values.resources.limits.memory | quote }}

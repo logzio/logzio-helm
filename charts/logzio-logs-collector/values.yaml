@@ -15,10 +15,13 @@ mode: "daemonset"
 namespaceOverride: ""
 
 secrets:
-  name: logzio-log-collector-secrets
-  # When true, the logzio secret will be created and managed by this Chart. If you're managing the logzio secret by yourself, set to false
+  # When true, the logzio secret will be created and managed by this Chart. If you're managing the logzio secrets by yourself, set to false, note that in order for the default configuration to work proprly you need to create the following env variables: ENV_ID LOG_TYPE LOGZIO_REGION LOGZIO_LOGS_TOKEN
   enabled: true
+  name: logzio-log-collector-secrets
+  # environment indentifier attribute that will be added to all logs
   env_id: "my_env"
+  # defualt log type field
+  logType: "k8s"
   # Secret with your logzio logs shipping token
   logzioLogsToken: ""
   # Secret with your logzio region
@@ -38,7 +41,8 @@ config:
     debug: {}
     logzio/logs:
       account_token: ${env:LOGZIO_LOGS_TOKEN}
-      region: us
+      region: ${env:LOGZIO_REGION}
+      endpoint: ${env:CUSTOM_ENDPOINT}
   extensions:
     health_check: {}
   processors:
@@ -65,7 +69,7 @@ config:
             # Set type based on Kubernetes annotation or default
             - set(attributes["type"], attributes["k8s.annotations.logz.io/application_type"]) where attributes["k8s.annotations.logz.io/application_type"] != nil
             - set(attributes["type"], attributes["k8s.annotations.log_type"]) where attributes["k8s.annotations.log_type"] != nil and attributes["k8s.annotations.logz.io/application_type"] == nil
-            - set(attributes["type"], "k8s") where attributes["k8s.annotations.log_type"] == nil and attributes["k8s.annotations.logz.io/application_type"] == nil
+            - set(attributes["type"], "${env:LOG_TYPE}") where attributes["k8s.annotations.log_type"] == nil and attributes["k8s.annotations.logz.io/application_type"] == nil
     batch: {}
     k8sattributes:
       extract:
