@@ -1,3 +1,4 @@
+{{ if .Values.enabled}}
 {{- if (.Values.clusterRole.create) -}}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -34,3 +35,4 @@ rules:
     resources: ["daemonsets", "deployments", "replicasets"]
     verbs: ["get", "list", "watch"]
 {{- end }}
+{{ end }}

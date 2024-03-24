@@ -1,3 +1,4 @@
+{{ if .Values.enabled}}
 {{- if .Values.networkPolicy.enabled }}
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
@@ -37,3 +38,4 @@ spec:
     {{- toYaml .Values.networkPolicy.egressRules | nindent 4 }}
   {{- end }}
 {{- end }}
+{{ end }}

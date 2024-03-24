@@ -1,3 +1,4 @@
+{{ if .Values.enabled}}
 {{- if .Values.ingress.enabled -}}
 {{- $ingresses := prepend .Values.ingress.additionalIngresses .Values.ingress -}}
 {{- range $ingresses }}
@@ -53,3 +54,4 @@ spec:
 ---
 {{- end }}
 {{- end }}
+{{ end }}

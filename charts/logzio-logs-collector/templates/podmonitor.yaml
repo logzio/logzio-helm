@@ -1,3 +1,4 @@
+{{ if .Values.enabled}}
 {{- if and .Values.podMonitor.enabled .Values.podMonitor.metricsEndpoints (eq .Values.mode "daemonset") }}
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
@@ -17,3 +18,4 @@ spec:
   podMetricsEndpoints:
   {{- toYaml .Values.podMonitor.metricsEndpoints | nindent 2 }}
 {{- end }}
+{{ end }}

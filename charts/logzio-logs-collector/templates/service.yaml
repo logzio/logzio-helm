@@ -1,3 +1,4 @@
+{{ if .Values.enabled}}
 {{- if or (eq (include "opentelemetry-collector.serviceEnabled" .) "true") (.Values.ingress.enabled) -}}
 apiVersion: v1
 kind: Service
@@ -40,3 +41,4 @@ spec:
   externalTrafficPolicy: {{ .Values.service.externalTrafficPolicy }}
   {{- end }}
 {{- end }}
+{{ end }}
