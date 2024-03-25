@@ -5,7 +5,7 @@
 enabled: false
 
 nameOverride: ""
-fullnameOverride: "logzio-logs-collector"
+fullnameOverride: ""
 
 # Valid value for log collection is "daemonset". More modes may be added in the future
 mode: "daemonset"

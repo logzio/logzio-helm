@@ -74,7 +74,7 @@ The following table lists the configurable parameters of the `logzio-logs-collec
 |--------------------------|----------------------------------------------------------------------------------|----------------------------------------|
 | enabled                  | Toggle for enabling the Helm chart deployment.                                   | `false`                                 |
 | nameOverride             | Override the default name for the deployment.                                    | `""`                                    |
-| fullnameOverride         | Set a full name override for the deployment.                                     | `"logzio-logs-collector"`               |
+| fullnameOverride         | Set a full name override for the deployment.                                     | `""`               |
 | mode                     | Deployment mode (currently supports only "daemonset").                           | `"daemonset"`                           |
 | namespaceOverride        | Override the namespace into which the resources will be deployed.                | `""`                                     |
 | fargateLogRouter.enabled | Boolean to decide if to configure Fargate log router (EKS Fargate environments). | `false`                                  |
