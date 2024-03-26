@@ -1,3 +1,4 @@
+enabled: true
 # Fluentd image in daemonset
 image: logzio/logzio-fluentd
 # Fluentd image tag
@@ -87,6 +88,8 @@ daemonset:
   # Container runtime interface of the cluster. Used to determine which configuration to use when concatenating partial logs.
   # Valid options are: docker, containerd
   cri: containerd
+  # The interval of refreshing the list of watch file for log files.
+  LogFileRefreshInterval: 60s
   # Specifies which plugin to use as the backend
   logzioBufferType: file
   # Path of the buffer
@@ -170,6 +173,8 @@ windowsDaemonset:
   # Container runtime interface of the cluster. Used to determine which configuration to use when concatenating partial logs.
   # Valid options are: docker, containerd
   cri: containerd
+  # The interval of refreshing the list of watch file for log files.
+  LogFileRefreshInterval: 60s
   # Specifies which plugin to use as the backend
   logzioBufferType: file
   # Path of the buffer
@@ -304,6 +309,7 @@ configmap:
       exclude_path "#{ENV['EXCLUDE_PATH'].split(',')}"
       tag logzio.kubernetes.*
       read_from_head true
+      refresh_insterval "#{ENV['LOG_FILE_REFRESH_INTERVAL']}"
       <parse>
         @type multi_format
         <pattern>
@@ -329,6 +335,7 @@ configmap:
       path /var/log/salt/minion
       pos_file /var/log/fluentd-salt.pos
       tag logzio.salt
+      refresh_insterval "#{ENV['LOG_FILE_REFRESH_INTERVAL']}"
       <parse>
         @type regexp
         expression /^(?<time>[^ ]* [^ ,]*)[^\[]*\[[^\]]*\]\[(?<severity>[^ \]]*) *\] (?<message>.*)$/
@@ -342,6 +349,7 @@ configmap:
       path /var/log/startupscript.log
       pos_file /var/log/fluentd-startupscript.log.pos
       tag logzio.startupscript
+      refresh_insterval "#{ENV['LOG_FILE_REFRESH_INTERVAL']}"
       <parse>
         @type syslog
       </parse>
@@ -353,6 +361,7 @@ configmap:
       path /var/log/docker.log
       pos_file /var/log/fluentd-docker.log.pos
       tag logzio.docker
+      refresh_insterval "#{ENV['LOG_FILE_REFRESH_INTERVAL']}"
       <parse>
         @type regexp
         expression /^time="(?<time>[^)]*)" level=(?<severity>[^ ]*) msg="(?<message>[^"]*)"( err="(?<error>[^"]*)")?( statusCode=($<status_code>\d+))?/
@@ -365,6 +374,7 @@ configmap:
       path /var/log/etcd.log
       pos_file /var/log/fluentd-etcd.log.pos
       tag logzio.etcd
+      refresh_insterval "#{ENV['LOG_FILE_REFRESH_INTERVAL']}"
       <parse>
         @type none
       </parse>
@@ -377,6 +387,7 @@ configmap:
       path /var/log/kubelet.log
       pos_file /var/log/fluentd-kubelet.log.pos
       tag logzio.kubelet
+      refresh_insterval "#{ENV['LOG_FILE_REFRESH_INTERVAL']}"
       <parse>
         @type kubernetes
       </parse>
@@ -389,6 +400,7 @@ configmap:
       path /var/log/kube-proxy.log
       pos_file /var/log/fluentd-kube-proxy.log.pos
       tag logzio.kube-proxy
+      refresh_insterval "#{ENV['LOG_FILE_REFRESH_INTERVAL']}"
       <parse>
         @type kubernetes
       </parse>
@@ -401,6 +413,7 @@ configmap:
       path /var/log/kube-apiserver.log
       pos_file /var/log/fluentd-kube-apiserver.log.pos
       tag logzio.kube-apiserver
+      refresh_insterval "#{ENV['LOG_FILE_REFRESH_INTERVAL']}"
       <parse>
         @type kubernetes
       </parse>
@@ -413,6 +426,7 @@ configmap:
       path /var/log/kube-controller-manager.log
       pos_file /var/log/fluentd-kube-controller-manager.log.pos
       tag logzio.kube-controller-manager
+      refresh_insterval "#{ENV['LOG_FILE_REFRESH_INTERVAL']}"
       <parse>
         @type kubernetes
       </parse>
@@ -425,6 +439,7 @@ configmap:
       path /var/log/kube-scheduler.log
       pos_file /var/log/fluentd-kube-scheduler.log.pos
       tag logzio.kube-scheduler
+      refresh_insterval "#{ENV['LOG_FILE_REFRESH_INTERVAL']}"
       <parse>
         @type kubernetes
       </parse>
@@ -437,6 +452,7 @@ configmap:
       path /var/log/rescheduler.log
       pos_file /var/log/fluentd-rescheduler.log.pos
       tag logzio.rescheduler
+      refresh_insterval "#{ENV['LOG_FILE_REFRESH_INTERVAL']}"
       <parse>
         @type kubernetes
       </parse>
@@ -449,6 +465,7 @@ configmap:
       path /var/log/glbc.log
       pos_file /var/log/fluentd-glbc.log.pos
       tag logzio.glbc
+      refresh_insterval "#{ENV['LOG_FILE_REFRESH_INTERVAL']}"
       <parse>
         @type kubernetes
       </parse>
@@ -461,6 +478,7 @@ configmap:
       path /var/log/cluster-autoscaler.log
       pos_file /var/log/fluentd-cluster-autoscaler.log.pos
       tag logzio.cluster-autoscaler
+      refresh_insterval "#{ENV['LOG_FILE_REFRESH_INTERVAL']}"
       <parse>
         @type kubernetes
       </parse>
@@ -586,6 +604,7 @@ configmap:
       path /var/log/kubernetes/kube-apiserver-audit.log
       pos_file /var/log/kube-apiserver-audit.log.pos
       tag logzio.kube-apiserver-audit
+      refresh_insterval "#{ENV['LOG_FILE_REFRESH_INTERVAL']}"
       <parse>
         @type multiline
         format_firstline /^\S+\s+AUDIT:/
@@ -609,6 +628,7 @@ configmap:
       path /var/log/kubernetes/kube-apiserver-audit.log
       pos_file /var/log/kube-apiserver-audit.log.pos
       tag logzio.kube-apiserver-audit
+      refresh_insterval "#{ENV['LOG_FILE_REFRESH_INTERVAL']}"
       <parse>
         @type json
         keep_time_key true
