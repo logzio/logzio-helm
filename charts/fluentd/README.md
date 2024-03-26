@@ -91,6 +91,7 @@ helm install -n monitoring \
 | `daemonset.auditLogFormat` | Match Fluentd's format for kube-apiserver audit logs. Set to `audit-json` if your audit logs are in json format. | `audit` |
 | `daemonset.containerdRuntime` | **Deprecated from chart version 0.1.0.** Determines whether to use a configuration for a Containerd runtime. Set to `false` if your cluster doesn't use Containerd as CRI. | `true` |
 | `daemonset.cri` | Container runtime interface of the cluster. Used to determine which configuration to use when concatenating partial logs. Valid options are: `docker`, `containerd`. | `containerd` |
+| `daemonset.LogFileRefreshInterval` | The interval of refreshing the list of watch file for log files.. | `60s` |
 | `daemonset.logzioBufferType` | Specifies which plugin to use as the backend. | `file` |
 | `daemonset.logzioBufferPath` | Path of the buffer. | `/var/log/fluentd-buffers/stackdriver.buffer` |
 | `daemonset.logzioOverflowAction` | Controls the behavior when the queue becomes full. | `block` |
@@ -301,6 +302,9 @@ If needed, the fluentd image can be changed to support windows server 2022 with 
 
 
 ## Change log
+ - **0.29.1**:
+   - Added `enabled` value, to conditianly control the deployment of this chart by a parent chart.
+   - Added `daemonset.LogFileRefreshInterval` value, to control list of watched log files refresh interval.
  - **0.29.0**:
    - EKS Fargate logging:
     - Send logs to port `8070` in logzio listener (instead of port `5050`)
