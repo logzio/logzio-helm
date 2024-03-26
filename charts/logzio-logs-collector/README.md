@@ -32,7 +32,8 @@ Getting Started
 Before installing the chart, add the Logz.io Helm repository:
 
 ```
-helm repo add logzio https://helm.logz.io helm repo update
+helm repo add logzio-hem https://logzio.github.io/logzio-helm 
+helm repo update
 ```
 
 ### Installation
@@ -52,7 +53,7 @@ helm repo add logzio https://helm.logz.io helm repo update
     --set secrets.logzioRegion=<<region>> \
     --set secrets.env_id=<<env_id>> \
     --set secrets.logType=<<logType>> \
-    logzio/logzio-logs-collector
+    logzio-helm/logzio-logs-collector
     ```
 
     Replace `logzio-logs-collector` with your release name.
@@ -63,7 +64,7 @@ To uninstall/delete the `logzio-logs-collector` deployment:
 
 shellCopy code
 
-`helm delete logzio-logs-collector`
+`helm delete -n monitoring logzio-logs-collector`
 
 Configuration
 -------------
