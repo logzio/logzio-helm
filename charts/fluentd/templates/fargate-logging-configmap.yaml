@@ -1,3 +1,4 @@
+{{ if .Values.enabled }}
 {{ if .Values.fargateLogRouter.enabled }}
 kind: ConfigMap
 apiVersion: v1
@@ -44,4 +45,5 @@ data:
       Port  8070
       Retry_Limit no_retries
       Index logzioCustomerIndex
+{{ end }}
 {{ end }}
