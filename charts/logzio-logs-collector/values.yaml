@@ -122,6 +122,7 @@ config:
       include_file_path: true
       attributes:
         env.id: ${env:ENV_ID} 
+        logzio.logs.collector.version: {{.Chart.version}}
       operators:
       - id: get-format
         routes:
