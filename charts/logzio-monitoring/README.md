@@ -1,18 +1,19 @@
 # logzio-monitoring
 
-The logzio-monitoring Helm Chart ships your Kubernetes telemetry (logs, metrics, traces and security reports) to your Logz.io account.
+The `logzio-monitoring` Helm Chart facilitates the shipping of Kubernetes telemetry—including logs, metrics, traces, and security reports—to your Logz.io account.
 
-**Note:** this project is currently in *beta* and is prone to changes.
+**Note:** This project is currently in *beta* and may undergo changes.
 
 ## Overview
 
 This project packages the following Helm Charts:
-- [logzio-fluentd](https://github.com/logzio/logzio-helm/tree/master/charts/fluentd) for logs shipping (via Fluentd).
-- [logzio-telemetry](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-telemetry) for metrics and traces (via OpenTelemetry Collector).
-- [logzio-trivy](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-trivy) for security reports (via Trivy operator).
-- [logzio-k8s-events](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-k8s-events) for k8s deployment events.
+- [logzio-fluentd](https://github.com/logzio/logzio-helm/tree/master/charts/fluentd) for shipping logs via Fluentd.
+- [logzio-telemetry](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-telemetry) for metrics and traces via OpenTelemetry Collector.
+- [logzio-trivy](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-trivy) for security reports via Trivy operator.
+- [logzio-k8s-events](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-k8s-events) for Kubernetes deployment events.
 
 ### Kubernetes Versions Compatibility
+
 | Chart Version | Kubernetes Version |
 |---|---|
 | > 3.0.0 | v1.22.0 - v1.28.0 |
@@ -21,24 +22,25 @@ This project packages the following Helm Charts:
 ## Instructions for standard deployment:
 
 ### Before installing the chart
-* Check if you have any taints on your nodes:
 
-```sh
+* Verify if any taints are present on your nodes:
+
+```shell
 kubectl get nodes -o json | jq '"\(.items[].metadata.name) \(.items[].spec.taints)"'
 ```
 
-if you do, please add them as tolerations. For further explenation about modifying the chart, see the [further configuration section](#Further-configuration).
+If so, add them as tolerations. For further explanation on modifying the chart, see the [further configuration section](#Further-configuration).
 
-* You are using `Helm` client with version `v3.9.0` or above
+* You are using `Helm` client with version `v3.9.0` or above.
 
-### 1. Add the Helm Chart:
+### 1. Add the Helm chart:
 
-```sh
+```shell
 helm repo add logzio-helm https://logzio.github.io/logzio-helm
 helm repo update
 ```
 
-### 2. Deploy the Chart:
+### 2. Deploy the chart:
 
 Use the following command, and replace the placeholders with your parameters:
 
@@ -85,9 +87,9 @@ logzio-monitoring logzio-helm/logzio-monitoring
 
 ### Further configuration
 
-The above `helm install` command will deploy a standard configuration version of the Chart, for shipping logs, metrics and traces.
+The helm install command outlined above deploys a standard configuration of the chart for shipping logs, metrics, and traces.
 
-However, you can modify the Chart by using the `--set` flag in your `helm install` command:
+However, you can customize the chart using the --set flag in your helm install command:
 
 | Parameter	| Description | Default |
 | --- | --- | --- |
@@ -96,17 +98,18 @@ However, you can modify the Chart by using the `--set` flag in your `helm instal
 | `securityReport.enabled` | Enable to send k8s security logs | `false` |
 | `deployEvents.enabled` | Enable to send k8s deploy events logs | `false` |
 
-#### To modify the logs Chart configuration:
+#### To modify the logs chart configuration:
 
 You can see a full list of the possible configuration values in the [logzio-fluentd Chart folder](https://github.com/logzio/logzio-helm/tree/master/charts/fluentd#configuration).
 
 If you want to modify one of the values mentioned in the `logzio-fluentd` folder, add it with the `--set` flag, and the `logzio-fluentd` prefix.
 
-For example, if in `logzio-fluentd`'s `values.yaml` file there's a parameter named `someField`, to set it we'll add the following to the `helm install` command:
+For example, to change a value named `someField` in `logzio-fluentd`'s `values.yaml` file, include the following in your `helm install` command:
 
-```sh
+```shell
 --set logzio-fluentd.someField="my new value"
 ```
+
 You can add `log_type` annotation with a custom value, which will be parsed into a `log_type` field with the same value.
 
 
@@ -116,16 +119,17 @@ You can see a full list of the possible configuration values in the [logzio-tele
 
 If you want to modify one of the values mentioned in the `logzio-telemetry` folder, add it with the `--set` flag, and the `logzio-k8s-telemetry` prefix.
 
-For example, if in `logzio-telemetry`'s `values.yaml` file there's a parameter named `someField`, to set it we'll add the following to the `helm install` command:
+For example, to change a value named `someField` in `logzio-telemetry`'s `values.yaml` file, include the following in your `helm install` command:
 
-```sh
+```shell
 --set logzio-k8s-telemetry.someField="my new value"
 ```
 
 ### Sending telemetry data from eks on fargate
 
-If you want to ship logs from pods that are running on fargate set the `fargateLogRouter.enabled` value to true, the follwing will deploy a dedicated `aws-observability` namespace and a `configmap` for fargate log router. More information about eks fargate logging can be found [here](https://docs.aws.amazon.com/eks/latest/userguide/fargate-logging.html)
-```sh
+To ship logs from pods running on Fargate, set the `fargateLogRouter.enabled` value to `true`. This will deploy a dedicated `aws-observability` namespace and a `configmap` for the Fargate log router. More information about EKS Fargate logging can be found [here](https://docs.aws.amazon.com/eks/latest/userguide/fargate-logging.html)
+
+```shell
 helm install -n monitoring \
 --set logs.enabled=true \
 --set logzio-fluentd.fargateLogRouter.enabled=true \
@@ -142,15 +146,22 @@ helm install -n monitoring \
 logzio-monitoring logzio-helm/logzio-monitoring
 ```
 
-Then use `kubectl port-forward` to accsess the user intefrace in your browser
-```
+Then use `kubectl port-forward` to accsess the user intefrace in your browser:
+
+```shell
 kubectl port-forward svc/ezkonnect-ui -n monitoring 31032:31032
 ```
 
 
 ### Handling image pull rate limit
-In some cases (i.e spot clusters) where the pods/nodes are replaced frequently, the pull rate limit for images pulled from dockerhub might be reached, with an error:
-`You have reached your pull rate limit. You may increase the limit by authenticating and upgrading: https://www.docker.com/increase-rate-limits`.
+
+In scenarios (e.g., spot clusters) where pods/nodes are frequently replaced, you may encounter Dockerhub's pull rate limits. In these cases, use the following `--set` commands to use alternative image repositories:
+
+```
+You have reached your pull rate limit. You may increase the limit by authenticating and upgrading: https://www.docker.com/increase-rate-limits.
+```
+
+
 In these cases we can use the following `--set` commands to use an alternative image repository:
 
 ```shell
@@ -161,19 +172,25 @@ In these cases we can use the following `--set` commands to use an alternative i
 ```
 
 ### Send logs to a custom endpoint
+
 Set fluetd `customEndpoint` value to send your logs to a custom endpoint
+
 ```shell
 --set logzio-fluentd.secrets.customEndpoint="<<CUSTOM_ENDPOINT>>" 
 ```
 
 ### Send Traces to a custom endpoint
+
 Set logzio-k8s-telemetry `CustomTracingEndpoint` value to send your spans to a custom endpoint
+
 ```shell
 --set logzio-k8s-telemetry.secrets.CustomTracingEndpoint="<<CUSTOM_TRACING_ENDPOINT>>" 
 ```
 
 ### Send metrics to a custom endpoint
+
 Set logzio-k8s-telemetry `ListenerHost` value to send your metrics to a custom endpoint (example: "https://endpoint.com:8080")
+
 ```shell
 --set logzio-k8s-telemetry.secrets.ListenerHost="<<CUSTOM_ENDPOINT>>"
 ```
@@ -183,6 +200,7 @@ Set logzio-k8s-telemetry `ListenerHost` value to send your metrics to a custom e
 Before upgrading your logzio-monitoring Chart to v3.0.0 with `helm upgrade`, note that you may encounter an error for some of the logzio-telemetry sub-charts.
 
 There are two possible approaches to the upgrade you can choose from:
+
 - Reinstall the chart.
 - Before running the `helm upgrade` command, delete the old subcharts resources: `logzio-monitoring-prometheus-pushgateway` deployment and the `logzio-monitoring-prometheus-node-exporter` daemonset.
 

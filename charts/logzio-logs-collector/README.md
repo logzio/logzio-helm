@@ -2,21 +2,22 @@
 
 **In development**
 
-kubernetes logs collection agent for logz.io based on opentelemetry collector
+Kubernetes logs collection agent for Logz.io based on OpenTelemetry Collector.
 
 ## Prerequisites
 
 - Kubernetes 1.24+
 - Helm 3.9+
 
-Below is the extended README.md including the full configuration table based on the provided `values.yaml`.
+Below is the extended README.md, including the full configuration table based on the provided `values.yaml`.
+
 
 * * *
 
 Logz.io Logs Collector for Kubernetes
 =====================================
 
-The `logzio-logs-collector` Helm chart deploys a Kubernetes logs collection agent designed to forward logs from your Kubernetes clusters to Logz.io. This solution leverages the OpenTelemetry Collector, offering a robust and flexible way to manage log data, ensuring that your logging infrastructure scales with your application needs.
+The `logzio-logs-collector` Helm chart deploys a Kubernetes logs collection agent designed to forward logs from Kubernetes clusters to Logz.io. This solution leverages the OpenTelemetry Collector, providing a robust and flexible way to manage log data, ensuring that your logging infrastructure scales with your application needs.
 
 Features
 --------
@@ -40,11 +41,11 @@ helm repo update
 
 1.  **Create the Logz.io Secret**
     
-    If not managing secrets externally, ensure the Logz.io secret with your shipping token and other relevant information is created.
+    If not managing secrets externally, create the Logz.io secret with your shipping token and other relevant information.
     
 2.  **Install the Chart**
     
-    Install `logzio-logs-collector` from the Logz.io Helm repository, with logzio authentication values:
+    Install `logzio-logs-collector` from the Logz.io Helm repository, specifying the authentication values:
 
     ```
     helm install logzio-logs-collector -n monitoring \
@@ -56,20 +57,26 @@ helm repo update
     logzio-helm/logzio-logs-collector
     ```
 
-    Replace `logzio-logs-collector` with your release name.
+    Replace:
+    * `logzio-logs-collector` with your release name
+    * `<<token>>` with your Logz.io logs shipping token
+    * `<<region>>` with your Logz.io [account region code](https://docs.logz.io/docs/user-guide/admin/hosting-regions/account-region/)
+    * `<<env_id>>` with a unique name assigned to your environment's identifier, to differentiate telemetry data across various environments
+    * `<<logType>>` with a log type for your logs
+
     
 ### Uninstalling the Chart
 
 To uninstall/delete the `logzio-logs-collector` deployment:
 
-shellCopy code
-
-`helm delete -n monitoring logzio-logs-collector`
+```shell
+helm delete -n monitoring logzio-logs-collector
+```
 
 Configuration
 -------------
 
-The following table lists the configurable parameters of the `logzio-logs-collector` chart and their default values.
+The table below lists the configurable parameters of the `logzio-logs-collector` chart and their default values.
 
 | Key                      | Description                                                                      | Default Value                          |
 |--------------------------|----------------------------------------------------------------------------------|----------------------------------------|
