@@ -1,7 +1,7 @@
 Customizing Multiline Log Handling 
 ==================================
 
-Handling multiline logs efficiently in the OpenTelemetry Collector deployed through `logzio-logs-collector` Helm chart requires a nuanced understanding of the `filelog` receiver, particularly the `recombine` operator. This operator is crucial for parsing and recombining logs that span multiple lines into a single entry, such as stack traces or multiline application logs.
+Handling multiline logs efficiently in the OpenTelemetry Collector deployed through `logzio-logs-collector` Helm chart requires understanding of the `filelog` receiver, particularly the `recombine` operator. This operator is crucial for parsing and recombining logs that span multiple lines into a single entry, such as stack traces or multiline application logs.
 
 Key Configuration Options of the `recombine` Operator
 -----------------------------------------------------

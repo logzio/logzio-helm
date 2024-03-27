@@ -32,7 +32,7 @@ Getting Started
 Before installing the chart, add the Logz.io Helm repository:
 
 ```
-helm repo add logzio-hem https://logzio.github.io/logzio-helm 
+helm repo add logzio-helm https://logzio.github.io/logzio-helm
 helm repo update
 ```
 
