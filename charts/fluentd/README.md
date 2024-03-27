@@ -121,6 +121,7 @@ helm install -n monitoring \
 | `windowsDaemonset.auditLogFormat` | Match Fluentd's format for kube-apiserver audit logs. Set to `audit-json` if your audit logs are in json format. (windows) | `audit` |
 | `windowsDaemonset.containerdRuntime` | **Deprecated from chart version 0.1.0.** Determines whether to use a configuration for a Containerd runtime. Set to `false` if your cluster doesn't use Containerd as CRI. (windows) | `true` |
 | `windowsDaemonset.cri` | Container runtime interface of the cluster. Used to determine which configuration to use when concatenating partial logs (windows). Valid options are: `docker`, `containerd`. | `containerd` |
+| `windowsDaemonset.LogFileRefreshInterval` | The interval of refreshing the list of watch file for log files.. | `60s` |
 | `windowsDaemonset.logzioBufferType` | Specifies which plugin to use as the backend. | `file` |
 | `windowsDaemonset.logzioBufferPath` | Path of the buffer. (windows) | `/var/log/fluentd-buffers/stackdriver.buffer` |
 | `windowsDaemonset.logzioOverflowAction` | Controls the behavior when the queue becomes full. (windows) | `block` |
