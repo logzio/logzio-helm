@@ -130,6 +130,10 @@ You can use the following options to update the Helm chart parameters:
 
 * Overide default values with your own `my_values.yaml` and apply it in the `helm install` command. 
 
+Multi line logs configuration
+-----------------------------
+The collector supports by default various log formats (including multiline logs) such as `CRI-O` `CRI-Containerd` `Docker` formats. You can configure the chart to parse custom multiline logs pattern according to your needs, please read [Customizing Multiline Log Handling](./examples/multiline.md) guide for more details.
+
 ## Change log
 * 1.0.0
   - kubernetes logs collection agent for logz.io based on opentelemetry collector
