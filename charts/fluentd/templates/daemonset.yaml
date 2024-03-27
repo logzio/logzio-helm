@@ -1,3 +1,4 @@
+{{ if .Values.enabled }}
 apiVersion: {{ .Values.apiVersions.daemonset }}
 kind: DaemonSet
 metadata:
@@ -87,6 +88,8 @@ spec:
             secretKeyRef:
               name: {{ .Values.secretName }}
               key: logzio-log-listener
+        - name: LOG_FILE_REFRESH_INTERVAL
+          value: {{ .Values.daemonset.LogFileRefreshInterval | quote }}
         - name: LOGZIO_BUFFER_TYPE
           value: {{ .Values.daemonset.logzioBufferType | quote }}
         - name: LOGZIO_BUFFER_PATH
@@ -236,6 +239,8 @@ spec:
             secretKeyRef:
               name: {{ .Values.secretName }}
               key: logzio-log-listener
+        - name: LOG_FILE_REFRESH_INTERVAL
+          value: {{ .Values.windowsDaemonset.LogFileRefreshInterval | quote }}
         - name: LOGZIO_BUFFER_TYPE
           value: {{ .Values.windowsDaemonset.logzioBufferType | quote }}
         - name: LOGZIO_BUFFER_PATH
@@ -316,3 +321,4 @@ spec:
   updateStrategy: {{ toYaml .Values.windowsDaemonset.updateStrategy | nindent 4 }}
   {{- end }}
 {{- end }}
+{{ end }}
