@@ -32,11 +32,7 @@ dependencies:
     repository: "https://logzio.github.io/logzio-helm/"
     condition: logs.enabled
 maintainers:
-- name: tamirmich
-  email: tamir.michaeli@logz.io
 - name: yotamloe
   email: yotam.loewenbach@logz.io
-- name: miriig
-  email: miri.ignatiev@logz.io
 - name: ralongit
   email: raul.gurshumo@logz.io
