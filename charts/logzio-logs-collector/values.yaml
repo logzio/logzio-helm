@@ -93,6 +93,9 @@ config:
         - "k8s.pod.name"
         - "k8s.pod.uid"
         - "k8s.pod.start_time"
+        - "container.id"
+        - "container.image.name"
+        - "container.image.tag"
       filter:
         node_from_env_var: K8S_NODE_NAME
       passthrough: false
@@ -124,7 +127,7 @@ config:
       # Add common attributes
       attributes:
         env.id: ${env:ENV_ID} 
-        logzio.logs.collector.version: {{.Chart.version}}
+        logzio.logs.collector.version: "{{ .Chart.Version }}"
       operators:
       # Find out which format is used by kubernetes
       - id: get-format
