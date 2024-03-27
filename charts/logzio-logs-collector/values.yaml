@@ -120,6 +120,8 @@ config:
       - /var/log/pods/*/*/*.log
       include_file_name: false
       include_file_path: true
+      start_at: end
+      # Add common attributes
       attributes:
         env.id: ${env:ENV_ID} 
         logzio.logs.collector.version: {{.Chart.version}}
@@ -207,7 +209,6 @@ config:
       - from: attributes.log
         to: body
         type: move
-      start_at: end
     otlp:
       protocols:
         grpc:
