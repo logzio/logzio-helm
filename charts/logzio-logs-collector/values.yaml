@@ -124,6 +124,7 @@ config:
         env.id: ${env:ENV_ID} 
         logzio.logs.collector.version: {{.Chart.version}}
       operators:
+      # Find out which format is used by kubernetes
       - id: get-format
         routes:
         - expr: body matches "^\\{"
@@ -133,6 +134,7 @@ config:
         - expr: body matches "^[^ Z]+Z"
           output: parser-containerd
         type: router
+      # Parse CRI-O format
       - id: parser-crio
         regex: ^(?P<time>[^ Z]+) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*) ?(?P<log>.*)$
         timestamp:
@@ -148,6 +150,7 @@ config:
         output: extract_metadata_from_filepath
         source_identifier: attributes["log.file.path"]
         type: recombine
+      # Parse CRI-Containerd format
       - id: parser-containerd
         regex: ^(?P<time>[^ ^Z]+Z) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*) ?(?P<log>.*)$
         timestamp:
@@ -162,16 +165,19 @@ config:
         output: extract_metadata_from_filepath
         source_identifier: attributes["log.file.path"]
         type: recombine
+      # Parse Docker format
       - id: parser-docker
         output: extract_metadata_from_filepath
         timestamp:
           layout: '%Y-%m-%dT%H:%M:%S.%LZ'
           parse_from: attributes.time
         type: json_parser
+      # Extract metadata from file path
       - id: extract_metadata_from_filepath
         parse_from: attributes["log.file.path"]
         regex: ^.*\/(?P<namespace>[^_]+)_(?P<pod_name>[^_]+)_(?P<uid>[a-f0-9\-]+)\/(?P<container_name>[^\._]+)\/(?P<restart_count>\d+)\.log$
         type: regex_parser
+      # Rename attributes
       - from: attributes.stream
         to: attributes["iostream"]
         type: move
@@ -190,14 +196,17 @@ config:
       - from: attributes.uid
         to: resource["k8s.pod.uid"]
         type: move
-      - from: attributes.log
-        to: body
-        type: move
+      # multiline parsers. add more `type: recombine` operators for custom multiline formats
+      # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/pkg/stanza/docs/operators/recombine.md
       - type: recombine
         id: stack-errors-recombine
         combine_field: body
         is_first_entry: body matches "^[^\\s]"
         source_identifier: attributes["log.file.path"]
+      # Update body field after finishing all parsing
+      - from: attributes.log
+        to: body
+        type: move
       start_at: end
     otlp:
       protocols:
