@@ -240,7 +240,7 @@ spec:
               name: {{ .Values.secretName }}
               key: logzio-log-listener
         - name: LOG_FILE_REFRESH_INTERVAL
-          value: {{ .Values.daemonset.LogFileRefreshInterval | quote }}
+          value: {{ .Values.windowsDaemonset.LogFileRefreshInterval | quote }}
         - name: LOGZIO_BUFFER_TYPE
           value: {{ .Values.windowsDaemonset.logzioBufferType | quote }}
         - name: LOGZIO_BUFFER_PATH
