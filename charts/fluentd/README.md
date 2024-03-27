@@ -305,7 +305,7 @@ If needed, the fluentd image can be changed to support windows server 2022 with 
 ## Change log
  - **0.29.1**:
    - Added `enabled` value, to conditianly control the deployment of this chart by a parent chart.
-   - Added `daemonset.LogFileRefreshInterval` value, to control list of watched log files refresh interval.
+   - Added `daemonset.LogFileRefreshInterval` and `windowsDaemonset.LogFileRefreshInterval` values, to control list of watched log files refresh interval.
  - **0.29.0**:
    - EKS Fargate logging:
     - Send logs to port `8070` in logzio listener (instead of port `5050`)
