@@ -1,0 +1,13 @@
+{{ if .Values.enabled}}
+{{- if and (eq .Values.mode "daemonset") (.Values.configMap.create) -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "opentelemetry-collector.fullname" . }}-daemonset
+  namespace: {{ template "opentelemetry-collector.namespace" . }}
+  labels:
+    {{- include "opentelemetry-collector.labels" . | nindent 4 }}
+data:
+  relay: {{- include "opentelemetry-collector.daemonsetConfig" . | nindent 4 }}
+{{- end }}
+{{ end }}
