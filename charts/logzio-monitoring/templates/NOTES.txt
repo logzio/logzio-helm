@@ -1,0 +1,31 @@
+
+{{- if and (.Values.logs.enabled) (not (index .Values "logzio-logs-collector" "enabled")) (index .Values "logzio-fluentd" "enabled") }}
+[ DEPRICATION ] You are using fluetnd agent for log collection, this option will be disabled by default in upcoming releases.
+We reccomend to migrate to opentelemetry logzio-logs-collector by setting the following values:
+
+  --set logs.enbled=true \
+  --set logzio-logs-collector.enabled=true \
+  --set logzio-fluentd.enbled=false
+
+
+{{ end }}
+
+
+{{- if and (.Values.logs.enabled) (index .Values "logzio-logs-collector" "enabled") (index .Values "logzio-fluentd" "enabled") }}
+[ WARNING ] You enabled both fluetnd agent and opentelemetry logzio-logs-collector for log collection, you will probly have duplicated log data entries in logz.io
+We reccomend to migrate to opentelemetry logzio-logs-collector by setting the following values:
+
+  --set logs.enbled=true \
+  --set logzio-logs-collector.enabled=true \
+  --set logzio-fluentd.enbled=false
+
+{{ end }}
+
+
+{{- if and (.Values.logs.enabled) (index .Values "logzio-logs-collector" "enabled")}}
+[ INFO ] You enabled opentelemetry logzio-logs-collector for log collection, this option will be enabled the default in upcoming releases.
+
+{{ end }}
+
+
+

@@ -188,6 +188,15 @@ There are two possible approaches to the upgrade you can choose from:
 
 
 ## Changelog
+- **5.2.1**:
+	- Added `logzio-logs-collector` version `1.0.0`:
+    - otel collector daemonset designed and configured to function as log collection agent
+    - eks fargate support
+    - adds logzio required fields (`log_level`, `type`, `env_id` and more)
+    - `enabled` value to enable/disable deployment from parent charts
+	- Upgrade `logzio-fluentd` to `0.29.1`:
+    - Added `enabled` value, to conditianly control the deployment of this chart by a parent chart.
+    - Added `daemonset.LogFileRefreshInterval` and `windowsDaemonset.LogFileRefreshInterval` values, to control list of watched log files refresh interval.
 - **5.2.0**:
 	- Upgrade `logzio-k8s-telemetry` to `4.1.0`:
 		- Upgraded prometheus-node-exporter version to `4.29.0`
