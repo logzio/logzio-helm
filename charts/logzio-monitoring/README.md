@@ -96,7 +96,7 @@ However, you can modify the Chart by using the `--set` flag in your `helm instal
 | `securityReport.enabled` | Enable to send k8s security logs | `false` |
 | `deployEvents.enabled` | Enable to send k8s deploy events logs | `false` |
 
-#### To modify the logs Chart configuration:
+### To modify the logs Chart configuration:
 
 You can see a full list of the possible configuration values in the [logzio-fluentd Chart folder](https://github.com/logzio/logzio-helm/tree/master/charts/fluentd#configuration).
 
@@ -109,6 +109,18 @@ For example, if in `logzio-fluentd`'s `values.yaml` file there's a parameter nam
 ```
 You can add `log_type` annotation with a custom value, which will be parsed into a `log_type` field with the same value.
 
+#### Migrate to opentelemetry for log collection
+`logzio-fluentd` chart will be disabled by default in favour of `logzio-logs-collector` for log collection in upcoming releases.
+To migrate to `logzio-logs-collector` add the following `--set` flags:
+```sh
+helm install -n monitoring \
+--set logs.enbled=true \
+--set logzio-fluentd.enbled=false
+--set logzio-logs-collector.enabled=true \
+--set logzio-logs-collector.secrets.logzioShippingToken='<<LOG-SHIPPING-TOKEN>>' \
+--set logzio-logs-collector.secrets.logzioListener='<<LISTENER-HOST>>' \
+logzio-monitoring logzio-helm/logzio-monitoring
+```
 
 ### To modify the metrics and traces Chart configuration:
 
@@ -189,6 +201,7 @@ There are two possible approaches to the upgrade you can choose from:
 
 ## Changelog
 - **5.2.1**:
+  - **Depreciation notice** `logzio-fluentd` chart will be disabled by default in favour of `logzio-logs-collector` for log collection in upcoming releases.
 	- Added `logzio-logs-collector` version `1.0.0`:
     - otel collector daemonset designed and configured to function as log collection agent
     - eks fargate support
