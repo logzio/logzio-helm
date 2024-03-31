@@ -109,9 +109,10 @@ For example, if in `logzio-fluentd`'s `values.yaml` file there's a parameter nam
 ```
 You can add `log_type` annotation with a custom value, which will be parsed into a `log_type` field with the same value.
 
-#### Migrate to opentelemetry for log collection
-`logzio-fluentd` chart will be disabled by default in favour of `logzio-logs-collector` for log collection in upcoming releases.
-To migrate to `logzio-logs-collector` add the following `--set` flags:
+#### Migrate to OpenTelemetry for log collection
+
+The `logzio-fluentd` chart will be disabled by default in favor of the `logzio-logs-collector` for log collection in upcoming releases. To migrate to `logzio-logs-collector`, add the following `--set` flags:
+
 ```sh
 helm install -n monitoring \
 --set logs.enbled=true \
