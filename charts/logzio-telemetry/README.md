@@ -394,6 +394,8 @@ If you don't want the sub charts to installed add the relevant flag per sub char
 
 
 ## Change log
+* 4.1.1
+  - Fixed bug with cAdvisor metrics filter.
 * 4.1.0
   - Upgraded prometheus-node-exporter version to `4.29.0`
   - Fixed bug with AKS metrics filter

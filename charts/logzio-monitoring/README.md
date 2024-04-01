@@ -207,6 +207,9 @@ There are two possible approaches to the upgrade you can choose from:
 
 ## Changelog
 - **5.2.0**:
+	- Upgrade `logzio-k8s-telemetry` to `4.1.1`:
+  		- Fixed bug with cAdvisor metrics filter.
+- **5.2.0**:
 	- Upgrade `logzio-k8s-telemetry` to `4.1.0`:
 		- Upgraded prometheus-node-exporter version to `4.29.0`
 		- Fixed bug with AKS metrics filter
