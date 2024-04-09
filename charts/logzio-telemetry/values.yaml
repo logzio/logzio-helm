@@ -511,7 +511,7 @@ windowsExporterInstallerImage:
 spmImage:
   repository: otel/opentelemetry-collector-contrib
   pullPolicy: IfNotPresent
-  tag: "0.80.0"
+  tag: "0.97.0"
 imagePullSecrets: []
 
 # OpenTelemetry Collector executable
@@ -638,6 +638,11 @@ spanMetricsAgregator:
             buckets: [2ms, 8ms, 50ms, 100ms, 200ms, 500ms, 1s, 5s, 10s]
         dimensions_cache_size: 100000
         aggregation_temporality: AGGREGATION_TEMPORALITY_CUMULATIVE
+        metrics_expiration: 5m
+        resource_metrics_key_attributes:
+          - service.name
+          - telemetry.sdk.language
+          - telemetry.sdk.name
         dimensions:
           - name: rpc.grpc.status_code
           - name: http.method
