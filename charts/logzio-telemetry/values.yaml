@@ -295,9 +295,6 @@ tracesConfig:
         receivers: [jaeger, zipkin, otlp]
         processors: [resourcedetection/all,attributes/env_id, k8sattributes, resource/k8s, tail_sampling, batch]
         exporters: [logzio]
-    telemetry:
-      logs:
-        level: "info"  
 
 spmForwarderConfig:
   exporters:
@@ -716,6 +713,9 @@ spanMetricsAgregator:
           receivers: [prometheus/spm-logzio, spanmetrics]
           processors: [metricstransform]
           exporters: [prometheusremotewrite/spm-logzio]
+      telemetry:
+        logs:
+          level: "info"  
   # service values        
   service:
     type: ClusterIP
@@ -1075,6 +1075,9 @@ daemonsetConfig:
           - prometheus/infrastructure
           - prometheus/cadvisor
           - prometheus/collector
+    telemetry:
+      logs:
+        level: "info" 
 
          
 opencost:
