@@ -295,9 +295,6 @@ tracesConfig:
         receivers: [jaeger, zipkin, otlp]
         processors: [resourcedetection/all,attributes/env_id, k8sattributes, resource/k8s, tail_sampling, batch]
         exporters: [logzio]
-    telemetry:
-      logs:
-        level: "info"  
 
 spmForwarderConfig:
   exporters:
@@ -511,7 +508,7 @@ windowsExporterInstallerImage:
 spmImage:
   repository: otel/opentelemetry-collector-contrib
   pullPolicy: IfNotPresent
-  tag: "0.80.0"
+  tag: "0.97.0"
 imagePullSecrets: []
 
 # OpenTelemetry Collector executable
@@ -638,6 +635,11 @@ spanMetricsAgregator:
             buckets: [2ms, 8ms, 50ms, 100ms, 200ms, 500ms, 1s, 5s, 10s]
         dimensions_cache_size: 100000
         aggregation_temporality: AGGREGATION_TEMPORALITY_CUMULATIVE
+        metrics_expiration: 5m
+        resource_metrics_key_attributes:
+          - service.name
+          - telemetry.sdk.language
+          - telemetry.sdk.name
         dimensions:
           - name: rpc.grpc.status_code
           - name: http.method
@@ -711,6 +713,9 @@ spanMetricsAgregator:
           receivers: [prometheus/spm-logzio, spanmetrics]
           processors: [metricstransform]
           exporters: [prometheusremotewrite/spm-logzio]
+      telemetry:
+        logs:
+          level: "info"  
   # service values        
   service:
     type: ClusterIP
@@ -1070,6 +1075,9 @@ daemonsetConfig:
           - prometheus/infrastructure
           - prometheus/cadvisor
           - prometheus/collector
+    telemetry:
+      logs:
+        level: "info" 
 
          
 opencost:
