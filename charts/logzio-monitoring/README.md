@@ -206,6 +206,12 @@ There are two possible approaches to the upgrade you can choose from:
 
 
 ## Changelog
+- **5.2.2**:
+  - Upgrade `logzio-k8s-telemetry` to `4.1.2`:
+    - Upgrade `.values.spmImage.tag` `0.80` -> `0.97`
+      - Add `metrics_expiration` to span metrics configuration, to prevent sending expired time series
+      - Add `resource_metrics_key_attributes` to span metrics configuration, to prevent value fluctuation of counter metrics when resource attributes change.
+    - Include collector log level configuration in individual components (standalone, daemonset, spanmetrics).
 - **5.2.1**:
 	- Upgrade `logzio-k8s-telemetry` to `4.1.1`:
   		- Fixed bug with cAdvisor metrics filter.
