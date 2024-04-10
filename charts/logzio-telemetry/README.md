@@ -397,7 +397,8 @@ If you don't want the sub charts to installed add the relevant flag per sub char
 * 4.1.2
   - Upgrade `.values.spmImage.tag` `0.80` -> `0.97`
     - Add `metrics_expiration` to span metrics configuration, to prevent sending expired time series
-    - Add `resource_metrics_key_attributes` to span metrics configuration, to prevent value fluctuation of counter metrics when resource attributes change
+    - Add `resource_metrics_key_attributes` to span metrics configuration, to prevent value fluctuation of counter metrics when resource attributes change.
+  - Include collector log level configuration in individual components (standalone, daemonset, spanmetrics).
 * 4.1.1
   - Fixed bug with cAdvisor metrics filter for standalone collector mode.
 * 4.1.0
