@@ -206,6 +206,12 @@ There are two possible approaches to the upgrade you can choose from:
 
 
 ## Changelog
+- **5.2.3**:
+  - Upgrade `logzio-k8s-telemetry` to `4.1.3`:
+	- Removed unused prometheus receiver
+	- Divide metrics and labels renames to separate processors
+	- Disable metric suffix from prometheus exporter
+		- Resolves latency metric rename
 - **5.2.2**:
   - Upgrade `logzio-k8s-telemetry` to `4.1.2`:
     - Upgrade `.values.spmImage.tag` `0.80` -> `0.97`
