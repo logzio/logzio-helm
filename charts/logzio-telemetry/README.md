@@ -394,6 +394,11 @@ If you don't want the sub charts to installed add the relevant flag per sub char
 
 
 ## Change log
+* 4.1.3
+  - Removed unused prometheus receiver
+  - Divide metrics and labels renames to separate processors
+  - Disable metric suffix from prometheus exporter.
+    - Resolves latency metric rename
 * 4.1.2
   - Upgrade `.values.spmImage.tag` `0.80` -> `0.97`
     - Add `metrics_expiration` to span metrics configuration, to prevent sending expired time series
