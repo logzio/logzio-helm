@@ -206,6 +206,8 @@ There are two possible approaches to the upgrade you can choose from:
 
 
 ## Changelog
+- **5.2.4**:
+  - Update `logzio-k8s-telemetry` sub chart version to `4.1.3`
 - **5.2.3**:
   - Upgrade `logzio-k8s-telemetry` to `4.1.3`:
 	- Removed unused prometheus receiver
