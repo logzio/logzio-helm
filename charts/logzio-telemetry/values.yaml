@@ -604,82 +604,107 @@ serviceGraph:
 spanMetricsAgregator:
   config:
     processors:
-      # Modify the data to support Logz.io backwards compatibility
-      metricstransform:
+      metricstransform/metrics-rename:
         transforms:
-          - include: '^duration.*'
-            action: update
-            match_type: regexp
-            new_name: 'latency.$1'
-          - include: calls
-            action: update
-            new_name: calls_total 
-          - include: ^latency
-            action: update
-            match_type: regexp            
-            operations:
-              - action: update_label
-                label: span.name
-                new_label: operation 
-          - include: ^calls
-            action: update
-            match_type: regexp            
-            operations:
-              - action: update_label
-                label: span.name
-                new_label: operation    
+        - include: ^duration(.*)$$
+          action: update
+          match_type: regexp
+          new_name: latency.$${1} 
+        - action: update
+          include: calls
+          new_name: calls_total
+      metricstransform/labels-rename:
+        transforms:
+        - action: update
+          include: ^latency
+          match_type: regexp
+          operations:
+          - action: update_label
+            label: span.name
+            new_label: operation
+        - action: update
+          include: ^calls
+          match_type: regexp
+          operations:
+          - action: update_label
+            label: span.name
+            new_label: operation  
     connectors:
+      servicegraph:
+        dimensions:
+        - env_id
+        latency_histogram_buckets:
+        - 2ms
+        - 8ms
+        - 50ms
+        - 100ms
+        - 200ms
+        - 500ms
+        - 1s
+        - 5s
+        - 10s
+        store:
+          max_items: 100000
+          ttl: 5s
       spanmetrics:
+        aggregation_temporality: AGGREGATION_TEMPORALITY_CUMULATIVE
+        dimensions:
+        - name: rpc.grpc.status_code
+        - name: http.method
+        - name: http.status_code
+        - name: k8s.pod.name
+        - name: k8s.deployment.name
+        - name: k8s.namespace.name
+        - name: k8s.node.name
+        - name: k8s.statefulset.name
+        - name: k8s.replicaset.name
+        - name: k8s.daemonset.name
+        - name: k8s.cronjob.name
+        - name: k8s.job.name
+        - name: cloud.provider
+        - name: cloud.region
+        - name: db.system
+        - name: messaging.system
+        - default: ${ENV_ID}
+          name: env_id
+        dimensions_cache_size: 100000
         histogram:
           explicit:
-            buckets: [2ms, 8ms, 50ms, 100ms, 200ms, 500ms, 1s, 5s, 10s]
-        dimensions_cache_size: 100000
-        aggregation_temporality: AGGREGATION_TEMPORALITY_CUMULATIVE
+            buckets:
+            - 2ms
+            - 8ms
+            - 50ms
+            - 100ms
+            - 200ms
+            - 500ms
+            - 1s
+            - 5s
+            - 10s
         metrics_expiration: 5m
         resource_metrics_key_attributes:
-          - service.name
-          - telemetry.sdk.language
-          - telemetry.sdk.name
-        dimensions:
-          - name: rpc.grpc.status_code
-          - name: http.method
-          - name: http.status_code
-          - name: k8s.pod.name
-          - name: k8s.deployment.name
-          - name: k8s.namespace.name
-          - name: k8s.node.name
-          - name: k8s.statefulset.name
-          - name: k8s.replicaset.name
-          - name: k8s.daemonset.name
-          - name: k8s.cronjob.name
-          - name: k8s.job.name
-          - name: cloud.provider
-          - name: cloud.region
-          - name: db.system
-          - name: messaging.system          
-          - name: env_id
-            default: ${ENV_ID}
+        - service.name
+        - telemetry.sdk.language
+        - telemetry.sdk.name
+    exporters:
+      logging:
+        loglevel: info
+      prometheus/spm:
+        endpoint: 0.0.0.0:8889
+      prometheusremotewrite/spm-logzio:
+        endpoint: ${LISTENER_URL}
+        headers:
+          Authorization: Bearer ${SPM_TOKEN}
+        timeout: 30s
+        add_metric_suffixes: false
     receivers:
-      # Dummy recivier 
-      otlp/spm:
-        protocols:
-          grpc:
-            endpoint: "localhost:12345"
-      prometheus/spm-logzio:
-        config:
-          scrape_configs:
-          - job_name: 'spm'
-            scrape_interval: 30s
-            static_configs:
-            - targets: [ "0.0.0.0:8889" ] 
       jaeger:
         protocols:
-          thrift_compact:
-            endpoint: "0.0.0.0:6831"
-          thrift_binary:
-            endpoint: "0.0.0.0:6832"
           grpc:
             endpoint: "0.0.0.0:14250"
+          thrift_binary:
+            endpoint: "0.0.0.0:6832"
+          thrift_compact:
+            endpoint: "0.0.0.0:6831"
           thrift_http:
             endpoint: "0.0.0.0:14268"
       otlp:
@@ -690,32 +715,31 @@ spanMetricsAgregator:
             endpoint: "0.0.0.0:4318"
       zipkin:
         endpoint: "0.0.0.0:9411"
-    exporters:
-      logging:
-        loglevel: info
-      prometheus/spm:
-        endpoint: "0.0.0.0:8889"
-      prometheusremotewrite/spm-logzio:
-        timeout: 30s
-        endpoint: ${LISTENER_URL}
-        headers:
-          Authorization: "Bearer ${SPM_TOKEN}"
     service:
       pipelines:
-        traces:
-          receivers: [jaeger, zipkin, otlp]
-          exporters: [logging, spanmetrics]
-        metrics/spm:
-          # Dummy recivier 
-          receivers: [otlp/spm]
-          exporters: [prometheus/spm]
         metrics/spm-logzio:
-          receivers: [prometheus/spm-logzio, spanmetrics]
-          processors: [metricstransform]
-          exporters: [prometheusremotewrite/spm-logzio]
+          exporters:
+          - prometheusremotewrite/spm-logzio
+          - prometheus/spm
+          processors:
+          - metricstransform/metrics-rename
+          - metricstransform/labels-rename
+          receivers:
+          - spanmetrics
+          - servicegraph
+        traces:
+          exporters:
+          - logging
+          - spanmetrics
+          - servicegraph
+          receivers:
+          - jaeger
+          - zipkin
+          - otlp
       telemetry:
         logs:
-          level: "info"  
+          level: "info"
+
   # service values        
   service:
     type: ClusterIP
