@@ -5,7 +5,7 @@ keywords:
   - logging
   - k8s
   - kubernetes
-version: 0.0.3
+version: 0.0.4
 appVersion: 0.0.2
 maintainers:
   - name: Raul Gurshumov
