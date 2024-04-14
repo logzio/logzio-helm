@@ -1,3 +1,4 @@
+{{ if .Values.enabled }}
 {{- if .Values.isRBAC }}
 apiVersion: {{ .Values.apiVersions.clusterRole }}
 kind: ClusterRole
@@ -6,3 +7,4 @@ metadata:
   namespace: {{ .Release.Namespace }}
 rules: {{ toYaml .Values.clusterRole.rules | nindent 2 -}}
 {{- end }}
+{{ end }}

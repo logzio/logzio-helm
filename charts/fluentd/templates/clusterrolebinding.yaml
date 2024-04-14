@@ -1,3 +1,4 @@
+{{ if .Values.enabled }}
 {{- if .Values.isRBAC }}
 apiVersion: {{ .Values.apiVersions.clusterRoleBinding }}
 kind: ClusterRoleBinding
@@ -12,3 +13,4 @@ subjects:
   name: {{ template "fluentd.serviceAccount" . }}
   namespace: {{ .Release.Namespace }}
 {{- end }}
+{{ end }}

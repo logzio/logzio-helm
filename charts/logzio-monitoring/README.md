@@ -231,6 +231,14 @@ There are two possible approaches to the upgrade you can choose from:
 	- Upgrade `logzio-fluentd` to `0.29.1`:
     - Added `enabled` value, to conditianly control the deployment of this chart by a parent chart.
     - Added `daemonset.LogFileRefreshInterval` and `windowsDaemonset.LogFileRefreshInterval` values, to control list of watched log files refresh interval.
+- **5.2.4**:
+  - Update `logzio-k8s-telemetry` sub chart version to `4.1.3`
+- **5.2.3**:
+  - Upgrade `logzio-k8s-telemetry` to `4.1.3`:
+	- Removed unused prometheus receiver
+	- Divide metrics and labels renames to separate processors
+	- Disable metric suffix from prometheus exporter
+		- Resolves latency metric rename
 - **5.2.2**:
   - Upgrade `logzio-k8s-telemetry` to `4.1.2`:
     - Upgrade `.values.spmImage.tag` `0.80` -> `0.97`

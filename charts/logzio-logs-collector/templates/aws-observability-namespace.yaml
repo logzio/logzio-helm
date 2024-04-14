@@ -1,4 +1,4 @@
-{{ if .Values.enabled }}
+{{ if .Values.enabled}}
 {{- if .Values.fargateLogRouter.enabled }}
 kind: Namespace
 apiVersion: v1

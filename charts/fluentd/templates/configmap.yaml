@@ -1,3 +1,4 @@
+{{ if .Values.enabled }}
 apiVersion: {{ .Values.apiVersions.configmap }}
 kind: ConfigMap
 metadata:
@@ -43,3 +44,4 @@ data:
 {{ $value | indent 4 -}}
 {{- end -}}
 {{- end }}
+{{ end }}

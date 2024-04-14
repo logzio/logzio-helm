@@ -1,4 +1,4 @@
-{{ if .Values.enabled }}
+{{ if .Values.enabled}}
 {{ if .Values.fargateLogRouter.enabled }}
 kind: ConfigMap
 apiVersion: v1
@@ -10,8 +10,8 @@ data:
     [FILTER]
       Name modify
       Match *
-      Add token {{ .Values.secrets.logzioShippingToken }}
-      Add type {{ .Values.daemonset.logType }}
+      Add token {{ .Values.secrets.logzioLogsToken }}
+      Add type {{ .Values.secrets.logType }}
       Rename log message
     [FILTER]
       Name kubernetes
@@ -39,9 +39,9 @@ data:
     [OUTPUT]
       Name  es
       Match *
-      Host  {{ .Values.secrets.logzioListener }}
+      Host  {{ template "logzio.listenerAddress" . }}
       HTTP_User token
-      HTTP_Passwd {{ .Values.secrets.logzioShippingToken }}
+      HTTP_Passwd {{ .Values.secrets.logzioLogsToken }}
       Port  8070
       Retry_Limit no_retries
       Index logzioCustomerIndex

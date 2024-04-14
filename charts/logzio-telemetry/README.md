@@ -394,6 +394,18 @@ If you don't want the sub charts to installed add the relevant flag per sub char
 
 
 ## Change log
+* 4.1.3
+  - Removed unused prometheus receiver
+  - Divide metrics and labels renames to separate processors
+  - Disable metric suffix from prometheus exporter.
+    - Resolves latency metric rename
+* 4.1.2
+  - Upgrade `.values.spmImage.tag` `0.80` -> `0.97`
+    - Add `metrics_expiration` to span metrics configuration, to prevent sending expired time series
+    - Add `resource_metrics_key_attributes` to span metrics configuration, to prevent value fluctuation of counter metrics when resource attributes change.
+  - Include collector log level configuration in individual components (standalone, daemonset, spanmetrics).
+* 4.1.1
+  - Fixed bug with cAdvisor metrics filter for standalone collector mode.
 * 4.1.0
   - Upgraded prometheus-node-exporter version to `4.29.0`
   - Fixed bug with AKS metrics filter

@@ -1,0 +1,624 @@
+# Default values for opentelemetry-collector.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# conditionally controll the deployment of this chart by a parent chart 
+enabled: true
+
+nameOverride: ""
+fullnameOverride: ""
+
+# Valid value for log collection is "daemonset". More modes may be added in the future
+mode: "daemonset"
+
+# Specify which namespace should be used to deploy the resources into
+namespaceOverride: ""
+
+fargateLogRouter:
+  # Boolen to decide if to configure fargate log router (eks fargate envirinments)
+  enabled: false
+
+secrets:
+  # When true, the logzio secret will be created and managed by this Chart. If you're managing the logzio secrets by yourself, set to false, note that in order for the default configuration to work proprly you need to create the following env variables: ENV_ID LOG_TYPE LOGZIO_REGION LOGZIO_LOGS_TOKEN
+  enabled: true
+  name: logzio-log-collector-secrets
+  # environment indentifier attribute that will be added to all logs
+  env_id: "my_env"
+  # defualt log type field
+  logType: "k8s"
+  # Secret with your logzio logs shipping token
+  logzioLogsToken: "token"
+  # Secret with your logzio region
+  LogzioRegion: "us"
+  # Secret with your custom endpoint, for example:http://endpoint:8080. Overrides secrets.LogzioRegion listener adress
+  customEndpoint: ""
+
+configMap:
+  # Specifies whether a configMap should be created (true by default)
+  create: true
+
+# Base collector configuration.
+# Supports templating. To escape existing instances of {{ }}, use {{` <original content> `}}.
+# For example, {{ REDACTED_EMAIL }} becomes {{` {{ REDACTED_EMAIL }} `}}.
+config:
+  exporters:
+    logging: {}
+    logzio/logs:
+      account_token: ${env:LOGZIO_LOGS_TOKEN}
+      region: ${env:LOGZIO_REGION}
+      endpoint: ${env:CUSTOM_ENDPOINT}
+  extensions:
+    health_check: {}
+    file_storage:
+      directory: /var/lib/otelcol
+  processors:
+    transform/log_level:
+      error_mode: ignore
+      log_statements:
+        - context: log
+          statements:
+            # set log_level
+            - set(attributes["log.level"], "INFO")
+            - set(attributes["log.level"], "DEBUG") where (IsMatch(body, ".*\\b(?i:debug)\\b.*"))
+            - set(attributes["log.level"], "WARNING") where (IsMatch(body, ".*\\b(?i:warning|warn)\\b.*"))
+            - set(attributes["log.level"], "ERROR") where (IsMatch(body, ".*\\b(?i:error|failure|failed|exception|panic)\\b.*"))
+    transform/log_type:
+      error_mode: ignore
+      log_statements:
+        - context: resource
+          statements:
+            # Set type based on Kubernetes annotation or default
+            - set(attributes["type"], attributes["k8s.annotations.logz.io/application_type"]) where attributes["k8s.annotations.logz.io/application_type"] != nil
+            - set(attributes["type"], attributes["k8s.annotations.log_type"]) where attributes["k8s.annotations.log_type"] != nil and attributes["k8s.annotations.logz.io/application_type"] == nil
+            - set(attributes["type"], "${env:LOG_TYPE}") where attributes["k8s.annotations.log_type"] == nil and attributes["k8s.annotations.logz.io/application_type"] == nil
+    batch: {}
+    k8sattributes:
+      extract:
+        annotations:
+        - from: pod
+          key_regex: (.*)
+          tag_name: k8s.annotations.$$1
+        labels:
+        - from: pod
+          key_regex: (.*)
+          tag_name: k8s.labels.$$1
+        metadata:
+        - "k8s.namespace.name"
+        - "k8s.deployment.name"
+        - "k8s.statefulset.name"
+        - "k8s.daemonset.name"
+        - "k8s.cronjob.name"
+        - "k8s.job.name"
+        - "k8s.node.name"
+        - "k8s.pod.name"
+        - "k8s.pod.uid"
+        - "k8s.pod.start_time"
+        - "container.id"
+        - "container.image.name"
+        - "container.image.tag"
+      filter:
+        node_from_env_var: K8S_NODE_NAME
+      passthrough: false
+      pod_association:
+      - sources:
+        - from: resource_attribute
+          name: k8s.pod.ip
+      - sources:
+        - from: resource_attribute
+          name: k8s.pod.uid
+      - sources:
+        - from: connection
+      - sources:
+        - from: resource_attribute
+          name: k8s.pod.name
+        - from: resource_attribute
+          name: k8s.namespace.name
+  receivers:
+    filelog:
+      # store check point in `directory: /var/lib/otelcol`
+      storage: file_storage
+      # Exclude collector container's logs. The file format is /var/log/pods/<namespace_name>_<pod_name>_<pod_uid>/<container_name>/<run_id>.log
+      exclude: [ "/var/log/pods/{{ .Release.Namespace }}_{{ include \"opentelemetry-collector.fullname\" . }}*_*/{{ include \"opentelemetry-collector.lowercase_chartname\" . }}/*.log" ]
+      include:
+      - /var/log/pods/*/*/*.log
+      include_file_name: false
+      include_file_path: true
+      start_at: end
+      # Add common attributes
+      attributes:
+        env.id: ${env:ENV_ID} 
+        logzio.logs.collector.version: "{{ .Chart.Version }}"
+      operators:
+      # Find out which format is used by kubernetes
+      - id: get-format
+        routes:
+        - expr: body matches "^\\{"
+          output: parser-docker
+        - expr: body matches "^[^ Z]+ "
+          output: parser-crio
+        - expr: body matches "^[^ Z]+Z"
+          output: parser-containerd
+        type: router
+      # Parse CRI-O format
+      - id: parser-crio
+        regex: ^(?P<time>[^ Z]+) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*) ?(?P<log>.*)$
+        timestamp:
+          layout: 2006-01-02T15:04:05.999999999Z07:00
+          layout_type: gotime
+          parse_from: attributes.time
+        type: regex_parser
+      - combine_field: attributes.log
+        combine_with: ""
+        id: crio-recombine
+        is_last_entry: attributes.logtag == 'F'
+        max_log_size: 102400
+        output: extract_metadata_from_filepath
+        source_identifier: attributes["log.file.path"]
+        type: recombine
+      # Parse CRI-Containerd format
+      - id: parser-containerd
+        regex: ^(?P<time>[^ ^Z]+Z) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*) ?(?P<log>.*)$
+        timestamp:
+          layout: '%Y-%m-%dT%H:%M:%S.%LZ'
+          parse_from: attributes.time
+        type: regex_parser
+      - combine_field: attributes.log
+        combine_with: ""
+        id: containerd-recombine
+        is_last_entry: attributes.logtag == 'F'
+        max_log_size: 102400
+        output: extract_metadata_from_filepath
+        source_identifier: attributes["log.file.path"]
+        type: recombine
+      # Parse Docker format
+      - id: parser-docker
+        output: extract_metadata_from_filepath
+        timestamp:
+          layout: '%Y-%m-%dT%H:%M:%S.%LZ'
+          parse_from: attributes.time
+        type: json_parser
+      # Extract metadata from file path
+      - id: extract_metadata_from_filepath
+        parse_from: attributes["log.file.path"]
+        regex: ^.*\/(?P<namespace>[^_]+)_(?P<pod_name>[^_]+)_(?P<uid>[a-f0-9\-]+)\/(?P<container_name>[^\._]+)\/(?P<restart_count>\d+)\.log$
+        type: regex_parser
+      # Rename attributes
+      - from: attributes.stream
+        to: attributes["iostream"]
+        type: move
+      - from: attributes.container_name
+        to: resource["k8s.container.name"]
+        type: move
+      - from: attributes.namespace
+        to: resource["k8s.namespace.name"]
+        type: move
+      - from: attributes.pod_name
+        to: resource["k8s.pod.name"]
+        type: move
+      - from: attributes.restart_count
+        to: resource["k8s.container.restart_count"]
+        type: move
+      - from: attributes.uid
+        to: resource["k8s.pod.uid"]
+        type: move
+      # multiline parsers. add more `type: recombine` operators for custom multiline formats
+      # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/pkg/stanza/docs/operators/recombine.md
+      - type: recombine
+        id: stack-errors-recombine
+        combine_field: body
+        is_first_entry: body matches "^[^\\s]"
+        source_identifier: attributes["log.file.path"]
+      # Update body field after finishing all parsing
+      - from: attributes.log
+        to: body
+        type: move
+    otlp:
+      protocols:
+        grpc:
+          endpoint: ${env:MY_POD_IP}:4317
+        http:
+          endpoint: ${env:MY_POD_IP}:4318
+    prometheus:
+      config:
+        scrape_configs:
+        - job_name: opentelemetry-collector
+          scrape_interval: 15s
+          static_configs:
+          - targets:
+            - ${env:MY_POD_IP}:8888
+  service:
+    extensions:
+      - health_check
+      - file_storage
+    pipelines:
+      logs:
+        exporters:
+        - logzio/logs
+        - logging
+        processors:
+        - k8sattributes
+        - transform/log_level
+        - transform/log_type
+        - batch
+        receivers:
+        - otlp
+        - filelog
+    telemetry:
+      metrics:
+        address: ${env:MY_POD_IP}:8888
+      logs:
+        level: info
+
+image:
+  # If you want to use the core image `otel/opentelemetry-collector`, you also need to change `command.name` value to `otelcol`.
+  repository: otel/opentelemetry-collector-contrib
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+  # When digest is set to a non-empty value, images will be pulled by digest (regardless of tag value).
+  digest: ""
+imagePullSecrets: []
+
+# OpenTelemetry Collector executable
+command:
+  name: otelcol-contrib
+  extraArgs: []
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+clusterRole:
+  # Specifies whether a clusterRole should be created
+  # Some presets also trigger the creation of a cluster role and cluster role binding.
+  # If using one of those presets, this field is no-op.
+  create: true
+  # Annotations to add to the clusterRole
+  # Can be used in combination with presets that create a cluster role.
+  annotations: {}
+  # The name of the clusterRole to use.
+  # If not set a name is generated using the fullname template
+  # Can be used in combination with presets that create a cluster role.
+  name: ""
+  # A set of rules as documented here : https://kubernetes.io/docs/reference/access-authn-authz/rbac/
+  # Can be used in combination with presets that create a cluster role to add additional rules.
+  rules: []
+  # - apiGroups:
+  #   - ''
+  #   resources:
+  #   - 'pods'
+  #   - 'nodes'
+  #   verbs:
+  #   - 'get'
+  #   - 'list'
+  #   - 'watch'
+
+  clusterRoleBinding:
+    # Annotations to add to the clusterRoleBinding
+    # Can be used in combination with presets that create a cluster role binding.
+    annotations: {}
+    # The name of the clusterRoleBinding to use.
+    # If not set a name is generated using the fullname template
+    # Can be used in combination with presets that create a cluster role binding.
+    name: ""
+
+podSecurityContext: {}
+securityContext: {}
+
+nodeSelector: {}
+tolerations: []
+# Set affinity rules for the scheduler to determine where all DaemonSet pods can be placed.
+# The following configuration prevent logzio loi collector deamonset deploymment on fargate nodes
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: eks.amazonaws.com/compute-type
+              operator: DoesNotExist
+
+# Allows for pod scheduler prioritisation
+priorityClassName: ""
+
+extraEnvs: []
+extraEnvsFrom: []
+extraVolumes: []
+extraVolumeMounts: []
+
+ports:
+  otlp:
+    enabled: true
+    containerPort: 4317
+    servicePort: 4317
+    hostPort: 4317
+    protocol: TCP
+    # nodePort: 30317
+    appProtocol: grpc
+  otlp-http:
+    enabled: true
+    containerPort: 4318
+    servicePort: 4318
+    hostPort: 4318
+    protocol: TCP
+  jaeger-compact:
+    enabled: true
+    containerPort: 6831
+    servicePort: 6831
+    hostPort: 6831
+    protocol: UDP
+  jaeger-thrift:
+    enabled: true
+    containerPort: 14268
+    servicePort: 14268
+    hostPort: 14268
+    protocol: TCP
+  jaeger-grpc:
+    enabled: true
+    containerPort: 14250
+    servicePort: 14250
+    hostPort: 14250
+    protocol: TCP
+  zipkin:
+    enabled: true
+    containerPort: 9411
+    servicePort: 9411
+    hostPort: 9411
+    protocol: TCP
+  metrics:
+    enabled: true
+    containerPort: 8888
+    servicePort: 8888
+    protocol: TCP
+
+resources:
+  limits:
+    cpu: 250m
+    memory: 512Mi
+
+podAnnotations: {}
+
+podLabels: {}
+
+# Common labels to add to all otel-collector resources. Evaluated as a template.
+additionalLabels: {}
+#  app.kubernetes.io/part-of: my-app
+
+# Host networking requested for this pod. Use the host's network namespace.
+hostNetwork: false
+
+# Adding entries to Pod /etc/hosts with HostAliases
+# https://kubernetes.io/docs/tasks/network/customize-hosts-file-for-pods/
+hostAliases: []
+  # - ip: "1.2.3.4"
+  #   hostnames:
+  #     - "my.host.com"
+
+# Pod DNS policy ClusterFirst, ClusterFirstWithHostNet, None, Default, None
+dnsPolicy: ""
+
+# Custom DNS config. Required when DNS policy is None.
+dnsConfig: {}
+
+
+annotations: {}
+
+# List of extra sidecars to add
+extraContainers: []
+# extraContainers:
+#   - name: test
+#     command:
+#       - cp
+#     args:
+#       - /bin/sleep
+#       - /test/sleep
+#     image: busybox:latest
+#     volumeMounts:
+#       - name: test
+#         mountPath: /test
+
+# List of init container specs, e.g. for copying a binary to be executed as a lifecycle hook.
+# Another usage of init containers is e.g. initializing filesystem permissions to the OTLP Collector user `10001` in case you are using persistence and the volume is producing a permission denied error for the OTLP Collector container.
+initContainers: []
+# initContainers:
+#   - name: test
+#     image: busybox:latest
+#     command:
+#       - cp
+#     args:
+#       - /bin/sleep
+#       - /test/sleep
+#     volumeMounts:
+#       - name: test
+#         mountPath: /test
+#  - name: init-fs
+#    image: busybox:latest
+#    command:
+#      - sh
+#      - '-c'
+#      - 'chown -R 10001: /var/lib/storage/otc' # use the path given as per `extensions.file_storage.directory` & `extraVolumeMounts[x].mountPath`
+#    volumeMounts:
+#      - name: opentelemetry-collector-data # use the name of the volume used for persistence
+#        mountPath: /var/lib/storage/otc # use the path given as per `extensions.file_storage.directory` & `extraVolumeMounts[x].mountPath`
+
+# Pod lifecycle policies.
+lifecycleHooks: {}
+# lifecycleHooks:
+#   preStop:
+#     exec:
+#       command:
+#       - /test/sleep
+#       - "5"
+
+# liveness probe configuration
+# Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+##
+livenessProbe:
+  # Number of seconds after the container has started before startup, liveness or readiness probes are initiated.
+  # initialDelaySeconds: 1
+  # How often in seconds to perform the probe.
+  # periodSeconds: 10
+  # Number of seconds after which the probe times out.
+  # timeoutSeconds: 1
+  # Minimum consecutive failures for the probe to be considered failed after having succeeded.
+  # failureThreshold: 1
+  # Duration in seconds the pod needs to terminate gracefully upon probe failure.
+  # terminationGracePeriodSeconds: 10
+  httpGet:
+    port: 13133
+    path: /
+
+# readiness probe configuration
+# Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+##
+readinessProbe:
+  # Number of seconds after the container has started before startup, liveness or readiness probes are initiated.
+  # initialDelaySeconds: 1
+  # How often (in seconds) to perform the probe.
+  # periodSeconds: 10
+  # Number of seconds after which the probe times out.
+  # timeoutSeconds: 1
+  # Minimum consecutive successes for the probe to be considered successful after having failed.
+  # successThreshold: 1
+  # Minimum consecutive failures for the probe to be considered failed after having succeeded.
+  # failureThreshold: 1
+  httpGet:
+    port: 13133
+    path: /
+
+service:
+  # Enable the creation of a Service.
+  enabled: true
+
+  type: ClusterIP
+  # type: LoadBalancer
+  # loadBalancerIP: 1.2.3.4
+  # loadBalancerSourceRanges: []
+
+  # By default, Service of type 'LoadBalancer' will be created setting 'externalTrafficPolicy: Cluster'
+  # unless other value is explicitly set.
+  # Possible values are Cluster or Local (https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip)
+  # externalTrafficPolicy: Cluster
+
+  annotations: {}
+
+  # By default, Service will be created setting 'internalTrafficPolicy: Local' on mode = daemonset
+  # unless other value is explicitly set.
+  # Setting 'internalTrafficPolicy: Cluster' on a daemonset is not recommended
+  # internalTrafficPolicy: Cluster
+
+ingress:
+  enabled: false
+  # annotations: {}
+  # ingressClassName: nginx
+  # hosts:
+  #   - host: collector.example.com
+  #     paths:
+  #       - path: /
+  #         pathType: Prefix
+  #         port: 4318
+  # tls:
+  #   - secretName: collector-tls
+  #     hosts:
+  #       - collector.example.com
+
+  # Additional ingresses - only created if ingress.enabled is true
+  # Useful for when differently annotated ingress services are required
+  # Each additional ingress needs key "name" set to something unique
+  additionalIngresses: []
+  # - name: cloudwatch
+  #   ingressClassName: nginx
+  #   annotations: {}
+  #   hosts:
+  #     - host: collector.example.com
+  #       paths:
+  #         - path: /
+  #           pathType: Prefix
+  #           port: 4318
+  #   tls:
+  #     - secretName: collector-tls
+  #       hosts:
+  #         - collector.example.com
+
+podMonitor:
+  # The pod monitor by default scrapes the metrics port.
+  # The metrics port needs to be enabled as well.
+  enabled: false
+  metricsEndpoints:
+    - port: metrics
+      # interval: 15s
+
+  # additional labels for the PodMonitor
+  extraLabels: {}
+  #   release: kube-prometheus-stack
+
+rollout:
+  rollingUpdate: {}
+  # When 'mode: daemonset', maxSurge cannot be used when hostPort is set for any of the ports
+  # maxSurge: 25%
+  # maxUnavailable: 0
+  strategy: RollingUpdate
+
+networkPolicy:
+  enabled: false
+
+  # Annotations to add to the NetworkPolicy
+  annotations: {}
+
+  # Configure the 'from' clause of the NetworkPolicy.
+  # By default this will restrict traffic to ports enabled for the Collector. If
+  # you wish to further restrict traffic to other hosts or specific namespaces,
+  # see the standard NetworkPolicy 'spec.ingress.from' definition for more info:
+  # https://kubernetes.io/docs/reference/kubernetes-api/policy-resources/network-policy-v1/
+  allowIngressFrom: []
+  # # Allow traffic from any pod in any namespace, but not external hosts
+  # - namespaceSelector: {}
+  # # Allow external access from a specific cidr block
+  # - ipBlock:
+  #     cidr: 192.168.1.64/32
+  # # Allow access from pods in specific namespaces
+  # - namespaceSelector:
+  #     matchExpressions:
+  #       - key: kubernetes.io/metadata.name
+  #         operator: In
+  #         values:
+  #           - "cats"
+  #           - "dogs"
+
+  # Add additional ingress rules to specific ports
+  # Useful to allow external hosts/services to access specific ports
+  # An example is allowing an external prometheus server to scrape metrics
+  #
+  # See the standard NetworkPolicy 'spec.ingress' definition for more info:
+  # https://kubernetes.io/docs/reference/kubernetes-api/policy-resources/network-policy-v1/
+  extraIngressRules: []
+  # - ports:
+  #   - port: metrics
+  #     protocol: TCP
+  #   from:
+  #     - ipBlock:
+  #         cidr: 192.168.1.64/32
+
+  # Restrict egress traffic from the OpenTelemetry collector pod
+  # See the standard NetworkPolicy 'spec.egress' definition for more info:
+  # https://kubernetes.io/docs/reference/kubernetes-api/policy-resources/network-policy-v1/
+  egressRules: []
+  #  - to:
+  #      - namespaceSelector: {}
+  #      - ipBlock:
+  #          cidr: 192.168.10.10/24
+  #    ports:
+  #      - port: 1234
+  #        protocol: TCP
+
+# When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured
+# resources.limits.memory
+# If no resources.limits.memory are defined enabling does nothing.
+# In a future release this setting will be enabled by default.
+# See https://github.com/open-telemetry/opentelemetry-helm-charts/issues/891
+# for more details.
+useGOMEMLIMIT: false

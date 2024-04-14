@@ -1,3 +1,4 @@
+{{ if .Values.enabled }}
 {{- if or .Values.daemonset.fluentdPrometheusConf .Values.windowsDaemonset.fluentdPrometheusConf }}
 apiVersion: {{ .Values.apiVersions.configmap }}
 kind: ConfigMap
@@ -9,3 +10,4 @@ metadata:
 data:
   prometheus.conf : {{ toYaml .Values.configmap.prometheus | indent 2 }}
 {{- end }}
+{{ end }}
