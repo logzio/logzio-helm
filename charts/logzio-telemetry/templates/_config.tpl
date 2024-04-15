@@ -35,6 +35,11 @@ Build config file for standalone OpenTelemetry Collector
 {{- $_ := set (index $metricsConfig "service" "pipelines" "metrics/infrastructure") "processors" (concat (index $metricsConfig "service" "pipelines" "metrics/infrastructure" "processors") (index $opencostConfig "service" "pipelines" "metrics/infrastructure" "processors" )) -}}
 {{- end -}}
 
+{{/* Handle k8s objects config */}}
+{{- if .Values.k8sObjectsConfig.enabled -}}
+{{- $k8sObjectsConfig := deepCopy .Values.k8sObjectsConfig.config | mustMergeOverwrite -}}
+{{- $metricsConfig = deepCopy $k8sObjectsConfig | merge $metricsConfig | mustMergeOverwrite -}}
+{{- end -}}
 
 {{- if and (and (eq .Values.collector.mode "standalone") (.Values.metrics.enabled)) .Values.traces.enabled  .Values.spm.enabled }}
 {{- $configData = $metricsConfig  | merge $tracesConfig | merge $spmConfig | mustMergeOverwrite }}
@@ -198,6 +203,12 @@ Build config file for standalone OpenTelemetry Collector daemonset
 {{- $_ := set (index $metricsConfig "service" "pipelines" "metrics/infrastructure") "processors" (concat (index $metricsConfig "service" "pipelines" "metrics/infrastructure" "processors") (index $opencostConfig "service" "pipelines" "metrics/infrastructure" "processors" )) -}}
 {{- end }}
 
+{{/* Handle k8s objects config */}}
+{{- if .Values.k8sObjectsConfig.enabled }}
+{{- $k8sObjectsConfig := deepCopy .Values.k8sObjectsConfig.config | mustMergeOverwrite }}
+{{- $metricsConfig = deepCopy $k8sObjectsConfig | merge $metricsConfig | mustMergeOverwrite }}
+{{- end }}
+
 {{- $values := deepCopy .Values.daemonsetCollector | mustMergeOverwrite (deepCopy .Values) }}
 {{- $data := dict "Values" $values | mustMergeOverwrite (deepCopy .) }}
 {{- $config := include "opentelemetry-collector.baseConfig" $data | fromYaml }}
@@ -239,6 +250,7 @@ Build config file for standalone OpenTelemetry Collector daemonset
     {{- $metricsApplications := dict "exporters" (list "prometheusremotewrite/applications") "processors" (list "attributes/env_id" "filter/kubernetes360") "receivers" (list "prometheus/applications") -}}
     {{- $_ := set .Values.daemonsetConfig.service.pipelines "metrics/applications" $metricsApplications -}}
   {{- end -}}
+
 {{- end -}}
 
 {{- .Values.daemonsetCollector.configOverride | merge $configData | mustMergeOverwrite $config | toYaml}}
