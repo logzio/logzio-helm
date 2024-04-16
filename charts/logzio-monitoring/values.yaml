@@ -20,8 +20,12 @@ deployEvents:
 
 # Override values for the Fluentd sub-chart
 logzio-fluentd:
+  enabled: true
   daemonset:
     logType: "agent-k8s"
+
+logzio-logs-collector:
+  enabled: false
 
 # Override values for the opencost sub-chart
 opencost:

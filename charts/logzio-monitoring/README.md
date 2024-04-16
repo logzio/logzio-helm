@@ -8,6 +8,7 @@ The `logzio-monitoring` Helm Chart facilitates the shipping of Kubernetes teleme
 
 This project packages the following Helm Charts:
 - [logzio-fluentd](https://github.com/logzio/logzio-helm/tree/master/charts/fluentd) for shipping logs via Fluentd.
+- [logzio-logs-collector](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-logs-collector) for shipping logs via opentelemetry.
 - [logzio-telemetry](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-telemetry) for metrics and traces via OpenTelemetry Collector.
 - [logzio-trivy](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-trivy) for security reports via Trivy operator.
 - [logzio-k8s-events](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-k8s-events) for Kubernetes deployment events.
@@ -125,6 +126,20 @@ For example, to change a value named `someField` in `logzio-telemetry`'s `values
 --set logzio-k8s-telemetry.someField="my new value"
 ```
 
+### Migrate to OpenTelemetry for log collection
+
+The `logzio-fluentd` chart will be disabled by default in favor of the `logzio-logs-collector` for log collection in upcoming releases. To migrate to `logzio-logs-collector`, add the following `--set` flags:
+
+```sh
+helm install -n monitoring \
+--set logs.enabled=true \
+--set logzio-fluentd.enabled=false
+--set logzio-logs-collector.enabled=true \
+--set logzio-logs-collector.secrets.logzioShippingToken='<<LOG-SHIPPING-TOKEN>>' \
+--set logzio-logs-collector.secrets.logzioListener='<<LISTENER-HOST>>' \
+logzio-monitoring logzio-helm/logzio-monitoring
+```
+
 ### Sending telemetry data from eks on fargate
 
 To ship logs from pods running on Fargate, set the `fargateLogRouter.enabled` value to `true`. This will deploy a dedicated `aws-observability` namespace and a `configmap` for the Fargate log router. More information about EKS Fargate logging can be found [here](https://docs.aws.amazon.com/eks/latest/userguide/fargate-logging.html)
@@ -206,6 +221,16 @@ There are two possible approaches to the upgrade you can choose from:
 
 
 ## Changelog
+- **5.2.5**:
+  - **Depreciation notice** `logzio-fluentd` chart will be disabled by default in favour of `logzio-logs-collector` for log collection in upcoming releases.
+	- Added `logzio-logs-collector` version `1.0.0`:
+    - otel collector daemonset designed and configured to function as log collection agent
+    - eks fargate support
+    - adds logzio required fields (`log_level`, `type`, `env_id` and more)
+    - `enabled` value to enable/disable deployment from parent charts
+	- Upgrade `logzio-fluentd` to `0.29.1`:
+    - Added `enabled` value, to conditianly control the deployment of this chart by a parent chart.
+    - Added `daemonset.LogFileRefreshInterval` and `windowsDaemonset.LogFileRefreshInterval` values, to control list of watched log files refresh interval.
 - **5.2.4**:
   - Update `logzio-k8s-telemetry` sub chart version to `4.1.3`
 - **5.2.3**:
