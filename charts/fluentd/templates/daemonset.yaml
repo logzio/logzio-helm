@@ -277,7 +277,7 @@ spec:
           value: {{ .Values.windowsDaemonset.containersPath | quote }}
         {{- if .Values.env_id }}
         - name: ENV_ID
-          value: {{ .Values.env_id }}
+          value: {{ .Values.env_id | quote}}
         {{- end }}
         {{- if .Values.windowsDaemonset.extraEnv }}
 {{ toYaml .Values.windowsDaemonset.extraEnv | indent 8 }}
