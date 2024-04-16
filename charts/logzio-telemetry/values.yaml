@@ -5,34 +5,47 @@
 collector:
   mode: daemonset # possible values: standalone, daemonset
 traces:
-  enabled: false
+  enabled: false # Send traces telemetry
 metrics:
-  enabled: false
+  enabled: false # Send metrics telemetry 
 spm:
-  enabled: false
+  enabled: false # Send Span metrics, requires `traces.enabled`
+
 applicationMetrics:
-  enabled: false
-nameOverride: "otel-collector"
-fullnameOverride: ""
+  ## Send application metrics, requires `metrics.enabled` and the `prometheus.io/scrape: true` annotaion set.
+  enabled: false 
+kubeStateMetrics:
+  ## If false, kube-state-metrics sub-chart will not be installed
+  enabled: true
+pushGateway:
+  ## If false, prometheus-push-gateway sub-chart will not be installed
+  enabled: true
+nodeExporter:
+  ## If false, prometheus-node-exporter will not be installed
+  enabled: true
+
+nameOverride: "otel-collector" # The resources name prefix 
+fullnameOverride: "" # The resources name
 
 secrets:
-  name: logzio-secret
-  enabled: true
-  MetricsToken: ""
-  TracesToken: ""
-  SpmToken: ""
-  ListenerHost: ""
-  env_id: "my_environment"
-  LogzioRegion: "us"
-  CustomTracingEndpoint: ""
-  p8s_logzio_name: ""
-  windowsNodeUsername: ""
-  windowsNodePassword: ""
-  SamplingProbability: 10
-  SamplingLatency: 500
+  name: logzio-secret  # Secret name
+  enabled: true  # Create secret
+  MetricsToken: ""  # Metrics account shipping token
+  TracesToken: ""  # Tracing account shipping token
+  SpmToken: ""  # Span Metrics account shipping token
+  k8sObjectsLogsToken: ""  # Kubernetes objects Logs account shipping token
+  ListenerHost: ""  # Logz.io metrics listener address - https://docs.logz.io/docs/user-guide/admin/hosting-regions/account-region/
+  env_id: "my_environment"  # Environment name 
+  LogzioRegion: "us"  # Traces & Logs listener address region code - https://docs.logz.io/docs/user-guide/admin/hosting-regions/account-region/
+  CustomTracingEndpoint: ""  # Custom Traces listener endpoint
+  p8s_logzio_name: ""  # Metrics Environment name
+  windowsNodeUsername: ""  # Windows Node Username
+  windowsNodePassword: ""  # Windows Node Password
+  SamplingProbability: 10  # Traces Sampling Probability
+  SamplingLatency: 500  # Traces Sampling Latency
 
 
-managedServiceAccount: true
+managedServiceAccount: true 
 
 clusterRole:
   # Specifies whether a clusterRole should be created
@@ -121,27 +134,14 @@ clusterRoleRules:
   - list
   - watch
 
-
-kubeStateMetrics:
-  ## If false, kube-state-metrics sub-chart will not be installed
-  enabled: true
-
-pushGateway:
-  ## If false, prometheus-push-gateway sub-chart will not be installed
-  enabled: true
-
-nodeExporter:
-  ## If false, prometheus-node-exporter will not be installed
-  enabled: true
-
 prometheus-pushgateway:
   serviceAnnotations:
     prometheus.io/scrape: "true"
   nodeSelector:
     kubernetes.io/os: linux
-
+# Configuration merge from the colelctor configs
 emptyConfig: {}
-
+# Base configuration of the collector
 baseCollectorConfig:
   exporters:
     logging:
@@ -230,7 +230,7 @@ baseCollectorConfig:
     telemetry:
       logs:
         level: "info"
-
+# Traces configuration
 tracesConfig:
   exporters:
     logzio:
@@ -308,7 +308,7 @@ spmForwarderConfig:
         receivers: [jaeger, zipkin, otlp]
         processors: [resourcedetection/all, attributes/env_id, k8sattributes]
         exporters: [logging, otlp]
-
+# Metrics standalone collector configuration 
 metricsConfig:
   extensions:
     health_check: {}
@@ -494,7 +494,7 @@ image:
   repository: otel/opentelemetry-collector-contrib
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.80.0"
+  tag: "0.97.0"
 nginxWindowsImage:
   # Reverse proxy image to enable metrics scraping from windows nodes
   repository: logzio/logzio-windows-node-reverse-proxy
@@ -582,7 +582,89 @@ ports:
     hostPort: 9411
     protocol: TCP
 
-# Span and service graph metrics
+# Kubernetes Object logs
+k8sObjectsConfig:
+  enabled: true
+  config:
+    receivers:
+      # Watch for changes in Kubernetes objects
+      k8sobjects/watch:
+        objects:
+          - name: pods
+            mode: watch
+            exclude_watch_type: [ DELETED, BOOKMARK ]
+          - name: deployments
+            mode: watch
+            exclude_watch_type: [ DELETED, BOOKMARK ]
+          - name: daemonsets
+            mode: watch
+            exclude_watch_type: [ DELETED, BOOKMARK ]
+          - name: statefulsets
+            mode: watch
+            exclude_watch_type: [ DELETED, BOOKMARK ]
+          - name: jobs
+            mode: watch
+            exclude_watch_type: [ DELETED, BOOKMARK ]
+          - name: nodes
+            mode: watch
+            exclude_watch_type: [ DELETED, BOOKMARK ]
+      # Pull Kubernetes objects every 3 hours(default)
+      k8sobjects/pull:
+        objects:
+          - name: pods
+            mode: pull
+            interval: 180m
+          - name: deployments
+            mode: pull
+            interval: 180m
+          - name: daemonsets
+            mode: pull
+            interval: 180m
+          - name: statefulsets
+            mode: pull
+            interval: 180m
+          - name: jobs
+            mode: pull
+            interval: 180m
+          - name: nodes
+            mode: pull
+            interval: 180m
+    processors:
+      # Adds eventType key with value of type key, then sets type to k8s_object
+      transform/log_type:
+        error_mode: ignore
+        log_statements:
+          - context: log
+            statements:
+              - set(body["eventType"],body["type"]) where body["type"] != "k8s_object"
+              - set(body["type"], "k8s_object")
+      # For pulled objects, copy the log into object key       
+      transform/pulled_object:
+        error_mode: ignore
+        log_statements:
+          - context: log
+            statements:
+              - set(body["object"],body) where body["object"] == nil
+              - keep_keys(body, ["object", "type", "eventType"])
+      # Remove managed fields metadata key              
+      transform/remove_managedfields:
+        error_mode: ignore
+        log_statements:
+          - context: log
+            statements:
+              - delete_key(body["object"]["metadata"], "managedFields")
+    exporters:
+      logzio/logs:
+        account_token: "${OBJECTS_LOGS_TOKEN}"
+        region: "${LOGZIO_LISTENER_REGION}"
+
+    service:
+      pipelines:
+        logs/k8sobjects:
+          receivers: [k8sobjects/pull,k8sobjects/watch]
+          processors: [transform/pulled_object,transform/remove-managedfields,transform/log_type]
+          exporters: [logzio/logs]
+# Service graph metrics configuration
 serviceGraph:
   enabled: true
   config:
@@ -600,7 +682,7 @@ serviceGraph:
           exporters: [servicegraph]      
         metrics/spm-logzio:
           receivers: [servicegraph]
-
+# Span metrics configuration
 spanMetricsAgregator:
   config:
     processors:
@@ -630,22 +712,6 @@ spanMetricsAgregator:
             label: span.name
             new_label: operation  
     connectors:
-      servicegraph:
-        dimensions:
-        - env_id
-        latency_histogram_buckets:
-        - 2ms
-        - 8ms
-        - 50ms
-        - 100ms
-        - 200ms
-        - 500ms
-        - 1s
-        - 5s
-        - 10s
-        store:
-          max_items: 100000
-          ttl: 5s
       spanmetrics:
         aggregation_temporality: AGGREGATION_TEMPORALITY_CUMULATIVE
         dimensions:
@@ -726,12 +792,10 @@ spanMetricsAgregator:
           - metricstransform/labels-rename
           receivers:
           - spanmetrics
-          - servicegraph
         traces:
           exporters:
           - logging
           - spanmetrics
-          - servicegraph
           receivers:
           - jaeger
           - zipkin
@@ -799,9 +863,12 @@ standaloneCollector:
       memory: 512Mi
     requests:
       cpu: 200m
+      
+  podLabels:  {}
 
   podAnnotations: {}
-  # Configuration override that will be merged into the colelctor default config
+  
+  # Configuration override that will be merged into the collector default config
   configOverride: {}
 
 daemonsetCollector:
@@ -825,7 +892,10 @@ daemonsetCollector:
     requests:
       cpu: 150m
 
+  podLabels:  {}
+
   podAnnotations: {}
+  
   # Configuration override that will be merged into the daemonset default config
   configOverride: {}
 
@@ -880,15 +950,16 @@ prometheus-node-exporter:
                 operator: DoesNotExist
   rbac:
     pspEnabled: false
-
+# Filter only metrics relevant for prebuilt content
 enableMetricsFilter:
-  gke: false
-  eks: false
-  aks: false
-  dropKubeSystem: false
+  gke: false  # Google Kubernetes Engine
+  eks: false  # Amazon Elastic Kubernetes Service
+  aks: false  # Azure Kubernetes Service
+  dropKubeSystem: false  # Drop kube-system metrics
 
-disableKubeDnsScraping: false
+disableKubeDnsScraping: false  # Kube DNS metrics scraping
 
+# Metrics Daemonset collector configuration
 daemonsetConfig:
   extensions:
     health_check: {}
