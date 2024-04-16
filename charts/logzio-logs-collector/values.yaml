@@ -25,7 +25,7 @@ secrets:
   # environment indentifier attribute that will be added to all logs
   env_id: "my_env"
   # defualt log type field
-  logType: "test"
+  logType: "agent-k8s"
   # Secret with your logzio logs shipping token
   logzioLogsToken: "token"
   # Secret with your logzio region
