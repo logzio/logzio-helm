@@ -145,5 +145,6 @@ The collector supports by default various log formats (including multiline logs)
 * 1.0.1
   - Update multiline parsing
   - Update error detection in logs
+  - Change default log type
 * 1.0.0
   - kubernetes logs collection agent for logz.io based on opentelemetry collector
