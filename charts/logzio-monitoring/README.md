@@ -221,6 +221,25 @@ There are two possible approaches to the upgrade you can choose from:
 
 
 ## Changelog
+- **5.3.0**:
+  - Add `logzio-logs-collector.enabled` + `fluentd.enabled` values
+  - Upgrade `logzio-k8s-telemetry` to `4.2.0`:
+    - Upgraded opentelemetry-collector-contrib image to v0.97.0
+    - Added Kubernetes objects receiver
+    - Removed servicegraph connector from span metrics configuration
+    - Allow env_id & p8s_logzio_name non string values
+  - Upgrade `logzio-logs-collector` version to `1.0.1`:
+    - Create NOTES.txt for Helm install notes
+	- Enhanced env_id handling to support both numeric and string formats
+    - Change default log type
+	- Update multiline parsing and error detection
+	- Update error detection in logs
+  - Upgrade `logzio-fluentd` to `0.29.2`:
+    - Enhanced env_id handling to support both numeric and string formats
+  - Upgrade `logzio-trivy` to `0.4.0`:
+    - Enhanced env_id handling to support both numeric and string formats
+  - Upgrade `logzio-k8s-events` to `0.0.4`:
+    - Enhanced env_id handling to support both numeric and string formats
 - **5.2.5**:
   - **Depreciation notice** `logzio-fluentd` chart will be disabled by default in favour of `logzio-logs-collector` for log collection in upcoming releases.
 	- Added `logzio-logs-collector` version `1.0.0`:
