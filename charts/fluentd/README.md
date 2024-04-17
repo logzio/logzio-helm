@@ -303,6 +303,8 @@ If needed, the fluentd image can be changed to support windows server 2022 with 
 
 
 ## Change log
+ - **0.29.2**:
+  - Enhanced env_id handling to support both numeric and string formats.
  - **0.29.1**:
    - Added `enabled` value, to conditianly control the deployment of this chart by a parent chart.
    - Added `daemonset.LogFileRefreshInterval` and `windowsDaemonset.LogFileRefreshInterval` values, to control list of watched log files refresh interval.

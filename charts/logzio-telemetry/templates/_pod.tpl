@@ -58,6 +58,21 @@ containers:
           secretKeyRef:
             name: {{ .Values.secrets.name }}
             key: logzio-metrics-shipping-token
+      {{ if .Values.k8sObjectsConfig.enabled }}
+      - name: OBJECTS_LOGS_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: {{ .Values.secrets.name }}
+            key: logzio-k8s-objects-logs-token
+      {{ end }} 
+         
+{{- end }}
+{{- if or (eq .Values.k8sObjectsConfig.enabled true) (eq .Values.traces.enabled true) }}  
+      - name: LOGZIO_LISTENER_REGION
+        valueFrom:
+          secretKeyRef:
+            name: {{ .Values.secrets.name }}
+            key: logzio-listener-region            
 {{- end }}
 {{- if or (eq .Values.metrics.enabled true) (eq .Values.spm.enabled true) }}
       - name: LISTENER_URL
@@ -69,7 +84,7 @@ containers:
         valueFrom:
           secretKeyRef:
             name: {{ .Values.secrets.name }}
-            key: p8s-logzio-name
+            key: p8s-logzio-name   
 {{- end }}
 {{- if .Values.traces.enabled }}
       - name: TRACES_TOKEN
@@ -77,11 +92,6 @@ containers:
           secretKeyRef:
             name: {{ .Values.secrets.name }}
             key: logzio-traces-shipping-token
-      - name: LOGZIO_LISTENER_REGION
-        valueFrom:
-          secretKeyRef:
-            name: {{ .Values.secrets.name }}
-            key: logzio-listener-region
       {{ if .Values.secrets.CustomTracingEndpoint}}
       - name: CUSTOM_TRACING_ENDPOINT
         valueFrom:
@@ -104,7 +114,7 @@ containers:
         valueFrom:
           secretKeyRef:
             name: {{ .Values.secrets.name }}
-            key: logzio-spm-shipping-token
+            key: logzio-spm-shipping-token        
 {{ end }}
 {{- end }}
       - name: ENV_ID

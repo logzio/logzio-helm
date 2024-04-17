@@ -31,7 +31,7 @@ spec:
               name: {{ .Values.secrets.name }}
               key: logzio-log-listener
         - name: ENV_ID
-          value: {{ .Values.env_id }}
+          value: {{ .Values.env_id | quote }}
         - name: SCHEDULE
           value: {{ .Values.schedule }}
         - name: LOG_LEVEL
