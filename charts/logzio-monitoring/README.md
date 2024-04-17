@@ -132,11 +132,13 @@ The `logzio-fluentd` chart will be disabled by default in favor of the `logzio-l
 
 ```sh
 helm install -n monitoring \
---set logs.enabled=true \
---set logzio-fluentd.enabled=false
---set logzio-logs-collector.enabled=true \
---set logzio-logs-collector.secrets.logzioShippingToken='<<LOG-SHIPPING-TOKEN>>' \
---set logzio-logs-collector.secrets.logzioListener='<<LISTENER-HOST>>' \
+--set logs.enabled=true \  
+--set logzio-fluentd.enabled=false \  
+--set logzio-logs-collector.enabled=true \  
+--set logzio-logs-collector.secrets.logzioLogsToken=<<token>> \  
+--set logzio-logs-collector.secrets.logzioRegion=<<region>> \  
+--set logzio-logs-collector.secrets.env_id=<<env_id>> \  
+--set logzio-logs-collector.secrets.logType=<<log_type>> \
 logzio-monitoring logzio-helm/logzio-monitoring
 ```
 
