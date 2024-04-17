@@ -638,6 +638,12 @@ k8sObjectsConfig:
             statements:
               - set(body["eventType"],body["type"]) where body["type"] != "k8s_object"
               - set(body["type"], "k8s_object")
+      resource/env_id:
+        attributes:
+        # Adds env_id key with value from the secret
+        - key: env_id
+          action: insert
+          value: ${ENV_ID}
       # For pulled objects, copy the log into object key       
       transform/pulled_object:
         error_mode: ignore
@@ -654,7 +660,7 @@ k8sObjectsConfig:
             statements:
               - delete_key(body["object"]["metadata"], "managedFields")
     exporters:
-      logzio/logs:
+      logzio/object_logs:
         account_token: "${OBJECTS_LOGS_TOKEN}"
         region: "${LOGZIO_LISTENER_REGION}"
 
@@ -662,8 +668,8 @@ k8sObjectsConfig:
       pipelines:
         logs/k8sobjects:
           receivers: [k8sobjects/pull,k8sobjects/watch]
-          processors: [transform/pulled_object,transform/remove-managedfields,transform/log_type]
-          exporters: [logzio/logs]
+          processors: [transform/pulled_object,transform/remove_managedfields,transform/log_type, resource/env_id]
+          exporters: [logzio/object_logs]
 # Service graph metrics configuration
 serviceGraph:
   enabled: true
