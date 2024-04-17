@@ -294,6 +294,21 @@ entries:
   logzio-fluentd:
   - apiVersion: v2
     appVersion: 1.5.1
+    created: "2024-04-17T12:22:09.561092256Z"
+    description: A Helm chart for shipping Kubernetes logs via Fluentd.
+    digest: 911fc5f882528491c15bcff7989b6225d85af619a8cd514049dad724ce9f930e
+    keywords:
+    - logging
+    - fluentd
+    maintainers:
+    - email: yotam.loewenbach@logz.io
+      name: Yotam loewenbach
+    name: logzio-fluentd
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/logzio-fluentd-0.29.2/logzio-fluentd-0.29.2.tgz
+    version: 0.29.2
+  - apiVersion: v2
+    appVersion: 1.5.1
     created: "2024-03-27T05:13:26.409492432Z"
     description: A Helm chart for shipping Kubernetes logs via Fluentd.
     digest: 43098b6722057456b5b642195bff23c9b85208d83c232c531a5f3b468c352be2
@@ -939,6 +954,23 @@ entries:
   logzio-k8s-events:
   - apiVersion: v2
     appVersion: 0.0.2
+    created: "2024-04-17T12:22:09.728680618Z"
+    description: A Helm chart for shipping Kubernetes deployments event information
+      logs to Logz.io.
+    digest: 3c81d23b9e48cc1cfa0e698b5979a2ff0e81490fac6789f51109cb6f61509329
+    keywords:
+    - logging
+    - k8s
+    - kubernetes
+    maintainers:
+    - email: raul.gurshumo@logz.io
+      name: Raul Gurshumov
+    name: logzio-k8s-events
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/logzio-k8s-events-0.0.4/logzio-k8s-events-0.0.4.tgz
+    version: 0.0.4
+  - apiVersion: v2
+    appVersion: 0.0.2
     created: "2024-01-02T17:30:55.883008+07:00"
     description: A Helm chart for shipping Kubernetes deployments event information
       logs to Logz.io.
@@ -1117,6 +1149,38 @@ entries:
     - https://logzio.github.io/logzio-helm/logzio-k8s-metrics-0.0.1.tgz
     version: 0.0.1
   logzio-k8s-telemetry:
+  - apiVersion: v2
+    appVersion: 0.97.0
+    created: "2024-04-17T12:22:09.91455194Z"
+    dependencies:
+    - condition: kubeStateMetrics.enabled
+      name: kube-state-metrics
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 4.24.0
+    - condition: nodeExporter.enabled
+      name: prometheus-node-exporter
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 4.29.0
+    - condition: pushGateway.enabled
+      name: prometheus-pushgateway
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 2.4.2
+    description: logzio-k8s-telemetry allows you to ship metrics and traces from your
+      Kubernetes cluster using the OpenTelemetry collector.
+    digest: 24099d66e742d8674e12ee1aedde894ff7791e2d2f00aa928d444f7204750d97
+    maintainers:
+    - email: yotam.loewenbach@logz.io
+      name: yotamloe
+    - email: raul.gurshumo@logz.io
+      name: ralongit
+    name: logzio-k8s-telemetry
+    sources:
+    - https://github.com/prometheus/node_exporter
+    - https://github.com/kubernetes/kube-state-metrics
+    type: application
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/logzio-k8s-telemetry-4.2.0/logzio-k8s-telemetry-4.2.0.tgz
+    version: 4.2.0
   - apiVersion: v2
     appVersion: 0.80.0
     created: "2024-04-11T07:28:40.523343721Z"
@@ -2806,6 +2870,21 @@ entries:
     - https://logzio.github.io/logzio-helm/logzio-k8s-telemetry-0.0.1.tgz
     version: 0.0.1
   logzio-logs-collector:
+  - apiVersion: v2
+    appVersion: 0.80.0
+    created: "2024-04-17T12:22:10.048559342Z"
+    description: kubernetes logs collection agent for logz.io based on opentelemetry
+      collector
+    digest: 8a0628be944e8c664f93dfee138e1c4527630b9af503a337888f00df116aa180
+    home: https://logz.io/
+    maintainers:
+    - email: yotam.loewenbach@logz.io
+      name: yotam loewenbach
+    name: logzio-logs-collector
+    type: application
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/logzio-logs-collector-1.0.1/logzio-logs-collector-1.0.1.tgz
+    version: 1.0.1
   - apiVersion: v2
     appVersion: 0.80.0
     created: "2024-03-27T14:08:23.615208618Z"
@@ -5599,6 +5678,29 @@ entries:
   logzio-trivy:
   - apiVersion: v2
     appVersion: 0.2.1
+    created: "2024-04-17T12:22:10.360295705Z"
+    dependencies:
+    - name: trivy-operator
+      repository: https://aquasecurity.github.io/helm-charts/
+      version: 0.15.1
+    description: A Helm chart for deploying Trivy operator for scanning security risks
+      on your cluster, and shipping them to Logz.io
+    digest: fa4ebb56a3d5fc69f514cbfe84d3668909c16e2e439aea337c3be7f8f57a0b88
+    keywords:
+    - logging
+    - trivy
+    - security
+    maintainers:
+    - email: miri.ignatiev@logz.io
+      name: Miri Bar
+    name: logzio-trivy
+    sources:
+    - https://github.com/logzio/logzio-helm
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/logzio-trivy-0.3.1/logzio-trivy-0.3.1.tgz
+    version: 0.3.1
+  - apiVersion: v2
+    appVersion: 0.2.1
     created: "2024-01-02T17:30:56.663283+07:00"
     dependencies:
     - name: trivy-operator
@@ -5781,4 +5883,4 @@ entries:
     urls:
     - https://logzio.github.io/logzio-helm/prometheus-alerts-migrator-1.0.0.tgz
     version: 1.0.0
-generated: "2024-04-11T08:04:03.404851984Z"
+generated: "2024-04-17T12:22:10.360827073Z"
