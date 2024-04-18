@@ -22,7 +22,7 @@ Creating Custom Formats for Multiline Logs
 
 To configure custom formats, you must understand your logs' structure to accurately use `is_first_entry` or `is_last_entry` expressions. Regular expressions (regex) are powerful tools in matching specific log patterns, allowing you to identify the start or end of a multiline log entry effectively.
 
-Custom multiline `recombine` operators should be added before `move from attributes.log to body`:
+Custom multiline `recombine` operators should be added after `move from attributes.log to body`:
 ```yaml
   # Update body field after finishing all parsing
   - from: attributes.log
@@ -41,7 +41,7 @@ config:
       operators:
       - id: get-format
         routes:
-        - expr: body matches "^\\{"
+        - expr: body matches "^{.*}$"
           output: parser-docker
         - expr: body matches "^[^ Z]+ "
           output: parser-crio
@@ -105,6 +105,12 @@ config:
       - from: attributes.uid
         to: resource["k8s.pod.uid"]
         type: move
+      - id: parser-json
+        type: json_parser
+      # Update body field after finishing all parsing
+      - from: attributes.log
+        to: body
+        type: move
       # Add custom multiline parsers here. Add more `type: recombine` operators for custom multiline formats
       # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/pkg/stanza/docs/operators/recombine.md
       - type: recombine
@@ -112,10 +118,6 @@ config:
         combine_field: body
         is_first_entry: body matches "^[^\\s]"
         source_identifier: attributes["log.file.path"]
-      # Update body field after finishing all parsing
-      - from: attributes.log
-        to: body
-        type: move
 ```
 ### Examples
 
@@ -138,15 +140,16 @@ config:
     filelog:
       operators:
         # previous operators
-        - type: recombine
-          id: Java-Stack-Trace-Errors
-          combine_field: body
-          is_first_entry: body matches "^[\\w]+(Exception|Error)"
-          combine_with: "\n"
         # Update body field after finishing all parsing
         - from: attributes.log
           to: body
           type: move
+        # custom multiline recombine
+        - type: recombine
+          id: Java-Stack-Trace-Errors
+          combine_field: body
+          is_first_entry: body matches "^[\\w]+(Exception|Error)"
+          source_identifier: attributes["log.file.path"]
 ```
 
 #### Python Tracebacks
@@ -169,15 +172,16 @@ config:
     filelog:
       operators:
         # previous operators
-        - type: recombine
-          id: Python-Tracebacks
-          combine_field: body
-          is_first_entry: body matches "^Traceback"
-          combine_with: "\n"
         # Update body field after finishing all parsing
         - from: attributes.log
           to: body
           type: move
+        # custom multiline recombine
+        - type: recombine
+          id: Python-Tracebacks
+          combine_field: body
+          is_first_entry: body matches "^Traceback"
+          source_identifier: attributes["log.file.path"]
 ```
 
 #### Custom Multiline Log Format
@@ -199,13 +203,14 @@ config:
     filelog:
       operators:
         # previous operators
-        - type: recombine
-          id: custom-multiline
-          combine_field: body
-          is_first_entry: body matches "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}"
-          combine_with: "\n"
         # Update body field after finishing all parsing
         - from: attributes.log
           to: body
           type: move
+        # custom multiline recombine
+        - type: recombine
+          id: custom-multiline
+          combine_field: body
+          is_first_entry: body matches "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}"
+          source_identifier: attributes["log.file.path"]
 ```

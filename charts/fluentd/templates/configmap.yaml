@@ -36,7 +36,7 @@ data:
   {{- end }}
 
   {{- if .Values.env_id }}
-  env-id.conf : {{ toYaml .Values.configmap.envId | indent 2 }}
+  env-id.conf : {{ toYaml .Values.configmap.envId | quote | indent 2 }}
   {{- end }}
 {{- if .Values.configmap.extraConfig }}
 {{- range $key, $value := fromYaml .Values.configmap.extraConfig }}

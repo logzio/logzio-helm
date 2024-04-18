@@ -54,6 +54,18 @@ containers:
           secretKeyRef:
             name: {{ .Values.secrets.name }}
             key: logzio-metrics-shipping-token
+      {{ if .Values.k8sObjectsConfig.enabled }}
+      - name: OBJECTS_LOGS_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: {{ .Values.secrets.name }}
+            key: logzio-k8s-objects-logs-token
+      - name: LOGZIO_LISTENER_REGION
+        valueFrom:
+          secretKeyRef:
+            name: {{ .Values.secrets.name }}
+            key: logzio-listener-region            
+      {{ end }}            
       - name: LISTENER_URL
         valueFrom:
           secretKeyRef:

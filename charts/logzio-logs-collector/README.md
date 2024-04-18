@@ -142,5 +142,10 @@ Multi line logs configuration
 The collector supports by default various log formats (including multiline logs) such as `CRI-O` `CRI-Containerd` `Docker` formats. You can configure the chart to parse custom multiline logs pattern according to your needs, please read [Customizing Multiline Log Handling](./examples/multiline.md) guide for more details.
 
 ## Change log
+* 1.0.1
+  - Update multiline parsing
+  - Update error detection in logs
+  - Change default log type
+  - Enhanced env_id handling to support both numeric and string formats.
 * 1.0.0
   - kubernetes logs collection agent for logz.io based on opentelemetry collector
