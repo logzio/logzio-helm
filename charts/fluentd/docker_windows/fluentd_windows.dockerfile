@@ -1,4 +1,4 @@
-FROM fluent/fluentd:v1.14.5-windows-ltsc2019-1.0
+FROM fluent/fluentd:v1.16.5-windows-ltsc2019-1.0
 RUN gem install fluent-plugin-detect-exceptions \
 && gem install fluent-plugin-logzio \
 && gem install fluent-plugin-concat \
@@ -9,7 +9,7 @@ RUN gem install fluent-plugin-detect-exceptions \
 && gem install fluent-plugin-multi-format-parser \
 && gem install fluent-plugin-windows-eventlog \
 && gem install fluent-plugin-prometheus \
-&& fluent-plugin-dedot_filter 
+&& gem install fluent-plugin-dedot_filter 
 COPY plugins /fluent/plugins
 
 ENTRYPOINT ["cmd", "/k" ,"fluentd", "--config", "C:\\fluent\\conf\\fluent.conf","-p","C:\\fluent\\plugins"]
