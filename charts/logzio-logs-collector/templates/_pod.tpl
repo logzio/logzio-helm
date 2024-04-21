@@ -1,4 +1,4 @@
-{{- define "opentelemetry-collector.pod" -}}
+{{- define "opentelemetry-collector.loggingPod" -}}
 {{- with .Values.imagePullSecrets }}
 imagePullSecrets:
   {{- toYaml . | nindent 2 }}
