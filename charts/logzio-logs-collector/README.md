@@ -142,6 +142,8 @@ Multi line logs configuration
 The collector supports by default various log formats (including multiline logs) such as `CRI-O` `CRI-Containerd` `Docker` formats. You can configure the chart to parse custom multiline logs pattern according to your needs, please read [Customizing Multiline Log Handling](./examples/multiline.md) guide for more details.
 
 ## Change log
+* 1.0.2
+  - Change template function name `baseConfig` -> `baseLoggingConfig` to avoid conflicts with other charts deployed
 * 1.0.1
   - Update multiline parsing
   - Update error detection in logs

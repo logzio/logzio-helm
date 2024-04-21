@@ -1,14 +1,14 @@
 # Merge user supplied config.
-{{- define "opentelemetry-collector.baseConfig" -}}
+{{- define "opentelemetry-collector.baseLoggingConfig" -}}
 {{- $config := .Values.config | toYaml -}}
 {{- toYaml $config -}}
 {{- end }}
 
 # Build config file for daemonset OpenTelemetry Collector
-{{- define "opentelemetry-collector.daemonsetConfig" -}}
+{{- define "opentelemetry-collector.loggingDaemonsetConfig" -}}
 {{- $values := deepCopy .Values -}}
 {{- $data := dict "Values" $values | mustMergeOverwrite (deepCopy .) -}}
-{{- $config := include "opentelemetry-collector.baseConfig" $data -}}
+{{- $config := include "opentelemetry-collector.baseLoggingConfig" $data -}}
 {{- tpl $config . -}}
 {{- end }}
 

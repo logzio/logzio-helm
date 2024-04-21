@@ -8,6 +8,6 @@ metadata:
   labels:
     {{- include "opentelemetry-collector.labels" . | nindent 4 }}
 data:
-  relay: {{- include "opentelemetry-collector.daemonsetConfig" . | nindent 4 }}
+  relay: {{- include "opentelemetry-collector.loggingDaemonsetConfig" . | nindent 4 }}
 {{- end }}
 {{ end }}
