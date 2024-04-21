@@ -6,14 +6,14 @@ apiVersion: "networking.k8s.io/v1"
 kind: Ingress
 metadata:
   {{- if .name }}
-  name: {{ printf "%s-%s" (include "opentelemetry-collector.fullname" $) .name }}
+  name: {{ printf "%s-%s" (include "logs-collector.fullname" $) .name }}
   {{- else }}
-  name: {{ include "opentelemetry-collector.fullname" $ }}
+  name: {{ include "logs-collector.fullname" $ }}
   {{- end }}
-  namespace: {{ template "opentelemetry-collector.namespace" $ }}
+  namespace: {{ template "logs-collector.namespace" $ }}
   labels:
-    {{- include "opentelemetry-collector.labels" $ | nindent 4 }}
-    {{- include "opentelemetry-collector.component" $ | nindent 4 }}
+    {{- include "logs-collector.labels" $ | nindent 4 }}
+    {{- include "logs-collector.component" $ | nindent 4 }}
   {{- if .annotations }}
   annotations:
     {{- range $key, $value := .annotations }}
@@ -46,7 +46,7 @@ spec:
             pathType: {{ .pathType }}
             backend:
               service:
-                name: {{ include "opentelemetry-collector.fullname" $ }}
+                name: {{ include "logs-collector.fullname" $ }}
                 port:
                   number: {{ .port }}
           {{- end }}

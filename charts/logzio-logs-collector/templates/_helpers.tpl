@@ -1,18 +1,18 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "opentelemetry-collector.name" -}}
+{{- define "logs-collector.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
-{{- define "opentelemetry-collector.lowercase_chartname" -}}
+{{- define "logs-collector.lowercase_chartname" -}}
 {{- default .Chart.Name | lower }}
 {{- end }}
 
 {{/*
 Get component name
 */}}
-{{- define "opentelemetry-collector.component" -}}
+{{- define "logs-collector.component" -}}
 {{- if eq .Values.mode "daemonset" -}}
 component: logs-collector
 {{- end -}}
@@ -23,7 +23,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "opentelemetry-collector.fullname" -}}
+{{- define "logs-collector.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -34,37 +34,37 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "opentelemetry-collector.chart" -}}
+{{- define "logs-collector.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "opentelemetry-collector.labels" -}}
-helm.sh/chart: {{ include "opentelemetry-collector.chart" . }}
-{{ include "opentelemetry-collector.selectorLabels" . }}
+{{- define "logs-collector.labels" -}}
+helm.sh/chart: {{ include "logs-collector.chart" . }}
+{{ include "logs-collector.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-{{ include "opentelemetry-collector.additionalLabels" . }}
+{{ include "logs-collector.additionalLabels" . }}
 {{- end }}
 
 {{/*
 Selector labels
 */}}
-{{- define "opentelemetry-collector.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "opentelemetry-collector.name" . }}
+{{- define "logs-collector.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "logs-collector.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "opentelemetry-collector.serviceAccountName" -}}
+{{- define "logs-collector.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "opentelemetry-collector.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "logs-collector.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
@@ -74,30 +74,30 @@ Create the name of the service account to use
 {{/*
 Create the name of the clusterRole to use
 */}}
-{{- define "opentelemetry-collector.clusterRoleName" -}}
-{{- default (include "opentelemetry-collector.fullname" .) .Values.clusterRole.name }}
+{{- define "logs-collector.clusterRoleName" -}}
+{{- default (include "logs-collector.fullname" .) .Values.clusterRole.name }}
 {{- end }}
 
 {{/*
 Create the name of the clusterRoleBinding to use
 */}}
-{{- define "opentelemetry-collector.clusterRoleBindingName" -}}
-{{- default (include "opentelemetry-collector.fullname" .) .Values.clusterRole.clusterRoleBinding.name }}
+{{- define "logs-collector.clusterRoleBindingName" -}}
+{{- default (include "logs-collector.fullname" .) .Values.clusterRole.clusterRoleBinding.name }}
 {{- end }}
 
-{{- define "opentelemetry-collector.podAnnotations" -}}
+{{- define "logs-collector.podAnnotations" -}}
 {{- if .Values.podAnnotations }}
 {{- tpl (.Values.podAnnotations | toYaml) . }}
 {{- end }}
 {{- end }}
 
-{{- define "opentelemetry-collector.podLabels" -}}
+{{- define "logs-collector.podLabels" -}}
 {{- if .Values.podLabels }}
 {{- tpl (.Values.podLabels | toYaml) . }}
 {{- end }}
 {{- end }}
 
-{{- define "opentelemetry-collector.additionalLabels" -}}
+{{- define "logs-collector.additionalLabels" -}}
 {{- if .Values.additionalLabels }}
 {{- tpl (.Values.additionalLabels | toYaml) . }}
 {{- end }}
@@ -107,7 +107,7 @@ Create the name of the clusterRoleBinding to use
 {{/*
 Compute Service creation on mode
 */}}
-{{- define "opentelemetry-collector.serviceEnabled" }}
+{{- define "logs-collector.serviceEnabled" }}
   {{- $serviceEnabled := true }}
   {{- if not (eq (toString .Values.service.enabled) "<nil>") }}
     {{- $serviceEnabled = .Values.service.enabled -}}
@@ -123,7 +123,7 @@ Compute Service creation on mode
 {{/*
 Compute InternalTrafficPolicy on Service creation
 */}}
-{{- define "opentelemetry-collector.serviceInternalTrafficPolicy" }}
+{{- define "logs-collector.serviceInternalTrafficPolicy" }}
   {{- if and (eq .Values.mode "daemonset") (eq .Values.service.enabled true) }}
     {{- print (.Values.service.internalTrafficPolicy | default "Local") -}}
   {{- else }}
@@ -134,7 +134,7 @@ Compute InternalTrafficPolicy on Service creation
 {{/*
 Allow the release namespace to be overridden
 */}}
-{{- define "opentelemetry-collector.namespace" -}}
+{{- define "logs-collector.namespace" -}}
   {{- if .Values.namespaceOverride -}}
     {{- .Values.namespaceOverride -}}
   {{- else -}}
@@ -146,7 +146,7 @@ Allow the release namespace to be overridden
   This helper converts the input value of memory to Bytes.
   Input needs to be a valid value as supported by k8s memory resource field.
  */}}
-{{- define "opentelemetry-collector.convertMemToBytes" }}
+{{- define "logs-collector.convertMemToBytes" }}
   {{- $mem := lower . -}}
   {{- if hasSuffix "e" $mem -}}
     {{- $mem = mulf (trimSuffix "e" $mem | float64) 1e18 -}}
@@ -176,8 +176,8 @@ Allow the release namespace to be overridden
 {{- $mem }}
 {{- end }}
 
-{{- define "opentelemetry-collector.gomemlimit" }}
-{{- $memlimitBytes := include "opentelemetry-collector.convertMemToBytes" . | mulf 0.8 -}}
+{{- define "logs-collector.gomemlimit" }}
+{{- $memlimitBytes := include "logs-collector.convertMemToBytes" . | mulf 0.8 -}}
 {{- printf "%dMiB" (divf $memlimitBytes 0x1p20 | floor | int64) -}}
 {{- end }}
 

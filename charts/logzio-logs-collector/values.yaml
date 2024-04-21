@@ -118,7 +118,7 @@ config:
       # store check point in `directory: /var/lib/otelcol`
       storage: file_storage
       # Exclude collector container's logs. The file format is /var/log/pods/<namespace_name>_<pod_name>_<pod_uid>/<container_name>/<run_id>.log
-      exclude: [ "/var/log/pods/{{ .Release.Namespace }}_{{ include \"opentelemetry-collector.fullname\" . }}*_*/{{ include \"opentelemetry-collector.lowercase_chartname\" . }}/*.log" ]
+      exclude: [ "/var/log/pods/{{ .Release.Namespace }}_{{ include \"logs-collector.fullname\" . }}*_*/{{ include \"logs-collector.lowercase_chartname\" . }}/*.log" ]
       include:
       - /var/log/pods/*/*/*.log
       include_file_name: false

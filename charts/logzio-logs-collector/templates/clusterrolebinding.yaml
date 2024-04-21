@@ -3,9 +3,9 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: {{ include "opentelemetry-collector.clusterRoleBindingName" . }}
+  name: {{ include "logs-collector.clusterRoleBindingName" . }}
   labels:
-    {{- include "opentelemetry-collector.labels" . | nindent 4 }}
+    {{- include "logs-collector.labels" . | nindent 4 }}
   {{- if .Values.clusterRole.clusterRoleBinding.annotations }}
   annotations:
     {{- range $key, $value := .Values.clusterRole.clusterRoleBinding.annotations }}
@@ -15,10 +15,10 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: {{ include "opentelemetry-collector.clusterRoleName" . }}
+  name: {{ include "logs-collector.clusterRoleName" . }}
 subjects:
 - kind: ServiceAccount
-  name: {{ include "opentelemetry-collector.serviceAccountName" . }}
-  namespace: {{ include "opentelemetry-collector.namespace" . }}
+  name: {{ include "logs-collector.serviceAccountName" . }}
+  namespace: {{ include "logs-collector.namespace" . }}
 {{- end }}
 {{ end }}
