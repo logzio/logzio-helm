@@ -1,19 +1,19 @@
 # Merge user supplied config.
-{{- define "opentelemetry-collector.baseConfig" -}}
+{{- define "logs-collector.baseLoggingConfig" -}}
 {{- $config := .Values.config | toYaml -}}
 {{- toYaml $config -}}
 {{- end }}
 
-# Build config file for daemonset OpenTelemetry Collector
-{{- define "opentelemetry-collector.daemonsetConfig" -}}
+# Build config file for daemonset logs Collector
+{{- define "logs-collector.loggingDaemonsetConfig" -}}
 {{- $values := deepCopy .Values -}}
 {{- $data := dict "Values" $values | mustMergeOverwrite (deepCopy .) -}}
-{{- $config := include "opentelemetry-collector.baseConfig" $data -}}
+{{- $config := include "logs-collector.baseLoggingConfig" $data -}}
 {{- tpl $config . -}}
 {{- end }}
 
 {{/* Build the list of port for service */}}
-{{- define "opentelemetry-collector.servicePortsConfig" -}}
+{{- define "logs-collector.servicePortsConfig" -}}
 {{- $ports := deepCopy .Values.ports }}
 {{- range $key, $port := $ports }}
 {{- if $port.enabled }}
@@ -32,7 +32,7 @@
 {{- end }}
 
 {{/* Build the list of port for pod */}}
-{{- define "opentelemetry-collector.podPortsConfig" -}}
+{{- define "logs-collector.podPortsConfig" -}}
 {{- $ports := deepCopy .Values.ports }}
 {{- range $key, $port := $ports }}
 {{- if $port.enabled }}

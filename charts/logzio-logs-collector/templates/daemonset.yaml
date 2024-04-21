@@ -3,10 +3,10 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: {{ include "opentelemetry-collector.fullname" . }}
-  namespace: {{ template "opentelemetry-collector.namespace" . }}
+  name: {{ include "logs-collector.fullname" . }}
+  namespace: {{ template "logs-collector.namespace" . }}
   labels:
-    {{- include "opentelemetry-collector.labels" . | nindent 4 }}
+    {{- include "logs-collector.labels" . | nindent 4 }}
   {{- if .Values.annotations }}
   annotations:
     {{- range $key, $value := .Values.annotations }}
@@ -16,8 +16,8 @@ metadata:
 spec:
   selector:
     matchLabels:
-      {{- include "opentelemetry-collector.selectorLabels" . | nindent 6 }}
-      {{- include "opentelemetry-collector.component" . | nindent 6 }}
+      {{- include "logs-collector.selectorLabels" . | nindent 6 }}
+      {{- include "logs-collector.component" . | nindent 6 }}
   updateStrategy:
     {{- if eq .Values.rollout.strategy "RollingUpdate" }}
     {{- with .Values.rollout.rollingUpdate }}
@@ -30,15 +30,15 @@ spec:
     metadata:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap-agent.yaml") . | sha256sum }}
-        {{- include "opentelemetry-collector.podAnnotations" . | nindent 8 }}
+        {{- include "logs-collector.podAnnotations" . | nindent 8 }}
       labels:
-        {{- include "opentelemetry-collector.selectorLabels" . | nindent 8 }}
-        {{- include "opentelemetry-collector.component" . | nindent 8 }}
-        {{- include "opentelemetry-collector.podLabels" . | nindent 8 }}
+        {{- include "logs-collector.selectorLabels" . | nindent 8 }}
+        {{- include "logs-collector.component" . | nindent 8 }}
+        {{- include "logs-collector.podLabels" . | nindent 8 }}
     spec:
       {{- $podValues := deepCopy .Values }}
       {{- $podData := dict "Values" $podValues "configmapSuffix" "-daemonset" "isAgent" true }}
-      {{- include "opentelemetry-collector.pod" ($podData | mustMergeOverwrite (deepCopy .)) | nindent 6 }}
+      {{- include "logs-collector.loggingPod" ($podData | mustMergeOverwrite (deepCopy .)) | nindent 6 }}
       hostNetwork: {{ .Values.hostNetwork }}
       {{- with .Values.dnsPolicy }}
       dnsPolicy: {{ . }}

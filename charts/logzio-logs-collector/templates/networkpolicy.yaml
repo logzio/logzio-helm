@@ -3,10 +3,10 @@
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
-  name: {{ include "opentelemetry-collector.fullname" . }}
-  namespace: {{ template "opentelemetry-collector.namespace" . }}
+  name: {{ include "logs-collector.fullname" . }}
+  namespace: {{ template "logs-collector.namespace" . }}
   labels:
-    {{- include "opentelemetry-collector.labels" . | nindent 4 }}
+    {{- include "logs-collector.labels" . | nindent 4 }}
   {{- if .Values.networkPolicy.annotations }}
   annotations:
     {{- range $key, $value := .Values.networkPolicy.annotations }}
@@ -16,8 +16,8 @@ metadata:
 spec:
   podSelector:
     matchLabels:
-      {{- include "opentelemetry-collector.selectorLabels" . | nindent 6 }}
-      {{- include "opentelemetry-collector.component" . | nindent 6 }}
+      {{- include "logs-collector.selectorLabels" . | nindent 6 }}
+      {{- include "logs-collector.component" . | nindent 6 }}
   ingress:
     - ports:
         {{- range $port := .Values.ports }}

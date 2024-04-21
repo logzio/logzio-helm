@@ -1,13 +1,13 @@
 {{ if .Values.enabled}}
-{{- if or (eq (include "opentelemetry-collector.serviceEnabled" .) "true") (.Values.ingress.enabled) -}}
+{{- if or (eq (include "logs-collector.serviceEnabled" .) "true") (.Values.ingress.enabled) -}}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "opentelemetry-collector.fullname" . }}
-  namespace: {{ template "opentelemetry-collector.namespace" . }}
+  name: {{ include "logs-collector.fullname" . }}
+  namespace: {{ template "logs-collector.namespace" . }}
   labels:
-    {{- include "opentelemetry-collector.labels" . | nindent 4 }}
-    {{- include "opentelemetry-collector.component" . | nindent 4 }}
+    {{- include "logs-collector.labels" . | nindent 4 }}
+    {{- include "logs-collector.component" . | nindent 4 }}
   {{- if .Values.service.annotations }}
   annotations:
     {{- range $key, $value := .Values.service.annotations }}
@@ -28,15 +28,15 @@ spec:
     - {{ . }}
     {{- end }}
   {{- end }}
-  {{- $ports := include "opentelemetry-collector.servicePortsConfig" . }}
+  {{- $ports := include "logs-collector.servicePortsConfig" . }}
   {{- if $ports }}
   ports:
     {{- $ports | nindent 4}}
   {{- end }}
   selector:
-    {{- include "opentelemetry-collector.selectorLabels" . | nindent 4 }}
-    {{- include "opentelemetry-collector.component" . | nindent 4 }}
-  internalTrafficPolicy: {{ include "opentelemetry-collector.serviceInternalTrafficPolicy" . }}
+    {{- include "logs-collector.selectorLabels" . | nindent 4 }}
+    {{- include "logs-collector.component" . | nindent 4 }}
+  internalTrafficPolicy: {{ include "logs-collector.serviceInternalTrafficPolicy" . }}
   {{- if and (eq .Values.service.type "LoadBalancer") (.Values.service.externalTrafficPolicy) }}
   externalTrafficPolicy: {{ .Values.service.externalTrafficPolicy }}
   {{- end }}
