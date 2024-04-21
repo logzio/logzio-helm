@@ -144,6 +144,7 @@ The collector supports by default various log formats (including multiline logs)
 ## Change log
 * 1.0.2
   - Change template function name `baseConfig` -> `baseLoggingConfig` to avoid conflicts with other charts deployed
+  - Refactor tempaltes function names `opentelemetry-collector` -> `logs-collector` to avoid conflicts with other charts templates
 * 1.0.1
   - Update multiline parsing
   - Update error detection in logs
