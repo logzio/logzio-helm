@@ -297,7 +297,8 @@ By default the fluentd image for windows-server supports windows server 2019.
 If needed, the fluentd image can be changed to support windows server 2022 with the following commands:
 
 ```yaml
---set windowsImage=logzio/fluentd-windows-2022
+--set windowsImage=logzio/fluentd-windows-2022 \
+--set windowsImageTag=0.0.2
 ```
 
 
