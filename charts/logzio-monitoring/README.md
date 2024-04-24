@@ -225,7 +225,6 @@ There are two possible approaches to the upgrade you can choose from:
 
 
 ## Changelog
-
 - **5.3.1**: 
   Upgrade `logzio-logs-collector` version to `1.0.2`:
     - Refactor templates function names, to avoid conflicts with other charts templates
