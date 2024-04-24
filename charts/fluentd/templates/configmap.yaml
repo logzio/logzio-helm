@@ -36,8 +36,7 @@ data:
   {{- end }}
 
   {{- if .Values.env_id }}
-  env-id.conf : {{ toYaml .Values.configmap.envId | quote | indent 2 }}
-  {{- end }}
+  env-id.conf : {{ include "logzio.envId" . | toYaml | indent 2 }}
 {{- if .Values.configmap.extraConfig }}
 {{- range $key, $value := fromYaml .Values.configmap.extraConfig }}
   {{ $key }}: |-

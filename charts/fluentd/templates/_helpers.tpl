@@ -89,3 +89,11 @@ Builds a filter based on log levels
 {{- cat "<filter **>\n    @type grep\n    regexp1 log_level" .Values.logLevelFilter "\n</filter>" | replace "\"" "" }}
 {{- end -}}
 {{- end -}}
+
+
+{{/*
+Builds the envId.conf to add env id field in the logs
+*/}}
+{{- define "logzio.envId" }}
+{{- printf "%s" .Values.configmap.envId }}
+{{- end -}}
