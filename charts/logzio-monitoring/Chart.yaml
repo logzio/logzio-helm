@@ -29,7 +29,7 @@ dependencies:
     repository: "https://logzio.github.io/logzio-helm/"
     condition: deployEvents.enabled
   - name: logzio-logs-collector
-    version: "1.0.1"
+    version: "1.0.2"
     repository: "https://logzio.github.io/logzio-helm/"
     condition: logs.enabled
 maintainers:

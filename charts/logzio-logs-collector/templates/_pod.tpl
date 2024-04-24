@@ -1,9 +1,9 @@
-{{- define "opentelemetry-collector.pod" -}}
+{{- define "logs-collector.loggingPod" -}}
 {{- with .Values.imagePullSecrets }}
 imagePullSecrets:
   {{- toYaml . | nindent 2 }}
 {{- end }}
-serviceAccountName: {{ include "opentelemetry-collector.serviceAccountName" . }}
+serviceAccountName: {{ include "logs-collector.serviceAccountName" . }}
 securityContext:
   {{- toYaml .Values.podSecurityContext | nindent 2 }}
 {{- with .Values.hostAliases }}
@@ -11,7 +11,7 @@ hostAliases:
   {{- toYaml . | nindent 2 }}
 {{- end }}
 containers:
-  - name: {{ include "opentelemetry-collector.lowercase_chartname" . }}
+  - name: {{ include "logs-collector.lowercase_chartname" . }}
     command:
       - /{{ .Values.command.name }}
       {{- if .Values.configMap.create }}
@@ -34,7 +34,7 @@ containers:
     {{- end }}
     imagePullPolicy: {{ .Values.image.pullPolicy }}
 
-    {{- $ports := include "opentelemetry-collector.podPortsConfig" . }}
+    {{- $ports := include "logs-collector.podPortsConfig" . }}
     {{- if $ports }}
     ports:
       {{- $ports | nindent 6}}
@@ -80,7 +80,7 @@ containers:
       {{ end }}
       {{- if and (.Values.useGOMEMLIMIT) ((((.Values.resources).limits).memory))  }}
       - name: GOMEMLIMIT
-        value: {{ include "opentelemetry-collector.gomemlimit" .Values.resources.limits.memory | quote }}
+        value: {{ include "logs-collector.gomemlimit" .Values.resources.limits.memory | quote }}
       {{- end }}
       {{- with .Values.extraEnvs }}
       {{- . | toYaml | nindent 6 }}
@@ -138,7 +138,7 @@ containers:
     volumeMounts:
       {{- if .Values.configMap.create }}
       - mountPath: /conf
-        name: {{ include "opentelemetry-collector.lowercase_chartname" . }}-configmap
+        name: {{ include "logs-collector.lowercase_chartname" . }}-configmap
       {{- end }}
       - name: varlogpods
         mountPath: /var/log/pods
@@ -163,9 +163,9 @@ priorityClassName: {{ .Values.priorityClassName | quote }}
 {{- end }}
 volumes:
   {{- if .Values.configMap.create }}
-  - name: {{ include "opentelemetry-collector.lowercase_chartname" . }}-configmap
+  - name: {{ include "logs-collector.lowercase_chartname" . }}-configmap
     configMap:
-      name: {{ include "opentelemetry-collector.fullname" . }}{{ .configmapSuffix }}
+      name: {{ include "logs-collector.fullname" . }}{{ .configmapSuffix }}
       items:
         - key: relay
           path: relay.yaml

@@ -3,9 +3,9 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ include "opentelemetry-collector.clusterRoleName" . }}
+  name: {{ include "logs-collector.clusterRoleName" . }}
   labels:
-    {{- include "opentelemetry-collector.labels" . | nindent 4 }}
+    {{- include "logs-collector.labels" . | nindent 4 }}
   {{- if .Values.clusterRole.annotations }}
   annotations:
     {{- range $key, $value := .Values.clusterRole.annotations }}
