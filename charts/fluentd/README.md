@@ -298,11 +298,14 @@ If needed, the fluentd image can be changed to support windows server 2022 with 
 
 ```yaml
 --set windowsImage=logzio/fluentd-windows-2022 \
---set windowsImageTag=0.0.1
+--set windowsImageTag=0.0.2
 ```
 
 
 ## Change log
+ - **0.30.0**:
+  - Upgrade fluentd version to `1.16.5`
+  - Fix bug of `env-id.conf`
  - **0.29.2**:
   - Enhanced env_id handling to support both numeric and string formats.
  - **0.29.1**:

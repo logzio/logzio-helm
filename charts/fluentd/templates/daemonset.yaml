@@ -130,7 +130,7 @@ spec:
           value: {{ .Values.daemonset.posFile | quote }}
         {{- if .Values.env_id }}
         - name: ENV_ID
-          value: {{ .Values.env_id }}
+          value: {{ .Values.env_id | quote }}
         {{- end }}
         {{- if .Values.daemonset.extraEnv }}
 {{ toYaml .Values.daemonset.extraEnv | indent 8 }}
@@ -275,6 +275,8 @@ spec:
           value: {{ include "logzio.windowsExcludePath" . | quote }}
         - name: CONTAINERS_PATH
           value: {{ .Values.windowsDaemonset.containersPath | quote }}
+        - name: POS_FILE_PATH
+          value: {{ .Values.daemonset.posFile | quote }}
         {{- if .Values.env_id }}
         - name: ENV_ID
           value: {{ .Values.env_id | quote}}
