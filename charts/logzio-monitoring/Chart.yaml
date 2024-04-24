@@ -10,7 +10,7 @@ sources:
 dependencies:
   - name: logzio-fluentd
     version: "0.30.0"
-    repository: "file:///Users/naama/Desktop/naama/integrations/logzio-helm/charts/fluentd/"
+    repository: "https://logzio.github.io/logzio-helm/"
     condition: logs.enabled
   - name: logzio-k8s-telemetry
     version: "4.2.0"
