@@ -226,11 +226,8 @@ There are two possible approaches to the upgrade you can choose from:
 
 ## Changelog
 
-- **5.3.2**:
-  - Upgrade `logzio-fluentd` to version `0.30.0`
-  	- Upgrade fluentd version to `1.16.5`
 - **5.3.1**: 
-  - Upgrade `logzio-logs-collector` version to `1.0.2`:
+  Upgrade `logzio-logs-collector` version to `1.0.2`:
     - Refactor templates function names, to avoid conflicts with other charts templates
 - **5.3.0**:
   - Add `logzio-logs-collector.enabled` + `fluentd.enabled` values
