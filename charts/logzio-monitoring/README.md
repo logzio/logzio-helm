@@ -227,7 +227,7 @@ There are two possible approaches to the upgrade you can choose from:
 ## Changelog
 - **5.3.1**:
   Upgrade `logzio-logs-collector` version to `1.0.2`:
-    - Refactor tempaltes function names, to avoid conflicts with other charts templates
+    - Refactor templates function names, to avoid conflicts with other charts templates
 - **5.3.0**:
   - Add `logzio-logs-collector.enabled` + `fluentd.enabled` values
   - Upgrade `logzio-k8s-telemetry` to `4.2.0`:
