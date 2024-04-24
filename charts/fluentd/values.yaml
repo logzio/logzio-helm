@@ -7,7 +7,7 @@ imageTag: 1.5.3
 # Fluentd image in daemonset for windows nodes
 windowsImage: logzio/fluentd-windows
 # Fluentd image tag for windows nodes
-windowsImageTag: 0.0.3a
+windowsImageTag: 0.0.3
 
 # Overrides the Chart name for resources
 nameOverride: ""
