@@ -1,13 +1,12 @@
 
 # Logzio-fluentd
 
-[Helm](https://helm.sh/) is a tool for managing packages of pre-configured Kubernetes resources using Charts.
-Logzio-fluentd allows you to ship logs from your Kubernetes cluster to Logz.io, using Fluentd.
-Fluentd is flexible enough and has the proper plugins to distribute logs to different third parties such as Logz.io.
+[Helm](https://helm.sh/) is a package management tool that uses Charts to deploy pre-configured sets of Kubernetes resources. The Logzio-fluentd chart enables you to transmit logs from your Kubernetes cluster to Logz.io via Fluentd. Fluentd's flexibility and availability of plugins allow for easy distribution of logs to various third-party services, including Logz.io.
 
 The chart defaults to configuration for Conatinerd CRI. If your cluster uses Docker as CRI, please refer to `daemonset.containerdRuntime` in the [configuration table](https://github.com/logzio/logzio-helm/tree/master/charts/fluentd#configuration).
 
-**Note**: This chart is for shipping logs only. For a chart that ships all telemetry (logs, metrics, traces, spm) - use our [Logzio Monitoring chart](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-monitoring).
+**Note**: This chart is for shipping logs only. 
+For a chart that ships all telemetry data, including logs, metrics, traces, and SPM, use our [Logzio Monitoring chart](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-monitoring).
 
 ### Deploying the Chart:
 
@@ -27,9 +26,8 @@ helm repo add logzio-helm https://logzio.github.io/logzio-helm
 
 #### 3. Deploy
 
-The following command will install the Chart with the default values.
-If you wish to change some of the values, add to this command `--set` flag(s) with the parameter(s) you'd like to change. For more information & example, see the [configuration table](https://github.com/logzio/logzio-helm/tree/master/charts/fluentd#configuration).
-You can learn more about the ways you can customise the Chart's values [here](https://helm.sh/docs/helm/helm_install/#synopsis).
+The following command installs the Chart using the default values. If you want to modify any settings, append the `--set` flag(s) to this command along with the parameters you wish to change. For more information and examples, refer to the [configuration table](https://github.com/logzio/logzio-helm/tree/master/charts/fluentd#configuration).
+You can find additional details on how to customize the Chart's values [here](https://helm.sh/docs/helm/helm_install/#synopsis).
 
 Replace `<<LOG-SHIPPING-TOKEN>>` with the [token](https://app.logz.io/#/dashboard/settings/general) of the account you want to ship to.
 
@@ -42,7 +40,7 @@ helm install -n monitoring \
 logzio-fluentd logzio-helm/logzio-fluentd
 ```
 
-In case it's not possible or secure to add the secret from the helm chart (e.g. no secure value-file storage) it is possible to override the name of the secret by overriding secretName in the values file. This way an external secret with the keys logzioShippingToken and logzioListener can be placed by other means. 
+If adding the secret directly through the Helm chart is not possible or secure (for example, due to the absence of secure value-file storage), you can override the secret's name by modifying `secretName` in the values file. This adjustment allows you to place an external secret containing the keys `logzioShippingToken` and `logzioListener` through alternative methods.
 
 #### 4. Check Logz.io for your logs
 
