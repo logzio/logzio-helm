@@ -1,6 +1,6 @@
 # Logzio-k8s-telemetry
 
-**Note**: This chart is for shipping metrics and traces only. For a chart that ships all telemetry (logs, metrics, traces, spm) - use our [Logzio Monitoring chart](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-monitoring).
+**Note**: This chart is specifically designed for shipping metrics and traces only. For a chart that handles all telemetry data—including logs, metrics, traces, and SPM—please use our [Logzio Monitoring chart](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-monitoring).
 
 ##  Overview
 
@@ -47,7 +47,7 @@ Replace `<<*P8S-LOGZIO-NAME*>>` with the name for the environment's metrics, to 
 Replace `<<*ENV-ID*>>` with the name for your environment's identifier, to easily identify the telemetry data for each environment.
 
 #### For metrics:
-Enable the metrics configuration for this chart: --set metrics.enabled=true
+Enable the metrics configuration for this chart: `--set metrics.enabled=true`
 
 Replace the Logz-io `<<PROMETHEUS-METRICS-SHIPPING-TOKEN>>` with the [token](https://app.logz.io/#/dashboard/settings/manage-tokens/data-shipping) of the metrics account to which you want to send your data.
 
@@ -163,10 +163,11 @@ In these cases we can use the following `--set` commands to use an alternative i
 
 #### For clusters with Windows Nodes
 
-In order to extract and scrape metrics from Windows Nodes, a Windows Exporter service must first be installed on the node host itself. We will do this by authenticating with username and password using SSH connection to the node through a job.
 
-By default, the Windows installer job will run on deployment and every 10 minutes, and will keep the most recent failed and successful pods.
-You can change these setting in values.yaml:
+To extract and scrape metrics from Windows Nodes, a Windows Exporter service must be installed on the node host. This installation is accomplished by authenticating with a username and password via an SSH connection to the node through a job.
+
+By default, the Windows installer job will execute upon deployment and subsequently every 10 minutes, retaining the most recent failed and successful pods.
+You can modify these settings in the `values.yaml` file:
 
 ```
 windowsExporterInstallerJob:
@@ -176,9 +177,9 @@ windowsExporterInstallerJob:
   failedJobsHistoryLimit: 1
 ```
 
-The default username for windows Node pools is: azureuser. (Username and password are shared across all windows nodepools)
+The default username for Windows Node pools is: `azureuser`. (This username and password are shared across all Windows node pools.)
 
-You can change your Windows node pool password in AKS cluster with the following command (will only affect Windows node pools):
+You can change the password for your Windows node pools in the AKS cluster using the following command (this will only affect Windows node pools):
 
 ```
     az aks update \
@@ -314,13 +315,13 @@ To Filter out metrics from `kube-system` namesapce, set the following flag when 
 
 ### Disabling kube-dns scraping for EKS clusters
 
-In the current EKS setup, kube-dns metrics cannot be scraped from the kube-dns system service as the port used for scraping is already in use. This results in the following warning in the collector pod logs:
+In the current EKS setup, kube-dns metrics cannot be scraped from the kube-dns system service because the port used for scraping is already in use. This issue generates the following warning in the collector pod logs:
 
 ```
 	Failed to scrape Prometheus endpoint	{"kind": "receiver", "name": "prometheus", "pipeline": "metrics", "scrape_timestamp": 1659031329447, "target_labels": "map[__name__:up eks_amazonaws_com_component:kube-dns instance:: job:kubernetes-service-endpoints k8s_app:kube-dns kubernetes_io_cluster_service:true kubernetes_io_name:CoreDNS kubernetes_node: namespace:kube-system pod:coredns service:kube-dns]"}
 ```
 
-A workaround for this issue is to create a seperate kube-dns service and add the necessary annotations to enable scraping.
+A workaround for this issue is to create a separate kube-dns service and add the necessary annotations to enable scraping.
 By default, the kube-dns service filter is enabled, using the flag:
 
 ```
@@ -332,28 +333,28 @@ https://github.com/aws/containers-roadmap/issues/965
 
 
 ### Collector deployment modes
-The default collector deployment is as a daemonset collector.
-This is the recommended deployment method.
-In some cases the standalone collector deployment can be more beneficial, e.g a small cluster with low metrics/traces count.
-For this case you can use standalone deployment for the pod:
+The default collector deployment is as a DaemonSet. This is the recommended deployment method. However, in some cases, such as a small cluster with a low count of metrics/traces, a standalone collector deployment may be more beneficial. For such scenarios, you can use the standalone deployment for the pod:
+
 ```
 --set collector.mode=standalone
 ```
 
 
 ### Using pprof extention
-The pprof extension in OpenTelemetry Collector allows you to view and analyze the profile of the collector during runtime. Here's how you can use it:
+The pprof extension in the OpenTelemetry Collector allows you to view and analyze the profile of the collector during runtime. Here's how you can use it:
 
-To download the go tool pprof command, you will need to install the Go programming language. You can download and install Go from the [official website](https://golang.org/dl/).
+To download the `go tool pprof` command, you need to install the Go programming language. You can download and install Go from the [official website](https://golang.org/dl/).
 
-Once Go is installed, you can use the go command to install pprof and other tools:
+Once Go is installed, you can use the `go` command to install pprof and other tools:
+
 
 ```
 go get -u golang.org/x/tools/cmd/pprof
 ```
-This will download and install pprof and any necessary dependencies. You can then use the go tool pprof command.
+This command will download and install pprof along with any necessary dependencies. You can then use the `go tool pprof` command.
 
-Alternatively, you can also install pprof using a package manager, such as apt-get on Ubuntu or brew on macOS:
+Alternatively, you can install pprof using a package manager, such as `apt-get` on Ubuntu or `brew` on macOS:
+
 
 ```
 sudo apt-get install pprof # on Ubuntu
@@ -364,7 +365,7 @@ Forward the 1777 pprof port of the collector pod to your local network using the
 ```
 kubectl port-forward <<pod>> 1777:1777
 ```
-Use the go tool pprof command to fetch the profile and visualize it in the web UI on port 1212.
+Use the `go tool pprof` command to fetch the profile and visualize it in the web UI on port 1212.
 To view the heap memory profile:
 ```
 go tool pprof -http=localhost:1212 http://localhost:1777/debug/pprof/heap
@@ -378,7 +379,8 @@ Or to look at a 30-second CPU profile:
 go tool pprof -http=localhost:1212 http://localhost:1777/debug/pprof/profile?seconds=30
 
 ```
-You can also use the pprof extension to view other types of profiles, such as goroutine, thread creation, and block. To do this, replace the endpoint in the go tool pprof command with the appropriate profile type. For example, to view the goroutine profile:
+You can also use the pprof extension to view other types of profiles, such as goroutine, thread creation, and block. To do this, replace the endpoint in the `go tool pprof` command with the appropriate profile type. For example, to view the goroutine profile:
+
 ```
 go tool pprof -http=localhost:1212 http://localhost:1777/debug/pprof/goroutine
 ```
