@@ -1,6 +1,6 @@
 # logzio-monitoring
 
-The `logzio-monitoring` Helm Chart facilitates the shipping of Kubernetes telemetry—including logs, metrics, traces, and security reports—to your Logz.io account.
+The `logzio-monitoring` Helm Chart facilitates the process of sending Kubernetes telemetry data—such as logs, metrics, traces, and security reports—to your Logz.io account.
 
 **Note:** This project is currently in *beta* and may undergo changes.
 
@@ -13,7 +13,7 @@ This project packages the following Helm Charts:
 - [logzio-trivy](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-trivy) for security reports via Trivy operator.
 - [logzio-k8s-events](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-k8s-events) for Kubernetes deployment events.
 
-### Kubernetes Versions Compatibility
+### Kubernetes versions compatibility
 
 | Chart Version | Kubernetes Version |
 |---|---|
@@ -90,16 +90,16 @@ logzio-monitoring logzio-helm/logzio-monitoring
 
 ### Further configuration
 
-The helm install command outlined above deploys a standard configuration of the chart for shipping logs, metrics, and traces.
+The `helm install` command described above deploys a standard configuration of the chart for sending logs, metrics, and traces.
 
-However, you can customize the chart using the --set flag in your helm install command:
+However, you can customize the chart by using the `--set` flag in your `helm install` command:
 
 | Parameter	| Description | Default |
 | --- | --- | --- |
-| `logs.enabled` | Enable to send k8s logs | `false` |
-| `metricsOrTraces.enabled` | Enable to send k8s metrics or traces | `false` |
-| `securityReport.enabled` | Enable to send k8s security logs | `false` |
-| `deployEvents.enabled` | Enable to send k8s deploy events logs | `false` |
+| `logs.enabled` | Enable to send Kubernetes logs | `false` |
+| `metricsOrTraces.enabled` | Enable to send Kubernetes metrics or traces | `false` |
+| `securityReport.enabled` | Enable to send Kubernetes security logs | `false` |
+| `deployEvents.enabled` | Enable to send Kubernetes deploy events logs | `false` |
 
 #### To modify the logs chart configuration:
 
