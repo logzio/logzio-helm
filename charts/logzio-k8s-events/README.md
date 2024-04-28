@@ -4,7 +4,7 @@ Helm is a tool for managing packages of pre-configured Kubernetes resources usin
 Logzio-K8S-Events helm chart allows you to deploy a daemonset that will ship deployment event logs from your Kubernetes cluster to Logz.io.
 
 
-**Note**: This chart is for shipping Kubernetes deployment event logs only. For a chart that ships all telemetry (logs, metrics, traces, spm) - use our [Logzio Monitoring chart](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-monitoring).
+**Note**: This chart is specifically for shipping Kubernetes deployment event logs only. For a chart that handles all telemetry data—including logs, metrics, traces, and SPM—please use our [Logzio Monitoring chart](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-monitoring).
 
 
 ### Prerequisites:
@@ -56,7 +56,7 @@ logzio-k8s-events logzio-helm/logzio-k8s-events
 
 #### Deployment Events Versioning
 
-To add a versioning indicator to our K8S 360 and Service Overview UI, the specified annotation must be included in the metadata of each resource whose versioning you wish to track. The 'View commit' button will link to the commit URL in your version control system (VCS) from the logzio/commit_url annotation value.
+To add a versioning indicator to our K8S 360 and Service Overview UI, you must include the specified annotation in the metadata of each resource whose versioning you wish to track. The 'View commit' button will link to the commit URL in your version control system (VCS) from the `logzio/commit_url` annotation value.
 
 ```yaml
 metadata:
