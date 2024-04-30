@@ -144,8 +144,8 @@ The collector supports by default various log formats (including multiline logs)
 ## Change log
 * 1.0.3
   - Replace dots (".") with underscores ("_") in log attributes keys:
-   - Added `transform/dedot` proccesor. 
-   - Edited `k8sattributes`, `transform/log_type`, `transform/log_level` proccesors.
+    - Added `transform/dedot` proccesor. 
+    - Edited `k8sattributes`, `transform/log_type`, `transform/log_level` proccesors.
 * 1.0.2
   - Change template function name `baseConfig` -> `baseLoggingConfig` to avoid conflicts with other charts deployed
   - Refactor tempaltes function names `opentelemetry-collector` -> `logs-collector` to avoid conflicts with other charts templates
