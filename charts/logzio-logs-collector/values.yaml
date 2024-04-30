@@ -58,30 +58,39 @@ config:
         - context: log
           statements:
             # set log_level
-            - set(attributes["log.level"], "INFO")
-            - set(attributes["log.level"], "DEBUG") where (IsMatch(body, ".*\\b(?i:debug)\\b.*"))
-            - set(attributes["log.level"], "WARNING") where (IsMatch(body, ".*\\b(?i:warning|warn)\\b.*"))
-            - set(attributes["log.level"], "ERROR") where (IsMatch(body, ".*(?i:(?:error|fail|failure|exception|panic)).*"))
+            - set(attributes["log_level"], "INFO")
+            - set(attributes["log_level"], "DEBUG") where (IsMatch(body, ".*\\b(?i:debug)\\b.*"))
+            - set(attributes["log_level"], "WARNING") where (IsMatch(body, ".*\\b(?i:warning|warn)\\b.*"))
+            - set(attributes["log_level"], "ERROR") where (IsMatch(body, ".*(?i:(?:error|fail|failure|exception|panic)).*"))
     transform/log_type:
       error_mode: ignore
       log_statements:
         - context: resource
           statements:
             # Set type based on Kubernetes annotation or default
-            - set(attributes["type"], attributes["k8s.annotations.logz.io/application_type"]) where attributes["k8s.annotations.logz.io/application_type"] != nil
-            - set(attributes["type"], attributes["k8s.annotations.log_type"]) where attributes["k8s.annotations.log_type"] != nil and attributes["k8s.annotations.logz.io/application_type"] == nil
-            - set(attributes["type"], "${env:LOG_TYPE}") where attributes["k8s.annotations.log_type"] == nil and attributes["k8s.annotations.logz.io/application_type"] == nil
+            - set(attributes["type"], attributes["k8s_annotations_logz.io/application_type"]) where attributes["k8s_annotations_logz.io/application_type"] != nil
+            - set(attributes["type"], attributes["k8s_annotations_log_type"]) where attributes["k8s_annotations_log_type"] != nil and attributes["k8s_annotations_logz.io/application_type"] == nil
+            - set(attributes["type"], "${env:LOG_TYPE}") where attributes["k8s_annotations_log_type"] == nil and attributes["k8s_annotations_logz.io/application_type"] == nil
+    transform/dedot:
+      error_mode: ignore
+      log_statements:
+        - context: resource
+          statements:
+            - replace_all_patterns(attributes, "key", "\\.", "_")
+        - context: log
+          statements:
+            - replace_all_patterns(attributes, "key", "\\.", "_")
     batch: {}
     k8sattributes:
       extract:
         annotations:
         - from: pod
           key_regex: (.*)
-          tag_name: k8s.annotations.$$1
+          tag_name: k8s_annotations_$$1
         labels:
         - from: pod
           key_regex: (.*)
-          tag_name: k8s.labels.$$1
+          tag_name: k8s_labels_$$1
         metadata:
         - "k8s.namespace.name"
         - "k8s.deployment.name"
@@ -100,9 +109,6 @@ config:
         node_from_env_var: K8S_NODE_NAME
       passthrough: false
       pod_association:
-      - sources:
-        - from: resource_attribute
-          name: k8s.pod.ip
       - sources:
         - from: resource_attribute
           name: k8s.pod.uid
@@ -126,8 +132,8 @@ config:
       start_at: end
       # Add common attributes
       attributes:
-        env.id: ${env:ENV_ID} 
-        logzio.logs.collector.version: "{{ .Chart.Version }}"
+        env_id: ${env:ENV_ID} 
+        logzio_logs_collector_version: "{{ .Chart.Version }}"
       operators:
       # Find out which format is used by kubernetes
       - id: get-format
@@ -244,6 +250,7 @@ config:
         - k8sattributes
         - transform/log_level
         - transform/log_type
+        - transform/dedot
         - batch
         receivers:
         - otlp
