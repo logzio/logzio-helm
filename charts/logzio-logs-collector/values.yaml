@@ -68,7 +68,7 @@ config:
         - context: resource
           statements:
             # Set type based on Kubernetes annotation or default
-            - set(attributes["type"], attributes["k8s_annotationslogz_io/application_type"]) where attributes["k8s_annotations_logz.io/application_type"] != nil
+            - set(attributes["type"], attributes["k8s_annotations_logz.io/application_type"]) where attributes["k8s_annotations_logz.io/application_type"] != nil
             - set(attributes["type"], attributes["k8s_annotations_log_type"]) where attributes["k8s_annotations_log_type"] != nil and attributes["k8s_annotations_logz.io/application_type"] == nil
             - set(attributes["type"], "${env:LOG_TYPE}") where attributes["k8s_annotations_log_type"] == nil and attributes["k8s_annotations_logz.io/application_type"] == nil
     transform/dedot:
