@@ -225,6 +225,11 @@ There are two possible approaches to the upgrade you can choose from:
 
 
 ## Changelog
+- **5.3.3**:
+  - Upgrade `logzio-logs-collector` version to `1.0.3`:
+  	- Replace dots `.` with underscores `_` in log attributes keys:
+      - Added `transform/dedot` proccesor. 
+      - Edited `k8sattributes`, `transform/log_type`, `transform/log_level` proccesors.
 - **5.3.2**:
   - Upgrade `logzio-fluentd` to version `0.30.0`
   	- Upgrade fluentd version to `1.16.5`
