@@ -259,7 +259,7 @@ config:
       metrics:
         address: ${env:MY_POD_IP}:8888
       logs:
-        level: debug
+        level: info
 
 image:
   # If you want to use the core image `otel/opentelemetry-collector`, you also need to change `command.name` value to `otelcol`.
