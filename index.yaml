@@ -2947,6 +2947,49 @@ entries:
     version: 1.0.0
   logzio-monitoring:
   - apiVersion: v2
+    created: "2024-04-30T15:03:25.614385098Z"
+    dependencies:
+    - condition: logs.enabled
+      name: logzio-fluentd
+      repository: https://logzio.github.io/logzio-helm/
+      version: 0.30.0
+    - condition: metricsOrTraces.enabled
+      name: logzio-k8s-telemetry
+      repository: https://logzio.github.io/logzio-helm/
+      version: 4.2.0
+    - condition: securityReport.enabled
+      name: logzio-trivy
+      repository: https://logzio.github.io/logzio-helm/
+      version: 0.3.1
+    - condition: finops.enabled
+      name: opencost
+      repository: https://opencost.github.io/opencost-helm-chart
+      version: 1.3.0
+    - condition: deployEvents.enabled
+      name: logzio-k8s-events
+      repository: https://logzio.github.io/logzio-helm/
+      version: 0.0.4
+    - condition: logs.enabled
+      name: logzio-logs-collector
+      repository: https://logzio.github.io/logzio-helm/
+      version: 1.0.3
+    description: logzio-monitoring allows you to ship logs, metrics, traces and security
+      reports from your Kubernetes cluster using the OpenTelemetry collector for metrics
+      and traces, Fluentd for logs, and Trivy for security reports.
+    digest: 64ff83cd8031f545f1b06d9b03ddc91bdbd9e3d702f63a88a3d675c330a39c31
+    maintainers:
+    - email: yotam.loewenbach@logz.io
+      name: yotamloe
+    - email: raul.gurshumo@logz.io
+      name: ralongit
+    name: logzio-monitoring
+    sources:
+    - https://github.com/logzio/logzio-helm
+    type: application
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/logzio-monitoring-5.3.3/logzio-monitoring-5.3.3.tgz
+    version: 5.3.3
+  - apiVersion: v2
     created: "2024-04-25T06:53:31.716596649Z"
     dependencies:
     - condition: logs.enabled
@@ -6057,4 +6100,4 @@ entries:
     urls:
     - https://logzio.github.io/logzio-helm/prometheus-alerts-migrator-1.0.0.tgz
     version: 1.0.0
-generated: "2024-04-30T14:44:57.94223927Z"
+generated: "2024-04-30T15:03:25.614828075Z"
