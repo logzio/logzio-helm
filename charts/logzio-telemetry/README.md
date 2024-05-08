@@ -412,6 +412,8 @@ If you don't want the sub charts to installed add the relevant flag per sub char
 
 
 ## Change log
+* 4.2.1
+  - Filter in `container_cpu_cfs_throttled_seconds_total` and `kube_pod_container_info` metrics.
 * 4.2.0
   - Upgraded `opentelemetry-collector-contrib` image to `v0.97.0`
   - Added Kubernetes objects receiver
