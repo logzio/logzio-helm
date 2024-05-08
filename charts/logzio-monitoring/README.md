@@ -225,6 +225,9 @@ There are two possible approaches to the upgrade you can choose from:
 
 
 ## Changelog
+- **5.3.4**:
+  - Upgrade `logzio-k8s-telemetry` version to `4.2.1`:
+  	- Filter in `container_cpu_cfs_throttled_seconds_total` and `kube_pod_container_info` metrics.
 - **5.3.3**:
   - Upgrade `logzio-logs-collector` version to `1.0.3`:
   	- Replace dots `.` with underscores `_` in log attributes keys:
