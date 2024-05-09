@@ -227,6 +227,7 @@ There are two possible approaches to the upgrade you can choose from:
 - **6.0.0**:
   - **Breaking changes**:
   	- Make `logzio-logs-collector` default subchart for logging instead of `logzio-fluentd`
+- **5.3.4**:
   - Upgrade `logzio-k8s-telemetry` version to `4.2.1`:
   	- Filter in `container_cpu_cfs_throttled_seconds_total` and `kube_pod_container_info` metrics.
 - **5.3.3**:
