@@ -584,7 +584,7 @@ ports:
 
 # Kubernetes Object logs
 k8sObjectsConfig:
-  enabled: true
+  enabled: false
   config:
     receivers:
       # Watch for changes in Kubernetes objects
