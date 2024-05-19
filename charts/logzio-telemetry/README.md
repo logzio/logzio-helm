@@ -412,6 +412,8 @@ If you don't want the sub charts to installed add the relevant flag per sub char
 
 
 ## Change log
+* 4.2.3
+  - Disable Kubernetes objects receiver by default.
 * 4.2.2
   - Fix missing `logzio-k8s-objects-logs-token` key from secret.
 * 4.2.1
