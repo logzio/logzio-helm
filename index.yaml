@@ -1166,6 +1166,38 @@ entries:
   logzio-k8s-telemetry:
   - apiVersion: v2
     appVersion: 0.97.0
+    created: "2024-05-19T07:44:56.666171915Z"
+    dependencies:
+    - condition: kubeStateMetrics.enabled
+      name: kube-state-metrics
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 4.24.0
+    - condition: nodeExporter.enabled
+      name: prometheus-node-exporter
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 4.29.0
+    - condition: pushGateway.enabled
+      name: prometheus-pushgateway
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 2.4.2
+    description: logzio-k8s-telemetry allows you to ship metrics and traces from your
+      Kubernetes cluster using the OpenTelemetry collector.
+    digest: 8219b98b5710e785b85865010d7314fd5a215803f1322d3897a8da497a837d81
+    maintainers:
+    - email: yotam.loewenbach@logz.io
+      name: yotamloe
+    - email: raul.gurshumo@logz.io
+      name: ralongit
+    name: logzio-k8s-telemetry
+    sources:
+    - https://github.com/prometheus/node_exporter
+    - https://github.com/kubernetes/kube-state-metrics
+    type: application
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/logzio-k8s-telemetry-4.2.3/logzio-k8s-telemetry-4.2.3.tgz
+    version: 4.2.3
+  - apiVersion: v2
+    appVersion: 0.97.0
     created: "2024-05-17T07:03:19.461117747Z"
     dependencies:
     - condition: kubeStateMetrics.enabled
@@ -6250,4 +6282,4 @@ entries:
     urls:
     - https://logzio.github.io/logzio-helm/prometheus-alerts-migrator-1.0.0.tgz
     version: 1.0.0
-generated: "2024-05-17T07:10:10.126845863Z"
+generated: "2024-05-19T07:44:56.666504592Z"
