@@ -379,6 +379,14 @@ configmap:
         @type none
       </parse>
     </source>
+    
+    # This changes message key to log for etcd logs
+    <filter logzio.etcd>
+      @type record_modifier
+      <record>
+      log ${record["message"]}
+      </record>
+    </filter>
 
     <source>
       @type tail
