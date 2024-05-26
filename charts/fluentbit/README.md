@@ -90,6 +90,8 @@ kubectl get nodes -o json | jq ".items[]|{name:.metadata.name, taints:.spec.tain
 
 
 ## Change log
+* 0.0.6 - Upgrade 'fluent-bit-output' image to 0.6.0
+  - Upgrade fluent-bit to v3.0.4.
 * 0.0.5 - Upgrade docker image to 0.4.1
   * Trim the compiler build path from stack traces.
   * Add timestamp decode support for new fluentbit versions.
