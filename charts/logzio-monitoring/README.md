@@ -128,7 +128,7 @@ For example, to change a value named `someField` in `logzio-telemetry`'s `values
 --set logzio-k8s-telemetry.someField="my new value"
 ```
 
-### Migrate to OpenTelemetry for log collection
+### Migrate to OpenTelemetry for log collection (Migrating to logzio-monitoring 6.0.0)
 
 The `logzio-fluentd` chart is disabled by default in favor of the `logzio-logs-collector` for log collection. To use `logzio-fluentd`, add the following `--set` flags:
 
