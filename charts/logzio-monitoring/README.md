@@ -48,9 +48,9 @@ Use the following command, and replace the placeholders with your parameters:
 ```shell
 helm install -n monitoring \
 --set logs.enabled=true \
---set logzio-fluentd.secrets.logzioShippingToken="<<LOG-SHIPPING-TOKEN>>" \
---set logzio-fluentd.secrets.logzioListener="<<LISTENER-HOST>>" \
---set logzio-fluentd.env_id="<<ENV-ID>>" \
+--set logzio-logs-collector.secrets.logzioLogsToken="<<LOG-SHIPPING-TOKEN>>" \
+--set logzio-logs-collector.secrets.logzioRegion="<<LOGZIO-REGION>>" \
+--set logzio-logs-collector.secrets.env_id="<<ENV-ID>>" \
 --set metricsOrTraces.enabled=true \
 --set logzio-k8s-telemetry.metrics.enabled=true \
 --set logzio-k8s-telemetry.secrets.MetricsToken="<<PROMETHEUS-METRICS-SHIPPING-TOKEN>>" \
@@ -128,19 +128,18 @@ For example, to change a value named `someField` in `logzio-telemetry`'s `values
 --set logzio-k8s-telemetry.someField="my new value"
 ```
 
-### Migrate to OpenTelemetry for log collection
+### Migrate to OpenTelemetry for log collection (Migrating to logzio-monitoring 6.0.0)
 
-The `logzio-fluentd` chart will be disabled by default in favor of the `logzio-logs-collector` for log collection in upcoming releases. To migrate to `logzio-logs-collector`, add the following `--set` flags:
+The `logzio-fluentd` chart is disabled by default in favor of the `logzio-logs-collector` for log collection. To use `logzio-fluentd`, add the following `--set` flags:
 
 ```sh
 helm install -n monitoring \
 --set logs.enabled=true \  
---set logzio-fluentd.enabled=false \  
---set logzio-logs-collector.enabled=true \  
---set logzio-logs-collector.secrets.logzioLogsToken=<<token>> \  
---set logzio-logs-collector.secrets.logzioRegion=<<region>> \  
---set logzio-logs-collector.secrets.env_id=<<env_id>> \  
---set logzio-logs-collector.secrets.logType=<<log_type>> \
+--set logzio-fluentd.enabled=true \  
+--set logzio-logs-collector.enabled=false \  
+--set logzio-fluentd.secrets.logzioShippingToken="<<LOG-SHIPPING-TOKEN>>" \
+--set logzio-fluentd.secrets.logzioListener="<<LISTENER-HOST>>" \
+--set logzio-fluentd.env_id="<<ENV-ID>>" \
 logzio-monitoring logzio-helm/logzio-monitoring
 ```
 
@@ -151,9 +150,9 @@ To ship logs from pods running on Fargate, set the `fargateLogRouter.enabled` va
 ```shell
 helm install -n monitoring \
 --set logs.enabled=true \
---set logzio-fluentd.fargateLogRouter.enabled=true \
---set logzio-fluentd.secrets.logzioShippingToken="<<LOG-SHIPPING-TOKEN>>" \
---set logzio-fluentd.secrets.logzioListener="<<LISTENER-HOST>>" \
+--set logzio-logs-collector.fargateLogRouter.enabled=true \
+--set logzio-logs-collector.secrets.logzioLogsToken="<<LOG-SHIPPING-TOKEN>>" \
+--set logzio-logs-collector.secrets.logzioRegion="<<LOGZIO-REGION>>" \
 --set metricsOrTraces.enabled=true \
 --set logzio-k8s-telemetry.metrics.enabled=true \
 --set logzio-k8s-telemetry.secrets.MetricsToken="<<PROMETHEUS-METRICS-SHIPPING-TOKEN>>" \
@@ -225,6 +224,9 @@ There are two possible approaches to the upgrade you can choose from:
 
 
 ## Changelog
+- **6.0.0**:
+  - **Breaking changes**:
+  	- Make `logzio-logs-collector` default subchart for logging instead of `logzio-fluentd`
 - **5.3.6**:
   - Upgrade `logzio-k8s-telemetry` version to `4.2.3`:
 	- Disable Kubernetes objects receiver by default.
