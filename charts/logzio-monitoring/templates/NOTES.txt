@@ -1,6 +1,6 @@
 
 {{- if and (.Values.logs.enabled) (not (index .Values "logzio-logs-collector" "enabled")) (index .Values "logzio-fluentd" "enabled") }}
-[ DEPRICATION ] You are using fluetnd agent for log collection, this option will be disabled by default in upcoming releases.
+[ DEPRICATION ] You are using fluetnd agent for log collection.
 You can change to opentelemetry logzio-logs-collector by setting the following values:
 
   --set logs.enabled=true \
@@ -25,12 +25,6 @@ You can change to opentelemetry logzio-logs-collector by setting the following v
   --set logzio-logs-collector.secrets.logzioRegion=<<region>> \
   --set logzio-logs-collector.secrets.env_id=<<env_id>> \
   --set logzio-logs-collector.secrets.logType=<<log_type>> \
-{{ end }}
-
-
-{{- if and (.Values.logs.enabled) (index .Values "logzio-logs-collector" "enabled")}}
-[ INFO ] You enabled opentelemetry logzio-logs-collector for log collection.
-
 {{ end }}
 
 
