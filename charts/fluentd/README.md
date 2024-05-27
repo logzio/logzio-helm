@@ -301,6 +301,8 @@ If needed, the fluentd image can be changed to support windows server 2022 with 
 
 
 ## Change log
+ - **0.30.1**:
+  - Handle empty etcd `log` key, populated based on `message` key.
  - **0.30.0**:
   - Upgrade fluentd version to `1.16.5`
   - Fix bug of `env-id.conf`
