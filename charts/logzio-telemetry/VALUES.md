@@ -33,7 +33,6 @@ logzio-k8s-telemetry allows you to ship metrics and traces from your Kubernetes 
 | baseCollectorConfig.service.telemetry.logs.level | string | `"info"` | log level that will be used with the collector. The value must be updated for the exporter logging in order to take effect. |
 | tracesConfig.exporters.logging.loglevel | string | `"info"` | log level that will be used with the collector. The value must be updated for the service telemetry in order to take effect. |
 | tracesConfig.service.telemetry.logs.level | string | `"info"` | log level that will be used with the collector. The value must be updated for the exporter logging in order to take effect. |
-| podLabels | string | `nil` | Selector labels that will be added to the collector pods. |
 | command.extraArgs | list | `[]` | Additional arguments for the opentelemetry collector. |
 | command.name | string | `"otelcol-contrib"` | Command name for the opentelemetry collector executable. |
 | disableKubeDnsScraping | bool | `false` | Enabling this flag will disable kube-dns service scraping. |
@@ -62,8 +61,12 @@ logzio-k8s-telemetry allows you to ship metrics and traces from your Kubernetes 
 | secrets.windowsNodeUsername | string | `""` | Windows username - will be used to install node-exporter for windows nodes. |
 | standaloneCollector.resources.limits.cpu | string | `"200m"` | Cpu limit for the opentelemetry collector pod. |
 | standaloneCollector.resources.limits.memory | string | `"512Mi"` | Memory limit for the opentelemetry colletor pods. |
+| standaloneCollector.podLabels | string | `nil` | Selector labels that will be added to the collector pods. |
+| standaloneCollector.podAnnotations | string | `nil` | Selector labels that will be added to the collector pods. |
 | daemonsetCollector.resources.limits.cpu | string | `"150m"` | Cpu limit for the opentelemetry colletor pods. |
 | daemonsetCollector.resources.limits.memory | string | `"250Mi"` | Memory limit for the opentelemetry colletor pods. |
+| daemonsetCollector.podLabels | string | `nil` | Selector labels that will be added to the collector pods. |
+| daemonsetCollector.podAnnotations | string | `nil` | Selector annotations that will be added to the collector pods. |
 | windowsExporterInstallerJob.interval | string | `"*/10 * * * *"` | Cronjob expression for the windows exporter installer job. |
 
 ----------------------------------------------
