@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      initContainers:
+        - name: init-last-start-dates
+          image: busybox
+          command: ['sh', '-c', 'touch /app/src/shared/last_start_dates.txt']
+          volumeMounts:
+            - name: data-volume
+              mountPath: /app/src/shared
+      containers:
+        - name: logzio-api-fetcher
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/src/shared/config.yaml
+              subPath: config.yaml
+            - name: data-volume
+              mountPath: /app/src/shared/last_start_dates.txt
+              subPath: last_start_dates.txt
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ .Release.Name }}-config
+        - name: data-volume
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-pvc
