@@ -29,7 +29,7 @@ This Helm chart deploys the Logz.io API Fetcher to collect data from Auth/OAuth 
 
 ## Configuration
 
-Rdit the configuration in `values.config`. There are 3 sections of the configuration:
+Edit the configuration in `values.config`. There are 3 sections of the configuration:
 
 #### logzio
 
