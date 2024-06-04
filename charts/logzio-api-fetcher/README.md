@@ -92,7 +92,7 @@ auth_apis:
       time_interval: 5
       days_back_fetch: 7
     filters:
-      event_type%5B%5D: '1090519054'
+      event_type%: 'type'
       start_date: 2021-10-05T10%3A10%3A10%2B00%3A00
     custom_fields:
       type: cisco_amp
@@ -114,7 +114,7 @@ auth_apis:
       data: data
       data_date: date
     filters:
-      event_type%5B%5D: '1090519054'
+      event_type: 'type'
 ```
 
 #### OAuth Api config:
