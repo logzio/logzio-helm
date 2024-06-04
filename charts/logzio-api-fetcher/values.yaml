@@ -54,4 +54,4 @@ persistentVolume:
   accessModes:
     - ReadWriteOnce
   size: 1Gi
-  storageClass: standard
+  storageClass: default
