@@ -24,7 +24,7 @@ This Helm chart deploys the Logz.io API Fetcher to collect data from Auth/OAuth 
 3. Install the Logz.io API Fetcher chart with custom values file:
 
   ```bash
-  helm install logzio-api-fetcher -f custom-values.yaml logzio/logzio-api-fetcher
+  helm install logzio-api-fetcher -f custom-values.yaml logzio-helm/logzio-api-fetcher
   ```
 
 ## Configuration
