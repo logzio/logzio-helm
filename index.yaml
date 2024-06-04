@@ -171,6 +171,20 @@ entries:
     urls:
     - https://github.com/logzio/logzio-helm/releases/download/kube-state-metrics-4.24.0/kube-state-metrics-4.24.0.tgz
     version: 4.24.0
+  logzio-api-fetcher:
+  - apiVersion: v2
+    appVersion: 0.1.3
+    created: "2024-06-04T08:55:11.100472895Z"
+    description: Helm chart for deploying the Logz.io API Fetcher
+    digest: 2cf8e3c89ddb0ed8c1042632e587d7248e821beac88577f4846a1d7f538312c2
+    maintainers:
+    - email: yotam.loewenbach@logz.io
+      name: yotamloe
+    name: logzio-api-fetcher
+    type: application
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/logzio-api-fetcher-1.0.0/logzio-api-fetcher-1.0.0.tgz
+    version: 1.0.0
   logzio-dotnet-monitor:
   - apiVersion: v2
     appVersion: 1.0.0
@@ -6404,4 +6418,4 @@ entries:
     urls:
     - https://logzio.github.io/logzio-helm/prometheus-alerts-migrator-1.0.0.tgz
     version: 1.0.0
-generated: "2024-05-27T12:34:39.806018116Z"
+generated: "2024-06-04T08:55:11.252576679Z"
