@@ -15,6 +15,8 @@ Get component name
 {{- define "logs-collector.component" -}}
 {{- if eq .Values.mode "daemonset" -}}
 component: logs-collector
+{{- else if eq .Values.mode "standalone" -}}
+component: logs-collector-standalone
 {{- end -}}
 {{- end }}
 

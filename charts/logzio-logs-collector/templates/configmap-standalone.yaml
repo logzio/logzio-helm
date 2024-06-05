@@ -1,0 +1,13 @@
+{{ if .Values.enabled}}
+{{- if and (eq .Values.mode "standalone") (.Values.configMap.create) -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "logs-collector.fullname" . }}-standalone
+  namespace: {{ template "logs-collector.namespace" . }}
+  labels:
+    {{- include "logs-collector.labels" . | nindent 4 }}
+data:
+  relay: {{- include "logs-collector.loggingStandaloneConfig" . | nindent 4 }}
+{{- end }}
+{{ end }}

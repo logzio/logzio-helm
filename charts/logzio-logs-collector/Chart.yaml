@@ -1,6 +1,6 @@
 apiVersion: v2
 name: logzio-logs-collector
-version: 1.0.3
+version: 1.0.4
 description: kubernetes logs collection agent for logz.io based on opentelemetry collector
 type: application
 home: https://logz.io/
