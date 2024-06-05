@@ -224,6 +224,11 @@ There are two possible approaches to the upgrade you can choose from:
 
 
 ## Changelog
+- **6.0.1**:
+  - Upgrade `logzio-logs-collector` chart to v1.0.4
+    - Add standalone deployment mode
+    - Rename `LogzioRegion` to camelCase - `logzioRegion`
+    - Add user-agent header
 - **6.0.0**:
   - **Breaking changes**:
   	- Make `logzio-logs-collector` default subchart for logging instead of `logzio-fluentd`
