@@ -52,7 +52,7 @@ config:
       region: ${env:LOGZIO_REGION}
       endpoint: ${env:CUSTOM_ENDPOINT}
       headers:
-        user-agent: logzio-logs-collector-helm
+        user-agent: "{{ .Chart.Name }}-{{ .Chart.Version }}-helm"
   extensions:
     health_check: {}
     file_storage:
@@ -339,7 +339,6 @@ affinity:
         - matchExpressions:
             - key: eks.amazonaws.com/compute-type
               operator: DoesNotExist
-
 # Allows for pod scheduler prioritisation
 priorityClassName: ""
 

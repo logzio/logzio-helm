@@ -21,7 +21,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/configmap-agent-standalone.yaml") . | sha256sum }}
+        checksum/config: {{ include (print $.Template.BasePath "/configmap-standalone.yaml") . | sha256sum }}
         {{- include "logs-collector.podAnnotations" . | nindent 8 }}
       labels:
         {{- include "logs-collector.selectorLabels" . | nindent 8 }}
