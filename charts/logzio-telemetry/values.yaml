@@ -237,6 +237,8 @@ tracesConfig:
       endpoint: ${CUSTOM_TRACING_ENDPOINT}
       region: ${LOGZIO_LISTENER_REGION}
       account_token: ${TRACES_TOKEN}
+      headers:
+        user-agent: Bearer "{{ .Chart.Name }}-{{ .Chart.Version }}-helm"
     logging:
       loglevel: info
   extensions:
@@ -325,6 +327,7 @@ metricsConfig:
         p8s_logzio_name: ${P8S_LOGZIO_NAME}
       headers:
         Authorization: "Bearer ${METRICS_TOKEN}"
+        user-agent: Bearer "{{ .Chart.Name }}-{{ .Chart.Version }}-helm"
     prometheusremotewrite/infrastructure:
       timeout: 30s
       endpoint: ${LISTENER_URL}
@@ -332,6 +335,7 @@ metricsConfig:
         p8s_logzio_name: ${P8S_LOGZIO_NAME}
       headers:
         Authorization: "Bearer ${METRICS_TOKEN}"
+        user-agent: Bearer "{{ .Chart.Name }}-{{ .Chart.Version }}-helm"
   receivers:
     prometheus/applications:
       config:
@@ -663,7 +667,8 @@ k8sObjectsConfig:
       logzio/object_logs:
         account_token: "${OBJECTS_LOGS_TOKEN}"
         region: "${LOGZIO_LISTENER_REGION}"
-
+        headers:
+          user-agent: Bearer "{{ .Chart.Name }}-{{ .Chart.Version }}-helm"
     service:
       pipelines:
         logs/k8sobjects:
@@ -766,6 +771,7 @@ spanMetricsAgregator:
         endpoint: ${LISTENER_URL}
         headers:
           Authorization: Bearer ${SPM_TOKEN}
+          user-agent: Bearer "{{ .Chart.Name }}-{{ .Chart.Version }}-helm"
         timeout: 30s
         add_metric_suffixes: false
     receivers:
@@ -991,6 +997,7 @@ daemonsetConfig:
         p8s_logzio_name: ${P8S_LOGZIO_NAME}
       headers:
         Authorization: "Bearer ${METRICS_TOKEN}"
+        user-agent: "{{ .Chart.Name }}-{{ .Chart.Version }}-helm"
     prometheusremotewrite/infrastructure:
       timeout: 30s
       endpoint: ${LISTENER_URL}
@@ -998,6 +1005,7 @@ daemonsetConfig:
         p8s_logzio_name: ${P8S_LOGZIO_NAME}
       headers:
         Authorization: "Bearer ${METRICS_TOKEN}"
+        user-agent: "{{ .Chart.Name }}-{{ .Chart.Version }}-helm"
   receivers:
     prometheus/applications:
       config:
