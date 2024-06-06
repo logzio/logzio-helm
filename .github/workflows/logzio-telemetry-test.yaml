@@ -1,0 +1,82 @@
+name: Test Logzio Telemetry Helm Chart on Kind Kubernetes Environment
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'charts/logzio-k8s-telemetry/**'
+jobs:
+  test-helm-chart:
+    name: Test Helm Chart on Kind
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        mode: ['daemonset', 'standalone']
+    env:
+      ENV_ID: telemetry-test-run-${{ github.run_id }}-number-${{ github.run_number }}-${{ matrix.mode }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.20'
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4.2.0
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+
+      - name: Install Kind
+        run: |
+          curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.11.1/kind-Linux-amd64"
+          chmod +x ./kind
+          mv ./kind /usr/local/bin/kind
+
+      - name: Create Kind cluster
+        run: |
+          kind create cluster --name kind-${{ github.run_id }}
+          kubectl cluster-info
+
+      - name: Deploy Helm Chart
+        run: |
+          cd charts/logzio-telemetry
+          helm dependency build
+          helm upgrade --install \
+          --set traces.enabled=true \
+          --set spm.enabled=true \
+          --set metrics.enabled=true \
+          --set secrets.TracesToken=${{ env.LOGZIO_TRACES_TOKEN }} \
+          --set secrets.SpmToken=${{ env.LOGZIO_METRICS_TOKEN }} \
+          --set secrets.MetricsToken=${{ env.LOGZIO_METRICS_TOKEN }} \
+          --set secrets.ListenerHost=https://listener.logz.io:8053 \
+          --set secrets.p8s_logzio_name=${{ env.ENV_ID }} \
+          --set secrets.env_id=${{ env.ENV_ID }} \
+          --set mode=${{ matrix.mode }} \
+          logzio-k8s-telemetry .
+          kubectl rollout status deployment/logzio-k8s-telemetry-otel-collector-standalone --timeout=300s
+          kubectl rollout status deployment/logzio-k8s-telemetry-otel-collector-spm --timeout=300s
+
+      - name: run trace generator
+        run: |
+          kubectl apply -f tests/resources/tracegen.yaml
+          kubectl rollout status deployment/trace-gen --timeout=300s
+
+      - name: sleep for 2 minutes
+        run: sleep 120
+
+      - name: Run Go Tests
+        run: |
+          go get go.uber.org/zap
+          go test -v ./tests/traces_e2e_test.go ./tests/common.go
+          go test -v ./tests/metrics_e2e_test.go ./tests/common.go
+      - name: Cleanup Environment
+        run: |
+          helm uninstall logzio-k8s-telemetry
+
+      - name: Delete Kind cluster
+        if: always()
+        run: kind delete cluster --name kind-${{ github.run_id }}
