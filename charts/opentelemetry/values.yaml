@@ -106,6 +106,7 @@ config:
         p8s_logzio_name: ${P8S_LOGZIO_NAME}
       headers:
         Authorization: "Bearer ${METRICS_TOKEN}"
+        user-agent: "{{ .Chart.Name }}-{{ .Chart.Version }}-helm"
   extensions:
     health_check: {}
   processors:
