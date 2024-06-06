@@ -8,7 +8,7 @@ enabled: true
 nameOverride: ""
 fullnameOverride: ""
 
-# Valid value for log collection is "daemonset". More modes may be added in the future
+# Valid values for log collection are "daemonset","standalone". More modes may be added in the future
 mode: "daemonset"
 
 # Specify which namespace should be used to deploy the resources into
@@ -29,13 +29,17 @@ secrets:
   # Secret with your logzio logs shipping token
   logzioLogsToken: "token"
   # Secret with your logzio region
-  LogzioRegion: "us"
+  logzioRegion: "us"
   # Secret with your custom endpoint, for example:http://endpoint:8080. Overrides secrets.LogzioRegion listener adress
   customEndpoint: ""
 
 configMap:
   # Specifies whether a configMap should be created (true by default)
   create: true
+
+standaloneCollector:
+  # Number of replicas in standalone collector mode
+  replicaCount: 1
 
 # Base collector configuration.
 # Supports templating. To escape existing instances of {{ }}, use {{` <original content> `}}.
@@ -47,6 +51,8 @@ config:
       account_token: ${env:LOGZIO_LOGS_TOKEN}
       region: ${env:LOGZIO_REGION}
       endpoint: ${env:CUSTOM_ENDPOINT}
+      headers:
+        user-agent: "{{ .Chart.Name }}-{{ .Chart.Version }}-helm"
   extensions:
     health_check: {}
     file_storage:
@@ -333,7 +339,6 @@ affinity:
         - matchExpressions:
             - key: eks.amazonaws.com/compute-type
               operator: DoesNotExist
-
 # Allows for pod scheduler prioritisation
 priorityClassName: ""
 

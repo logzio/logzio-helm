@@ -142,6 +142,10 @@ Multi line logs configuration
 The collector supports by default various log formats (including multiline logs) such as `CRI-O` `CRI-Containerd` `Docker` formats. You can configure the chart to parse custom multiline logs pattern according to your needs, please read [Customizing Multiline Log Handling](./examples/multiline.md) guide for more details.
 
 ## Change log
+* 1.0.4
+  - Add standalone deployment mode
+  - Rename `LogzioRegion` to camelCase - `logzioRegion`
+  - Add user-agent header
 * 1.0.3
   - Replace dots (".") with underscores ("_") in log attributes keys:
     - Added `transform/dedot` proccesor. 

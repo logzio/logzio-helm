@@ -12,6 +12,14 @@
 {{- tpl $config . -}}
 {{- end }}
 
+# Build config file for standalone logs Collector
+{{- define "logs-collector.loggingStandaloneConfig" -}}
+{{- $values := deepCopy .Values -}}
+{{- $data := dict "Values" $values | mustMergeOverwrite (deepCopy .) -}}
+{{- $config := include "logs-collector.baseLoggingConfig" $data -}}
+{{- tpl $config . -}}
+{{- end }}
+
 {{/* Build the list of port for service */}}
 {{- define "logs-collector.servicePortsConfig" -}}
 {{- $ports := deepCopy .Values.ports }}
