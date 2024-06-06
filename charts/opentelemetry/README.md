@@ -203,6 +203,11 @@ kubectl get nodes -o json | jq ".items[]|{name:.metadata.name, taints:.spec.tain
 ```
 
 ## Change log
+* 0.2.6 -
+<ul>
+  <li>Added 'user-agent' header for Prometheus Remote Write</li>
+</ul>
+
 * 0.2.5 -
   <ul>
   <li> Added basic metrics filtering for gke,aks and eks clusters (via "enableMetricsFilter" parameter).

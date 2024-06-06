@@ -105,4 +105,5 @@ kubectl get nodes -o json | jq ".items[]|{name:.metadata.name, taints:.spec.tain
 
 ## Changelog
 
+- 0.0.2: Added 'user-agent' header for Prometheus Remote Write.
 - 0.0.1: Initial release.
