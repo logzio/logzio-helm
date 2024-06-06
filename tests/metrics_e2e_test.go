@@ -3,6 +3,7 @@ package tests
 import (
 	"encoding/json"
 	"fmt"
+	"go.uber.org/zap"
 	"io"
 	"net/http"
 	"os"
@@ -68,6 +69,7 @@ func TestLogzioMonitoringMetrics(t *testing.T) {
 	if metricResponse.Status != "success" {
 		t.Errorf("No metrics found")
 	}
+	logger.Info("Found metrics", zap.Int("metrics_count", len(metricResponse.Data.Result)))
 	// Verify required metrics
 	missingMetrics := verifyMetrics(metricResponse, requiredMetrics)
 	if len(missingMetrics) > 0 {
@@ -81,8 +83,10 @@ func TestLogzioMonitoringMetrics(t *testing.T) {
 
 // fetchMetrics fetches the metrics from the logz.io API
 func fetchMetrics(metricsApiKey string) (*MetricResponse, error) {
-	url := fmt.Sprintf("%s/metrics/prometheus/api/v1/query?query={env_id='multi-env-test'}", BaseLogzioApiUrl)
+	envId := os.Getenv("ENV_ID")
+	url := fmt.Sprintf("%s/metrics/prometheus/api/v1/query?query={env_id='%s'}", BaseLogzioApiUrl, envId)
 	client := &http.Client{}
+	logger.Info("sending api request", zap.String("url", url))
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err

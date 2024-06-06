@@ -17,13 +17,13 @@ type LogResponse struct {
 		Hits  []struct {
 			Source struct {
 				Kubernetes struct {
-					ContainerImageID string `json:"container_image_id"`
-					ContainerName    string `json:"container_name"`
-					ContainerImage   string `json:"container_image"`
-					NamespaceName    string `json:"namespace_name"`
-					PodName          string `json:"pod_name"`
-					PodID            string `json:"pod_id"`
-					Host             string `json:"host"`
+					ContainerImageTag string `json:"container_image_tag"`
+					ContainerName     string `json:"container_name"`
+					ContainerImage    string `json:"container_image"`
+					NamespaceName     string `json:"namespace_name"`
+					PodName           string `json:"pod_name"`
+					PodID             string `json:"pod_id"`
+					Host              string `json:"host"`
 				} `json:"kubernetes"`
 			} `json:"_source"`
 		} `json:"hits"`
@@ -45,7 +45,7 @@ func TestLogzioMonitoringLogs(t *testing.T) {
 		t.Errorf("No logs found")
 	}
 	// Verify required fields
-	requiredFields := []string{"container_image_id", "container_name", "container_image", "namespace_name", "pod_name", "pod_id", "host"}
+	requiredFields := []string{"container_image_tag", "container_name", "container_image", "namespace_name", "pod_name", "pod_id", "host"}
 	missingFields := verifyLogs(logResponse, requiredFields)
 	if len(missingFields) > 0 {
 		t.Errorf("Missing log fields: %v", missingFields)
@@ -56,7 +56,10 @@ func TestLogzioMonitoringLogs(t *testing.T) {
 func fetchLogs(logsApiKey string) (*LogResponse, error) {
 	url := fmt.Sprintf("%s/search", BaseLogzioApiUrl)
 	client := &http.Client{}
-	req, err := http.NewRequest("POST", url, bytes.NewBufferString(LogsQuery))
+	envID := os.Getenv("ENV_ID")
+	query := fmt.Sprintf("env_id:%s AND type:agent-k8s", envID)
+	formattedQuery := formatQuery(query)
+	req, err := http.NewRequest("POST", url, bytes.NewBufferString(formattedQuery))
 	if err != nil {
 		return nil, err
 	}
@@ -97,8 +100,8 @@ func verifyLogs(logResponse *LogResponse, requiredFields []string) []string {
 
 	for _, hit := range logResponse.Hits.Hits {
 		kubernetes := hit.Source.Kubernetes
-		if kubernetes.ContainerImageID == "" {
-			missingFieldsMap["container_image_id"] = true
+		if kubernetes.ContainerImageTag == "" {
+			missingFieldsMap["container_image_tag"] = true
 			break
 		}
 		if kubernetes.ContainerName == "" {

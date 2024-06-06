@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"go.uber.org/zap"
 	"io"
 	"net/http"
 	"os"
@@ -86,7 +87,11 @@ func verifyTraces(traceResponse *TraceResponse, requiredFields []string) []strin
 func fetchTraces(tracesApiKey string) (*TraceResponse, error) {
 	url := fmt.Sprintf("%s/search", BaseLogzioApiUrl)
 	client := &http.Client{}
-	req, err := http.NewRequest("POST", url, bytes.NewBufferString(TracesQuery))
+	envID := os.Getenv("ENV_ID")
+	query := fmt.Sprintf(`JaegerTag.env_id:%s AND type:jaegerSpan`, envID)
+	logger.Info("sending api request", zap.String("url", url), zap.String("query", query))
+	formattedQuery := formatQuery(query)
+	req, err := http.NewRequest("POST", url, bytes.NewBufferString(formattedQuery))
 	if err != nil {
 		return nil, err
 	}
