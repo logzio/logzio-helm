@@ -23,47 +23,67 @@ type MetricResponse struct {
 	} `json:"data"`
 }
 
-func TestLogzioMonitoringMetrics(t *testing.T) {
-	metricsApiKey := os.Getenv("LOGZIO_METRICS_API_KEY")
-	if metricsApiKey == "" {
-		t.Fatalf("LOGZIO_METRICS_API_KEY environment variable not set")
+func TestContainerMetrics(t *testing.T) {
+	requiredMetrics := map[string][]string{
+		"container_cpu_usage_seconds_total":      {"p8s_logzio_name", "namespace", "pod", "container"},
+		"container_memory_working_set_bytes":     {"p8s_logzio_name", "namespace", "pod", "container"},
+		"container_network_transmit_bytes_total": {"p8s_logzio_name", "namespace", "pod"},
+		"container_network_receive_bytes_total":  {"p8s_logzio_name", "namespace", "pod"},
 	}
+	envId := os.Getenv("ENV_ID")
+	query := fmt.Sprintf(`{env_id='%s',pod=~'.+'}`, envId)
+	testMetrics(t, requiredMetrics, query)
+}
 
-	metricResponse, err := fetchMetrics(metricsApiKey)
-	if err != nil {
-		t.Fatalf("Failed to fetch metrics: %v", err)
-	}
-
+func TestInfrastructureMetrics(t *testing.T) {
 	requiredMetrics := map[string][]string{
 		"kube_pod_status_phase":                    {"p8s_logzio_name", "namespace", "pod", "phase", "uid"},
 		"kube_pod_info":                            {"p8s_logzio_name", "namespace", "host_ip", "node", "pod"},
-		"container_cpu_usage_seconds_total":        {"p8s_logzio_name", "namespace", "pod", "region", "topology_kubernetes_io_region", "container"},
 		"kube_pod_container_resource_limits":       {"p8s_logzio_name", "namespace", "pod", "resource"},
-		"container_memory_working_set_bytes":       {"p8s_logzio_name", "namespace", "pod", "container"},
 		"kube_pod_container_info":                  {"p8s_logzio_name", "namespace", "pod"},
-		"container_network_transmit_bytes_total":   {"p8s_logzio_name", "namespace", "pod"},
-		"container_network_receive_bytes_total":    {"p8s_logzio_name", "namespace", "pod"},
 		"kube_pod_created":                         {"p8s_logzio_name", "namespace", "pod"},
 		"kube_pod_owner":                           {"p8s_logzio_name", "namespace", "pod", "owner_kind", "owner_name"},
 		"kube_pod_container_status_restarts_total": {"p8s_logzio_name", "namespace", "pod"},
 		"kube_pod_status_reason":                   {"p8s_logzio_name", "namespace", "pod", "reason"},
-		"kube_pod_container_status_waiting_reason": {"p8s_logzio_name", "namespace", "pod", "reason"},
 		"node_cpu_seconds_total":                   {"p8s_logzio_name", "instance", "kubernetes_node"},
 		"kube_node_status_allocatable":             {"p8s_logzio_name", "node", "resource"},
 		"node_memory_MemAvailable_bytes":           {"p8s_logzio_name", "instance", "kubernetes_node"},
 		"node_memory_MemTotal_bytes":               {"p8s_logzio_name", "instance", "kubernetes_node"},
 		"kube_node_role":                           {"p8s_logzio_name", "status", "role", "node"},
-		"kube_node_status_condition":               {"p8s_logzio_name", "status", "role", "node"},
+		"kube_node_status_condition":               {"p8s_logzio_name", "status", "node"},
 		"kube_node_created":                        {"p8s_logzio_name", "node"},
 		"node_filesystem_avail_bytes":              {"p8s_logzio_name", "instance", "kubernetes_node"},
 		"node_filesystem_size_bytes":               {"p8s_logzio_name", "instance", "kubernetes_node"},
 		"kube_replicaset_owner":                    {"p8s_logzio_name", "namespace", "owner_kind", "owner_name", "replicaset"},
 		"kube_deployment_created":                  {"p8s_logzio_name", "namespace", "deployment"},
 		"kube_deployment_status_condition":         {"p8s_logzio_name", "namespace", "deployment", "status"},
-		"calls_total":                              {"k8s_node_name", "k8s_namespace_name", "k8s_pod_name", "span_kind", "operation"},
-		"latency_sum":                              {"k8s_node_name", "k8s_namespace_name", "k8s_pod_name", "span_kind", "operation"},
-		"latency_count":                            {"k8s_node_name", "k8s_namespace_name", "k8s_pod_name", "span_kind", "operation"},
-		"latency_bucket":                           {"k8s_node_name", "k8s_namespace_name", "k8s_pod_name", "span_kind", "operation"},
+	}
+	envId := os.Getenv("ENV_ID")
+	query := fmt.Sprintf(`{env_id='%s'}`, envId)
+	testMetrics(t, requiredMetrics, query)
+}
+
+func TestSpmMetrics(t *testing.T) {
+	requiredMetrics := map[string][]string{
+		"calls_total":    {"k8s_node_name", "k8s_namespace_name", "k8s_pod_name", "span_kind", "operation"},
+		"latency_sum":    {"k8s_node_name", "k8s_namespace_name", "k8s_pod_name", "span_kind", "operation"},
+		"latency_count":  {"k8s_node_name", "k8s_namespace_name", "k8s_pod_name", "span_kind", "operation"},
+		"latency_bucket": {"k8s_node_name", "k8s_namespace_name", "k8s_pod_name", "span_kind", "operation"},
+	}
+	envId := os.Getenv("ENV_ID")
+	query := fmt.Sprintf(`{env_id='%s'}`, envId)
+	testMetrics(t, requiredMetrics, query)
+}
+
+func testMetrics(t *testing.T, requiredMetrics map[string][]string, query string) {
+	metricsApiKey := os.Getenv("LOGZIO_METRICS_API_KEY")
+	if metricsApiKey == "" {
+		t.Fatalf("LOGZIO_METRICS_API_KEY environment variable not set")
+	}
+
+	metricResponse, err := fetchMetrics(metricsApiKey, query)
+	if err != nil {
+		t.Fatalf("Failed to fetch metrics: %v", err)
 	}
 
 	if metricResponse.Status != "success" {
@@ -82,9 +102,8 @@ func TestLogzioMonitoringMetrics(t *testing.T) {
 }
 
 // fetchMetrics fetches the metrics from the logz.io API
-func fetchMetrics(metricsApiKey string) (*MetricResponse, error) {
-	envId := os.Getenv("ENV_ID")
-	url := fmt.Sprintf("%s/metrics/prometheus/api/v1/query?query={env_id='%s'}", BaseLogzioApiUrl, envId)
+func fetchMetrics(metricsApiKey string, query string) (*MetricResponse, error) {
+	url := fmt.Sprintf("%s/metrics/prometheus/api/v1/query?query=%s", BaseLogzioApiUrl, query)
 	client := &http.Client{}
 	logger.Info("sending api request", zap.String("url", url))
 	req, err := http.NewRequest("GET", url, nil)
