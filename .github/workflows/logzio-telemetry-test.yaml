@@ -42,7 +42,7 @@ jobs:
 
       - name: Create Kind cluster
         run: |
-          kind create cluster --name kind-${{ github.run_id }}
+          kind create cluster --name kind-${{ github.run_id }}-${{ matrix.mode }}
           kubectl cluster-info
 
       - name: Deploy Helm Chart
@@ -83,4 +83,4 @@ jobs:
 
       - name: Delete Kind cluster
         if: always()
-        run: kind delete cluster --name kind-${{ github.run_id }}
+        run: kind delete cluster --name kind-${{ github.run_id }}-${{ matrix.mode }}
