@@ -10,9 +10,14 @@ jobs:
   test-helm-chart:
     name: Test Helm Chart on Kind
     runs-on: ubuntu-latest
-    env:
-      ENV_ID: logs-test-run-${{ github.run_id }}-number-${{ github.run_number }}
     steps:
+      - name: Generate random id
+        id: random_id
+        run: echo "::set-output name=rand::$(echo $RANDOM)"
+
+      - name: Set ENV_ID
+        run: echo "ENV_ID=logs-test-run-${{ steps.random_id.outputs.rand }}" >> $GITHUB_ENV
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -52,7 +57,7 @@ jobs:
           kubectl apply -f tests/resources/logsgen.yaml
           kubectl rollout status deployment/log-generator --timeout=300s
 
-      - name: sleep for 2 minutes
+      - name: sleep
         run: sleep 120
 
       - name: Run Go Tests

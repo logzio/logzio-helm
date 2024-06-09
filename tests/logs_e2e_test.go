@@ -4,27 +4,26 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"go.uber.org/zap"
 	"io"
 	"net/http"
 	"os"
 	"testing"
 )
 
-// LogResponse represents the structure of the logs API response
 type LogResponse struct {
 	Hits struct {
 		Total int `json:"total"`
 		Hits  []struct {
 			Source struct {
-				Kubernetes struct {
-					ContainerImageTag string `json:"container_image_tag"`
-					ContainerName     string `json:"container_name"`
-					ContainerImage    string `json:"container_image"`
-					NamespaceName     string `json:"namespace_name"`
-					PodName           string `json:"pod_name"`
-					PodID             string `json:"pod_id"`
-					Host              string `json:"host"`
-				} `json:"kubernetes"`
+				ContainerImageTag  string `json:"container_image_tag"`
+				ContainerImageName string `json:"container_image_name"`
+				ContainerName      string `json:"k8s_container_name"`
+				NamespaceName      string `json:"k8s_namespace_name"`
+				PodName            string `json:"k8s_pod_name"`
+				PodUID             string `json:"k8s_pod_uid"`
+				NodeName           string `json:"k8s_node_name"`
+				LogLevel           string `json:"log_level"`
 			} `json:"_source"`
 		} `json:"hits"`
 	} `json:"hits"`
@@ -44,21 +43,24 @@ func TestLogzioMonitoringLogs(t *testing.T) {
 	if logResponse.Hits.Total == 0 {
 		t.Errorf("No logs found")
 	}
-	// Verify required fields
-	requiredFields := []string{"container_image_tag", "container_name", "container_image", "namespace_name", "pod_name", "pod_id", "host"}
-	missingFields := verifyLogs(logResponse, requiredFields)
-	if len(missingFields) > 0 {
-		t.Errorf("Missing log fields: %v", missingFields)
+
+	for _, hit := range logResponse.Hits.Hits {
+		kubernetes := hit.Source
+		if kubernetes.ContainerImageTag == "" || kubernetes.ContainerName == "" || kubernetes.NamespaceName == "" || kubernetes.PodName == "" || kubernetes.PodUID == "" || kubernetes.NodeName == "" || kubernetes.ContainerImageName == "" || kubernetes.LogLevel == "" {
+			logger.Error("Missing log fields", zap.Any("log", hit))
+			t.Errorf("Missing log fields")
+			break
+		}
 	}
 }
 
-// fetchLogs fetches the logs from the logz.io API
 func fetchLogs(logsApiKey string) (*LogResponse, error) {
 	url := fmt.Sprintf("%s/search", BaseLogzioApiUrl)
 	client := &http.Client{}
 	envID := os.Getenv("ENV_ID")
-	query := fmt.Sprintf("env_id:%s AND type:agent-k8s", envID)
+	query := fmt.Sprintf("env_id:%s AND type:agent-k8s AND k8s_deployment_name:log-generator", envID)
 	formattedQuery := formatQuery(query)
+	logger.Info("sending api request", zap.String("url", url), zap.String("query", query))
 	req, err := http.NewRequest("POST", url, bytes.NewBufferString(formattedQuery))
 	if err != nil {
 		return nil, err
@@ -89,53 +91,4 @@ func fetchLogs(logsApiKey string) (*LogResponse, error) {
 	}
 
 	return &logResponse, nil
-}
-
-// verifyLogs checks if the logs contain the required Kubernetes fields
-func verifyLogs(logResponse *LogResponse, requiredFields []string) []string {
-	missingFieldsMap := make(map[string]bool, len(requiredFields))
-	for _, field := range requiredFields {
-		missingFieldsMap[field] = false
-	}
-
-	for _, hit := range logResponse.Hits.Hits {
-		kubernetes := hit.Source.Kubernetes
-		if kubernetes.ContainerImageTag == "" {
-			missingFieldsMap["container_image_tag"] = true
-			break
-		}
-		if kubernetes.ContainerName == "" {
-			missingFieldsMap["container_name"] = true
-			break
-		}
-		if kubernetes.ContainerImage == "" {
-			missingFieldsMap["container_image"] = true
-			break
-		}
-		if kubernetes.NamespaceName == "" {
-			missingFieldsMap["namespace_name"] = true
-			break
-		}
-		if kubernetes.PodName == "" {
-			missingFieldsMap["pod_name"] = true
-			break
-		}
-		if kubernetes.PodID == "" {
-			missingFieldsMap["pod_id"] = true
-			break
-		}
-		if kubernetes.Host == "" {
-			missingFieldsMap["host"] = true
-			break
-		}
-	}
-
-	var missingFields []string
-	for field, value := range missingFieldsMap {
-		if value == true {
-			missingFields = append(missingFields, field)
-		}
-	}
-
-	return missingFields
 }
