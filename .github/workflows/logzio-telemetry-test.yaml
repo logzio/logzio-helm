@@ -13,9 +13,13 @@ jobs:
     strategy:
       matrix:
         mode: ['daemonset', 'standalone']
-    env:
-      ENV_ID: telemetry-test-run-${{ github.run_id }}-number-${{ github.run_number }}-${{ matrix.mode }}
     steps:
+      - name: Generate random id
+        id: random_id
+        run: echo "::set-output name=rand::$(echo $RANDOM)"
+
+      - name: Set ENV_ID
+        run: echo "ENV_ID=telemetry-test-run-${{ steps.random_id.outputs.rand }}-${{ matrix.mode }}" >> $GITHUB_ENV
       - name: Checkout repository
         uses: actions/checkout@v4
 
