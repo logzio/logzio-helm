@@ -53,9 +53,9 @@ jobs:
           --set traces.enabled=true \
           --set spm.enabled=true \
           --set metrics.enabled=true \
-          --set secrets.TracesToken=${{ env.LOGZIO_TRACES_TOKEN }} \
-          --set secrets.SpmToken=${{ env.LOGZIO_METRICS_TOKEN }} \
-          --set secrets.MetricsToken=${{ env.LOGZIO_METRICS_TOKEN }} \
+          --set secrets.TracesToken=${{ secrets.LOGZIO_TRACES_TOKEN }} \
+          --set secrets.SpmToken=${{ secrets.LOGZIO_METRICS_TOKEN }} \
+          --set secrets.MetricsToken=${{ secrets.LOGZIO_METRICS_TOKEN }} \
           --set secrets.ListenerHost=https://listener.logz.io:8053 \
           --set secrets.p8s_logzio_name=${{ env.ENV_ID }} \
           --set secrets.env_id=${{ env.ENV_ID }} \

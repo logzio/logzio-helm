@@ -48,7 +48,7 @@ jobs:
           cd charts/logzio-logs-collector
           helm upgrade --install \
           --set secrets.env_id=${{ env.ENV_ID }} \
-          --set secrets.logzioLogsToken=${{ env.LOGZIO_LOGS_TOKEN }} \
+          --set secrets.logzioLogsToken=${{ secrets.LOGZIO_LOGS_TOKEN }} \
           --set secrets.logzioRegion=us \
           logzio-logs-collector .
 
