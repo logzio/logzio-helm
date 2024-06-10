@@ -61,6 +61,8 @@ jobs:
         run: sleep 120
 
       - name: Run Go Tests
+        env:
+          LOGZIO_LOGS_API_TOKEN: ${{ env.LOGZIO_LOGS_API_TOKEN }}
         run: |
           go get go.uber.org/zap
           go test -v ./tests/logs_e2e_test.go ./tests/common.go
