@@ -6,6 +6,7 @@ import (
 	"go.uber.org/zap"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"strings"
 	"testing"
@@ -25,14 +26,16 @@ type MetricResponse struct {
 
 func TestContainerMetrics(t *testing.T) {
 	requiredMetrics := map[string][]string{
-		"container_cpu_usage_seconds_total":      {"p8s_logzio_name", "namespace", "pod", "container"},
-		"container_memory_working_set_bytes":     {"p8s_logzio_name", "namespace", "pod", "container"},
+		"container_cpu_usage_seconds_total":      {"p8s_logzio_name", "namespace", "pod"},
+		"container_memory_working_set_bytes":     {"p8s_logzio_name", "namespace", "pod"},
 		"container_network_transmit_bytes_total": {"p8s_logzio_name", "namespace", "pod"},
 		"container_network_receive_bytes_total":  {"p8s_logzio_name", "namespace", "pod"},
 	}
 	envId := os.Getenv("ENV_ID")
-	query := fmt.Sprintf(`{env_id='%s',pod=~'.+'}`, envId)
-	testMetrics(t, requiredMetrics, query)
+	queryTemplate := `{env_id="%s",pod=~".+"}`
+	query := fmt.Sprintf(queryTemplate, envId)
+	escapedQuery := url.QueryEscape(query)
+	testMetrics(t, requiredMetrics, escapedQuery)
 }
 
 func TestInfrastructureMetrics(t *testing.T) {
@@ -49,7 +52,7 @@ func TestInfrastructureMetrics(t *testing.T) {
 		"kube_node_status_allocatable":             {"p8s_logzio_name", "node", "resource"},
 		"node_memory_MemAvailable_bytes":           {"p8s_logzio_name", "instance", "kubernetes_node"},
 		"node_memory_MemTotal_bytes":               {"p8s_logzio_name", "instance", "kubernetes_node"},
-		"kube_node_role":                           {"p8s_logzio_name", "status", "role", "node"},
+		"kube_node_role":                           {"p8s_logzio_name", "role", "node"},
 		"kube_node_status_condition":               {"p8s_logzio_name", "status", "node"},
 		"kube_node_created":                        {"p8s_logzio_name", "node"},
 		"node_filesystem_avail_bytes":              {"p8s_logzio_name", "instance", "kubernetes_node"},
