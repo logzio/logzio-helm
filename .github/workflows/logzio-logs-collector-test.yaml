@@ -3,7 +3,7 @@ name: Test Logzio Logs Collector Helm Chart on Kind Kubernetes Environment
 on:
   pull_request:
     branches:
-      - main
+      - master
     paths:
       - 'charts/logzio-logs-collector/**'
 jobs:

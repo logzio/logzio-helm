@@ -3,7 +3,7 @@ name: Test Logzio Telemetry Helm Chart on Kind Kubernetes Environment
 on:
   pull_request:
     branches:
-      - main
+      - master
     paths:
       - 'charts/logzio-k8s-telemetry/**'
 jobs:
