@@ -74,8 +74,8 @@ jobs:
 
       - name: Run Go Tests
         env:
-          LOGZIO_METRICS_API_KEY: ${{ env.LOGZIO_METRICS_API_KEY }}
-          LOGZIO_TRACES_API_KEY: ${{ env.LOGZIO_TRACES_API_KEY }}
+          LOGZIO_METRICS_API_KEY: ${{ secrets.LOGZIO_METRICS_API_KEY }}
+          LOGZIO_TRACES_API_KEY: ${{ secrets.LOGZIO_TRACES_API_KEY }}
         run: |
           go get go.uber.org/zap
           go test -v ./tests/traces_e2e_test.go ./tests/common.go
@@ -87,3 +87,4 @@ jobs:
       - name: Delete Kind cluster
         if: always()
         run: kind delete cluster --name kind-${{ github.run_id }}-${{ matrix.mode }}
+
