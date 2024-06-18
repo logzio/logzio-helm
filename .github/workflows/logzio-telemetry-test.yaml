@@ -5,7 +5,7 @@ on:
     branches:
       - master
     paths:
-      - 'charts/logzio-k8s-telemetry/**'
+      - 'charts/logzio-telemetry/**'
 jobs:
   test-helm-chart:
     name: Test Helm Chart on Kind
