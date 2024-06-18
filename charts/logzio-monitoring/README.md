@@ -224,6 +224,9 @@ There are two possible approaches to the upgrade you can choose from:
 
 
 ## Changelog
+- **6.0.2**:
+  - Upgrade `logzio-k8s-telemetry` chart to `v4.2.4`
+    - Upgrade `otel/opentelemetry-collector-contrib` image to `v0.102.1`
 - **6.0.1**:
   - Upgrade `logzio-logs-collector` chart to v1.0.4
     - Add standalone deployment mode
