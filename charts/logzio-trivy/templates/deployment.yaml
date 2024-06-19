@@ -32,6 +32,8 @@ spec:
               key: logzio-log-listener
         - name: ENV_ID
           value: {{ .Values.env_id | quote }}
+        - name: IMAGE_VERSION
+          value: {{ .Values.imageTag }}
         - name: SCHEDULE
           value: {{ .Values.schedule }}
         - name: LOG_LEVEL
