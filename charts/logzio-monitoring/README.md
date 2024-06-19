@@ -224,6 +224,9 @@ There are two possible approaches to the upgrade you can choose from:
 
 
 ## Changelog
+- **6.0.3**:
+  - Upgrade `logzio-k8s-events` chart to `0.0.5`
+    - Remove the duplicate label `app.kubernetes.io/managed-by` @philwelz
 - **6.0.2**:
   - Upgrade `logzio-k8s-telemetry` chart to `v4.2.4`
     - Upgrade `otel/opentelemetry-collector-contrib` image to `v0.102.1`
