@@ -224,6 +224,11 @@ There are two possible approaches to the upgrade you can choose from:
 
 
 ## Changelog
+- **6.0.4**:
+  - Upgrade `logzio-k8s-telemetry` chart to `4.2.5`
+    - Added 'user-agent' header for telemetry data.
+  - Upgrade `logzio-trivy` chart to `0.3.2`
+    - Added 'user-agent' header for telemetry data.
 - **6.0.3**:
   - Upgrade `logzio-k8s-events` chart to `0.0.5`
     - Bugfix/ Remove the duplicate label `app.kubernetes.io/managed-by` @philwelz
