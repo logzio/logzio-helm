@@ -75,7 +75,8 @@ In these cases we can use the following `--set` command to use an alternative im
 
 
 ## Changelog
-
+- **0.3.2**:
+  - Added 'user-agent' header for telemetry data.
 - **0.3.0**:
   - Bump Trivy-Operator version to `0.15.1`.
 - **0.2.1**:
