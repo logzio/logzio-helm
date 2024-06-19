@@ -6520,6 +6520,29 @@ entries:
     - https://github.com/logzio/logzio-helm/releases/download/logzio-trivy-0.3.3/logzio-trivy-0.3.3.tgz
     version: 0.3.3
   - apiVersion: v2
+    appVersion: 0.2.2
+    created: "2024-06-19T14:49:41.927615246Z"
+    dependencies:
+    - name: trivy-operator
+      repository: https://aquasecurity.github.io/helm-charts/
+      version: 0.15.1
+    description: A Helm chart for deploying Trivy operator for scanning security risks
+      on your cluster, and shipping them to Logz.io
+    digest: 4b225990389f73fd57d8eb71b42ed696a6c1e2a76da6f8d577679e245ecbdd42
+    keywords:
+    - logging
+    - trivy
+    - security
+    maintainers:
+    - email: miri.ignatiev@logz.io
+      name: Miri Bar
+    name: logzio-trivy
+    sources:
+    - https://github.com/logzio/logzio-helm
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/logzio-trivy-0.3.2/logzio-trivy-0.3.2.tgz
+    version: 0.3.2
+  - apiVersion: v2
     appVersion: 0.2.1
     created: "2024-04-17T12:22:10.360295705Z"
     dependencies:
@@ -6726,4 +6749,4 @@ entries:
     urls:
     - https://logzio.github.io/logzio-helm/prometheus-alerts-migrator-1.0.0.tgz
     version: 1.0.0
-generated: "2024-06-19T14:39:21.543363808Z"
+generated: "2024-06-19T14:49:41.92809225Z"
