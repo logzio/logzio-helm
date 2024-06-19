@@ -98,6 +98,8 @@ kubectl get nodes -o json | jq ".items[]|{name:.metadata.name, taints:.spec.tain
 
 
 ## Change log
+ - **0.0.5**:
+    - Remove the duplicate label `app.kubernetes.io/managed-by` @philwelz
  - **0.0.4**:
     - Enhanced env_id handling to support both numeric and string formats.
  - **0.0.3**:

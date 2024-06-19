@@ -413,7 +413,7 @@ If you don't want the sub charts to installed add the relevant flag per sub char
 
 ## Change log
 * 4.2.4
-  - Added 'user-agent' header for prometheusremotewrite exporters, logzio traces exporter, and logzio/object_logs exporter.
+  - Upgrade `otel/opentelemetry-collector-contrib` image to `v0.102.1`
 * 4.2.3
   - Disable Kubernetes objects receiver by default.
 * 4.2.2
