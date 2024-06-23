@@ -498,7 +498,7 @@ image:
   repository: otel/opentelemetry-collector-contrib
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.102.1"
+  tag: "0.103.0"
 nginxWindowsImage:
   # Reverse proxy image to enable metrics scraping from windows nodes
   repository: logzio/logzio-windows-node-reverse-proxy
@@ -512,7 +512,7 @@ windowsExporterInstallerImage:
 spmImage:
   repository: otel/opentelemetry-collector-contrib
   pullPolicy: IfNotPresent
-  tag: "0.102.1"
+  tag: "0.103.0"
 imagePullSecrets: []
 
 # OpenTelemetry Collector executable
