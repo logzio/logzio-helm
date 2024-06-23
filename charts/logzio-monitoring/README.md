@@ -224,6 +224,14 @@ There are two possible approaches to the upgrade you can choose from:
 
 
 ## Changelog
+- **6.0.5**:
+  - Upgrade `logzio-k8s-telemetry` chart to `v4.2.4`
+    - Upgrade `otel/opentelemetry-collector-contrib` image to `v0.103.0`
+	- Fix standalone self metrics collection for EKS Fargate
+  - Upgrade `logzio-logs-collector` chart to `v1.0.5`
+    - Upgrade `otel/opentelemetry-collector-contrib` image to `v0.103.0`
+  - Upgrade `logzio-fluentd` chart to `v0.30.1`
+    - Handle empty etcd `log` field, populated based on `message` field.		
 - **6.0.4**:
   - Upgrade `logzio-k8s-telemetry` chart to `4.2.5`
     - Added 'user-agent' header for telemetry data.
