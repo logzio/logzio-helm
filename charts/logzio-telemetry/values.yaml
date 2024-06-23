@@ -390,19 +390,29 @@ metricsConfig:
         scrape_configs:
         - job_name: 'kubernetes-cadvisor'
           scheme: https
-          metrics_path: /metrics/cadvisor
           tls_config:
             ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
             insecure_skip_verify: true
-          bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+          authorization:
+            type: Bearer
+            credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
           kubernetes_sd_configs:
           - role: node
           relabel_configs:
+          - replacement: kubernetes.default.svc:443
+            target_label: __address__        
           - action: labelmap
-            regex: __meta_kubernetes_node_label_(.+)  
+            regex: __meta_kubernetes_node_label_(.+)
           - action: replace
             replacement: kubernetes360
-            target_label: logzio_app                   
+            target_label: logzio_app
+          - source_labels: [__meta_kubernetes_node_name]
+            regex: (.+)
+            target_label: __metrics_path__
+            replacement: /api/v1/nodes/$${1}/proxy/metrics/cadvisor
+          - action: replace
+            replacement: kubernetes360
+            target_label: logzio_app
           metric_relabel_configs: []
     prometheus/collector:
       config:
@@ -498,7 +508,7 @@ image:
   repository: otel/opentelemetry-collector-contrib
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.102.1"
+  tag: "0.103.0"
 nginxWindowsImage:
   # Reverse proxy image to enable metrics scraping from windows nodes
   repository: logzio/logzio-windows-node-reverse-proxy
@@ -512,7 +522,7 @@ windowsExporterInstallerImage:
 spmImage:
   repository: otel/opentelemetry-collector-contrib
   pullPolicy: IfNotPresent
-  tag: "0.102.1"
+  tag: "0.103.0"
 imagePullSecrets: []
 
 # OpenTelemetry Collector executable
