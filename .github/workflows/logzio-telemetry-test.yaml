@@ -69,8 +69,8 @@ jobs:
           kubectl apply -f tests/resources/tracegen.yaml
           kubectl rollout status deployment/trace-gen --timeout=300s
 
-      - name: sleep for 2 minutes
-        run: sleep 120
+      - name: sleep for 3 minutes
+        run: sleep 180
 
       - name: Run Go Tests
         env:
