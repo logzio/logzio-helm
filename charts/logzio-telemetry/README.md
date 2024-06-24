@@ -412,6 +412,8 @@ If you don't want the sub charts to installed add the relevant flag per sub char
 
 
 ## Change log
+* 4.2.7
+  - Fix `cluster-admin` cluster role binding creation condition
 * 4.2.6
   - Upgrade `otel/opentelemetry-collector-contrib` image to `v0.103.0`
   - Fix standalone self metrics collection for EKS Fargate 
