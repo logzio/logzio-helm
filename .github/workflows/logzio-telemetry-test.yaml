@@ -59,7 +59,7 @@ jobs:
           --set secrets.ListenerHost=https://listener.logz.io:8053 \
           --set secrets.p8s_logzio_name=${{ env.ENV_ID }} \
           --set secrets.env_id=${{ env.ENV_ID }} \
-          --set mode=${{ matrix.mode }} \
+          --set collector.mode=${{ matrix.mode }} \
           logzio-k8s-telemetry .
           kubectl rollout status deployment/logzio-k8s-telemetry-otel-collector-standalone --timeout=300s
           kubectl rollout status deployment/logzio-k8s-telemetry-otel-collector-spm --timeout=300s
