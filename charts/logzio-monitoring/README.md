@@ -224,8 +224,11 @@ There are two possible approaches to the upgrade you can choose from:
 
 
 ## Changelog
+- **6.0.6**:
+  - Upgrade `logzio-k8s-telemetry` chart to `v4.2.7`
+    - Fix `cluster-admin` cluster role binding creation condition
 - **6.0.5**:
-  - Upgrade `logzio-k8s-telemetry` chart to `v4.2.4`
+  - Upgrade `logzio-k8s-telemetry` chart to `v4.2.6`
     - Upgrade `otel/opentelemetry-collector-contrib` image to `v0.103.0`
 	- Fix standalone self metrics collection for EKS Fargate
   - Upgrade `logzio-logs-collector` chart to `v1.0.5`
