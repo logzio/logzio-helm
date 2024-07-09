@@ -42,7 +42,7 @@ Edit the configuration in `values.config`. There are 2 sections of the configura
 
 <details>
   <summary>
-    <span><a href="./src/apis/general/README.md">General API</a></span>
+    <span><a href="https://github.com/logzio/logzio-api-fetcher/blob/main/src/apis/general/README.md">General API</a></span>
   </summary>
 
 For structuring custom API calls use type `general` API with the parameters below.
@@ -132,7 +132,7 @@ And in the call after it, it would update again according to the response and th
 </details>
 <details>
   <summary>
-    <span><a href="./src/apis/oauth/README.md">OAuth API</a></span>
+    <span><a href="https://github.com/logzio/logzio-api-fetcher/tree/main/src/apis/oauth">OAuth API</a></span>
   </summary>
 
 For structuring custom OAuth calls use type `oauth` API with the parameters below.
@@ -149,7 +149,7 @@ For structuring custom OAuth calls use type `oauth` API with the parameters belo
 </details>
 <details>
   <summary>
-    <span><a href="./src/apis/azure/README.MD/#azure-graph">Azure Graph</a></span>
+    <span><a href="https://github.com/logzio/logzio-api-fetcher/tree/main/src/apis/azure#azure-graph">Azure Graph</a></span>
   </summary>
 
 For Azure Graph, use type `azure_graph` with the below parameters.
@@ -171,7 +171,7 @@ For Azure Graph, use type `azure_graph` with the below parameters.
 
 <details>
   <summary>
-    <span><a href="./src/apis/azure/README.MD/#azure-mail-reports">Azure Mail Reports</a></span>
+    <span><a href="https://github.com/logzio/logzio-api-fetcher/tree/main/src/apis/azure#azure-mail-reports">Azure Mail Reports</a></span>
   </summary>
 
 For Azure Mail Reports, use type `azure_mail_reports` with the below parameters.
@@ -194,7 +194,7 @@ For Azure Mail Reports, use type `azure_mail_reports` with the below parameters.
 </details>
 <details>
   <summary>
-    <span><a href="./src/apis/azure/README.MD/#azure-general">Azure General API</a></span>
+    <span><a href="https://github.com/logzio/logzio-api-fetcher/tree/main/src/apis/azure#azure-general">Azure General API</a></span>
   </summary>
 
 For structuring custom general Azure API calls use type `azure_general` API with the parameters below.
@@ -213,7 +213,7 @@ For structuring custom general Azure API calls use type `azure_general` API with
 </details>
 <details>
   <summary>
-    <span><a href="./src/apis/cloudflare/README.md">Cloudflare</a></span>
+    <span><a href="https://github.com/logzio/logzio-api-fetcher/tree/main/src/apis/cloudflare">Cloudflare</a></span>
   </summary>
 
 For Cloudflare API, use type as `cloudflare`.  
