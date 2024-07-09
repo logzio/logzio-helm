@@ -141,8 +141,8 @@ For structuring custom OAuth calls use type `oauth` API with the parameters belo
 | Parameter Name    | Description                                                                                                                           | Required/Optional | Default                     |
 |-------------------|---------------------------------------------------------------------------------------------------------------------------------------|-------------------|-----------------------------|
 | name              | Name of the API (custom name)                                                                                                         | Optional          | the defined `url`           |
-| token_request     | Nest here any detail relevant to the request to get the bearer access token. (Options in [General API](./src/apis/general/README.md)) | Required          | -                           |
-| data_request      | Nest here any detail relevant to the data request. (Options in [General API](./src/apis/general/README.md))                           | Required          | -                           |
+| token_request     | Nest here any detail relevant to the request to get the bearer access token. (Options in [General API](https://github.com/logzio/logzio-api-fetcher/tree/main/src/apis/general)) | Required          | -                           |
+| data_request      | Nest here any detail relevant to the data request. (Options in [General API](https://github.com/logzio/logzio-api-fetcher/tree/main/src/apis/general))                           | Required          | -                           |
 | scrape_interval   | Time interval to wait between runs (unit: `minutes`)                                                                                  | Optional          | 1 (minute)                  |
 | additional_fields | Additional custom fields to add to the logs before sending to logzio                                                                  | Optional          | Add `type` as `api-fetcher` |
 
@@ -206,7 +206,7 @@ For structuring custom general Azure API calls use type `azure_general` API with
 | azure_ad_tenant_id    | The Azure AD Tenant id                                                                                      | Required          | -           |
 | azure_ad_client_id    | The Azure AD Client id                                                                                      | Required          | -           |
 | azure_ad_secret_value | The Azure AD Secret value                                                                                   | Required          | -           |
-| data_request          | Nest here any detail relevant to the data request. (Options in [General API](./src/apis/general/README.md)) | Required          | -           |
+| data_request          | Nest here any detail relevant to the data request. (Options in [General API](https://github.com/logzio/logzio-api-fetcher/tree/main/src/apis/general)) | Required          | -           |
 | days_back_fetch       | The amount of days to fetch back in the first request                                                       | Optional          | 1 (day)     |
 | scrape_interval       | Time interval to wait between runs (unit: `minutes`)                                                        | Optional          | 1 (minute)  |
 
@@ -229,7 +229,7 @@ By default `cloudflare` API type:
 | cloudflare_account_id   | The CloudFlare Account ID                                                                                                                  | Required          | -                 |
 | cloudflare_bearer_token | The Cloudflare Bearer token                                                                                                                | Required          | -                 |
 | url                     | The request URL                                                                                                                            | Required          | -                 |
-| next_url                | If needed to update the URL in next requests based on the last response. Supports using variables (see [General API](./general/README.md)) | Optional          | -                 |
+| next_url                | If needed to update the URL in next requests based on the last response. Supports using variables (see [General API](https://github.com/logzio/logzio-api-fetcher/tree/main/src/apis/general)) | Optional          | -                 |
 | additional_fields       | Additional custom fields to add to the logs before sending to logzio                                                                       | Optional          | -                 |
 | scrape_interval         | Time interval to wait between runs (unit: `minutes`)                                                                                       | Optional          | 1 (minute)        |
 | pagination_off          | True if builtin pagination should be off, False otherwise                                                                                  | Optional          | `False`           |
