@@ -1,6 +1,6 @@
 image:
   repository: logzio/logzio-api-fetcher
-  tag: 0.1.3
+  tag: 0.2.0
   pullPolicy: IfNotPresent
 
 # Custom configuration section for logzio-api-fetcher
@@ -10,44 +10,25 @@ config: |
     url: "https://listener.logz.io:8071"
     token: "your-logzio-token"
   
-  auth_apis:
-    - type: cisco_secure_x
-      name: cisco
-      credentials:
-        id: "your_api_credentials_id"
-        key: "your_api_credentials_key"
-      settings:
-        time_interval: 5
-        days_back_fetch: 7
-      filters:
-        event_type: 'type'
-        start_date: 2021-10-05T10%3A10%3A10%2B00%3A00
-      custom_fields:
-        type: cisco_amp
-        level: high
+  apis:
+    - name: my api example
+      type: general
+      url: https://first/request/url
+      additional_fields:
+        type: example_api
+      next_url: https://url/for/any/request/after/first/?since={res.createdDate}
 
-  oauth_apis:
-    - type: azure_graph
-      name: azure_test
-      credentials:
-        id: "your_azure_ad_secret_id"
-        key: "your_azure_ad_secret_value"
-      token_http_request:
-        url: "https://login.microsoftonline.com/your_azure_ad_tenant_id/oauth2/v2.0/token"
-        body: "client_id=your_azure_ad_client_id&scope=https://graph.microsoft.com/.default&client_secret=your_azure_ad_secret_value&grant_type=client_credentials"
-        headers: {}
-        method: POST
-      data_http_request:
-        url: "https://graph.microsoft.com/v1.0/auditLogs/signIns"
-        method: GET
-        headers: {}
-      json_paths:
-        data_date: createdDateTime
-        next_url: ""
-        data: ""
-      settings:
-        time_interval: 1
-        days_back_fetch: 30
+    - name: cloudflare example
+      type: cloudflare
+      cloudflare_account_id: <<CLOUDFLARE_ACCOUNT_ID>>
+      cloudflare_bearer_token: <<CLOUDFLARE_BEARER_TOKEN>>
+      url: https://api.cloudflare.com/client/v4/accounts/{account_id}/alerting/v3/history
+      next_url: https://api.cloudflare.com/client/v4/accounts/{account_id}/alerting/v3/history?since={res.result.[0].sent}
+      days_back_fetch: 7
+      scrape_interval: 5
+      additional_fields:
+        type: cloudflare
+
 
 persistentVolume:
   enabled: true
