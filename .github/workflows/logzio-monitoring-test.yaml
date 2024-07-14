@@ -125,7 +125,7 @@ jobs:
           go test -v ./tests/logs_e2e_test.go ./tests/common.go
       - name: Cleanup Environment
         run: |
-          helm uninstall my-release
+          helm uninstall logzio-monitoring
 
       - name: Delete Cluster
         if: always()
