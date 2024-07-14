@@ -11,14 +11,14 @@ config: |
     token: "your-logzio-token"
   
   apis:
-    - name: my api test
+    - name: my api example
       type: general
       url: https://first/request/url
       additional_fields:
-        type: test_api
+        type: example_api
       next_url: https://url/for/any/request/after/first/?since={res.createdDate}
 
-    - name: cloudflare test
+    - name: cloudflare example
       type: cloudflare
       cloudflare_account_id: <<CLOUDFLARE_ACCOUNT_ID>>
       cloudflare_bearer_token: <<CLOUDFLARE_BEARER_TOKEN>>
