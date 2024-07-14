@@ -246,7 +246,7 @@ logzio:
   token: 123456789a
 
 apis:
-  - name: cloudflare test
+  - name: cloudflare example
     type: cloudflare
     cloudflare_account_id: <<CLOUDFLARE_ACCOUNT_ID>>
     cloudflare_bearer_token: <<CLOUDFLARE_BEARER_TOKEN>>
