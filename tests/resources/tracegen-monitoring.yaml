@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trace-gen
+spec:
+  selector:
+    matchLabels:
+      app: trace-gen
+  template:
+    metadata:
+      labels:
+        app: trace-gen
+    spec:
+      containers:
+        - name: trace-gen
+          image: ghcr.io/frzifus/jaeger-otel-test:latest
+          args:
+            [
+              '-otel.agent.host=logzio-monitoring-otel-collector',
+              '-otel.agent.port=4317',
+            ]
+          env:
+            - name: OTEL_SERVICE_NAME
+              value: 'local-test-service'
