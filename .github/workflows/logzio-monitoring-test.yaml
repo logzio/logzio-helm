@@ -59,16 +59,8 @@ jobs:
           NUMBER_OF_NODES: 3
           AWS_REGION: us-west-1
         run: |
-          case ${{ matrix.environment }} in
-            eks-linux)
-              eksctl create cluster --name ${{ env.ENV_ID }}-${{ matrix.environment }} --region $AWS_REGION --nodes $NUMBER_OF_NODES
-              aws eks --region ${{ env.AWS_REGION }} update-kubeconfig --name ${{ env.ENV_ID }}-${{ matrix.environment }}
-              ;;
-            eks-windows)
-              eksctl create cluster --name ${{ env.ENV_ID }}-${{ matrix.environment }} --region $AWS_REGION --nodes $NUMBER_OF_NODES --node-ami-family WindowsServer2019FullContainer
-              aws eks --region ${{ env.AWS_REGION }} update-kubeconfig --name ${{ env.ENV_ID }}-${{ matrix.environment }}
-              ;;
-          esac
+          eksctl create cluster --name ${{ env.ENV_ID }}-${{ matrix.environment }} --region ${{ env.AWS_REGION }} --nodes {{ env.$NUMBER_OF_NODES }}
+          aws eks --region ${{ env.AWS_REGION }} update-kubeconfig --name ${{ env.ENV_ID }}-${{ matrix.environment }}
       - name: Label Nodes
         run: |
           kubectl get nodes -o name | xargs -I {} kubectl label {} node-role.kubernetes.io/worker=worker --overwrite
@@ -134,11 +126,5 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: us-west-1
         run: |
-          case ${{ matrix.environment }} in
-            eks-linux)
-              eksctl delete cluster --name ${{ env.ENV_ID }}-${{ matrix.environment }} --region ${{ env.AWS_REGION }}
-              ;;
-            eks-windows)
-              eksctl delete cluster --name ${{ env.ENV_ID }}-${{ matrix.environment }} --region ${{ env.AWS_REGION }}
-              ;;
-          esac
+          eksctl delete cluster --name ${{ env.ENV_ID }}-${{ matrix.environment }} --region ${{ env.AWS_REGION }}
+
