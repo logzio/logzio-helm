@@ -3,7 +3,7 @@ name: Test Logzio Monitoring Helm Chart on EKS Kubernetes Environments
 on:
   pull_request:
     branches:
-      - main
+      - master
     paths:
       - 'charts/logzio-monitoring/**'
 jobs:
