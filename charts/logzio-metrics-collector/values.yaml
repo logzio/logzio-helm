@@ -140,11 +140,7 @@ config:
             - from: resource_attribute
               name: k8s.pod.uid
         - sources:
-            - from: connection
-    filter/kubernetes360:
-      metrics:
-        datapoint:
-          - 'IsMatch(metric.name, "(${K8S_360_METRICS})") == true and attributes["logzio_app"] != "kubernetes360"'        
+            - from: connection        
     batch: {}
     attributes/env_id:
       actions:
@@ -473,6 +469,11 @@ standaloneCollector:
                 action: replace
                 target_label: logzio_app                 
             metric_relabel_configs: []
+    processors:
+      filter/kubernetes360:
+        metrics:
+          datapoint:
+            - 'IsMatch(metric.name, "(${K8S_360_METRICS})") == true and attributes["logzio_app"] != "kubernetes360"'    
     service:
       extensions:
         - health_check
