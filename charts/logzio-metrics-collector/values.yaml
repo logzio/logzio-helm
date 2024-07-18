@@ -23,36 +23,144 @@ secrets:
   env_id: "my_env"
   # Secret with your Logz.io metrics shipping token
   logzioMetricsToken: "<<METRICS-SHIPPING-TOKEN>>"
-  # Secret with your Logz.io region
-  logzioRegion: "us"
+  # Secret with your Logz.io region code - https://docs.logz.io/docs/user-guide/admin/hosting-regions/account-region/
+  logzioRegion: "us" 
   # Secret with your custom endpoint, for example: http://endpoint:8050. Overrides secrets.logzioRegion listener adress
   customEndpoint: ""
-  # Secret with your Logz.io Kubernetes object logs shipping token
-
 
 configMap:
   # Specifies whether a configMap should be created (true by default)
   create: true
 
-# Configuration for standalone OpenTelemetry Collector deployment
-standaloneCollector:
-  replicas: 1
+# OpenTelemetry Collector base configuration
+config:
+  receivers:
+    k8s_cluster:
+      auth_type: serviceAccount
+      collection_interval: 30s
+      metadata_collection_interval: 1m
+      node_conditions_to_report:
+        - Ready
+        - MemoryPressure
+        - NetworkUnavailable
+        - DiskPressure
+        - PIDPressure
+      allocatable_types_to_report:
+        - cpu
+        - memory
+        - storage
+        - ephemeral-storage
+      resource_attributes:
+        k8s.pod.name:
+          enabled: true
+        k8s.deployment.name:
+          enabled: true
+        k8s.namespace.name:
+          enabled: true
+        k8s.node.name:
+          enabled: true
+        k8s.statefulset.name:
+          enabled: true
+        k8s.replicaset.name:
+          enabled: true
+        k8s.daemonset.name:
+          enabled: true
+        k8s.cronjob.name:
+          enabled: true
+        k8s.job.name:
+          enabled: true
+        k8s.pod.uid:
+          enabled: true
+    kubeletstats:
+      collection_interval: 30s
+      auth_type: "serviceAccount"
+      endpoint: "${env:KUBE_NODE_NAME}:10250"
+      insecure_skip_verify: true
+    prometheus/collector:
+      config:
+        global:
+          scrape_interval: 30s
+          scrape_timeout: 30s
+        scrape_configs:
+        # Job to collect opentelemetry collector metrics
+        - job_name: 'collector-metrics'
+          scrape_interval: 15s
+          static_configs:
+          - targets: [ "0.0.0.0:8888" ] 
+          metric_relabel_configs: []
+  exporters:
+    logging:
+      loglevel: info
+    prometheusremotewrite/applications:
+      timeout: 30s
+      endpoint: ${LISTENER_URL}
+      external_labels:
+        p8s_logzio_name: ${P8S_LOGZIO_NAME}
+      headers:
+        Authorization: "Bearer ${METRICS_TOKEN}"
+        user-agent: "{{ .Chart.Name }}-{{ .Chart.Version }}-helm"
+      resource_to_telemetry_conversion:
+        enabled: true
+    prometheusremotewrite/infrastructure:
+      timeout: 30s
+      endpoint: ${LISTENER_URL}
+      external_labels:
+        p8s_logzio_name: ${P8S_LOGZIO_NAME}
+      headers:
+        Authorization: "Bearer ${METRICS_TOKEN}"
+        user-agent: "{{ .Chart.Name }}-{{ .Chart.Version }}-helm"    
+      resource_to_telemetry_conversion:
+        enabled: true
+  extensions:
+    health_check: {}
+  processors:
+    k8sattributes:
+      extract:
+        metadata:
+        - k8s.pod.name
+        - k8s.deployment.name
+        - k8s.namespace.name
+        - k8s.node.name
+        - k8s.statefulset.name
+        - k8s.replicaset.name
+        - k8s.daemonset.name
+        - k8s.cronjob.name
+        - k8s.job.name
+        - k8s.pod.uid
+        - k8s.pod.start_time
+        - k8s.pod.ip
+      filter:
+        node_from_env_var: KUBE_NODE_NAME
+      passthrough: false
+      pod_association:
+        - sources:
+            - from: resource_attribute
+              name: k8s.pod.ip
+        - sources:
+            - from: resource_attribute
+              name: k8s.pod.uid
+        - sources:
+            - from: connection
+    filter/kubernetes360:
+      metrics:
+        datapoint:
+          - 'IsMatch(metric.name, "(${K8S_360_METRICS})") == true and attributes["logzio_app"] != "kubernetes360"'        
+    batch: {}
+    attributes/env_id:
+      actions:
+        - key: env_id
+          value: ${ENV_ID}
+          action: insert
+        - key: logzio_agent_version
+          value: "{{ .Chart.Version }}"
+          action: insert
+  service:
+    extensions:
+      - health_check
+    telemetry:
+      logs:
+        level: "debug"  
 
-  containerLogs:
-    enabled: false
-
-  resources:
-    limits:
-      memory: 512Mi
-    requests:
-      cpu: 200m
-      
-  podLabels:  {}
-
-  podAnnotations: {}
-  
-  # Configuration override that will be merged into the collector default config
-  configOverride: {}
 
 # Configuration for OpenTelemetry Collector DaemonSet, enabled by default
 daemonsetCollector:
@@ -79,16 +187,311 @@ daemonsetCollector:
 
   podAnnotations: {}
   
-  # Configuration override that will be merged into the daemonset default config
-  configOverride: {}
+  # DaemonSet Configuration override that will be merged into the daemonset default config
+  configOverride:
+    receivers: 
+      prometheus/applications:
+        config:
+          global:
+            scrape_interval: 30s
+            scrape_timeout: 30s
+          scrape_configs:
+          - job_name: applications
+            honor_timestamps: true
+            honor_labels: true
+            metrics_path: /metrics
+            scheme: http
+            kubernetes_sd_configs:
+            - role: pod
+              selectors:
+              # only scrape data from pods running on the same node as the collector
+              - role: pod
+                field: "spec.nodeName=$KUBE_NODE_NAME"
+            relabel_configs:
+              - action: keep
+                regex: true|"true"
+                source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+              - action: replace
+                regex: (https?)
+                source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scheme]
+                target_label: __scheme__
+              - action: replace
+                regex: (.+)
+                source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+                target_label: __metrics_path__
+              - action: replace
+                regex: (.+?)(?::\d+)?;(\d+)
+                replacement: $$1:$$2
+                source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+                target_label: __address__
+              - action: labelmap
+                regex: __meta_kubernetes_pod_annotation_prometheus_io_param_(.+)
+                replacement: __param_$$1
+              - action: labelmap
+                regex: __meta_kubernetes_pod_label_(.+)
+              - action: replace
+                source_labels: [__meta_kubernetes_namespace]
+                target_label: namespace
+              - action: replace
+                source_labels: [__meta_kubernetes_pod_name]
+                target_label: pod
+              - source_labels: [__meta_kubernetes_pod_node_name]
+                action: replace
+                target_label: kubernetes_node          
+            metric_relabel_configs: []    
+      prometheus/infrastructure:
+        config:
+          global:
+            scrape_interval: 30s
+            scrape_timeout: 30s
+          scrape_configs:
+          - job_name: windows-metrics
+            honor_timestamps: true
+            honor_labels: true
+            metrics_path: /metrics
+            scheme: http
+            kubernetes_sd_configs:
+            - role: pod
+              selectors:
+              # only scrape data from pods running on the same node as collector
+              - role: pod
+                field: "spec.nodeName=$KUBE_NODE_NAME"
+            relabel_configs:
+              - source_labels: [__meta_kubernetes_pod_annotation_prometheus_windows_io_scrape]
+                action: keep
+                regex: true|"true"
+            metric_relabel_configs: []
+          # Job to collect metrics from applications running on pods
+          - job_name: kubernetes-service-endpoints
+            honor_timestamps: true
+            honor_labels: true
+            metrics_path: /metrics
+            scheme: http
+            kubernetes_sd_configs:
+            - role: endpoints
+              selectors:
+              # only scrape data from pods running on the same node as collector
+              - role: pod
+                field: "spec.nodeName=$KUBE_NODE_NAME"
+            relabel_configs:
+              # Adding a dummy job label to enable filtering for duplicate metrics using daemonset collector
+              # "job" label is only added in the prometheusremotewrite and cannot be added before
+              - action: replace
+                replacement: kubernetes-service-endpoints
+                target_label: job_dummy
+              - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scrape]
+                action: keep
+                regex: true|"true"
+              - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scheme]
+                action: replace
+                target_label: __scheme__
+                regex: (https?)
+              - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_path]
+                action: replace
+                target_label: __metrics_path__
+                regex: (.+)
+              - source_labels: [__address__, __meta_kubernetes_service_annotation_prometheus_io_port]
+                action: replace
+                target_label: __address__
+                regex: ([^:]+)(?::\d+)?;(\d+)
+                replacement: $$1:$$2
+              - action: labelmap
+                regex: __meta_kubernetes_service_label_(.+)
+              - source_labels: [__meta_kubernetes_namespace]
+                action: replace
+                target_label: namespace
+              - source_labels: [__meta_kubernetes_service_name]
+                action: replace
+                target_label: service
+              - source_labels: [__meta_kubernetes_pod_name]
+                action: replace
+                target_label: pod
+              - source_labels: [__meta_kubernetes_pod_node_name]
+                action: replace
+                target_label: kubernetes_node
+              - source_labels: [__meta_kubernetes_service_annotation_logz_io_app]
+                action: replace
+                target_label: logzio_app                 
+            metric_relabel_configs: []
+    processors:
+      resourcedetection/all:
+        detectors: [ec2, azure, gcp]
+      filter/kubernetes360:
+        metrics:
+          datapoint:
+            - 'IsMatch(metric.name, "(${K8S_360_METRICS})") == true and attributes["logzio_app"] != "kubernetes360"'
+            # Workaround for an issue where metrics are scraped multiple times
+            - 'attributes["job_dummy"] == "kubernetes-service-endpoints" and attributes["kubernetes_node"] == nil'
+      # Removes label needed for duplicate metrics checks
+      attributes/remove_job_dummy:
+        actions:
+          - key: job_dummy
+            action: delete    
+    service:
+      extensions:
+        - health_check
+      pipelines:
+        metrics/infrastructure:
+          exporters:
+            - prometheusremotewrite/infrastructure
+          processors:
+            - attributes/env_id
+            - batch
+            # - filter/kubernetes360
+            - k8sattributes
+            # workaround for duplicate metrics sent from kubernetes-service-endpoints job
+            - attributes/remove_job_dummy
+          receivers:
+            - prometheus/infrastructure
+            - kubeletstats
+            - k8s_cluster
+            - prometheus/collector
+                      
 
+# Configuration for standalone OpenTelemetry Collector deployment
+standaloneCollector:
+  replicas: 1
 
-# Base collector configuration.
-# Supports templating. To escape existing instances of {{ }}, use {{` <original content> `}}.
-# For example, {{ REDACTED_EMAIL }} becomes {{` {{ REDACTED_EMAIL }} `}}.
-config:
+  containerLogs:
+    enabled: false
 
+  resources:
+    limits:
+      memory: 512Mi
+    requests:
+      cpu: 200m
+      
+  podLabels:  {}
 
+  podAnnotations: {}
+  
+  # Standalone collector configuration override that will be merged into the collector default config
+  configOverride: 
+    receivers:
+      prometheus/applications:
+        config:
+          global:
+            scrape_interval: 60s
+            scrape_timeout: 60s
+          scrape_configs:
+          - job_name: applications
+            honor_timestamps: true
+            honor_labels: true
+            metrics_path: /metrics
+            scheme: http
+            kubernetes_sd_configs:
+            - role: pod
+            relabel_configs:
+              - action: keep
+                regex: true|"true"
+                source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+              - action: replace
+                regex: (https?)
+                source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scheme]
+                target_label: __scheme__
+              - action: replace
+                regex: (.+)
+                source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+                target_label: __metrics_path__
+              - action: replace
+                regex: (.+?)(?::\d+)?;(\d+)
+                replacement: $$1:$$2
+                source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+                target_label: __address__
+              - action: labelmap
+                regex: __meta_kubernetes_pod_annotation_prometheus_io_param_(.+)
+                replacement: __param_$$1
+              - action: labelmap
+                regex: __meta_kubernetes_pod_label_(.+)
+              - action: replace
+                source_labels: [__meta_kubernetes_namespace]
+                target_label: namespace
+              - action: replace
+                source_labels: [__meta_kubernetes_pod_name]
+                target_label: pod
+              - source_labels: [__meta_kubernetes_pod_node_name]
+                action: replace
+                target_label: kubernetes_node          
+            metric_relabel_configs: []
+      prometheus/infrastructure:
+        config:
+          global:
+            scrape_interval: 30s
+            scrape_timeout: 30s
+          scrape_configs:
+          - job_name: windows-metrics
+            honor_timestamps: true
+            honor_labels: true
+            metrics_path: /metrics
+            scheme: http
+            kubernetes_sd_configs:
+            - role: pod
+            relabel_configs:
+              - source_labels: [__meta_kubernetes_pod_annotation_prometheus_windows_io_scrape]
+                action: keep
+                regex: true|"true"
+            metric_relabel_configs: []
+          - job_name: kubernetes-service-endpoints
+            honor_timestamps: true
+            honor_labels: true
+            metrics_path: /metrics
+            scheme: http
+            kubernetes_sd_configs:
+            - role: endpoints
+            relabel_configs:
+              - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scrape]
+                action: keep
+                regex: true|"true"
+              - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scheme]
+                action: replace
+                target_label: __scheme__
+                regex: (https?)
+              - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_path]
+                action: replace
+                target_label: __metrics_path__
+                regex: (.+)
+              - source_labels: [__address__, __meta_kubernetes_service_annotation_prometheus_io_port]
+                action: replace
+                target_label: __address__
+                regex: ([^:]+)(?::\d+)?;(\d+)
+                replacement: $$1:$$2
+              - action: labelmap
+                regex: __meta_kubernetes_service_label_(.+)
+              - source_labels: [__meta_kubernetes_namespace]
+                action: replace
+                target_label: namespace
+              - source_labels: [__meta_kubernetes_service_name]
+                action: replace
+                target_label: service
+              - source_labels: [__meta_kubernetes_pod_name]
+                action: replace
+                target_label: pod
+              - source_labels: [__meta_kubernetes_pod_node_name]
+                action: replace
+                target_label: kubernetes_node
+              - source_labels: [__meta_kubernetes_service_annotation_logz_io_app]
+                action: replace
+                target_label: logzio_app                 
+            metric_relabel_configs: []
+    service:
+      extensions:
+        - health_check
+      pipelines:
+        metrics/infrastructure:
+          exporters:
+            - prometheusremotewrite/infrastructure
+          processors:
+            - attributes/env_id
+            - batch
+            # - filter/kubernetes360
+            - k8sattributes
+          receivers:
+            - prometheus/infrastructure
+            - kubeletstats
+            - k8s_cluster
+            - prometheus/collector
+          
+# OpenTelemetry Collector image
 image:
   # If you want to use the core image `otel/opentelemetry-collector`, you also need to change `command.name` value to `otelcol`.
   repository: otel/opentelemetry-collector-contrib
@@ -153,14 +556,7 @@ securityContext: {}
 nodeSelector: {}
 tolerations: []
 # Set affinity rules for the scheduler to determine where all DaemonSet pods can be placed.
-# The following configuration prevent Logz.io collector deamonset deploymment on fargate nodes
-affinity:
-  nodeAffinity:
-    requiredDuringSchedulingIgnoredDuringExecution:
-      nodeSelectorTerms:
-        - matchExpressions:
-            - key: eks.amazonaws.com/compute-type
-              operator: DoesNotExist
+affinity: {}
 # Allows for pod scheduler prioritisation
 priorityClassName: ""
 

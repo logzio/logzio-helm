@@ -55,6 +55,11 @@ containers:
           secretKeyRef:
             name: {{ .Values.secrets.name }}
             key: env-id
+      - name: P8S_LOGZIO_NAME
+        valueFrom:
+          secretKeyRef:
+            name: {{ .Values.secrets.name }}
+            key: env-id
       - name: LOGZIO_REGION
         valueFrom:
           secretKeyRef:
