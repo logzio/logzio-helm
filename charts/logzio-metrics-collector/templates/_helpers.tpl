@@ -1,22 +1,22 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "logs-collector.name" -}}
+{{- define "metrics-collector.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
-{{- define "logs-collector.lowercase_chartname" -}}
+{{- define "metrics-collector.lowercase_chartname" -}}
 {{- default .Chart.Name | lower }}
 {{- end }}
 
 {{/*
 Get component name
 */}}
-{{- define "logs-collector.component" -}}
+{{- define "metrics-collector.component" -}}
 {{- if eq .Values.mode "daemonset" -}}
-component: logs-collector
+component: metrics-collector
 {{- else if eq .Values.mode "standalone" -}}
-component: logs-collector-standalone
+component: metrics-collector-standalone
 {{- end -}}
 {{- end }}
 
@@ -25,7 +25,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "logs-collector.fullname" -}}
+{{- define "metrics-collector.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -36,37 +36,37 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "logs-collector.chart" -}}
+{{- define "metrics-collector.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "logs-collector.labels" -}}
-helm.sh/chart: {{ include "logs-collector.chart" . }}
-{{ include "logs-collector.selectorLabels" . }}
+{{- define "metrics-collector.labels" -}}
+helm.sh/chart: {{ include "metrics-collector.chart" . }}
+{{ include "metrics-collector.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-{{ include "logs-collector.additionalLabels" . }}
+{{ include "metrics-collector.additionalLabels" . }}
 {{- end }}
 
 {{/*
 Selector labels
 */}}
-{{- define "logs-collector.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "logs-collector.name" . }}
+{{- define "metrics-collector.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "metrics-collector.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "logs-collector.serviceAccountName" -}}
+{{- define "metrics-collector.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "logs-collector.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "metrics-collector.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
@@ -76,30 +76,30 @@ Create the name of the service account to use
 {{/*
 Create the name of the clusterRole to use
 */}}
-{{- define "logs-collector.clusterRoleName" -}}
-{{- default (include "logs-collector.fullname" .) .Values.clusterRole.name }}
+{{- define "metrics-collector.clusterRoleName" -}}
+{{- default (include "metrics-collector.fullname" .) .Values.clusterRole.name }}
 {{- end }}
 
 {{/*
 Create the name of the clusterRoleBinding to use
 */}}
-{{- define "logs-collector.clusterRoleBindingName" -}}
-{{- default (include "logs-collector.fullname" .) .Values.clusterRole.clusterRoleBinding.name }}
+{{- define "metrics-collector.clusterRoleBindingName" -}}
+{{- default (include "metrics-collector.fullname" .) .Values.clusterRole.clusterRoleBinding.name }}
 {{- end }}
 
-{{- define "logs-collector.podAnnotations" -}}
+{{- define "metrics-collector.podAnnotations" -}}
 {{- if .Values.podAnnotations }}
 {{- tpl (.Values.podAnnotations | toYaml) . }}
 {{- end }}
 {{- end }}
 
-{{- define "logs-collector.podLabels" -}}
+{{- define "metrics-collector.podLabels" -}}
 {{- if .Values.podLabels }}
 {{- tpl (.Values.podLabels | toYaml) . }}
 {{- end }}
 {{- end }}
 
-{{- define "logs-collector.additionalLabels" -}}
+{{- define "metrics-collector.additionalLabels" -}}
 {{- if .Values.additionalLabels }}
 {{- tpl (.Values.additionalLabels | toYaml) . }}
 {{- end }}
@@ -109,7 +109,7 @@ Create the name of the clusterRoleBinding to use
 {{/*
 Compute Service creation on mode
 */}}
-{{- define "logs-collector.serviceEnabled" }}
+{{- define "metrics-collector.serviceEnabled" }}
   {{- $serviceEnabled := true }}
   {{- if not (eq (toString .Values.service.enabled) "<nil>") }}
     {{- $serviceEnabled = .Values.service.enabled -}}
@@ -125,7 +125,7 @@ Compute Service creation on mode
 {{/*
 Compute InternalTrafficPolicy on Service creation
 */}}
-{{- define "logs-collector.serviceInternalTrafficPolicy" }}
+{{- define "metrics-collector.serviceInternalTrafficPolicy" }}
   {{- if and (eq .Values.mode "daemonset") (eq .Values.service.enabled true) }}
     {{- print (.Values.service.internalTrafficPolicy | default "Local") -}}
   {{- else }}
@@ -136,7 +136,7 @@ Compute InternalTrafficPolicy on Service creation
 {{/*
 Allow the release namespace to be overridden
 */}}
-{{- define "logs-collector.namespace" -}}
+{{- define "metrics-collector.namespace" -}}
   {{- if .Values.namespaceOverride -}}
     {{- .Values.namespaceOverride -}}
   {{- else -}}
@@ -148,7 +148,7 @@ Allow the release namespace to be overridden
   This helper converts the input value of memory to Bytes.
   Input needs to be a valid value as supported by k8s memory resource field.
  */}}
-{{- define "logs-collector.convertMemToBytes" }}
+{{- define "metrics-collector.convertMemToBytes" }}
   {{- $mem := lower . -}}
   {{- if hasSuffix "e" $mem -}}
     {{- $mem = mulf (trimSuffix "e" $mem | float64) 1e18 -}}
@@ -178,8 +178,8 @@ Allow the release namespace to be overridden
 {{- $mem }}
 {{- end }}
 
-{{- define "logs-collector.gomemlimit" }}
-{{- $memlimitBytes := include "logs-collector.convertMemToBytes" . | mulf 0.8 -}}
+{{- define "metrics-collector.gomemlimit" }}
+{{- $memlimitBytes := include "metrics-collector.convertMemToBytes" . | mulf 0.8 -}}
 {{- printf "%dMiB" (divf $memlimitBytes 0x1p20 | floor | int64) -}}
 {{- end }}
 
@@ -200,7 +200,7 @@ listener-eu.logz.io
 {{- else if eq $region "uk" -}}
 listener-uk.logz.io
 {{- else -}}
-listener.logz.io  # Default to US if no match
+listener.logz.io  # Default to us-east-1 region if no match
 {{- end -}}
 {{- end }}
 

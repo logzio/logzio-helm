@@ -1,0 +1,463 @@
+# Default values for opentelemetry-collector.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# conditionally controll the deployment of this chart by a parent chart 
+enabled: true
+
+nameOverride: ""
+fullnameOverride: ""
+
+# Valid values for metrics collection are "daemonset","standalone". Default is "daemonset"
+mode: "daemonset"
+
+# Specify which namespace should be used to deploy the resources into
+namespaceOverride: ""
+
+ 
+secrets:
+  # When true, the logzio secret will be created and managed by this Chart. If you're managing the logzio secrets by yourself, set to false, note that in order for the default configuration to work proprly you need to create the following env variables: ENV_ID LOGZIO_REGION LOGZIO_METRICS_TOKEN
+  enabled: true
+  name: logzio-metric-collector-secrets
+  # environment indentifier attribute that will be added to all metrics
+  env_id: "my_env"
+  # Secret with your Logz.io metrics shipping token
+  logzioMetricsToken: "<<METRICS-SHIPPING-TOKEN>>"
+  # Secret with your Logz.io region
+  logzioRegion: "us"
+  # Secret with your custom endpoint, for example: http://endpoint:8050. Overrides secrets.logzioRegion listener adress
+  customEndpoint: ""
+  # Secret with your Logz.io Kubernetes object logs shipping token
+
+
+configMap:
+  # Specifies whether a configMap should be created (true by default)
+  create: true
+
+# Configuration for standalone OpenTelemetry Collector deployment
+standaloneCollector:
+  replicas: 1
+
+  containerLogs:
+    enabled: false
+
+  resources:
+    limits:
+      memory: 512Mi
+    requests:
+      cpu: 200m
+      
+  podLabels:  {}
+
+  podAnnotations: {}
+  
+  # Configuration override that will be merged into the collector default config
+  configOverride: {}
+
+# Configuration for OpenTelemetry Collector DaemonSet, enabled by default
+daemonsetCollector:
+
+  containerLogs:
+    enabled: false
+  
+  # prevent collector daemonset deployment on fargate nodes
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: eks.amazonaws.com/compute-type
+                operator: DoesNotExist
+
+  resources:
+    limits:
+      memory: 250Mi
+    requests:
+      cpu: 150m
+
+  podLabels:  {}
+
+  podAnnotations: {}
+  
+  # Configuration override that will be merged into the daemonset default config
+  configOverride: {}
+
+
+# Base collector configuration.
+# Supports templating. To escape existing instances of {{ }}, use {{` <original content> `}}.
+# For example, {{ REDACTED_EMAIL }} becomes {{` {{ REDACTED_EMAIL }} `}}.
+config:
+
+
+image:
+  # If you want to use the core image `otel/opentelemetry-collector`, you also need to change `command.name` value to `otelcol`.
+  repository: otel/opentelemetry-collector-contrib
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+  # When digest is set to a non-empty value, images will be pulled by digest (regardless of tag value).
+  digest: ""
+imagePullSecrets: []
+
+# OpenTelemetry Collector executable
+command:
+  name: otelcol-contrib
+  extraArgs: []
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+clusterRole:
+  # Specifies whether a clusterRole should be created
+  # Some presets also trigger the creation of a cluster role and cluster role binding.
+  # If using one of those presets, this field is no-op.
+  create: true
+  # Annotations to add to the clusterRole
+  # Can be used in combination with presets that create a cluster role.
+  annotations: {}
+  # The name of the clusterRole to use.
+  # If not set a name is generated using the fullname template
+  # Can be used in combination with presets that create a cluster role.
+  name: ""
+  # A set of rules as documented here : https://kubernetes.io/docs/reference/access-authn-authz/rbac/
+  # Can be used in combination with presets that create a cluster role to add additional rules.
+  rules: []
+  # - apiGroups:
+  #   - ''
+  #   resources:
+  #   - 'pods'
+  #   - 'nodes'
+  #   verbs:
+  #   - 'get'
+  #   - 'list'
+  #   - 'watch'
+
+  clusterRoleBinding:
+    # Annotations to add to the clusterRoleBinding
+    # Can be used in combination with presets that create a cluster role binding.
+    annotations: {}
+    # The name of the clusterRoleBinding to use.
+    # If not set a name is generated using the fullname template
+    # Can be used in combination with presets that create a cluster role binding.
+    name: ""
+
+podSecurityContext: {}
+securityContext: {}
+
+nodeSelector: {}
+tolerations: []
+# Set affinity rules for the scheduler to determine where all DaemonSet pods can be placed.
+# The following configuration prevent Logz.io collector deamonset deploymment on fargate nodes
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: eks.amazonaws.com/compute-type
+              operator: DoesNotExist
+# Allows for pod scheduler prioritisation
+priorityClassName: ""
+
+extraEnvs: []
+extraEnvsFrom: []
+extraVolumes: []
+extraVolumeMounts: []
+
+ports:
+  otlp:
+    enabled: true
+    containerPort: 4317
+    servicePort: 4317
+    hostPort: 4317
+    protocol: TCP
+    # nodePort: 30317
+    appProtocol: grpc
+  otlp-http:
+    enabled: true
+    containerPort: 4318
+    servicePort: 4318
+    hostPort: 4318
+    protocol: TCP
+  jaeger-compact:
+    enabled: true
+    containerPort: 6831
+    servicePort: 6831
+    hostPort: 6831
+    protocol: UDP
+  jaeger-thrift:
+    enabled: true
+    containerPort: 14268
+    servicePort: 14268
+    hostPort: 14268
+    protocol: TCP
+  jaeger-grpc:
+    enabled: true
+    containerPort: 14250
+    servicePort: 14250
+    hostPort: 14250
+    protocol: TCP
+  zipkin:
+    enabled: true
+    containerPort: 9411
+    servicePort: 9411
+    hostPort: 9411
+    protocol: TCP
+  metrics:
+    enabled: true
+    containerPort: 8888
+    servicePort: 8888
+    protocol: TCP
+
+resources:
+  limits:
+    cpu: 250m
+    memory: 512Mi
+
+podAnnotations: {}
+
+podLabels: {}
+
+# Common labels to add to all otel-collector resources. Evaluated as a template.
+additionalLabels: {}
+#  app.kubernetes.io/part-of: my-app
+
+# Host networking requested for this pod. Use the host's network namespace.
+hostNetwork: false
+
+# Adding entries to Pod /etc/hosts with HostAliases
+# https://kubernetes.io/docs/tasks/network/customize-hosts-file-for-pods/
+hostAliases: []
+  # - ip: "1.2.3.4"
+  #   hostnames:
+  #     - "my.host.com"
+
+# Pod DNS policy ClusterFirst, ClusterFirstWithHostNet, None, Default, None
+dnsPolicy: ""
+
+# Custom DNS config. Required when DNS policy is None.
+dnsConfig: {}
+
+
+annotations: {}
+
+# List of extra sidecars to add
+extraContainers: []
+# extraContainers:
+#   - name: test
+#     command:
+#       - cp
+#     args:
+#       - /bin/sleep
+#       - /test/sleep
+#     image: busybox:latest
+#     volumeMounts:
+#       - name: test
+#         mountPath: /test
+
+# List of init container specs, e.g. for copying a binary to be executed as a lifecycle hook.
+# Another usage of init containers is e.g. initializing filesystem permissions to the OTLP Collector user `10001` in case you are using persistence and the volume is producing a permission denied error for the OTLP Collector container.
+initContainers: []
+# initContainers:
+#   - name: test
+#     image: busybox:latest
+#     command:
+#       - cp
+#     args:
+#       - /bin/sleep
+#       - /test/sleep
+#     volumeMounts:
+#       - name: test
+#         mountPath: /test
+#  - name: init-fs
+#    image: busybox:latest
+#    command:
+#      - sh
+#      - '-c'
+#      - 'chown -R 10001: /var/lib/storage/otc' # use the path given as per `extensions.file_storage.directory` & `extraVolumeMounts[x].mountPath`
+#    volumeMounts:
+#      - name: opentelemetry-collector-data # use the name of the volume used for persistence
+#        mountPath: /var/lib/storage/otc # use the path given as per `extensions.file_storage.directory` & `extraVolumeMounts[x].mountPath`
+
+# Pod lifecycle policies.
+lifecycleHooks: {}
+# lifecycleHooks:
+#   preStop:
+#     exec:
+#       command:
+#       - /test/sleep
+#       - "5"
+
+# liveness probe configuration
+# Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+##
+livenessProbe:
+  # Number of seconds after the container has started before startup, liveness or readiness probes are initiated.
+  # initialDelaySeconds: 1
+  # How often in seconds to perform the probe.
+  # periodSeconds: 10
+  # Number of seconds after which the probe times out.
+  # timeoutSeconds: 1
+  # Minimum consecutive failures for the probe to be considered failed after having succeeded.
+  # failureThreshold: 1
+  # Duration in seconds the pod needs to terminate gracefully upon probe failure.
+  # terminationGracePeriodSeconds: 10
+  httpGet:
+    port: 13133
+    path: /
+
+# readiness probe configuration
+# Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+##
+readinessProbe:
+  # Number of seconds after the container has started before startup, liveness or readiness probes are initiated.
+  # initialDelaySeconds: 1
+  # How often (in seconds) to perform the probe.
+  # periodSeconds: 10
+  # Number of seconds after which the probe times out.
+  # timeoutSeconds: 1
+  # Minimum consecutive successes for the probe to be considered successful after having failed.
+  # successThreshold: 1
+  # Minimum consecutive failures for the probe to be considered failed after having succeeded.
+  # failureThreshold: 1
+  httpGet:
+    port: 13133
+    path: /
+
+service:
+  # Enable the creation of a Service.
+  enabled: true
+
+  type: ClusterIP
+  # type: LoadBalancer
+  # loadBalancerIP: 1.2.3.4
+  # loadBalancerSourceRanges: []
+
+  # By default, Service of type 'LoadBalancer' will be created setting 'externalTrafficPolicy: Cluster'
+  # unless other value is explicitly set.
+  # Possible values are Cluster or Local (https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip)
+  # externalTrafficPolicy: Cluster
+
+  annotations: {}
+
+  # By default, Service will be created setting 'internalTrafficPolicy: Local' on mode = daemonset
+  # unless other value is explicitly set.
+  # Setting 'internalTrafficPolicy: Cluster' on a daemonset is not recommended
+  # internalTrafficPolicy: Cluster
+
+ingress:
+  enabled: false
+  # annotations: {}
+  # ingressClassName: nginx
+  # hosts:
+  #   - host: collector.example.com
+  #     paths:
+  #       - path: /
+  #         pathType: Prefix
+  #         port: 4318
+  # tls:
+  #   - secretName: collector-tls
+  #     hosts:
+  #       - collector.example.com
+
+  # Additional ingresses - only created if ingress.enabled is true
+  # Useful for when differently annotated ingress services are required
+  # Each additional ingress needs key "name" set to something unique
+  additionalIngresses: []
+  # - name: cloudwatch
+  #   ingressClassName: nginx
+  #   annotations: {}
+  #   hosts:
+  #     - host: collector.example.com
+  #       paths:
+  #         - path: /
+  #           pathType: Prefix
+  #           port: 4318
+  #   tls:
+  #     - secretName: collector-tls
+  #       hosts:
+  #         - collector.example.com
+
+podMonitor:
+  # The pod monitor by default scrapes the metrics port.
+  # The metrics port needs to be enabled as well.
+  enabled: false
+  metricsEndpoints:
+    - port: metrics
+      # interval: 15s
+
+  # additional labels for the PodMonitor
+  extraLabels: {}
+  #   release: kube-prometheus-stack
+
+rollout:
+  rollingUpdate: {}
+  # When 'mode: daemonset', maxSurge cannot be used when hostPort is set for any of the ports
+  # maxSurge: 25%
+  # maxUnavailable: 0
+  strategy: RollingUpdate
+
+networkPolicy:
+  enabled: false
+
+  # Annotations to add to the NetworkPolicy
+  annotations: {}
+
+  # Configure the 'from' clause of the NetworkPolicy.
+  # By default this will restrict traffic to ports enabled for the Collector. If
+  # you wish to further restrict traffic to other hosts or specific namespaces,
+  # see the standard NetworkPolicy 'spec.ingress.from' definition for more info:
+  # https://kubernetes.io/docs/reference/kubernetes-api/policy-resources/network-policy-v1/
+  allowIngressFrom: []
+  # # Allow traffic from any pod in any namespace, but not external hosts
+  # - namespaceSelector: {}
+  # # Allow external access from a specific cidr block
+  # - ipBlock:
+  #     cidr: 192.168.1.64/32
+  # # Allow access from pods in specific namespaces
+  # - namespaceSelector:
+  #     matchExpressions:
+  #       - key: kubernetes.io/metadata.name
+  #         operator: In
+  #         values:
+  #           - "cats"
+  #           - "dogs"
+
+  # Add additional ingress rules to specific ports
+  # Useful to allow external hosts/services to access specific ports
+  # An example is allowing an external prometheus server to scrape metrics
+  #
+  # See the standard NetworkPolicy 'spec.ingress' definition for more info:
+  # https://kubernetes.io/docs/reference/kubernetes-api/policy-resources/network-policy-v1/
+  extraIngressRules: []
+  # - ports:
+  #   - port: metrics
+  #     protocol: TCP
+  #   from:
+  #     - ipBlock:
+  #         cidr: 192.168.1.64/32
+
+  # Restrict egress traffic from the OpenTelemetry collector pod
+  # See the standard NetworkPolicy 'spec.egress' definition for more info:
+  # https://kubernetes.io/docs/reference/kubernetes-api/policy-resources/network-policy-v1/
+  egressRules: []
+  #  - to:
+  #      - namespaceSelector: {}
+  #      - ipBlock:
+  #          cidr: 192.168.10.10/24
+  #    ports:
+  #      - port: 1234
+  #        protocol: TCP
+
+# When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured
+# resources.limits.memory
+# If no resources.limits.memory are defined enabling does nothing.
+# In a future release this setting will be enabled by default.
+# See https://github.com/open-telemetry/opentelemetry-helm-charts/issues/891
+# for more details.
+useGOMEMLIMIT: false

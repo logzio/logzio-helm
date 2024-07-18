@@ -1,0 +1,51 @@
+{{ if .Values.enabled}}
+{{- if eq .Values.mode "daemonset" -}}
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ include "metrics-collector.fullname" . }}
+  namespace: {{ template "metrics-collector.namespace" . }}
+  labels:
+    {{- include "metrics-collector.labels" . | nindent 4 }}
+  {{- if .Values.annotations }}
+  annotations:
+    {{- range $key, $value := .Values.annotations }}
+    {{- printf "%s: %s" $key (tpl $value $ | quote) | nindent 4 }}
+    {{- end }}
+  {{- end }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "metrics-collector.selectorLabels" . | nindent 6 }}
+      {{- include "metrics-collector.component" . | nindent 6 }}
+  updateStrategy:
+    {{- if eq .Values.rollout.strategy "RollingUpdate" }}
+    {{- with .Values.rollout.rollingUpdate }}
+    rollingUpdate:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+    {{- end }}
+    type: {{ .Values.rollout.strategy }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap-agent.yaml") . | sha256sum }}
+        {{- include "metrics-collector.podAnnotations" . | nindent 8 }}
+      labels:
+        {{- include "metrics-collector.selectorLabels" . | nindent 8 }}
+        {{- include "metrics-collector.component" . | nindent 8 }}
+        {{- include "metrics-collector.podLabels" . | nindent 8 }}
+    spec:
+      {{- $podValues := deepCopy .Values }}
+      {{- $podData := dict "Values" $podValues "configmapSuffix" "-daemonset" "isAgent" true }}
+      {{- include "metrics-collector.metricsPod" ($podData | mustMergeOverwrite (deepCopy .)) | nindent 6 }}
+      hostNetwork: {{ .Values.hostNetwork }}
+      {{- with .Values.dnsPolicy }}
+      dnsPolicy: {{ . }}
+      {{- end }}
+      {{- with .Values.dnsConfig }}
+      dnsConfig:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}
+{{ end }}

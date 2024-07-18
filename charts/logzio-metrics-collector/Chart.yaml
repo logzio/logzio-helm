@@ -1,0 +1,10 @@
+apiVersion: v2
+name: logzio-metrics-collector
+version: 0.0.1
+description: Kubernetes metrics collection agent for Logz.io based on opentelemetry collector
+type: application
+home: https://logz.io/
+maintainers:
+  - name: Raul Gurshumov
+    email: raul.gurshumo@logz.io
+appVersion: 0.105.0
