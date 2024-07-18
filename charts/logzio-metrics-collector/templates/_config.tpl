@@ -6,7 +6,7 @@
 
 # Build config file for daemonset metrics Collector
 {{- define "metrics-collector.metricsDaemonsetConfig" -}}
-{{- $values := deepCopy .Values.daemonsetCollector.config -}}
+{{- $values := deepCopy .Values.daemonsetCollector.configOverride -}}
 {{- $data := dict "Values" $values | mustMergeOverwrite (deepCopy .) -}}
 {{- $config := include "metrics-collector.baseMetricsConfig" $data -}}
 {{- tpl $config . -}}
@@ -14,7 +14,7 @@
 
 # Build config file for standalone metrics Collector
 {{- define "metrics-collector.metricsStandaloneConfig" -}}
-{{- $values := deepCopy .Values.standaloneCollector.config -}}
+{{- $values := deepCopy .Values.standaloneCollector.configOverride -}}
 {{- $data := dict "Values" $values | mustMergeOverwrite (deepCopy .) -}}
 {{- $config := include "metrics-collector.baseMetricsConfig" $data -}}
 {{- tpl $config . -}}
