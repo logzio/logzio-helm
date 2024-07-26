@@ -8,6 +8,7 @@ metadata:
   labels:
     {{- include "metrics-collector.labels" . | nindent 4 }}
 data:
-  relay: {{- include "metrics-collector.metricsStandaloneConfig" . | nindent 4 }}
+  relay: |
+    {{- include "metrics-collector.standaloneCollectorConfig" . | nindent 4 -}}
 {{- end }}
 {{ end }}

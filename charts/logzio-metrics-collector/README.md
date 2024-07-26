@@ -47,19 +47,19 @@ helm repo update
     Install `logzio-metrics-collector` from the Logz.io Helm repository, specifying the authentication values:
 
     ```
-    helm install logzio-metrics-collector -n monitoring \
+    helm install logzio-metrics-collector -n monitoring --create-namespace \
     --set enabled=true \
-    --set secrets.logzioMetricsToken=<<token>> \
-    --set secrets.logzioRegion=<<region>> \
-    --set secrets.env_id=<<env_id>> \
+    --set secrets.logzioMetricsToken="<<METRICS-SHIPPING-TOKEN>>" \
+    --set secrets.logzioRegion="<<LOGZIO-REGION>>" \
+    --set secrets.env_id="<<ENV-ID>>" \
     logzio-helm/logzio-metrics-collector
     ```
 
     Replace:
     * `logzio-metrics-collector` with your release name
-    * `<<token>>` with your Logz.io metrics shipping token
-    * `<<region>>` with your Logz.io [account region code](https://docs.logz.io/docs/user-guide/admin/hosting-regions/account-region/)
-    * `<<env_id>>` with a unique name assigned to your environment's identifier, to differentiate telemetry data across various environments
+    * `<<METRICS-SHIPPING-TOKEN>>` with your Logz.io metrics shipping token
+    * `<<LOGZIO-REGION>>` with your Logz.io [account region code](https://docs.logz.io/docs/user-guide/admin/hosting-regions/account-region/)
+    * `<<ENV-ID>>` with a unique name assigned to your environment's identifier, to differentiate telemetry data across various environments
 
     
 ### Uninstalling the Chart
@@ -79,3 +79,87 @@ You can use the following options to update the Helm chart values [parameters](V
 * Edit the `values.yaml`
 
 * Overide default values with your own `my_values.yaml` and apply it in the `helm install` command. 
+
+### Deploy metrics chart with Kuberenetes object logs correlation
+
+**Note**: `k8sObjectsLogs.enabled=true` will have no effect unless `enabled` is also set to `true`
+
+```
+helm install logzio-metrics-collector -n monitoring --create-namespace \
+--set enabled=true \
+--set k8sObjectsLogs.enabled=true \
+--set secrets.k8sObjectsLogsToken="<<LOGS-SHIPPING-TOKEN>>"\
+--set secrets.logzioMetricsToken="<<METRICS-SHIPPING-TOKEN>>" \
+--set secrets.logzioRegion="<<LOGZIO-REGION>>" \
+--set secrets.env_id="<<ENV_ID>>" \
+logzio-helm/logzio-metrics-collector 
+```
+    
+Replace:
+* `logzio-metrics-collector` with your release name
+* `<<METRICS-SHIPPING-TOKEN>>` with your Logz.io metrics shipping token
+* `<<LOGS-SHIPPING-TOKEN>>` with your Logz.io logs shipping token
+* `<<LOGZIO-REGION>>` with your Logz.io [account region code](https://docs.logz.io/docs/user-guide/admin/hosting-regions/account-region/)
+* `<<ENV-ID>>` with a unique name assigned to your environment's identifier, to differentiate telemetry data across various environments
+
+
+### For clusters with Windows Nodes
+
+
+To extract and scrape metrics from Windows Nodes, a Windows Exporter service must be installed on the node host. This installation is accomplished by authenticating with a username and password via an SSH connection to the node through a job.
+
+By default, the Windows installer job will execute upon deployment and subsequently every 10 minutes, retaining the most recent failed and successful pods.
+You can modify these settings in the `values.yaml` file:
+
+```
+windowsExporterInstallerJob:
+  interval: "*/10 * * * *"           #In CronJob format
+  concurrencyPolicy: Forbid          # Future cronjob will run only after current job is finished
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+```
+
+The default username for Windows Node pools is: `azureuser`. (This username and password are shared across all Windows node pools.)
+
+You can change the password for your Windows node pools in the AKS cluster using the following command (this will only affect Windows node pools):
+
+```
+    az aks update \
+    --resource-group $RESOURCE_GROUP \
+    --name $CLUSTER_NAME \
+    --windows-admin-password $NEW_PW
+```
+
+You can read more information at https://docs.microsoft.com/en-us/azure/aks/windows-faq,
+under `How do I change the administrator password for Windows Server nodes on my cluster?` section.
+
+
+###### Run the Helm deployment code for clusters with Windows Nodes:
+
+    ```
+    helm install logzio-metrics-collector -n monitoring --create-namespace \
+    --set enabled=true \
+    --set secrets.windowsNodeUsername="<<WINDOWS-NODE-USERNAME>" \
+    --set secrets.windowsNodePassword="<<WINDOWS-NODE-PASSWORD>>" \
+    --set secrets.logzioMetricsToken="<<METRICS-SHIPPING-TOKEN>>" \
+    --set secrets.logzioRegion="<<LOGZIO-REGION>>" \
+    --set secrets.env_id="<<ENV_ID>>" \
+    logzio-helm/logzio-metrics-collector
+    ```
+    Replace:
+    * `logzio-metrics-collector` with your release name
+    * `<<METRICS-SHIPPING-TOKEN>>` with your Logz.io metrics shipping token
+    * `<<LOGZIO-REGION>>` with your Logz.io [account region code](https://docs.logz.io/docs/user-guide/admin/hosting-regions/account-region/)
+    * `<<ENV-ID>>` with a unique name assigned to your environment's identifier, to differentiate telemetry data across various environments
+    * `<<WINDOWS-NODE-USERNAME>>` with the username for the Node pool you want the Windows exporter to be installed on.
+    * `<<WINDOWS-NODE-PASSWORD>>` with the password for the Node pool you want the Windows exporter to be installed on.
+
+
+### Handling image pull rate limit
+In some cases (i.e spot clusters) where the pods/nodes are replaced frequently, the pull rate limit for images pulled from dockerhub might be reached, with an error:
+`You have reached your pull rate limit. You may increase the limit by authenticating and upgrading: https://www.docker.com/increase-rate-limits`.
+In these cases we can use the following `--set` commands to use an alternative image repository:
+
+```shell
+--set image.repository=ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-contrib
+```

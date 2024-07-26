@@ -45,21 +45,19 @@ containers:
           fieldRef:
             apiVersion: v1
             fieldPath: status.podIP
-      - name: K8S_NODE_NAME
+      - name: KUBE_NODE_NAME
         valueFrom:
           fieldRef:
             fieldPath: spec.nodeName
+      - name: K8S_360_METRICS
+        value: {{ include "metrics-collector.k360Metrics" . }}
+      - name: LOGZIO_AGENT_VERSION
+        value: {{.Chart.Version}}
+      - name: REALESE_NAME
+        value: {{.Release.Name}}
+      - name: REALESE_NS
+        value: {{.Release.Namespace}}            
       {{ if .Values.secrets.enabled}}
-      - name: ENV_ID
-        valueFrom:
-          secretKeyRef:
-            name: {{ .Values.secrets.name }}
-            key: env-id
-      - name: P8S_LOGZIO_NAME
-        valueFrom:
-          secretKeyRef:
-            name: {{ .Values.secrets.name }}
-            key: env-id
       - name: LOGZIO_REGION
         valueFrom:
           secretKeyRef:
@@ -76,8 +74,34 @@ containers:
           secretKeyRef:
             name: {{ .Values.secrets.name }}
             key: custom-endpoint
+      - name: LISTENER_URL
+      valueFrom:
+        secretKeyRef:
+          name: {{ .Values.secrets.name }}
+          key: custom-endpoint            
+      {{- end -}}
+      {{- if .Values.secrets.k8sObjectsLogsToken }}
+      - name: LOGZIO_OBJECTS_LOGS_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: {{ .Values.secrets.name }}
+            key: logzio-k8s-objects-logs-token
+      {{- end -}}      
+      {{- if .Values.secrets.env_id }}
+      - name: ENV_ID
+        valueFrom:
+          secretKeyRef:
+            name: {{ .Values.secrets.name }}
+            key: env-id
+      - name: P8S_LOGZIO_NAME
+        valueFrom:
+          secretKeyRef:
+            name: {{ .Values.secrets.name }}
+            key: env-id           
       {{- end -}}
       {{ end }}
+      - name: LISTENER_URL
+        value: {{ include "logzio.listenerAddress" . | quote }}    
       {{- if and (.Values.useGOMEMLIMIT) ((((.Values.resources).limits).memory))  }}
       - name: GOMEMLIMIT
         value: {{ include "metrics-collector.gomemlimit" .Values.resources.limits.memory | quote }}
@@ -89,48 +113,6 @@ containers:
     envFrom:
     {{- . | toYaml | nindent 6 }}
     {{- end }}
-    {{- if .Values.lifecycleHooks }}
-    lifecycle:
-      {{- toYaml .Values.lifecycleHooks | nindent 6 }}
-    {{- end }}
-    livenessProbe:
-      {{- if .Values.livenessProbe.initialDelaySeconds | empty | not }}
-      initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
-      {{- end }}
-      {{- if .Values.livenessProbe.periodSeconds | empty | not }}
-      periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
-      {{- end }}
-      {{- if .Values.livenessProbe.timeoutSeconds | empty | not }}
-      timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
-      {{- end }}
-      {{- if .Values.livenessProbe.failureThreshold | empty | not }}
-      failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
-      {{- end }}
-      {{- if .Values.livenessProbe.terminationGracePeriodSeconds | empty | not }}
-      terminationGracePeriodSeconds: {{ .Values.livenessProbe.terminationGracePeriodSeconds }}
-      {{- end }}
-      httpGet:
-        path: {{ .Values.livenessProbe.httpGet.path }}
-        port: {{ .Values.livenessProbe.httpGet.port }}
-    readinessProbe:
-      {{- if .Values.readinessProbe.initialDelaySeconds | empty | not }}
-      initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
-      {{- end }}
-      {{- if .Values.readinessProbe.periodSeconds | empty | not }}
-      periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
-      {{- end }}
-      {{- if .Values.readinessProbe.timeoutSeconds | empty | not }}
-      timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
-      {{- end }}
-      {{- if .Values.readinessProbe.successThreshold | empty | not }}
-      successThreshold: {{ .Values.readinessProbe.successThreshold }}
-      {{- end }}
-      {{- if .Values.readinessProbe.failureThreshold | empty | not }}
-      failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
-      {{- end }}
-      httpGet:
-        path: {{ .Values.readinessProbe.httpGet.path }}
-        port: {{ .Values.readinessProbe.httpGet.port }}
     {{- with .Values.resources }}
     resources:
       {{- toYaml . | nindent 6 }}

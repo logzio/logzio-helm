@@ -3,7 +3,7 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: {{ include "metrics-collector.fullname" . }}
+  name: {{ include "metrics-collector.fullname" . }}-ds
   namespace: {{ template "metrics-collector.namespace" . }}
   labels:
     {{- include "metrics-collector.labels" . | nindent 4 }}

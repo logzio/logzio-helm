@@ -190,17 +190,36 @@ Calculate Logz.io listener address based on region
 {{- define "logzio.listenerAddress" -}}
 {{- $region := .Values.secrets.logzioRegion -}}
 {{- if eq $region "us" -}}
-listener.logz.io
+https://listener.logz.io:8053
 {{- else if eq $region "au" -}}
-listener-au.logz.io
+https://listener-au.logz.io:8053
 {{- else if eq $region "ca" -}}
-listener-ca.logz.io
+https://listener-ca.logz.io:8053
 {{- else if eq $region "eu" -}}
-listener-eu.logz.io
+https://listener-eu.logz.io:8053
 {{- else if eq $region "uk" -}}
-listener-uk.logz.io
+https://listener-uk.logz.io:8053
 {{- else -}}
-listener.logz.io  # Default to us-east-1 region if no match
+https://listener.logz.io:8053  # Default to us-east-1 region if no match
 {{- end -}}
 {{- end }}
 
+{{/*
+Create k360 metrics list - will be used for K360 promethetus filters
+If any OOB filters is being used the function return the OOB filter concatenated with custom keep infrastrucre filter
+*/}}
+{{- define "metrics-collector.k360Metrics" -}}
+{{- $metrics := "" }}
+{{- if .Values.enableMetricsFilter.aks }}
+    {{- $metrics = .Values.prometheusFilters.metrics.infrastructure.keep.aks }}
+{{- else if .Values.enableMetricsFilter.gke}}
+    {{- $metrics = .Values.prometheusFilters.metrics.infrastructure.keep.gke }}
+{{- else }}
+    {{- $metrics = .Values.prometheusFilters.metrics.infrastructure.keep.eks }}
+{{- end -}}
+
+{{- if .Values.prometheusFilters.metrics.infrastructure.keep.custom }}
+    {{- $metrics = print $metrics "|" .Values.prometheusFilters.metrics.infrastructure.keep.custom }}
+{{- end }}
+{{- $metrics }}
+{{- end }}
