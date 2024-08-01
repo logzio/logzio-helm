@@ -254,6 +254,8 @@ There are two possible approaches to the upgrade you can choose from:
 - **6.0.0**:
   - **Breaking changes**:
   	- Make `logzio-logs-collector` default subchart for logging instead of `logzio-fluentd`
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
 - **5.3.6**:
   - Upgrade `logzio-k8s-telemetry` version to `4.2.3`:
 	- Disable Kubernetes objects receiver by default.
