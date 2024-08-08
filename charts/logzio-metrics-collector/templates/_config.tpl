@@ -132,7 +132,7 @@ Param 1: dict: "pipeline" infrastructure/applications & global context
 Build config file for standalone OpenTelemetry Collector
 */}}
 {{- define "metrics-collector.standaloneCollectorConfig" -}}
-{{- $configData := .Values.emptyConfig }}
+{{- $configData := dict }}
 {{- $standaloneConfig := deepCopy .Values.standaloneConfig | mustMergeOverwrite  }}
 {{- $values := deepCopy .Values.standaloneCollector | mustMergeOverwrite (deepCopy .Values) }}
 {{- $data := dict "Values" $values | mustMergeOverwrite (deepCopy .) }}
@@ -193,7 +193,7 @@ Build config file for standalone OpenTelemetry Collector
 
 # Build config file for daemonset metrics Collector
 {{- define "metrics-collector.daemonsetCollectorConfig" -}}
-{{- $configData := .Values.emptyConfig }}
+{{- $configData := dict }}
 {{- $daemonsetConfig := deepCopy .Values.daemonsetConfig | mustMergeOverwrite  }}
 {{- $values := deepCopy .Values.daemonsetCollector | mustMergeOverwrite (deepCopy .Values) }}
 {{- $data := dict "Values" $values | mustMergeOverwrite (deepCopy .) }}

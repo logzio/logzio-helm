@@ -166,9 +166,6 @@ baseConfig:
 
 # Configuration for OpenTelemetry Collector DaemonSet, enabled by default
 daemonsetCollector:
-
-  containerLogs:
-    enabled: false
   
   # prevent collector daemonset deployment on fargate nodes
   affinity:
@@ -195,9 +192,6 @@ daemonsetCollector:
 # Configuration for standalone OpenTelemetry Collector deployment
 standaloneCollector:
   replicas: 1
-
-  containerLogs:
-    enabled: false
 
   resources:
     limits:
@@ -375,6 +369,7 @@ service:
   # By default, Service of type 'LoadBalancer' will be created setting 'externalTrafficPolicy: Cluster'
   # unless other value is explicitly set.
   # Possible values are Cluster or Local (https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip)
+  
   # externalTrafficPolicy: Cluster
 
   annotations: {}
@@ -382,6 +377,7 @@ service:
   # By default, Service will be created setting 'internalTrafficPolicy: Local' on mode = daemonset
   # unless other value is explicitly set.
   # Setting 'internalTrafficPolicy: Cluster' on a daemonset is not recommended
+  
   # internalTrafficPolicy: Cluster
 
 ingress:

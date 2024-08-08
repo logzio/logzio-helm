@@ -29,8 +29,13 @@ The table below lists the configurable parameters of the `logzio-metrics-collect
 | command.extraArgs        | Additional arguments for the command.                                            | `[]`                                     |
 | serviceAccount.create    | Specifies whether a service account should be created.                           | `true`                                   |
 | serviceAccount.name      | The name of the service account to use.                                          | `""`                                     |
-| clusterRole.create       | Specifies whether a clusterRole should be created.                               | `true`                                   |
-| clusterRole.name         | The name of the clusterRole to use.                                              | `""`                                     |
+| serviceAccount.annotations      | Annotations to add to the service account.                                          | `{}`                                     |
+| clusterRole.create       | Specifies whether a cluster role should be created.                               | `true`                                   |
+| clusterRole.name         | The name of the cluster role to use.                                              | `""`                                     |
+| clusterRole.rules         | Access rules of the cluster role.                                              | `[]`                                     |
+| clusterRole.annotations         | Annotations to add to the cluster role.                                              | `{}`                                     |
+| clusterRole.clusterRoleBinding.annotations         | Annotations to add to the cluster role binding.                                              | `{}`                                     |
+| clusterRole.clusterRoleBinding.name         | The name of the cluster role binding to use.                                              | `""`                                     |
 | podSecurityContext       | Security context policies for the pod.                                           | `{}`                                     |
 | securityContext          | Security context policies for the container.                                     | `{}`                                     |
 | nodeSelector             | Node labels for pod assignment.                                                  | `{}`                                     |
@@ -46,8 +51,7 @@ The table below lists the configurable parameters of the `logzio-metrics-collect
 | daemonsetCollector.resources | CPU/memory resource requests/limits for DaemonSet.                            | Default: `limits.memory: 250Mi`, `requests.cpu: 150m` |
 | daemonsetCollector.podLabels | Labels to add to the DaemonSet pod.                                            | `{}`                                   |
 | daemonsetCollector.podAnnotations | Annotations to add to the DaemonSet pod.                                  | `{}`                                   |
-| daemonsetCollector.containerLogs.enabled | Enable container logs for DaemonSet collector.                 | `false`                                |
-| standaloneCollector.containerLogs.enabled | Enable container logs for standalone collector.               | `false`                                |
+| standaloneCollector.configOverride | Configuration override for standalone collector.                               | `{}`                                   |
 | standaloneCollector.replicas | Number of replicas for the standalone collector.                               | `1`                                    |
 | standaloneCollector.resources | CPU/memory resource requests/limits for standalone collector.                 | Default: `limits.memory: 512Mi`, `requests.cpu: 200m` |
 | standaloneCollector.podLabels | Labels to add to the standalone pod.                                           | `{}`                                   |
@@ -95,3 +99,9 @@ The table below lists the configurable parameters of the `logzio-metrics-collect
 | service.internalTrafficPolicy     | Internal traffic policy for DaemonSet service.                                   | `Local`                                |
 | service.loadBalancerIP            | LoadBalancer IP if `service.type` is `LoadBalancer`.                             | `""`                                   |
 | service.loadBalancerSourceRanges  | Source ranges for LoadBalancer service.                                          | `[]`                                   |
+| ingress.enabled                   | Enable ingress controller resource.                                              | `false`                                |
+| ingress.annotations               | Annotations to add to the ingress.                                               | `{}`                                   |
+| ingress.hosts                     | List of ingress hosts.                                                           | `[]`                                   |
+| ingress.tls                       | TLS configuration for the ingress.                                               | `[]`                                   |
+| ingress.ingressClassName          | Name of the ingress class to use.                                                | `""`                                   |
+| ingress.additionalIngresses       | Additional ingress configurations.                                               | `[]`                                   |
