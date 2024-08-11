@@ -24,7 +24,7 @@ schedule: "07:00"
 # Container image
 image: logzio/trivy-to-logzio
 # Container image tag
-imageTag: 0.2.2
+imageTag: 0.2.3
 # The name for your environment's identifier (cluster name), to easily identify the telemetry data for each environment
 env_id: ""
 # Termination period (in seconds) to wait before killing Fluentd pod process on pod shutdown
