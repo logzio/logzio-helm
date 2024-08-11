@@ -75,6 +75,11 @@ In these cases we can use the following `--set` command to use an alternative im
 
 
 ## Changelog
+- **0.3.3**:
+  - Upgrade to image `logzio/trivy-to-logzio:0.3.3`.
+    - Upgrade python version to 3.12.5.
+    - Re-build image to include the latest version of git(CVE-2024-32002).
+  - Bump Trivy-Operator version to `0.24.0`.
 - **0.3.2**:
   - Added 'user-agent' header for telemetry data.
 - **0.3.0**:

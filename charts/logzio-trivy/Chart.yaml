@@ -5,14 +5,16 @@ keywords:
   - logging
   - trivy
   - security
-version: 0.3.2
-appVersion: 0.2.2
+version: 0.3.3
+appVersion: 0.2.3
 sources:
   - https://github.com/logzio/logzio-helm
 dependencies:
   - name: trivy-operator
-    version: "0.15.1"
+    version: "0.24.0"
     repository: "https://aquasecurity.github.io/helm-charts/"
 maintainers:
   - name: Miri Bar
     email: miri.ignatiev@logz.io
+  - name: Raul Gurshumov
+    email: raul.gurshumo@logz.io    
