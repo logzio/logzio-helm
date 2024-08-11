@@ -53,9 +53,9 @@ containers:
         value: {{ include "metrics-collector.k360Metrics" . }}
       - name: LOGZIO_AGENT_VERSION
         value: {{.Chart.Version}}
-      - name: REALESE_NAME
+      - name: RELEASE_NAME
         value: {{.Release.Name}}
-      - name: REALESE_NS
+      - name: RELEASE_NS
         value: {{.Release.Namespace}}            
       {{ if .Values.secrets.enabled}}
       - name: LOGZIO_REGION
@@ -92,12 +92,7 @@ containers:
         valueFrom:
           secretKeyRef:
             name: {{ .Values.secrets.name }}
-            key: env-id
-      - name: P8S_LOGZIO_NAME
-        valueFrom:
-          secretKeyRef:
-            name: {{ .Values.secrets.name }}
-            key: env-id           
+            key: env-id       
       {{- end -}}
       {{ end }}
       - name: LISTENER_URL
