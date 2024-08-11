@@ -321,7 +321,7 @@ ports:
 resources:
   requests:
     cpu: 50m
-    memory: 70mi
+    memory: 70Mi
 
 podAnnotations: {}
 
