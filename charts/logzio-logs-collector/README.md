@@ -142,6 +142,9 @@ Multi line logs configuration
 The collector supports by default various log formats (including multiline logs) such as `CRI-O` `CRI-Containerd` `Docker` formats. You can configure the chart to parse custom multiline logs pattern according to your needs, please read [Customizing Multiline Log Handling](./examples/multiline.md) guide for more details.
 
 ## Change log
+* 1.0.6
+  - Added `varlogcontainers` volume and volume mounts
+  - Added new `container` operator instead of complex operator sequence
 * 1.0.5
   - Upgrade `otel/opentelemetry-collector-contrib` image to `v0.103.0`
 * 1.0.4
