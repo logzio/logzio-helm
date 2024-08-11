@@ -319,9 +319,9 @@ ports:
     protocol: TCP
 
 resources:
-  limits:
-    cpu: 250m
-    memory: 512Mi
+  requests:
+    cpu: 50m
+    memory: 70mi
 
 podAnnotations: {}
 
