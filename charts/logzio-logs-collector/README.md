@@ -145,6 +145,8 @@ The collector supports by default various log formats (including multiline logs)
 * 1.0.6
   - Added `varlogcontainers` volume and volume mounts
   - Added new `container` operator instead of complex operator sequence
+  - Remove default resources `limits`
+  - Add default resources `requests`
 * 1.0.5
   - Upgrade `otel/opentelemetry-collector-contrib` image to `v0.103.0`
 * 1.0.4
