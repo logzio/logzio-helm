@@ -1,6 +1,5 @@
 {{- if .Values.enabled }}
-{{- if .Values.secrets.windowsNodeUsername }}
-{{- if .Values.secrets.windowsNodePassword }}
+{{- if and (.Values.secrets.windowsNodeUsername) (.Values.secrets.windowsNodePassword) -}}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -91,6 +90,5 @@ spec:
           {{- if .Values.tolerations }}
           tolerations: {{- .Values.tolerations | toYaml | trim | nindent 12 }}
           {{- end }}
-{{- end }}
 {{- end }}
 {{- end }}
