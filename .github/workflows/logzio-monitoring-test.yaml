@@ -59,7 +59,8 @@ jobs:
           NUMBER_OF_NODES: 3
           AWS_REGION: us-west-1
         run: |
-          eksctl create cluster --name ${{ env.ENV_ID }}-${{ matrix.environment }} --region ${{ env.AWS_REGION }} --nodes ${{ env.NUMBER_OF_NODES }}
+          eksctl create cluster --name ${{ env.ENV_ID }}-${{ matrix.environment }} --region ${{ env.AWS_REGION }} --nodes ${{ env.NUMBER_OF_NODES }} --with-oidc
+
           aws eks --region ${{ env.AWS_REGION }} update-kubeconfig --name ${{ env.ENV_ID }}-${{ matrix.environment }}
       - name: Label Nodes
         run: |
