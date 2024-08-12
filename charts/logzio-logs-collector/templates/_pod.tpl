@@ -148,6 +148,9 @@ containers:
         readOnly: true
       - name: varlibotelcol
         mountPath: /var/lib/otelcol
+      - name: varlogcontainers
+        mountPath: /var/log/containers
+        readOnly: true
       {{- if .Values.extraVolumeMounts }}
       {{- toYaml .Values.extraVolumeMounts | nindent 6 }}
       {{- end }}
@@ -180,6 +183,9 @@ volumes:
   - name: varlibdockercontainers
     hostPath:
       path: /var/lib/docker/containers
+  - name: varlogcontainers
+    hostPath:
+      path: /var/log/containers
   {{- if .Values.extraVolumes }}
   {{- toYaml .Values.extraVolumes | nindent 2 }}
   {{- end }}

@@ -141,82 +141,8 @@ config:
         env_id: ${env:ENV_ID} 
         logzio_logs_collector_version: "{{ .Chart.Version }}"
       operators:
-      # Find out which format is used by kubernetes
-      - id: get-format
-        routes:
-        - expr: body matches "^{.*"
-          output: parser-docker
-        - expr: body matches "^[^ Z]+ "
-          output: parser-crio
-        - expr: body matches "^[^ Z]+Z"
-          output: parser-containerd
-        type: router
-      # Parse CRI-O format
-      - id: parser-crio
-        regex: ^(?P<time>[^ Z]+) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*) ?(?P<log>.*)$
-        timestamp:
-          layout: 2006-01-02T15:04:05.999999999Z07:00
-          layout_type: gotime
-          parse_from: attributes.time
-        type: regex_parser
-      - combine_field: attributes.log
-        combine_with: ""
-        id: crio-recombine
-        is_last_entry: attributes.logtag == 'F'
-        max_log_size: 102400
-        output: extract_metadata_from_filepath
-        source_identifier: attributes["log.file.path"]
-        type: recombine
-      # Parse CRI-Containerd format
-      - id: parser-containerd
-        regex: ^(?P<time>[^ ^Z]+Z) (?P<stream>stdout|stderr) (?P<logtag>[^ ]*) ?(?P<log>.*)$
-        timestamp:
-          layout: '%Y-%m-%dT%H:%M:%S.%LZ'
-          parse_from: attributes.time
-        type: regex_parser
-      - combine_field: attributes.log
-        combine_with: ""
-        id: containerd-recombine
-        is_last_entry: attributes.logtag == 'F'
-        max_log_size: 102400
-        output: extract_metadata_from_filepath
-        source_identifier: attributes["log.file.path"]
-        type: recombine
-      # Parse Docker format
-      - id: parser-docker
-        output: extract_metadata_from_filepath
-        timestamp:
-          layout: '%Y-%m-%dT%H:%M:%S.%LZ'
-          parse_from: attributes.time
-        type: json_parser
-      # Extract metadata from file path
-      - id: extract_metadata_from_filepath
-        parse_from: attributes["log.file.path"]
-        regex: ^.*\/(?P<namespace>[^_]+)_(?P<pod_name>[^_]+)_(?P<uid>[a-f0-9\-]+)\/(?P<container_name>[^\._]+)\/(?P<restart_count>\d+)\.log$
-        type: regex_parser
-      # Rename attributes
-      - from: attributes.stream
-        to: attributes["iostream"]
-        type: move
-      - from: attributes.container_name
-        to: resource["k8s.container.name"]
-        type: move
-      - from: attributes.namespace
-        to: resource["k8s.namespace.name"]
-        type: move
-      - from: attributes.pod_name
-        to: resource["k8s.pod.name"]
-        type: move
-      - from: attributes.restart_count
-        to: resource["k8s.container.restart_count"]
-        type: move
-      - from: attributes.uid
-        to: resource["k8s.pod.uid"]
-        type: move
-      # Update body field after finishing all parsing
-      - from: attributes.log
-        to: body
-        type: move
+      - id: container-parser
+        type: container
       # conditional json parser
       - type: json_parser
         id: json
@@ -393,9 +319,9 @@ ports:
     protocol: TCP
 
 resources:
-  limits:
-    cpu: 250m
-    memory: 512Mi
+  requests:
+    cpu: 50m
+    memory: 70Mi
 
 podAnnotations: {}
 
