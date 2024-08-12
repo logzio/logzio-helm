@@ -98,6 +98,11 @@ kubectl get nodes -o json | jq ".items[]|{name:.metadata.name, taints:.spec.tain
 
 
 ## Change log
+ - **0.0.6**:
+   - Upgrade `logzio-k8s-events` to v0.0.3
+      - Upgrade GoLang version to `v1.22.3`
+      - Upgrade docker image to `alpine:3.20`
+      - Upgrade GoLang docker image to `golang:1.22.3-alpine3.20`
  - **0.0.5**:
     - Remove the duplicate label `app.kubernetes.io/managed-by` @philwelz
  - **0.0.4**:

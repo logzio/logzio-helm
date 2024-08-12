@@ -224,6 +224,22 @@ There are two possible approaches to the upgrade you can choose from:
 
 
 ## Changelog
+- **6.0.7**:
+  - Upgrade `logzio-logs-collector` chart to `v1.0.6`
+	- Added `varlogcontainers` volume and volume mounts
+	- Added new `container` operator instead of complex operator sequence
+	- Remove default resources `limits`
+	- Add default resources `requests`
+  - Upgrade `logzio-k8s-events` chart to `v0.0.6`
+    - Upgrade `logzio-k8s-events` to `v0.0.3`
+      - Upgrade GoLang version to `v1.22.3`
+      - Upgrade docker image to `alpine:3.20`
+      - Upgrade GoLang docker image to `golang:1.22.3-alpine3.20`
+  - Upgrade `logzio-trivy` chart to `0.3.3`
+	- Upgrade to image `logzio/trivy-to-logzio:0.3.3`.
+	  - Upgrade python version to 3.12.5.
+	  - Re-build image to include the latest version of git(CVE-2024-32002).
+	- Bump Trivy-Operator chart version to `0.24.0`.
 - **6.0.6**:
   - Upgrade `logzio-k8s-telemetry` chart to `v4.2.7`
     - Fix `cluster-admin` cluster role binding creation condition
