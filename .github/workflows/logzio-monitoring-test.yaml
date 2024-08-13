@@ -62,6 +62,13 @@ jobs:
           eksctl create cluster --name ${{ env.ENV_ID }}-${{ matrix.environment }} --region ${{ env.AWS_REGION }} --nodes ${{ env.NUMBER_OF_NODES }} --with-oidc
 
           aws eks --region ${{ env.AWS_REGION }} update-kubeconfig --name ${{ env.ENV_ID }}-${{ matrix.environment }}
+      - name: Update kubeconfig
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: us-west-1
+        run: |
+          aws eks --region ${{ env.AWS_REGION }} update-kubeconfig --name ${{ env.ENV_ID }}-${{ matrix.environment }}
       - name: Label Nodes
         run: |
           kubectl get nodes -o name | xargs -I {} kubectl label {} node-role.kubernetes.io/worker=worker --overwrite
