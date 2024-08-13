@@ -25,6 +25,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set up AWS credentials
+        run: |
+          echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> $GITHUB_ENV
+          echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
+          echo "AWS_REGION=us-west-1" >> $GITHUB_ENV
+
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
@@ -54,14 +60,16 @@ jobs:
 
       - name: Provision Cluster
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           NUMBER_OF_NODES: 3
-          AWS_REGION: us-west-1
         run: |
           eksctl create cluster --name ${{ env.ENV_ID }}-${{ matrix.environment }} --region ${{ env.AWS_REGION }} --nodes ${{ env.NUMBER_OF_NODES }} --with-oidc
 
           aws eks --region ${{ env.AWS_REGION }} update-kubeconfig --name ${{ env.ENV_ID }}-${{ matrix.environment }}
+
+      - name: Update kubeconfig
+        run: |
+          aws eks --region ${{ env.AWS_REGION }} update-kubeconfig --name ${{ env.ENV_ID }}-${{ matrix.environment }}
+
       - name: Label Nodes
         run: |
           kubectl get nodes -o name | xargs -I {} kubectl label {} node-role.kubernetes.io/worker=worker --overwrite
@@ -122,10 +130,6 @@ jobs:
 
       - name: Delete Cluster
         if: always()
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: us-west-1
         run: |
           eksctl delete cluster --name ${{ env.ENV_ID }}-${{ matrix.environment }} --region ${{ env.AWS_REGION }}
 
