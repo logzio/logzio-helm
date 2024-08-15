@@ -7,20 +7,25 @@ on:
     paths:
       - 'charts/logzio-monitoring/**'
 jobs:
-  test-helm-chart:
-    name: Test Helm Chart
+  setup-cluster:
+    name: Set up EKS Cluster
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        environment: [eks-linux]
-
+        kubernetes_version: [1.24, 1.25, 1.27, 1.30]
+        environment: [eks-linux, eks-fargate]
+    outputs:
+      env_id: ${{ steps.set_env_id.outputs.env_id }}
     steps:
       - name: Generate random id
         id: random_id
         run: echo "::set-output name=rand::$(echo $RANDOM)"
 
       - name: Set ENV_ID
-        run: echo "ENV_ID=monitoring-test-run-${{ steps.random_id.outputs.rand }}-${{ matrix.environment }}" >> $GITHUB_ENV
+        id: set_env_id
+        run: |
+          echo "ENV_ID=monitoring-test-run-${{ steps.random_id.outputs.rand }}-${{ matrix.environment }}" >> $GITHUB_ENV
+          echo "::set-output name=env_id::monitoring-test-run-${{ steps.random_id.outputs.rand }}-${{ matrix.environment }}"
 
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -31,30 +36,11 @@ jobs:
           echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
           echo "AWS_REGION=us-west-1" >> $GITHUB_ENV
 
-      - name: Set up Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: '1.20'
-
-      - name: Set up Helm
-        uses: azure/setup-helm@v4.2.0
-
-      - name: Set up kubectl
-        uses: azure/setup-kubectl@v4
-
-      - name: Install AWS CLI
-        run: |
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip awscliv2.zip
-          sudo ./aws/install --update
-
       - name: Set up eksctl
         run: |
           ARCH=amd64
           PLATFORM=$(uname -s)_$ARCH
           curl -sLO "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_$PLATFORM.tar.gz"
-          # (Optional) Verify checksum
-          curl -sL "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_checksums.txt" | grep $PLATFORM | sha256sum --check
           tar -xzf eksctl_$PLATFORM.tar.gz -C /tmp && rm eksctl_$PLATFORM.tar.gz
           sudo mv /tmp/eksctl /usr/local/bin
 
@@ -62,41 +48,55 @@ jobs:
         env:
           NUMBER_OF_NODES: 3
         run: |
-          eksctl create cluster --name ${{ env.ENV_ID }}-${{ matrix.environment }} --region ${{ env.AWS_REGION }} --nodes ${{ env.NUMBER_OF_NODES }} --with-oidc
-
-          aws eks --region ${{ env.AWS_REGION }} update-kubeconfig --name ${{ env.ENV_ID }}-${{ matrix.environment }}
+          if [ "${{ matrix.environment }}" == "eks-linux" ]; then
+            eksctl create cluster --name ${{ env.ENV_ID }}-${{ matrix.environment }} --region ${{ env.AWS_REGION }} \
+              --version ${{ matrix.kubernetes_version }} --nodes ${{ env.NUMBER_OF_NODES }} --with-oidc
+          elif [ "${{ matrix.environment }}" == "eks-fargate" ]; then
+            eksctl create cluster --name ${{ env.ENV_ID }}-${{ matrix.environment }} --region ${{ env.AWS_REGION }} \
+              --version ${{ matrix.kubernetes_version }} --fargate
+          fi
 
       - name: Update kubeconfig
         run: |
           aws eks --region ${{ env.AWS_REGION }} update-kubeconfig --name ${{ env.ENV_ID }}-${{ matrix.environment }}
 
       - name: Label Nodes
+        if: matrix.environment == 'eks-linux'
         run: |
           kubectl get nodes -o name | xargs -I {} kubectl label {} node-role.kubernetes.io/worker=worker --overwrite
+
       - name: Deploy Helm Chart
         run: |
           cd charts/logzio-monitoring
           helm dependency build
-          helm upgrade --install \
+          HELM_CMD="helm upgrade --install \
           --set logs.enabled=true \
           --set logzio-logs-collector.enabled=true \
-          --set logzio-logs-collector.secrets.logzioLogsToken="${{ secrets.LOGZIO_LOGS_TOKEN }}" \
-          --set logzio-logs-collector.secrets.logzioRegion="us" \
-          --set logzio-logs-collector.secrets.env_id="${{ env.ENV_ID }}" \
-          --set secrets.logType="test" \
+          --set logzio-logs-collector.secrets.logzioLogsToken='${{ secrets.LOGZIO_LOGS_TOKEN }}' \
+          --set logzio-logs-collector.secrets.logzioRegion='us' \
+          --set logzio-logs-collector.secrets.env_id='${{ env.ENV_ID }}' \
+          --set secrets.logType='test' \
           --set metricsOrTraces.enabled=true \
           --set logzio-k8s-telemetry.metrics.enabled=true \
-          --set logzio-k8s-telemetry.secrets.MetricsToken="${{ secrets.LOGZIO_METRICS_TOKEN }}" \
-          --set logzio-k8s-telemetry.secrets.ListenerHost="https://listener.logz.io:8053" \
-          --set logzio-k8s-telemetry.secrets.p8s_logzio_name="${{ env.ENV_ID }}" \
+          --set logzio-k8s-telemetry.secrets.MetricsToken='${{ secrets.LOGZIO_METRICS_TOKEN }}' \
+          --set logzio-k8s-telemetry.secrets.ListenerHost='https://listener.logz.io:8053' \
+          --set logzio-k8s-telemetry.secrets.p8s_logzio_name='${{ env.ENV_ID }}' \
           --set logzio-k8s-telemetry.traces.enabled=true \
-          --set logzio-k8s-telemetry.secrets.TracesToken="${{ secrets.LOGZIO_TRACES_TOKEN }}" \
-          --set logzio-k8s-telemetry.secrets.LogzioRegion="us" \
+          --set logzio-k8s-telemetry.secrets.TracesToken='${{ secrets.LOGZIO_TRACES_TOKEN }}' \
+          --set logzio-k8s-telemetry.secrets.LogzioRegion='us' \
           --set logzio-k8s-telemetry.spm.enabled=true \
-          --set logzio-k8s-telemetry.secrets.env_id="${{ env.ENV_ID }}" \
-          --set logzio-k8s-telemetry.secrets.SpmToken="${{ secrets.LOGZIO_METRICS_TOKEN }}" \
-          --set logzio-k8s-telemetry.serviceGraph.enabled=true \
-          logzio-monitoring .
+          --set logzio-k8s-telemetry.secrets.env_id='${{ env.ENV_ID }}' \
+          --set logzio-k8s-telemetry.secrets.SpmToken='${{ secrets.LOGZIO_METRICS_TOKEN }}' \
+          --set logzio-k8s-telemetry.serviceGraph.enabled=true"
+
+          if [ "${{ matrix.environment }}" == "eks-fargate" ]; then
+            HELM_CMD="$HELM_CMD --set logzio-logs-collector.fargateLogRouter.enabled='true'"
+          fi
+
+          HELM_CMD="$HELM_CMD logzio-monitoring ."
+          
+          eval $HELM_CMD
+
           kubectl rollout status deployment/logzio-monitoring-otel-collector-standalone --timeout=300s
           kubectl rollout status deployment/logzio-monitoring-otel-collector-spm --timeout=300s
 
@@ -111,20 +111,9 @@ jobs:
           kubectl rollout status deployment/trace-gen --timeout=300s
 
       - name: sleep
-        run: sleep 120
+        run: sleep 180
 
-      - name: Run Go Tests
-        env:
-          KUBERNETES_ENV: ${{ matrix.environment }}
-          LOGZIO_METRICS_API_KEY: ${{ secrets.LOGZIO_METRICS_API_KEY }}
-          LOGZIO_TRACES_API_KEY: ${{ secrets.LOGZIO_TRACES_API_KEY }}
-          LOGZIO_LOGS_API_KEY: ${{ secrets.LOGZIO_LOGS_API_KEY }}
-        run: |
-          go get go.uber.org/zap
-          go test -v ./tests/traces_e2e_test.go ./tests/common.go
-          go test -v ./tests/metrics_e2e_test.go ./tests/common.go   
-          go test -v ./tests/logs_e2e_test.go ./tests/common.go
-      - name: Cleanup Environment
+      - name: Uninstall Helm Chart
         run: |
           helm uninstall logzio-monitoring
 
@@ -133,3 +122,56 @@ jobs:
         run: |
           eksctl delete cluster --name ${{ env.ENV_ID }}-${{ matrix.environment }} --region ${{ env.AWS_REGION }}
 
+  run-logs-tests:
+    name: Run Logs Tests
+    runs-on: ubuntu-latest
+    needs: setup-cluster
+    env:
+      ENV_ID: ${{ needs.setup-cluster.outputs.env_id }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Go Logs Tests
+        env:
+          KUBERNETES_ENV: ${{ matrix.environment }}
+          LOGZIO_LOGS_API_KEY: ${{ secrets.LOGZIO_LOGS_API_KEY }}
+        run: |
+          go get go.uber.org/zap
+          go test -v ./tests/logs_e2e_test.go ./tests/common.go
+
+  run-metrics-tests:
+    name: Run Metrics Tests
+    runs-on: ubuntu-latest
+    needs: setup-cluster
+    env:
+      ENV_ID: ${{ needs.setup-cluster.outputs.env_id }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Go Metrics Tests
+        env:
+          KUBERNETES_ENV: ${{ matrix.environment }}
+          LOGZIO_METRICS_API_KEY: ${{ secrets.LOGZIO_METRICS_API_KEY }}
+        run: |
+          go get go.uber.org/zap
+          go test -v ./tests/metrics_e2e_test.go ./tests/common.go   
+
+  run-traces-tests:
+    name: Run Traces Tests
+    runs-on: ubuntu-latest
+    needs: setup-cluster
+    env:
+      ENV_ID: ${{ needs.setup-cluster.outputs.env_id }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Go Traces Tests
+        env:
+          KUBERNETES_ENV: ${{ matrix.environment }}
+          LOGZIO_TRACES_API_KEY: ${{ secrets.LOGZIO_TRACES_API_KEY }}
+        run: |
+          go get go.uber.org/zap
+          go test -v ./tests/traces_e2e_test.go ./tests/common.go
