@@ -11,6 +11,7 @@ jobs:
     name: EKS e2e Test
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         kubernetes_version: [1.24, 1.25, 1.27]
         environment: [eks-linux, eks-fargate]
