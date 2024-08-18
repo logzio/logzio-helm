@@ -180,10 +180,10 @@ daemonsetCollector:
                 operator: DoesNotExist
 
   resources:
-    limits:
-      memory: 250Mi
     requests:
-      cpu: 150m
+      cpu: 50m
+      memory: 70Mi
+
 
   podLabels:  {}
 
