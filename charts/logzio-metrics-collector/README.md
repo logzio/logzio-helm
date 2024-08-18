@@ -83,7 +83,7 @@ You can use the following options to update the Helm chart values [parameters](V
 helm install logzio-metrics-collector -n monitoring --create-namespace \
 --set enabled=true \
 --set k8sObjectsLogs.enabled=true \
---set secrets.k8sObjectsLogsToken="<<LOGS-SHIPPING-TOKEN>>"\
+--set secrets.k8sObjectsLogsToken="<<LOGS-SHIPPING-TOKEN>>" \
 --set secrets.logzioMetricsToken="<<METRICS-SHIPPING-TOKEN>>" \
 --set secrets.logzioRegion="<<LOGZIO-REGION>>" \
 --set secrets.env_id="<<ENV_ID>>" \
@@ -131,23 +131,24 @@ under `How do I change the administrator password for Windows Server nodes on my
 
 ###### Run the Helm deployment code for clusters with Windows Nodes:
 
-    ```
-    helm install logzio-metrics-collector -n monitoring --create-namespace \
-    --set enabled=true \
-    --set secrets.windowsNodeUsername="<<WINDOWS-NODE-USERNAME>" \
-    --set secrets.windowsNodePassword="<<WINDOWS-NODE-PASSWORD>>" \
-    --set secrets.logzioMetricsToken="<<METRICS-SHIPPING-TOKEN>>" \
-    --set secrets.logzioRegion="<<LOGZIO-REGION>>" \
-    --set secrets.env_id="<<ENV_ID>>" \
-    logzio-helm/logzio-metrics-collector
-    ```
-    Replace:
-    * `logzio-metrics-collector` with your release name
-    * `<<METRICS-SHIPPING-TOKEN>>` with your Logz.io metrics shipping token
-    * `<<LOGZIO-REGION>>` with your Logz.io [account region code](https://docs.logz.io/docs/user-guide/admin/hosting-regions/account-region/)
-    * `<<ENV-ID>>` with a unique name assigned to your environment's identifier, to differentiate telemetry data across various environments
-    * `<<WINDOWS-NODE-USERNAME>>` with the username for the Node pool you want the Windows exporter to be installed on.
-    * `<<WINDOWS-NODE-PASSWORD>>` with the password for the Node pool you want the Windows exporter to be installed on.
+```
+helm install logzio-metrics-collector -n monitoring --create-namespace \
+--set enabled=true \
+--set secrets.windowsNodeUsername="<<WINDOWS-NODE-USERNAME>" \
+--set secrets.windowsNodePassword="<<WINDOWS-NODE-PASSWORD>>" \
+--set secrets.logzioMetricsToken="<<METRICS-SHIPPING-TOKEN>>" \
+--set secrets.logzioRegion="<<LOGZIO-REGION>>" \
+--set secrets.env_id="<<ENV_ID>>" \
+logzio-helm/logzio-metrics-collector
+```
+
+Replace:
+* `logzio-metrics-collector` with your release name
+* `<<METRICS-SHIPPING-TOKEN>>` with your Logz.io metrics shipping token
+* `<<LOGZIO-REGION>>` with your Logz.io [account region code](https://docs.logz.io/docs/user-guide/admin/hosting-regions/account-region/)
+* `<<ENV-ID>>` with a unique name assigned to your environment's identifier, to differentiate telemetry data across various environments
+* `<<WINDOWS-NODE-USERNAME>>` with the username for the Node pool you want the Windows exporter to be installed on.
+* `<<WINDOWS-NODE-PASSWORD>>` with the password for the Node pool you want the Windows exporter to be installed on.
 
 
 ### Handling image pull rate limit
