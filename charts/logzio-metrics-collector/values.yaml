@@ -197,10 +197,10 @@ standaloneCollector:
   replicas: 1
 
   resources:
-    limits:
-      memory: 512Mi
     requests:
-      cpu: 200m
+      cpu: 50m
+      memory: 70Mi
+
       
   podLabels:  {}
 
@@ -291,9 +291,10 @@ ports:
     protocol: TCP
 
 resources:
-  limits:
-    cpu: 250m
-    memory: 512Mi
+  requests:
+    cpu: 50m
+    memory: 70Mi
+
 
 podAnnotations: {}
 
