@@ -7,15 +7,13 @@ on:
     paths:
       - 'charts/logzio-monitoring/**'
 jobs:
-  setup-cluster:
-    name: Set up EKS Cluster
+  eks-e2e-test:
+    name: EKS e2e Test
     runs-on: ubuntu-latest
     strategy:
       matrix:
         kubernetes_version: [1.24, 1.25, 1.27]
         environment: [eks-linux, eks-fargate]
-    outputs:
-      env_id: ${{ steps.set_env_id.outputs.env_id }}
     steps:
       - name: Generate random id
         id: random_id
@@ -25,7 +23,6 @@ jobs:
         id: set_env_id
         run: |
           echo "ENV_ID=monitoring-test-run-${{ steps.random_id.outputs.rand }}-${{ matrix.environment }}" >> $GITHUB_ENV
-          echo "::set-output name=env_id::monitoring-test-run-${{ steps.random_id.outputs.rand }}-${{ matrix.environment }}"
 
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -110,10 +107,63 @@ jobs:
           kubectl apply -f tests/resources/tracegen-monitoring.yaml
           kubectl rollout status deployment/trace-gen --timeout=300s
 
-      - name: sleep
+      - name: Sleep
         run: sleep 180
 
+      - name: Run linux logs tests
+        id: linux_logs_tests
+        continue-on-error: true
+        if: matrix.environment == 'eks-linux'
+        env:
+          KUBERNETES_ENV: ${{ matrix.environment }}
+          LOGZIO_LOGS_API_KEY: ${{ secrets.LOGZIO_LOGS_API_KEY }}
+        run: |
+          go get go.uber.org/zap
+          go test -v ./tests/logs_e2e_test.go ./tests/common.go
+
+      - name: Run fargate logs tests
+        id: fargate_logs_tests
+        continue-on-error: true
+        if: matrix.environment == 'eks-fargate'
+        env:
+          KUBERNETES_ENV: ${{ matrix.environment }}
+          LOGZIO_LOGS_API_KEY: ${{ secrets.LOGZIO_LOGS_API_KEY }}
+        run: |
+          go get go.uber.org/zap
+          go test -v ./tests/fargate_logs_e2e_test.go ./tests/common.go
+
+      - name: Run metrics tests
+        id: metrics_tests
+        continue-on-error: true
+        env:
+          KUBERNETES_ENV: ${{ matrix.environment }}
+          LOGZIO_METRICS_API_KEY: ${{ secrets.LOGZIO_METRICS_API_KEY }}
+        run: |
+          go get go.uber.org/zap
+          go test -v ./tests/metrics_e2e_test.go ./tests/common.go   
+
+      - name: Run traces tests
+        id: traces_tests
+        continue-on-error: true
+        env:
+          KUBERNETES_ENV: ${{ matrix.environment }}
+          LOGZIO_TRACES_API_KEY: ${{ secrets.LOGZIO_TRACES_API_KEY }}
+        run: |
+          go get go.uber.org/zap
+          go test -v ./tests/traces_e2e_test.go ./tests/common.go
+
+      - name: Check test results
+        run: |
+          if [ "${{ steps.linux_logs_tests.outcome }}" == "failure" ] || \
+             [ "${{ steps.fargate_logs_tests.outcome }}" == "failure" ] || \
+             [ "${{ steps.metrics_tests.outcome }}" == "failure" ] || \
+             [ "${{ steps.traces_tests.outcome }}" == "failure" ]; then
+            echo "One or more tests failed"
+            exit 1
+          fi
+
       - name: Uninstall Helm Chart
+        if: always()
         run: |
           helm uninstall logzio-monitoring
 
@@ -122,56 +172,5 @@ jobs:
         run: |
           eksctl delete cluster --name ${{ env.ENV_ID }}-${{ matrix.environment }} --region ${{ env.AWS_REGION }}
 
-  run-logs-tests:
-    name: Run Logs Tests
-    runs-on: ubuntu-latest
-    needs: setup-cluster
-    env:
-      ENV_ID: ${{ needs.setup-cluster.outputs.env_id }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
 
-      - name: Run Go Logs Tests
-        env:
-          KUBERNETES_ENV: ${{ matrix.environment }}
-          LOGZIO_LOGS_API_KEY: ${{ secrets.LOGZIO_LOGS_API_KEY }}
-        run: |
-          go get go.uber.org/zap
-          go test -v ./tests/logs_e2e_test.go ./tests/common.go
 
-  run-metrics-tests:
-    name: Run Metrics Tests
-    runs-on: ubuntu-latest
-    needs: setup-cluster
-    env:
-      ENV_ID: ${{ needs.setup-cluster.outputs.env_id }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Run Go Metrics Tests
-        env:
-          KUBERNETES_ENV: ${{ matrix.environment }}
-          LOGZIO_METRICS_API_KEY: ${{ secrets.LOGZIO_METRICS_API_KEY }}
-        run: |
-          go get go.uber.org/zap
-          go test -v ./tests/metrics_e2e_test.go ./tests/common.go   
-
-  run-traces-tests:
-    name: Run Traces Tests
-    runs-on: ubuntu-latest
-    needs: setup-cluster
-    env:
-      ENV_ID: ${{ needs.setup-cluster.outputs.env_id }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Run Go Traces Tests
-        env:
-          KUBERNETES_ENV: ${{ matrix.environment }}
-          LOGZIO_TRACES_API_KEY: ${{ secrets.LOGZIO_TRACES_API_KEY }}
-        run: |
-          go get go.uber.org/zap
-          go test -v ./tests/traces_e2e_test.go ./tests/common.go
