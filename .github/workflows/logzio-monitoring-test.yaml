@@ -17,12 +17,12 @@ jobs:
     steps:
       - name: Generate random id
         id: random_id
-        run: echo "::set-output name=rand::$(echo $RANDOM)"
+        run: echo "rand=$(echo $RANDOM)" >> $GITHUB_ENV
 
       - name: Set ENV_ID
         id: set_env_id
         run: |
-          echo "ENV_ID=monitoring-test-run-${{ steps.random_id.outputs.rand }}-${{ matrix.environment }}" >> $GITHUB_ENV
+          echo "ENV_ID=monitoring-test-run-${{ env.rand }}-${{ matrix.environment }}" >> $GITHUB_ENV
 
       - name: Checkout repository
         uses: actions/checkout@v4
