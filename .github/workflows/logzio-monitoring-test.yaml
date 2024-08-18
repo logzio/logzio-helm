@@ -27,11 +27,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up AWS credentials
+      - name: Set up credentials
         run: |
           echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> $GITHUB_ENV
           echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
           echo "AWS_REGION=us-east-1" >> $GITHUB_ENV
+          echo "NUMBER_OF_NODES=3" >> $GITHUB_ENV
+          echo "KUBERNETES_ENV=${{ matrix.environment }}" >> $GITHUB_ENV
+          echo "LOGZIO_LOGS_API_KEY=${{ secrets.LOGZIO_LOGS_API_KEY }}" >> $GITHUB_ENV
+          echo "LOGZIO_METRICS_API_KEY=${{ secrets.LOGZIO_METRICS_API_KEY }}" >> $GITHUB_ENV
+          echo "LOGZIO_TRACES_API_KEY=${{ secrets.LOGZIO_TRACES_API_KEY }}" >> $GITHUB_ENV
 
       - name: Set up eksctl
         run: |
@@ -42,8 +47,6 @@ jobs:
           sudo mv /tmp/eksctl /usr/local/bin
 
       - name: Provision Cluster
-        env:
-          NUMBER_OF_NODES: 3
         run: |
           if [ "${{ matrix.environment }}" == "eks-linux" ]; then
             eksctl create cluster --name ${{ env.ENV_ID }}-${{ matrix.environment }} --region ${{ env.AWS_REGION }} \
@@ -114,9 +117,6 @@ jobs:
         id: linux_logs_tests
         continue-on-error: true
         if: matrix.environment == 'eks-linux'
-        env:
-          KUBERNETES_ENV: ${{ matrix.environment }}
-          LOGZIO_LOGS_API_KEY: ${{ secrets.LOGZIO_LOGS_API_KEY }}
         run: |
           go get go.uber.org/zap
           go test -v ./tests/logs_e2e_test.go ./tests/common.go
@@ -125,9 +125,6 @@ jobs:
         id: fargate_logs_tests
         continue-on-error: true
         if: matrix.environment == 'eks-fargate'
-        env:
-          KUBERNETES_ENV: ${{ matrix.environment }}
-          LOGZIO_LOGS_API_KEY: ${{ secrets.LOGZIO_LOGS_API_KEY }}
         run: |
           go get go.uber.org/zap
           go test -v ./tests/fargate_logs_e2e_test.go ./tests/common.go
@@ -135,9 +132,6 @@ jobs:
       - name: Run metrics tests
         id: metrics_tests
         continue-on-error: true
-        env:
-          KUBERNETES_ENV: ${{ matrix.environment }}
-          LOGZIO_METRICS_API_KEY: ${{ secrets.LOGZIO_METRICS_API_KEY }}
         run: |
           go get go.uber.org/zap
           go test -v ./tests/metrics_e2e_test.go ./tests/common.go   
@@ -145,9 +139,6 @@ jobs:
       - name: Run traces tests
         id: traces_tests
         continue-on-error: true
-        env:
-          KUBERNETES_ENV: ${{ matrix.environment }}
-          LOGZIO_TRACES_API_KEY: ${{ secrets.LOGZIO_TRACES_API_KEY }}
         run: |
           go get go.uber.org/zap
           go test -v ./tests/traces_e2e_test.go ./tests/common.go
