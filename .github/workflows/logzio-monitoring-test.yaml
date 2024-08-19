@@ -79,7 +79,7 @@ jobs:
           --set logzio-logs-collector.secrets.logzioLogsToken='${{ secrets.LOGZIO_LOGS_TOKEN }}' \
           --set logzio-logs-collector.secrets.logzioRegion='us' \
           --set logzio-logs-collector.secrets.env_id='${{ env.ENV_ID }}' \
-          --set secrets.logType='test' \
+          --set logzio-logs-collector.secrets.logType='${{ env.ENV_ID }}' \
           --set metricsOrTraces.enabled=true \
           --set logzio-k8s-telemetry.metrics.enabled=true \
           --set logzio-k8s-telemetry.secrets.MetricsToken='${{ secrets.LOGZIO_METRICS_TOKEN }}' \
