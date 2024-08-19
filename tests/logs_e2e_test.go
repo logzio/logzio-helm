@@ -58,7 +58,7 @@ func fetchLogs(logsApiKey string) (*LogResponse, error) {
 	url := fmt.Sprintf("%s/search", BaseLogzioApiUrl)
 	client := &http.Client{}
 	envID := os.Getenv("ENV_ID")
-	query := fmt.Sprintf("env_id:%s AND type:agent-k8s AND k8s_deployment_name:log-generator", envID)
+	query := fmt.Sprintf("env_id:%s AND type:%s AND k8s_deployment_name:log-generator", envID, envID)
 	formattedQuery := formatQuery(query)
 	logger.Info("sending api request", zap.String("url", url), zap.String("query", query))
 	req, err := http.NewRequest("POST", url, bytes.NewBufferString(formattedQuery))
