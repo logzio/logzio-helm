@@ -54,7 +54,8 @@ config:
       headers:
         user-agent: "{{ .Chart.Name }}-{{ .Chart.Version }}-helm"
   extensions:
-    health_check: {}
+    health_check:
+      endpoint: ${env:MY_POD_IP}:13133
     file_storage:
       directory: /var/lib/otelcol
   processors:
