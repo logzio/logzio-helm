@@ -224,6 +224,9 @@ There are two possible approaches to the upgrade you can choose from:
 
 
 ## Changelog
+- **6.0.9**:
+  - Upgrade `logzio-logs-collector` chart to `v1.0.8`
+    - Bug-fix: Remove comment from `_helpers.tpl` template that breaks `aws-logging` configmap
 - **6.0.8**:
   - Upgrade `logzio-logs-collector` chart to `v1.0.7`
     - Upgrade `otel/opentelemetry-collector-contrib` image to v0.107.0
