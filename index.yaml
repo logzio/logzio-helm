@@ -3208,6 +3208,21 @@ entries:
   logzio-logs-collector:
   - apiVersion: v2
     appVersion: 0.107.0
+    created: "2024-08-21T12:56:52.392209628Z"
+    description: kubernetes logs collection agent for logz.io based on opentelemetry
+      collector
+    digest: 88dd1ba627bb9366bdf04466347b24ff3676b5fa9e3d37360b5e52880d18666e
+    home: https://logz.io/
+    maintainers:
+    - email: yotam.loewenbach@logz.io
+      name: yotam loewenbach
+    name: logzio-logs-collector
+    type: application
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/logzio-logs-collector-1.0.8/logzio-logs-collector-1.0.8.tgz
+    version: 1.0.8
+  - apiVersion: v2
+    appVersion: 0.107.0
     created: "2024-08-20T14:35:31.211080859Z"
     description: kubernetes logs collection agent for logz.io based on opentelemetry
       collector
@@ -7075,4 +7090,4 @@ entries:
     urls:
     - https://logzio.github.io/logzio-helm/prometheus-alerts-migrator-1.0.0.tgz
     version: 1.0.0
-generated: "2024-08-20T16:28:12.892606548Z"
+generated: "2024-08-21T12:56:52.392577694Z"
