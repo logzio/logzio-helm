@@ -1,4 +1,4 @@
-name: Test Logzio Logs Collector Helm Chart on Kind Kubernetes Environment
+name: Test `logzio-logs-collector` chart
 
 on:
   pull_request:

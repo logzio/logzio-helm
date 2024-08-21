@@ -1,4 +1,4 @@
-name: Test Logzio Monitoring Helm Chart on EKS Kubernetes Environments
+name: Test `logzio-monitoring` chart
 
 on:
   pull_request:

@@ -1,4 +1,4 @@
-name: Test Logzio Telemetry Helm Chart on Kind Kubernetes Environment
+name: Test `logzio-telemetry` chart
 
 on:
   pull_request:
