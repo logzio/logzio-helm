@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        kubernetes_version: [1.24, 1.25, 1.27]
+        kubernetes_version: [1.24]
         environment: [eks-linux, eks-fargate]
     steps:
       - name: Generate random id
@@ -53,11 +53,11 @@ jobs:
         run: |
           if [ "${{ matrix.environment }}" == "eks-linux" ]; then
             eksctl create cluster --name ${{ env.ENV_ID }}-${{ matrix.environment }} --region ${{ env.AWS_REGION }} \
-              --version ${{ matrix.kubernetes_version }} --nodes ${{ env.NUMBER_OF_NODES }} \
+              --nodes ${{ env.NUMBER_OF_NODES }} \
               --node-type ${{ env.NODE_TYPE }} --with-oidc
           elif [ "${{ matrix.environment }}" == "eks-fargate" ]; then
             eksctl create cluster --name ${{ env.ENV_ID }}-${{ matrix.environment }} --region ${{ env.AWS_REGION }} \
-              --version ${{ matrix.kubernetes_version }} --fargate
+              --fargate
           fi
 
       - name: Update kubeconfig
@@ -151,9 +151,12 @@ jobs:
 
       - name: Get Logs
         run: |
+          echo "logzio-monitoring-otel-collector-standalone: "
           kubectl logs deployment/logzio-monitoring-otel-collector-standalone
+          echo "logzio-monitoring-otel-collector-spm: "
           kubectl logs deployment/logzio-monitoring-otel-collector-spm
           if [ "${{ matrix.environment }}" == "eks-linux" ]; then
+            echo "logzio-monitoring-otel-collector-ds: "
             kubectl logs ds/logzio-monitoring-otel-collector-ds
           fi
 
