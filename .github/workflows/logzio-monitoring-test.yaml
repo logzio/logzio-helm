@@ -34,7 +34,7 @@ jobs:
           echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
           echo "AWS_REGION=us-east-1" >> $GITHUB_ENV
           echo "NUMBER_OF_NODES=3" >> $GITHUB_ENV
-          echo "NODE_TYPE=t3a.large" >> $GITHUB_ENV
+          echo "NODE_TYPE=m5.large" >> $GITHUB_ENV
           echo "KUBERNETES_ENV=${{ matrix.environment }}" >> $GITHUB_ENV
           echo "LOGZIO_LOGS_API_KEY=${{ secrets.LOGZIO_LOGS_API_KEY }}" >> $GITHUB_ENV
           echo "LOGZIO_METRICS_API_KEY=${{ secrets.LOGZIO_METRICS_API_KEY }}" >> $GITHUB_ENV
@@ -102,9 +102,17 @@ jobs:
           echo "Running Helm command: $HELM_CMD"
           eval $HELM_CMD
           
-          
+        
+
+      - name: Wait for pods to be ready
+        run: |
           kubectl rollout status deployment/logzio-monitoring-otel-collector-standalone --timeout=300s
-          kubectl rollout status deployment/logzio-monitoring-otel-collector-spm --timeout=300s          
+          kubectl rollout status deployment/logzio-monitoring-otel-collector-spm --timeout=300s   
+          kubectl rollout status deployment/logzio-monitoring-kube-state-metrics --timeout=300s
+          if [ "${{ matrix.environment }}" == "eks-linux" ]; then
+            kubectl rollout status ds/logzio-monitoring-prometheus-node-exporter --timeout=300s
+            kubectl rollout status ds/logzio-monitoring-otel-collector-ds --timeout=300s
+          fi
 
       - name: Confirm `aws-observability` namespace and configmap are created (fargate)
         if: matrix.environment == 'eks-fargate'
@@ -139,7 +147,15 @@ jobs:
           kubectl rollout status deployment/trace-gen --timeout=300s
 
       - name: Sleep
-        run: sleep 240
+        run: sleep 180
+
+      - name: Get Logs
+        run: |
+          kubectl logs deployment/deployment/logzio-monitoring-otel-collector-standalone
+          kubectl logs deployment/deployment/logzio-monitoring-otel-collector-spm
+          if [ "${{ matrix.environment }}" == "eks-linux" ]; then
+            kubectl logs ds/logzio-monitoring-otel-collector-ds
+          fi
 
       - name: Run linux logs tests
         id: linux_logs_tests
