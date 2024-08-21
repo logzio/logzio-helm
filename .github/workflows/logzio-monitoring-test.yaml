@@ -99,7 +99,9 @@ jobs:
           
           HELM_CMD="$HELM_CMD logzio-monitoring ."
           
+          echo "Running Helm command: $HELM_CMD"
           eval $HELM_CMD
+          
           
           kubectl rollout status deployment/logzio-monitoring-otel-collector-standalone --timeout=300s
           kubectl rollout status deployment/logzio-monitoring-otel-collector-spm --timeout=300s          
