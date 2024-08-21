@@ -142,6 +142,9 @@ Multi line logs configuration
 The collector supports by default various log formats (including multiline logs) such as `CRI-O` `CRI-Containerd` `Docker` formats. You can configure the chart to parse custom multiline logs pattern according to your needs, please read [Customizing Multiline Log Handling](./examples/multiline.md) guide for more details.
 
 ## Change log
+* 1.0.8
+  - Bug-fix:
+    - Remove comment from `_helpers.tpl` template that breaks aws-logging configmap
 * 1.0.7
   - Upgrade `otel/opentelemetry-collector-contrib` image to v0.107.0
     - Adjusted health check extension endpoint
