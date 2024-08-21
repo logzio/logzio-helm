@@ -15,7 +15,7 @@ spec:
         app: log-generator
     spec:
       containers:
-        - name: random-logger
+        - name: log-generator
           image: chentex/random-logger:latest
           args:
             - "100"

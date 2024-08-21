@@ -60,7 +60,7 @@ func fetchFargateLogs(logsApiKey string) (*FargateLogResponse, error) {
 	url := fmt.Sprintf("%s/search", BaseLogzioApiUrl)
 	client := &http.Client{}
 	envID := os.Getenv("ENV_ID")
-	query := fmt.Sprintf("type:%s AND kubernetes.container_name:random-logger", envID)
+	query := fmt.Sprintf("type:%s AND kubernetes.container_name:log-generator", envID)
 	formattedQuery := formatQuery(query)
 	logger.Info("sending api request", zap.String("url", url), zap.String("query", query))
 	req, err := http.NewRequest("POST", url, bytes.NewBufferString(formattedQuery))

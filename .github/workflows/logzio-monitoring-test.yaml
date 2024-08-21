@@ -115,7 +115,7 @@ jobs:
           kubectl rollout status deployment/trace-gen --timeout=300s
 
       - name: Sleep
-        run: sleep 180
+        run: sleep 240
 
       - name: Run linux logs tests
         id: linux_logs_tests
