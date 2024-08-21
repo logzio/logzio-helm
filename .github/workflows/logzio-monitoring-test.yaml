@@ -34,7 +34,7 @@ jobs:
           echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
           echo "AWS_REGION=us-east-1" >> $GITHUB_ENV
           echo "NUMBER_OF_NODES=3" >> $GITHUB_ENV
-          echo "NODE_TYPE=t3.medium" >> $GITHUB_ENV
+          echo "NODE_TYPE=t3a.large" >> $GITHUB_ENV
           echo "KUBERNETES_ENV=${{ matrix.environment }}" >> $GITHUB_ENV
           echo "LOGZIO_LOGS_API_KEY=${{ secrets.LOGZIO_LOGS_API_KEY }}" >> $GITHUB_ENV
           echo "LOGZIO_METRICS_API_KEY=${{ secrets.LOGZIO_METRICS_API_KEY }}" >> $GITHUB_ENV
