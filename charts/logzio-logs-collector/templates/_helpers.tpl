@@ -200,7 +200,7 @@ listener-eu.logz.io
 {{- else if eq $region "uk" -}}
 listener-uk.logz.io
 {{- else -}}
-listener.logz.io  # Default to US if no match
+listener.logz.io
 {{- end -}}
 {{- end }}
 
