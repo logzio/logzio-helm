@@ -151,8 +151,8 @@ jobs:
 
       - name: Get Logs
         run: |
-          kubectl logs deployment/deployment/logzio-monitoring-otel-collector-standalone
-          kubectl logs deployment/deployment/logzio-monitoring-otel-collector-spm
+          kubectl logs deployment/logzio-monitoring-otel-collector-standalone
+          kubectl logs deployment/logzio-monitoring-otel-collector-spm
           if [ "${{ matrix.environment }}" == "eks-linux" ]; then
             kubectl logs ds/logzio-monitoring-otel-collector-ds
           fi
