@@ -92,17 +92,39 @@ jobs:
           --set logzio-k8s-telemetry.secrets.env_id='${{ env.ENV_ID }}' \
           --set logzio-k8s-telemetry.secrets.SpmToken='${{ secrets.LOGZIO_METRICS_TOKEN }}' \
           --set logzio-k8s-telemetry.serviceGraph.enabled=true"
-
+          
           if [ "${{ matrix.environment }}" == "eks-fargate" ]; then
-            HELM_CMD="$HELM_CMD --set logzio-logs-collector.fargateLogRouter.enabled='true'"
+            HELM_CMD="$HELM_CMD --set logzio-logs-collector.fargateLogRouter.enabled='true' --set logzio-k8s-telemetry.collector.mode=standalone"
           fi
-
+          
           HELM_CMD="$HELM_CMD logzio-monitoring ."
           
           eval $HELM_CMD
-
+          
           kubectl rollout status deployment/logzio-monitoring-otel-collector-standalone --timeout=300s
-          kubectl rollout status deployment/logzio-monitoring-otel-collector-spm --timeout=300s
+          kubectl rollout status deployment/logzio-monitoring-otel-collector-spm --timeout=300s          
+
+      - name: Confirm `aws-observability` namespace and configmap are created (fargate)
+        if: matrix.environment == 'eks-fargate'
+        run: |
+          NAMESPACE="aws-observability"
+          CONFIGMAP="aws-logging"
+          
+          if kubectl get namespace $NAMESPACE; then
+            echo "Namespace $NAMESPACE exists."
+          else
+            echo "Namespace $NAMESPACE does not exist."
+            exit 1
+          fi
+          
+          # Check if the configmap exists in the namespace
+          if kubectl get configmap $CONFIGMAP -n $NAMESPACE; then
+            echo "ConfigMap $CONFIGMAP exists in namespace $NAMESPACE."
+          else
+            echo "ConfigMap $CONFIGMAP does not exist in namespace $NAMESPACE."
+            exit 1
+          fi
+
 
       - name: run log generator
         run: |
