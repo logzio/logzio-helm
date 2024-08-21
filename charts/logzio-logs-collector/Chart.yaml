@@ -1,10 +1,10 @@
 apiVersion: v2
 name: logzio-logs-collector
-version: 1.0.6
+version: 1.0.7
 description: kubernetes logs collection agent for logz.io based on opentelemetry collector
 type: application
 home: https://logz.io/
 maintainers:
   - name: yotam loewenbach
     email: yotam.loewenbach@logz.io
-appVersion: 0.103.0
+appVersion: 0.107.0

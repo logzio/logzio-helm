@@ -224,6 +224,11 @@ There are two possible approaches to the upgrade you can choose from:
 
 
 ## Changelog
+- **6.0.8**:
+  - Upgrade `logzio-logs-collector` chart to `v1.0.7`
+    - Upgrade `otel/opentelemetry-collector-contrib` image to v0.107.0
+      - Adjusted health check extension endpoint
+    - In case `json_parser` fails, send the log anyway and print the error only in debug mode.
 - **6.0.7**:
   - Upgrade `logzio-logs-collector` chart to `v1.0.6`
 	- Added `varlogcontainers` volume and volume mounts
