@@ -16,16 +16,14 @@ type FargateLogResponse struct {
 		Total int `json:"total"`
 		Hits  []struct {
 			Source struct {
-				LogLevel   string `json:"log_level"`
-				Kubernetes struct {
-					ContainerName     string `json:"container_name"`
-					ContainerHash     string `json:"container_hash"`
-					Host              string `json:"host"`
-					PodID             string `json:"pod_id"`
-					ContainerImageTag string `json:"container_image"`
-					PodName           string `json:"pod_name"`
-					NamespaceName     string `json:"namespace_name"`
-				} `json:"kubernetes"`
+				LogLevel          string `json:"log_level"`
+				ContainerName     string `json:"kubernetes_container_name"`
+				ContainerHash     string `json:"kubernetes_container_hash"`
+				Host              string `json:"kubernetes_host"`
+				PodID             string `json:"kubernetes_pod_id"`
+				ContainerImageTag string `json:"kubernetes_container_image"`
+				PodName           string `json:"kubernetes_pod_name"`
+				NamespaceName     string `json:"kubernetes_namespace_name"`
 			} `json:"_source"`
 		} `json:"hits"`
 	} `json:"hits"`
@@ -47,8 +45,8 @@ func TestLogzioMonitoringFargateLogs(t *testing.T) {
 	}
 
 	for _, hit := range logResponse.Hits.Hits {
-		kubernetes := hit.Source.Kubernetes
-		if kubernetes.ContainerImageTag == "" || kubernetes.ContainerName == "" || kubernetes.NamespaceName == "" || kubernetes.PodName == "" || kubernetes.PodID == "" || kubernetes.Host == "" {
+		log := hit.Source
+		if log.ContainerImageTag == "" || log.ContainerName == "" || log.NamespaceName == "" || log.PodName == "" || log.PodID == "" || log.Host == "" {
 			logger.Error("Missing log fields", zap.Any("log", hit))
 			t.Errorf("Missing log fields")
 			break
