@@ -52,7 +52,7 @@ jobs:
           --set secrets.logzioRegion=us \
           logzio-logs-collector .
 
-      - name: run log generator
+      - name: Run log generator
         run: |
           kubectl apply -f tests/resources/logsgen.yaml
           kubectl rollout status deployment/log-generator --timeout=300s

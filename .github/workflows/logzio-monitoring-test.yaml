@@ -114,7 +114,7 @@ jobs:
             kubectl rollout status ds/logzio-monitoring-otel-collector-ds --timeout=300s
           fi
 
-      - name: Confirm `aws-observability` namespace and configmap are created (fargate)
+      - name: Check `aws-observability` namespace and configmap (fargate)
         if: matrix.environment == 'eks-fargate'
         run: |
           NAMESPACE="aws-observability"
@@ -136,12 +136,12 @@ jobs:
           fi
 
 
-      - name: run log generator
+      - name: Run log generator
         run: |
           kubectl apply -f tests/resources/logsgen.yaml
           kubectl rollout status deployment/log-generator --timeout=300s
 
-      - name: run trace generator
+      - name: Run trace generator
         run: |
           kubectl apply -f tests/resources/tracegen-monitoring.yaml
           kubectl rollout status deployment/trace-gen --timeout=300s
@@ -160,21 +160,16 @@ jobs:
             kubectl logs ds/logzio-monitoring-otel-collector-ds
           fi
 
-      - name: Run linux logs tests
-        id: linux_logs_tests
+      - name: Run logs tests
+        id: logs_tests
         continue-on-error: true
-        if: matrix.environment == 'eks-linux'
         run: |
           go get go.uber.org/zap
-          go test -v ./tests/logs_e2e_test.go ./tests/common.go
-
-      - name: Run fargate logs tests
-        id: fargate_logs_tests
-        continue-on-error: true
-        if: matrix.environment == 'eks-fargate'
-        run: |
-          go get go.uber.org/zap
-          go test -v ./tests/fargate_logs_e2e_test.go ./tests/common.go
+          if [ "${{ matrix.environment }}" == "eks-linux" ]; then
+            go test -v ./tests/logs_e2e_test.go ./tests/common.go
+          elif [ "${{ matrix.environment }}" == "eks-fargate" ]; then
+            go test -v ./tests/fargate_logs_e2e_test.go ./tests/common.go
+          fi
 
       - name: Run metrics tests
         id: metrics_tests
@@ -192,8 +187,7 @@ jobs:
 
       - name: Check test results
         run: |
-          if [ "${{ steps.linux_logs_tests.outcome }}" == "failure" ] || \
-             [ "${{ steps.fargate_logs_tests.outcome }}" == "failure" ] || \
+          if [ "${{ steps.logs_tests.outcome }}" == "failure" ] || \
              [ "${{ steps.metrics_tests.outcome }}" == "failure" ] || \
              [ "${{ steps.traces_tests.outcome }}" == "failure" ]; then
             echo "One or more tests failed"
