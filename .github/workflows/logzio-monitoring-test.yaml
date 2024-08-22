@@ -53,11 +53,11 @@ jobs:
         run: |
           if [ "${{ matrix.environment }}" == "eks-linux" ]; then
             eksctl create cluster --name ${{ env.ENV_ID }}-${{ matrix.environment }} --region ${{ env.AWS_REGION }} \
-              --nodes ${{ env.NUMBER_OF_NODES }} \
+              --version ${{ matrix.kubernetes_version }} --nodes ${{ env.NUMBER_OF_NODES }} \
               --node-type ${{ env.NODE_TYPE }} --with-oidc
           elif [ "${{ matrix.environment }}" == "eks-fargate" ]; then
             eksctl create cluster --name ${{ env.ENV_ID }}-${{ matrix.environment }} --region ${{ env.AWS_REGION }} \
-              --fargate
+              --version ${{ matrix.kubernetes_version }} --fargate
           fi
 
       - name: Update kubeconfig
