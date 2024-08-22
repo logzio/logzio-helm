@@ -39,6 +39,9 @@ func TestContainerMetrics(t *testing.T) {
 }
 
 func TestInfrastructureMetrics(t *testing.T) {
+	if os.Getenv("KUBERNETES_ENV") == "eks-fargate" {
+		t.Skip("Skipping infrastructure metrics test")
+	}
 	requiredMetrics := map[string][]string{
 		"kube_pod_status_phase":                    {"p8s_logzio_name", "namespace", "pod", "phase", "uid"},
 		"kube_pod_info":                            {"p8s_logzio_name", "namespace", "host_ip", "node", "pod"},
@@ -57,6 +60,28 @@ func TestInfrastructureMetrics(t *testing.T) {
 		"kube_node_created":                        {"p8s_logzio_name", "node"},
 		"node_filesystem_avail_bytes":              {"p8s_logzio_name", "instance", "kubernetes_node"},
 		"node_filesystem_size_bytes":               {"p8s_logzio_name", "instance", "kubernetes_node"},
+		"kube_replicaset_owner":                    {"p8s_logzio_name", "namespace", "owner_kind", "owner_name", "replicaset"},
+		"kube_deployment_created":                  {"p8s_logzio_name", "namespace", "deployment"},
+		"kube_deployment_status_condition":         {"p8s_logzio_name", "namespace", "deployment", "status"},
+	}
+	envId := os.Getenv("ENV_ID")
+	query := fmt.Sprintf(`{env_id='%s'}`, envId)
+	testMetrics(t, requiredMetrics, query)
+}
+
+func TestFargateMetrics(t *testing.T) {
+	if os.Getenv("KUBERNETES_ENV") != "eks-fargate" {
+		t.Skip("Skipping Fargate metrics test")
+	}
+	requiredMetrics := map[string][]string{
+		"kube_pod_status_phase":                    {"p8s_logzio_name", "namespace", "pod", "phase", "uid"},
+		"kube_pod_info":                            {"p8s_logzio_name", "namespace", "host_ip", "pod"},
+		"kube_pod_container_resource_limits":       {"p8s_logzio_name", "namespace", "pod", "resource"},
+		"kube_pod_container_info":                  {"p8s_logzio_name", "namespace", "pod"},
+		"kube_pod_created":                         {"p8s_logzio_name", "namespace", "pod"},
+		"kube_pod_owner":                           {"p8s_logzio_name", "namespace", "pod", "owner_kind", "owner_name"},
+		"kube_pod_container_status_restarts_total": {"p8s_logzio_name", "namespace", "pod"},
+		"kube_pod_status_reason":                   {"p8s_logzio_name", "namespace", "pod", "reason"},
 		"kube_replicaset_owner":                    {"p8s_logzio_name", "namespace", "owner_kind", "owner_name", "replicaset"},
 		"kube_deployment_created":                  {"p8s_logzio_name", "namespace", "deployment"},
 		"kube_deployment_status_condition":         {"p8s_logzio_name", "namespace", "deployment", "status"},
