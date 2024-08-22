@@ -142,6 +142,14 @@ Multi line logs configuration
 The collector supports by default various log formats (including multiline logs) such as `CRI-O` `CRI-Containerd` `Docker` formats. You can configure the chart to parse custom multiline logs pattern according to your needs, please read [Customizing Multiline Log Handling](./examples/multiline.md) guide for more details.
 
 ## Change log
+* 1.0.9
+  - **EKS fargate Breaking changes**:
+   - Add `nest` filters to remove dots from kubernetes metadata keys.
+    Changes in fields names:
+    - `kubernetes.*` -> `kubernetes_*`
+    - `kubernetes.labels.*` -> `kubernetes_labels_*`
+    - `kubernetes.annotations.*` -> `kubernetes_annotations_*`
+
 * 1.0.8
   - Bug-fix:
     - Remove comment from `_helpers.tpl` template that breaks aws-logging configmap
