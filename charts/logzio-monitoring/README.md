@@ -169,7 +169,11 @@ Then use `kubectl port-forward` to accsess the user intefrace in your browser:
 ```shell
 kubectl port-forward svc/ezkonnect-ui -n monitoring 31032:31032
 ```
-
+### Changes in kubernetes metadate fields names from version 6.1.0
+Changes in field names (replacing dots with underscore):
+  - `kubernetes.*` -> `kubernetes_*`
+  - `kubernetes.labels.*` -> `kubernetes_labels_*`
+  - `kubernetes.annotations.*` -> `kubernetes_annotations_*`
 
 ### Handling image pull rate limit
 
@@ -224,6 +228,14 @@ There are two possible approaches to the upgrade you can choose from:
 
 
 ## Changelog
+- **6.1.0**:
+  - Upgrade `logzio-logs-collector` chart to `v1.0.9`
+    - EKS fargate Breaking changes:
+      - Add nest filters to remove dots from kubernetes metadata keys. 
+      - Changes in fields names:
+        - `kubernetes.*` -> `kubernetes_*`
+        - `kubernetes.labels.*` -> `kubernetes_labels_*`
+        - `kubernetes.annotations.*` -> `kubernetes_annotations_*`
 - **6.0.9**:
   - Upgrade `logzio-logs-collector` chart to `v1.0.8`
     - Bug-fix: Remove comment from `_helpers.tpl` template that breaks `aws-logging` configmap
