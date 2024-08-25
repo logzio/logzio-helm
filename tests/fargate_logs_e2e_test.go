@@ -11,31 +11,31 @@ import (
 	"testing"
 )
 
-type LogResponse struct {
+type FargateLogResponse struct {
 	Hits struct {
 		Total int `json:"total"`
 		Hits  []struct {
 			Source struct {
-				ContainerImageTag  string `json:"container_image_tag"`
-				ContainerImageName string `json:"container_image_name"`
-				ContainerName      string `json:"k8s_container_name"`
-				NamespaceName      string `json:"k8s_namespace_name"`
-				PodName            string `json:"k8s_pod_name"`
-				PodUID             string `json:"k8s_pod_uid"`
-				NodeName           string `json:"k8s_node_name"`
-				LogLevel           string `json:"log_level"`
+				LogLevel          string `json:"log_level"`
+				ContainerName     string `json:"kubernetes_container_name"`
+				ContainerHash     string `json:"kubernetes_container_hash"`
+				Host              string `json:"kubernetes_host"`
+				PodID             string `json:"kubernetes_pod_id"`
+				ContainerImageTag string `json:"kubernetes_container_image"`
+				PodName           string `json:"kubernetes_pod_name"`
+				NamespaceName     string `json:"kubernetes_namespace_name"`
 			} `json:"_source"`
 		} `json:"hits"`
 	} `json:"hits"`
 }
 
-func TestLogzioMonitoringLogs(t *testing.T) {
+func TestLogzioMonitoringFargateLogs(t *testing.T) {
 	logsApiKey := os.Getenv("LOGZIO_LOGS_API_KEY")
 	if logsApiKey == "" {
 		t.Fatalf("LOGZIO_LOGS_API_KEY environment variable not set")
 	}
 
-	logResponse, err := fetchLogs(logsApiKey)
+	logResponse, err := fetchFargateLogs(logsApiKey)
 	if err != nil {
 		t.Fatalf("Failed to fetch logs: %v", err)
 	}
@@ -45,8 +45,8 @@ func TestLogzioMonitoringLogs(t *testing.T) {
 	}
 
 	for _, hit := range logResponse.Hits.Hits {
-		kubernetes := hit.Source
-		if kubernetes.ContainerImageTag == "" || kubernetes.ContainerName == "" || kubernetes.NamespaceName == "" || kubernetes.PodName == "" || kubernetes.PodUID == "" || kubernetes.NodeName == "" || kubernetes.ContainerImageName == "" || kubernetes.LogLevel == "" {
+		log := hit.Source
+		if log.ContainerImageTag == "" || log.ContainerName == "" || log.NamespaceName == "" || log.PodName == "" || log.PodID == "" || log.Host == "" {
 			logger.Error("Missing log fields", zap.Any("log", hit))
 			t.Errorf("Missing log fields")
 			break
@@ -54,11 +54,11 @@ func TestLogzioMonitoringLogs(t *testing.T) {
 	}
 }
 
-func fetchLogs(logsApiKey string) (*LogResponse, error) {
+func fetchFargateLogs(logsApiKey string) (*FargateLogResponse, error) {
 	url := fmt.Sprintf("%s/search", BaseLogzioApiUrl)
 	client := &http.Client{}
 	envID := os.Getenv("ENV_ID")
-	query := fmt.Sprintf("env_id:%s AND type:%s AND k8s_deployment_name:log-generator", envID, envID)
+	query := fmt.Sprintf("type:%s AND kubernetes_container_name:log-generator", envID)
 	formattedQuery := formatQuery(query)
 	logger.Info("sending api request", zap.String("url", url), zap.String("query", query))
 	req, err := http.NewRequest("POST", url, bytes.NewBufferString(formattedQuery))
@@ -84,7 +84,7 @@ func fetchLogs(logsApiKey string) (*LogResponse, error) {
 		return nil, err
 	}
 
-	var logResponse LogResponse
+	var logResponse FargateLogResponse
 	err = json.Unmarshal(body, &logResponse)
 	if err != nil {
 		return nil, err

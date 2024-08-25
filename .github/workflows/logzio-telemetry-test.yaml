@@ -1,4 +1,4 @@
-name: Test Logzio Telemetry Helm Chart on Kind Kubernetes Environment
+name: Test `logzio-telemetry` chart
 
 on:
   pull_request:
@@ -64,7 +64,7 @@ jobs:
           kubectl rollout status deployment/logzio-k8s-telemetry-otel-collector-standalone --timeout=300s
           kubectl rollout status deployment/logzio-k8s-telemetry-otel-collector-spm --timeout=300s
 
-      - name: run trace generator
+      - name: Run trace generator
         run: |
           kubectl apply -f tests/resources/tracegen.yaml
           kubectl rollout status deployment/trace-gen --timeout=300s
