@@ -141,7 +141,34 @@ Multi line logs configuration
 -----------------------------
 The collector supports by default various log formats (including multiline logs) such as `CRI-O` `CRI-Containerd` `Docker` formats. You can configure the chart to parse custom multiline logs pattern according to your needs, please read [Customizing Multiline Log Handling](./examples/multiline.md) guide for more details.
 
+Log collection in eks fargate environemnt
+-----------------------------
+You can use the `fargateLogRouter.enabled` value to enable log collection in eks fargate environemnt via fluentbit log-router
+```sh
+    helm install logzio-logs-collector -n monitoring \
+    --set enabled=true \
+    --set secrets.logzioLogsToken=<<token>> \
+    --set secrets.logzioRegion=<<region>> \
+    --set secrets.env_id=<<env_id>> \
+    --set secrets.logType=<<logType>> \
+    --set fargateLogRouter.enabled="true" \
+    logzio-helm/logzio-logs-collector
+```
+### Kubernetes metadata fields naming changes in eks fargate environemnt >= `1.0.9`
+Changes in fields names:
+  - `kubernetes.*` -> `kubernetes_*`
+  - `kubernetes.labels.*` -> `kubernetes_labels_*`
+  - `kubernetes.annotations.*` -> `kubernetes_annotations_*`
+  
 ## Change log
+* 1.0.9
+  - **EKS fargate Breaking changes**:
+   - Add `nest` filters to remove dots from kubernetes metadata keys.
+    Changes in fields names:
+    - `kubernetes.*` -> `kubernetes_*`
+    - `kubernetes.labels.*` -> `kubernetes_labels_*`
+    - `kubernetes.annotations.*` -> `kubernetes_annotations_*`
+
 * 1.0.8
   - Bug-fix:
     - Remove comment from `_helpers.tpl` template that breaks aws-logging configmap
