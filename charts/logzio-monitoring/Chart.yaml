@@ -5,6 +5,7 @@ type: application
 version: 6.1.0
 
 
+
 sources:
   - https://github.com/logzio/logzio-helm
 dependencies:
