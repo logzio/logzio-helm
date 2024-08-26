@@ -230,6 +230,7 @@ There are two possible approaches to the upgrade you can choose from:
 ## Changelog
 - **6.1.1**:
   - Upgrade `logzio-trivy` chart to `v0.3.4`
+	- Bump Trivy-Operator version to `0.24.1`.
 - **6.1.0**:
   - Upgrade `logzio-logs-collector` chart to `v1.0.9`
     - EKS fargate Breaking changes:
