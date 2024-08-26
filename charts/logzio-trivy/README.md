@@ -75,6 +75,8 @@ In these cases we can use the following `--set` command to use an alternative im
 
 
 ## Changelog
+- **0.3.4**
+  - Bump Trivy-Operator version to `0.24.1`.
 - **0.3.3**:
   - Upgrade to image `logzio/trivy-to-logzio:0.3.3`.
     - Upgrade python version to 3.12.5.
