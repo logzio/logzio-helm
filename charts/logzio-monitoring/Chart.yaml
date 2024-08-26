@@ -18,7 +18,7 @@ dependencies:
     repository: "https://logzio.github.io/logzio-helm/"
     condition: metricsOrTraces.enabled
   - name: logzio-trivy
-    version: "0.3.3"
+    version: "0.3.4"
     repository: "https://logzio.github.io/logzio-helm/"
     condition: securityReport.enabled
   - name: opencost
