@@ -6,6 +6,8 @@ on:
       - master
     paths:
       - 'charts/logzio-logs-collector/**'
+    paths-ignore:
+      - 'charts/logzio-logs-collector/README.md'
 jobs:
   test-helm-chart:
     name: Test Helm Chart on Kind

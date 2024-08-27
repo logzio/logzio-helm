@@ -6,6 +6,8 @@ on:
       - master
     paths:
       - 'charts/logzio-monitoring/**'
+    paths-ignore:
+      - 'charts/logzio-monitoring/README.md'
 jobs:
   eks-e2e-test:
     name: EKS e2e Test
