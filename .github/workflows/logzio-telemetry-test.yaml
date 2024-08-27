@@ -6,6 +6,8 @@ on:
       - master
     paths:
       - 'charts/logzio-telemetry/**'
+    paths-ignore:
+      - 'charts/logzio-telemetry/README.md'
 jobs:
   test-helm-chart:
     name: Test Helm Chart on Kind
