@@ -5,9 +5,11 @@ on:
     branches:
       - master
     paths:
-      - 'charts/logzio-telemetry/**'
-    paths-ignore:
-      - 'charts/logzio-telemetry/README.md'
+      - 'charts/logzio-telemetry/templates/**'
+      - 'charts/logzio-telemetry/Chart.yaml'
+      - 'charts/logzio-telemetry/values.yaml'
+      - 'charts/logzio-telemetry/nginx/**'
+      - 'charts/logzio-telemetry/windows_exporter_installer/**'
 jobs:
   test-helm-chart:
     name: Test Helm Chart on Kind

@@ -5,9 +5,9 @@ on:
     branches:
       - master
     paths:
-      - 'charts/logzio-logs-collector/**'
-    paths-ignore:
-      - 'charts/logzio-logs-collector/README.md'
+      - 'charts/logzio-logs-collector/Chart.yaml'
+      - 'charts/logzio-logs-collector/templates/**'
+      - 'charts/logzio-logs-collector/values.yaml'
 jobs:
   test-helm-chart:
     name: Test Helm Chart on Kind
