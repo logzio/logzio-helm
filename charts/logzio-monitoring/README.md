@@ -228,6 +228,14 @@ There are two possible approaches to the upgrade you can choose from:
 
 
 ## Changelog
+- **6.1.2**:
+  - Upgrade `logzio-k8s-events` chart to `v0.0.7`
+	- Remove default resources `limits`
+  - Upgrade `logzio-k8s-telemetry` chart to `v4.2.8`
+	- Upgrade `otel/opentelemetry-collector-contrib` image to `v0.108.0`
+	- Remove default resources `limits`
+  - Upgrade `logzio-fluentd` chart to `v0.30.2`
+	- Remove default resources `limits`
 - **6.1.1**:
   - Upgrade `logzio-trivy` chart to `v0.3.4`
     - Bump Trivy-Operator version to `0.24.1`.
