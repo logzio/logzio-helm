@@ -165,6 +165,8 @@ data:
 
 
 ## Changelog
+- v2.0.2
+  - Remove default resources `limits`
 - v2.0.1
   - values.yaml:
     - Added rbac permissions to create `events`

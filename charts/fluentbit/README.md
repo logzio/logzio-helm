@@ -90,14 +90,25 @@ kubectl get nodes -o json | jq ".items[]|{name:.metadata.name, taints:.spec.tain
 
 
 ## Change log
-* 0.0.6 - Upgrade 'fluent-bit-output' image to 0.6.0
+* 0.0.7 
+  - Upgrade 'fluent-bit-output' image to 0.6.2
+    - Resolve bug with exit code handling to ensure all buffered logs are flushed before termination.
+    - Upgrade golang to 1.22.
+    - Upgrade fluent-bit official image to 3.1.4.
+  - Remove default resources `limits`
+* 0.0.6 
+  - Upgrade 'fluent-bit-output' image to 0.6.0
   - Upgrade fluent-bit to v3.0.4.
-* 0.0.5 - Upgrade docker image to 0.4.1
-  * Trim the compiler build path from stack traces.
-  * Add timestamp decode support for new fluentbit versions.
-  * Update to fluent-bit 2.1.9 in docker image.
-* 0.0.4 - Upgrade docker image to 0.3.0, adding dedot filter
-          in Logzio Output config, added memory and cpu requirements.
-* 0.0.3 - Upgrade docker image to 0.1.3.
-* 0.0.2 - Upgrade docker image to v0.1.2.
-* 0.0.1 - Initial realese
+* 0.0.5 
+  - Upgrade docker image to 0.4.1
+    - Trim the compiler build path from stack traces.
+    - Add timestamp decode support for new fluentbit versions.
+    - Update to fluent-bit 2.1.9 in docker image.
+* 0.0.4 
+  - Upgrade docker image to 0.3.0, adding dedot filter in Logzio Output config, added memory and cpu requirements.
+* 0.0.3
+  - Upgrade docker image to 0.1.3.
+* 0.0.2 
+  - Upgrade docker image to v0.1.2.
+* 0.0.1 
+- Initial realese

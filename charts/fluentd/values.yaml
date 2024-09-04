@@ -125,8 +125,6 @@ daemonset:
   extraEnv: []
   # Allows you to set the resources for Fluentd Daemonset.
   resources:
-    limits:
-      memory: 500Mi
     requests:
       cpu: 200m
       memory: 500Mi
@@ -206,8 +204,6 @@ windowsDaemonset:
   extraEnv: []
   # Allows you to set the resources for Fluentd Daemonset.
   resources:
-    limits:
-      memory: 500Mi
     requests:
       cpu: 100m
       memory: 200Mi

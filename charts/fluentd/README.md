@@ -301,6 +301,8 @@ If needed, the fluentd image can be changed to support windows server 2022 with 
 
 
 ## Change log
+ - **0.30.2**:
+  - Remove default resources `limits`
  - **0.30.1**:
   - Handle empty etcd `log` key, populated based on `message` key.
  - **0.30.0**:

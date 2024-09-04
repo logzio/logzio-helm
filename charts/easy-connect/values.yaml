@@ -25,9 +25,6 @@ kubernetesInstrumentor:
     metricsPort: 8080
     healthProbePort: 8081
   resources:
-    limits:
-      cpu: "500m"
-      memory: "128Mi"
     requests:
       cpu: "10m"
       memory: "64Mi"

@@ -412,6 +412,9 @@ If you don't want the sub charts to installed add the relevant flag per sub char
 
 
 ## Change log
+* 4.2.8
+  - Upgrade `otel/opentelemetry-collector-contrib` image to `v0.108.0`
+  - Remove default resources `limits`
 * 4.2.7
   - Fix `cluster-admin` cluster role binding creation condition
 * 4.2.6
