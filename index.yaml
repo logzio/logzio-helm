@@ -14,6 +14,19 @@ entries:
     version: 0.0.1
   easy-connect:
   - apiVersion: v2
+    created: "2024-09-04T14:17:43.54772273Z"
+    description: Easily add otel auto instrumentation and log types to your Kubernetes
+      applications
+    digest: 0ae902128a3c565b12ea72d70b449d23c76a9d53e978c533c76e65af744c193c
+    maintainers:
+    - email: yotam.loewenbach@logz.io
+      name: yotamloe
+    name: easy-connect
+    type: application
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/easy-connect-1.0.8/easy-connect-1.0.8.tgz
+    version: 1.0.8
+  - apiVersion: v2
     created: "2024-01-28T10:42:36.982415631Z"
     description: Easily add otel auto instrumentation and log types to your Kubernetes
       applications
@@ -214,6 +227,27 @@ entries:
     version: 0.0.1
   logzio-fluent-bit:
   - apiVersion: v2
+    appVersion: 0.6.2
+    created: "2024-09-04T14:17:43.740020515Z"
+    description: Fast and lightweight log agent based on fluentbit, collect and send
+      your logs to logz.io
+    digest: a08f72988e0adf054cdc1943167d7048daf85c5789b199e27884571c3a031957
+    keywords:
+    - logging
+    - fluent-bit
+    - fluentd
+    maintainers:
+    - email: yotam.loewenbach@logz.io
+      name: yotam.loewenbach
+    name: logzio-fluent-bit
+    sources:
+    - https://github.com/logzio/logzio-helm
+    - https://github.com/fluent/fluent-bit/
+    type: application
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/logzio-fluent-bit-0.0.7/logzio-fluent-bit-0.0.7.tgz
+    version: 0.0.7
+  - apiVersion: v2
     appVersion: 0.6.0
     created: "2024-05-26T08:48:43.019803836Z"
     description: Fast and lightweight log agent based on fluentbit, collect and send
@@ -340,6 +374,21 @@ entries:
     - https://logzio.github.io/logzio-helm/logzio-fluent-bit-0.0.1.tgz
     version: 0.0.1
   logzio-fluentd:
+  - apiVersion: v2
+    appVersion: 1.5.3
+    created: "2024-09-04T14:17:43.957298846Z"
+    description: A Helm chart for shipping Kubernetes logs via Fluentd.
+    digest: aa647cecd904bf1357f791c9e258f49e6db7f7488bbcb1309583f75d3deeebfd
+    keywords:
+    - logging
+    - fluentd
+    maintainers:
+    - email: yotam.loewenbach@logz.io
+      name: Yotam loewenbach
+    name: logzio-fluentd
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/logzio-fluentd-0.30.2/logzio-fluentd-0.30.2.tgz
+    version: 0.30.2
   - apiVersion: v2
     appVersion: 1.5.3
     created: "2024-05-20T06:35:54.963377435Z"
@@ -1032,6 +1081,23 @@ entries:
   logzio-k8s-events:
   - apiVersion: v2
     appVersion: 0.0.3
+    created: "2024-09-04T14:17:44.17864383Z"
+    description: A Helm chart for shipping Kubernetes deployments event information
+      logs to Logz.io.
+    digest: 14174c465d270cd0559b6b0f1c94a57366fc26e247fc7bb517822672a8508e0e
+    keywords:
+    - logging
+    - k8s
+    - kubernetes
+    maintainers:
+    - email: raul.gurshumo@logz.io
+      name: Raul Gurshumov
+    name: logzio-k8s-events
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/logzio-k8s-events-0.0.7/logzio-k8s-events-0.0.7.tgz
+    version: 0.0.7
+  - apiVersion: v2
+    appVersion: 0.0.3
     created: "2024-08-11T11:38:16.850361137Z"
     description: A Helm chart for shipping Kubernetes deployments event information
       logs to Logz.io.
@@ -1133,6 +1199,15 @@ entries:
     - https://logzio.github.io/logzio-helm/logzio-k8s-events-0.0.1.tgz
     version: 0.0.1
   logzio-k8s-logs:
+  - apiVersion: v1
+    appVersion: 7.8.1
+    created: "2024-09-04T14:17:44.369574685Z"
+    description: A Helm chart for shipping k8s logs to logz.io via Filebeat and Winlogbeat.
+    digest: ae69bde45a66a093c3272493e962e8011031c41328ec06116f1d6bacc5614935
+    name: logzio-k8s-logs
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/logzio-k8s-logs-0.0.9/logzio-k8s-logs-0.0.9.tgz
+    version: 0.0.9
   - apiVersion: v1
     appVersion: 7.8.1
     created: "2024-01-02T17:30:55.889875+07:00"
@@ -1261,6 +1336,38 @@ entries:
     - https://logzio.github.io/logzio-helm/logzio-k8s-metrics-0.0.1.tgz
     version: 0.0.1
   logzio-k8s-telemetry:
+  - apiVersion: v2
+    appVersion: 0.108.0
+    created: "2024-09-04T14:17:44.55336242Z"
+    dependencies:
+    - condition: kubeStateMetrics.enabled
+      name: kube-state-metrics
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 4.24.0
+    - condition: nodeExporter.enabled
+      name: prometheus-node-exporter
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 4.29.0
+    - condition: pushGateway.enabled
+      name: prometheus-pushgateway
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 2.4.2
+    description: logzio-k8s-telemetry allows you to ship metrics and traces from your
+      Kubernetes cluster using the OpenTelemetry collector.
+    digest: b5b61a1c6c50578bcb9c3de9eea4d93983e913bda56142b6d71a352a7f5245e7
+    maintainers:
+    - email: yotam.loewenbach@logz.io
+      name: yotamloe
+    - email: raul.gurshumo@logz.io
+      name: ralongit
+    name: logzio-k8s-telemetry
+    sources:
+    - https://github.com/prometheus/node_exporter
+    - https://github.com/kubernetes/kube-state-metrics
+    type: application
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/logzio-k8s-telemetry-4.2.8/logzio-k8s-telemetry-4.2.8.tgz
+    version: 4.2.8
   - apiVersion: v2
     appVersion: 0.103.0
     created: "2024-06-24T15:03:49.062669899Z"
@@ -7216,6 +7323,21 @@ entries:
   prometheus-alerts-migrator:
   - apiVersion: v2
     appVersion: 1.0.3
+    created: "2024-09-04T14:17:44.764249048Z"
+    description: This Helm chart serves as a Kubernetes controller that automates
+      the migration of Prometheus alert rules to Logz.io's alert format, facilitating
+      monitoring and alert management in a Logz.io integrated environment.
+    digest: 7a673e04642f8fcf12f7afdf09d4d9a4ac2b21289d5585c633b46d55a55eade0
+    maintainers:
+    - email: yotam.loewenbach@logz.io
+      name: yotamloe
+    name: prometheus-alerts-migrator
+    type: application
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/prometheus-alerts-migrator-2.0.2/prometheus-alerts-migrator-2.0.2.tgz
+    version: 2.0.2
+  - apiVersion: v2
+    appVersion: 1.0.3
     created: "2024-03-10T08:49:01.270440945Z"
     description: This Helm chart serves as a Kubernetes controller that automates
       the migration of Prometheus alert rules to Logz.io's alert format, facilitating
@@ -7259,4 +7381,4 @@ entries:
     urls:
     - https://logzio.github.io/logzio-helm/prometheus-alerts-migrator-1.0.0.tgz
     version: 1.0.0
-generated: "2024-08-26T14:40:03.718972909Z"
+generated: "2024-09-04T14:17:44.765632791Z"
