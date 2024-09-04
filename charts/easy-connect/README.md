@@ -108,6 +108,8 @@ you can find alternative to `dockerhub` images in `public.ecr.aws/logzio/` with 
 
 Change log
 -------------
+* 1.0.8
+	- Remove default resources `limits`
 * 1.0.7
   - Update `instrumentor` and agents images `v1.0.10` -> `v1.0.11`
   - Update python instrumentation:

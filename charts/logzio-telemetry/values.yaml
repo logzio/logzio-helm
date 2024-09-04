@@ -868,7 +868,7 @@ spanMetricsAgregator:
       hostPort: 9411
       protocol: TCP
   resources:
-    limits:
+    requests:
       cpu: 256m
       memory: 512Mi
 
@@ -881,9 +881,8 @@ standaloneCollector:
     enabled: false
 
   resources:
-    limits:
-      memory: 512Mi
     requests:
+      memory: 512Mi
       cpu: 200m
       
   podLabels:  {}
@@ -909,10 +908,9 @@ daemonsetCollector:
                 operator: DoesNotExist
 
   resources:
-    limits:
-      memory: 250Mi
     requests:
       cpu: 150m
+      memory: 250Mi
 
   podLabels:  {}
 
