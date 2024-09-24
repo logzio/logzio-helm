@@ -61,7 +61,7 @@ daemonset:
     effect: NoSchedule
   # Set nodeSelector for all DaemonSet pods
   nodeSelector:
-    os: linux
+    kubernetes.io/os: linux
   # Set affinity rules for the scheduler to determine where all DaemonSet pods can be placed.
   # The following configuration prevent node exporter deamonset deploymment on fargate nodes
   affinity:
@@ -154,7 +154,7 @@ windowsDaemonset:
     effect: NoSchedule
   # Deploy the pods only on Windows nodes
   nodeSelector:
-    os: windows
+    kubernetes.io/os: windows
   # Controls whether Fluentd system messages will be enabled
   fluentdSystemdConf: disable
   # Controls the launch of a prometheus plugin that monitors Fluentd
