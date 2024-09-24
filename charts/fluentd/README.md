@@ -80,7 +80,7 @@ helm install -n monitoring \
 | `daemonset.securityContext` | Security context for the container level | `{}` |
 | `daemonset.initContainerSecurityContext` | Security context for the init container | `{}` |
 | `daemonset.tolerations` | Set [tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) for all DaemonSet pods. | See [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/fluentd/values.yaml). |
-| `daemonset.nodeSelector` | Set [nodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) for all DaemonSet pods. | `{}` |
+| `daemonset.nodeSelector` | Set [nodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) for all DaemonSet pods. | `{"kubernetes.io/os": "linux"}` |
 | `daemonset.affinity` | Set [affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity) rules for the scheduler to determine where all DaemonSet pods can be placed. |  |
 | `daemonset.fluentdSystemdConf` | Controls whether Fluentd system messages will be enabled. | `disable` |
 | `daemonset.fluentdPrometheusConf` | Controls the launch of a prometheus plugin that monitors Fluentd. | `false` |
@@ -301,6 +301,8 @@ If needed, the fluentd image can be changed to support windows server 2022 with 
 
 
 ## Change log
+- **0.30.3**:
+  - Resolve `nodeSelector` bug
  - **0.30.2**:
   - Remove default resources `limits`
  - **0.30.1**:

@@ -61,7 +61,7 @@ daemonset:
     effect: NoSchedule
   # Set nodeSelector for all DaemonSet pods
   nodeSelector:
-    os: linux
+    kubernetes.io/os: linux
   # Set affinity rules for the scheduler to determine where all DaemonSet pods can be placed.
   # The following configuration prevent node exporter deamonset deploymment on fargate nodes
   affinity:

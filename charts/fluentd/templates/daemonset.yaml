@@ -40,7 +40,10 @@ spec:
       {{- if .Values.daemonset.podSecurityContext }}
       securityContext: {{ toYaml .Values.daemonset.podSecurityContext | nindent 8 }}
       {{- end }}
+      {{- with .Values.nodeSelector }}
       nodeSelector:
+        {{- toYaml . | nindent 2 }}
+      {{- end }}
         kubernetes.io/os: {{ .Values.daemonset.nodeSelector.os }}
       # Because the image's entrypoint requires to write on /fluentd/etc but we mount configmap there which is read-only,
       # this initContainers workaround or other is needed.
