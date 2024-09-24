@@ -40,11 +40,10 @@ spec:
       {{- if .Values.daemonset.podSecurityContext }}
       securityContext: {{ toYaml .Values.daemonset.podSecurityContext | nindent 8 }}
       {{- end }}
-      {{- with .Values.nodeSelector }}
+      {{- with .Values.daemonset.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 2 }}
       {{- end }}
-        kubernetes.io/os: {{ .Values.daemonset.nodeSelector.os }}
       # Because the image's entrypoint requires to write on /fluentd/etc but we mount configmap there which is read-only,
       # this initContainers workaround or other is needed.
       # See https://github.com/fluent/fluentd-kubernetes-daemonset/issues/90
@@ -217,8 +216,10 @@ spec:
       tolerations:
 {{ toYaml .Values.windowsDaemonset.tolerations | indent 6 }}
       {{- end }}
+      {{- with .Values.windowsDaemonset.nodeSelector }}
       nodeSelector:
-        kubernetes.io/os: {{ .Values.windowsDaemonset.nodeSelector.os }}
+        {{- toYaml . | nindent 2 }}
+      {{- end }}
       # Because the image's entrypoint requires to write on /fluentd/etc but we mount configmap there which is read-only,
       # this initContainers workaround or other is needed.
       # See https://github.com/fluent/fluentd-kubernetes-daemonset/issues/90

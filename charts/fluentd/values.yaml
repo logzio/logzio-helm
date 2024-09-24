@@ -154,7 +154,7 @@ windowsDaemonset:
     effect: NoSchedule
   # Deploy the pods only on Windows nodes
   nodeSelector:
-    os: windows
+    kubernetes.io/os: windows
   # Controls whether Fluentd system messages will be enabled
   fluentdSystemdConf: disable
   # Controls the launch of a prometheus plugin that monitors Fluentd
