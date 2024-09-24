@@ -228,6 +228,9 @@ There are two possible approaches to the upgrade you can choose from:
 
 
 ## Changelog
+- **6.1.3**:
+	- Upgrade `logzio-fluentd` chart to `v0.30.3`
+		- Resolve `nodeSelector` bug
 - **6.1.2**:
   - Upgrade `logzio-k8s-events` chart to `v0.0.7`
 	- Remove default resources `limits`
