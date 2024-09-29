@@ -218,7 +218,7 @@ spec:
       {{- end }}
       {{- with .Values.windowsDaemonset.nodeSelector }}
       nodeSelector:
-        {{- toYaml . | nindent 2 }}
+{{ toYaml . | indent 8 }}
       {{- end }}
       # Because the image's entrypoint requires to write on /fluentd/etc but we mount configmap there which is read-only,
       # this initContainers workaround or other is needed.
