@@ -18,6 +18,7 @@ type FluentdResponse struct {
 		Hits  []struct {
 			Source struct {
 				FluentTags string `json:"fluentd_tags"`
+				LogLevel   string `json:"log_level"`
 				Kubernetes struct {
 					ContainerImageTag  string `json:"container_image"`
 					ContainerImageName string `json:"container_image_id"`
@@ -25,7 +26,6 @@ type FluentdResponse struct {
 					NamespaceName      string `json:"namespace_name"`
 					PodName            string `json:"pod_name"`
 					PodUID             string `json:"pod_id"`
-					LogLevel           string `json:"log_level"`
 				} `json:"kubernetes"`
 			} `json:"_source"`
 		} `json:"hits"`
