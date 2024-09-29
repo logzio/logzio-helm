@@ -302,6 +302,8 @@ If needed, the fluentd image can be changed to support windows server 2022 with 
 
 
 ## Change log
+- **0.30.4**:
+   - Fix `nodeSelector` indentation
 - **0.30.3**:
   - Resolve `nodeSelector` bug
  - **0.30.2**:
