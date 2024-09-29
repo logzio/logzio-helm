@@ -228,6 +228,9 @@ There are two possible approaches to the upgrade you can choose from:
 
 
 ## Changelog
+- **6.1.4**:
+	- Upgrade `logzio-fluentd` chart to `v0.30.4`
+		- Fix `nodeSelector` indentation
 - **6.1.3**:
 	- Upgrade `logzio-fluentd` chart to `v0.30.3`
 		- Resolve `nodeSelector` bug
