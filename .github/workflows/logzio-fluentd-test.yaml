@@ -72,7 +72,7 @@ jobs:
 
       - name: Cleanup Environment
         run: |
-          helm uninstall logzio-logs-collector
+          helm uninstall logzio-fluentd
 
       - name: Delete Kind cluster
         if: always()
