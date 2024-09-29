@@ -50,7 +50,7 @@ jobs:
         run: |
           cd charts/fluentd
           helm upgrade --install \
-          --set secrets.env_id=${{ env.ENV_ID }} \
+          --set env_id=${{ env.ENV_ID }} \
           --set secrets.logzioLogsToken=${{ secrets.LOGZIO_LOGS_TOKEN }} \
           --set secrets.logzioListener=listener.logz.io \
           logzio-fluentd .
