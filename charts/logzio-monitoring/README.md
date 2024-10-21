@@ -228,6 +228,9 @@ There are two possible approaches to the upgrade you can choose from:
 
 
 ## Changelog
+- **6.1.6**:
+	- Upgrade `logzio-fluentd` chart to `v0.30.5`
+		- Upgrade fluentd version to `1.17.1`
 - **6.1.5**:
 	- Upgrade `logzio-trivy` chart to `v0.3.5`
 		- Added `affinity` ,`nodeSelector` and `tolerations` to the deployment.
