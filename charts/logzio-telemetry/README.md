@@ -299,7 +299,7 @@ Added filters should be in the format of regex, i.e: `"metrics1|metric2"` etc.
 To add a custom filter, choose to which pipeline the filter is needed, and add the filter under the `custom` key accordingly.
 For example, to add a custom `namespace` keep filter to the application metric job, you can set:
 ```
---set prometheusFilters.namespaces.applications.custom="namesapce_1|namespace_2"
+--set prometheusFilters.namespaces.applications.keep.custom="namesapce_1|namespace_2"
 ```
 
 For more information, view `prometheusFitlers` in [values.yaml](https://github.com/logzio/logzio-helm/blob/master/charts/logzio-telemetry/values.yaml).
