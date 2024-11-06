@@ -49,19 +49,15 @@ logzio-apm-collector logzio-helm/logzio-apm-collector
 ## Configuration
 
 - [All configuration options](./VALUES.md)
-- [Auto-instrumentation options](#auto-instrumentation-options)
-  - [Enable Auto-instrumentation](#enable-auto-instrumentation)
-    - [Multi-container pods](#multi-container-pods)
-  - [Customize Auto-instrumentation](#customize-auto-instrumentation)
-    - [Customize Propagator](#customize-propagator)
-    - [Add a custom Sampler](#add-a-custom-sampler)
-    - [Distribute namespaces](#distribute-namespaces)
+- [Enable Auto-instrumentation](#enable-auto-instrumentation)
+  - [Multi-container pods](#multi-container-pods)
+- [Customize Auto-instrumentation](#customize-auto-instrumentation)
+  - [Customize Propagator](#customize-propagator)
+  - [Add a custom Sampler](#add-a-custom-sampler)
+  - [Distribute namespaces](#distribute-namespaces)
 - [Custom Trace Sampling rules](#custom-trace-sampling-rules)
 
-### Auto-instrumentation options
-Below, you can find guidance on enabling and customizing OpenTelemetry Operator Auto-instrumentation.
-
-#### Enable Auto-instrumentation
+## Enable Auto-instrumentation
 - **Step 1:** Make sure to enable the OpenTelemetry operator in the chart:
 ```shell
 --set otel-operator.enabled=true \
@@ -76,7 +72,7 @@ instrumentation.opentelemetry.io/inject-<APP_LANGUAGE>": "monitoring/logzio-apm-
 > `<APP_LANGUAGE>` can be one of `apache-httpd`, `dotnet`, `go`, `java`, `nginx`, `nodejs` or `python`.
 
 
-##### Multi-container pods
+### Multi-container pods
 By default, in multi-container pods, instrumentation is performed on the first container available in the pod spec.
 To fine tune which containers to instrument, add the below annotations to your pod:
 ```yaml
@@ -90,10 +86,10 @@ instrumentation.opentelemetry.io/<APP_LANGUAGE_2>-container-names: "myapp3"
 > `<APP_LANGUAGE>`, `<APP_LANGUAGE_2>` can be one of `apache-httpd`, `dotnet`, `go`, `java`, `nginx`, `nodejs` or `python`.
 
 
-#### Customize Auto-instrumentation
+## Customize Auto-instrumentation
 Below you can find multiple ways in which you can customize the OpenTelemetry Operator Auto-instrumentation.
 
-##### Customize Propagator
+### Customize Propagator
 The propagator specifies how context is injected into and extracted from carriers for distributed tracing.
 By default, the propagators `tracecontext` (W3C Trace Context) and `baggage` (W3C Correlation Context) are enabled.
 You can customize this to include other formats ([full list here](https://opentelemetry.io/docs/languages/sdk-configuration/general/#otel_propagators)) or set it to "none" to disable automatic propagation.
@@ -101,7 +97,7 @@ You can customize this to include other formats ([full list here](https://opente
 --set instrumentation.propagator={tracecontext, baggage, b3}
 ```
 
-##### Add a custom Sampler
+### Add a custom Sampler
 You can specify a sampler to be used by the instrumentor. You'll need to specify the below:
 - Sampler used to sample the traces ([available options](https://opentelemetry.io/docs/languages/sdk-configuration/general/#otel_traces_sampler))
 - Sampler arguments ([Sampler type expected input](https://opentelemetry.io/docs/languages/sdk-configuration/general/#otel_traces_sampler_arg))
@@ -112,7 +108,7 @@ Example:
 --set instrumentation.sampler.argument="0.25"
 ```
 
-##### Distribute namespaces
+### Distribute namespaces
 For intensive applications, to reduce the performance impact of the operator, you can define multiple namespaces to deploy the instrumentor resource at, which can help distribute the load in larger clusters.
 To do so, specify which namespaces to deploy the instrumentor at: 
 ```shell
@@ -127,7 +123,7 @@ instrumentation.opentelemetry.io/inject-<APP_LANGUAGE>": "true"
 > [!TIP]
 > `<APP_LANGUAGE>` can be one of `apache-httpd`, `dotnet`, `go`, `java`, `nginx`, `nodejs` or `python`.
 
-### Custom trace sampling rules
+## Custom trace sampling rules
 To customize the Traces Sampling rules in the OpenTelemetry Collector, you can follow the below steps:
 
 - **Step 1**: Create [customized Tail sampling rules configuration](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/tailsamplingprocessor).
