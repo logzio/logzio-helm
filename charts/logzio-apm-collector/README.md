@@ -55,6 +55,7 @@ logzio-apm-collector logzio-helm/logzio-apm-collector
   - [Customize Propagator](#customize-propagator)
   - [Add a custom Sampler](#add-a-custom-sampler)
   - [Distribute namespaces](#distribute-namespaces)
+- [Manual Instrumentation](#manual-instrumentation)
 - [Custom Trace Sampling rules](#custom-trace-sampling-rules)
 
 ## Enable Auto-instrumentation
@@ -122,6 +123,19 @@ instrumentation.opentelemetry.io/inject-<APP_LANGUAGE>": "true"
 
 > [!TIP]
 > `<APP_LANGUAGE>` can be one of `apache-httpd`, `dotnet`, `go`, `java`, `nginx`, `nodejs` or `python`.
+
+## Manual Instrumentation
+If you're using manual instrumentation or a custom instrumentation agent, configure it to export data to the Logz.io APM collector by setting the export/output address as follows:
+
+```
+logzio-monitoring-otel-collector.monitoring.svc.cluster.local:<<PORT>>
+```
+
+> [!IMPORTANT]
+> Replace `<<PORT>>` based on the protocol your agent uses:
+> - 4317 for GRCP
+> - 4318 for HTTP
+> For a complete list, see `values.yaml` >> `traceConfig` >> `receivers`.
 
 ## Custom trace sampling rules
 To customize the Traces Sampling rules in the OpenTelemetry Collector, you can follow the below steps:
