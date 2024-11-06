@@ -1,4 +1,4 @@
-FROM fluent/fluentd:v1.16.5-windows-ltsc2019-1.0
+FROM fluent/fluentd:v1.17.1-windows-ltsc2019-1.0
 RUN gem install fluent-plugin-detect-exceptions \
 && gem install fluent-plugin-logzio \
 && gem install fluent-plugin-concat \

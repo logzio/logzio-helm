@@ -4,8 +4,8 @@ description: A Helm chart for shipping Kubernetes logs via Fluentd.
 keywords:
   - logging
   - fluentd
-version: 0.30.2
-appVersion: 1.5.3
+version: 0.30.5
+appVersion: 1.5.4
 maintainers:
   - name: Yotam loewenbach
     email: yotam.loewenbach@logz.io

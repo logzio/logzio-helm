@@ -1,0 +1,79 @@
+name: Test `logzio-fluentd` chart
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'charts/fluentd/Chart.yaml'
+      - 'charts/fluentd/templates/**'
+      - 'charts/fluentd/values.yaml'
+
+jobs:
+  test-helm-chart:
+    name: Test Helm Chart on Kind
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate random id
+        id: random_id
+        run: echo "::set-output name=rand::$(echo $RANDOM)"
+
+      - name: Set ENV_ID
+        run: echo "ENV_ID=logs-test-run-${{ steps.random_id.outputs.rand }}" >> $GITHUB_ENV
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.20'
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4.2.0
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Install Kind
+        run: |
+          curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.11.1/kind-Linux-amd64"
+          chmod +x ./kind
+          mv ./kind /usr/local/bin/kind
+
+      - name: Create Kind cluster
+        run: |
+          kind create cluster --name kind-${{ github.run_id }}
+          kubectl cluster-info
+
+      - name: Deploy Helm Chart
+        run: |
+          cd charts/fluentd
+          helm upgrade --install \
+          --set env_id=${{ env.ENV_ID }} \
+          --set secrets.logzioShippingToken=${{ secrets.LOGZIO_LOGS_TOKEN }} \
+          --set secrets.logzioListener=listener.logz.io \
+          logzio-fluentd .
+
+      - name: Run log generator
+        run: |
+          kubectl apply -f tests/resources/logsgen.yaml
+          kubectl rollout status deployment/log-generator --timeout=300s
+
+      - name: sleep
+        run: sleep 120
+
+      - name: Run Go Tests
+        env:
+          LOGZIO_LOGS_API_KEY: ${{ secrets.LOGZIO_LOGS_API_KEY }}
+        run: |
+          go get go.uber.org/zap
+          go test -v ./tests/fluentd_logs_e2e_test.go ./tests/common.go
+
+      - name: Cleanup Environment
+        run: |
+          helm uninstall logzio-fluentd
+
+      - name: Delete Kind cluster
+        if: always()
+        run: kind delete cluster --name kind-${{ github.run_id }}

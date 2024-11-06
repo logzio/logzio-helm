@@ -47,3 +47,7 @@ secrets:
 
 # Log level of the script that sends security risk to Logz.io. Can be one of: DEBUG, INFO, WARNING, ERROR, CRITICAL.
 scriptLogLevel: INFO
+
+affinity: {}
+toleations: {}
+nodeSelector: {}
