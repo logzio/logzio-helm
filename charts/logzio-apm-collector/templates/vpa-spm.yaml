@@ -1,0 +1,36 @@
+{{- if and .Values.spm.enabled .Values.spmAutoscaling.enabled }}
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: {{ include "spm-collector.fullname" . }}
+  namespace: {{ template "apm-collector.namespace" . }}
+  labels:
+    {{- include "apm-collector.labels" . | nindent 4 }}
+  {{- if .Values.spmAutoscaling.annotations }}
+  annotations:
+    {{- range $key, $value := .Values.spmAutoscaling.annotations }}
+    {{- printf "%s: %s" $key (tpl $value $ | quote) | nindent 4 }}
+    {{- end }}
+  {{- end }}
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "spm-collector.fullname" . }}
+  updatePolicy:
+    updateMode: "Auto"
+  resourcePolicy:
+    containerPolicies:
+    - containerName: {{ include "apm-collector.lowercase_chartname" . }}-spm
+      {{- with .Values.spmAutoscaling.minAllowed }}
+      minAllowed:
+        cpu: {{ .cpu }}
+        memory: {{ .memory }}
+      {{- end }}
+      {{- with .Values.spmAutoscaling.maxAllowed }}
+      maxAllowed:
+        cpu: {{ .cpu }}
+        memory: {{ .memory }}
+      {{- end }}
+      controlledResources: ["cpu", "memory"]
+{{- end }}
