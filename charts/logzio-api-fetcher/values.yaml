@@ -1,6 +1,6 @@
 image:
   repository: logzio/logzio-api-fetcher
-  tag: 0.2.0
+  tag: 0.2.2
   pullPolicy: IfNotPresent
 
 # Custom configuration section for logzio-api-fetcher
