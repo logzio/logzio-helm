@@ -369,6 +369,8 @@ oauth_apis:
 
 ## Changelog:
 
+- **1.0.2**:
+  - Update api fetcher version to 0.2.2
 - **1.0.1**:
   - Update api fetcher version to 0.2.0
 - **1.0.0**:
