@@ -1,8 +1,6 @@
 {{/*
-This file will contain validations on the input of the chart.
-For example, verify the log level is with a valid value
+Verify tracing token was provided if the chart is enabled
 */}}
-
 {{- define "check-tracing-token" -}}
   {{- if .Values.enabled }}
     {{- if and (not .Values.global.logzioTracesToken) (not .Values.secrets.logzioTracesToken) }}
@@ -11,6 +9,9 @@ For example, verify the log level is with a valid value
   {{- end }}
 {{- end -}}
 
+{{/*
+Verify SPM token was provided if SPM is enabled
+*/}}
 {{- define "check-spm-token" -}}
   {{- if and (.Values.enabled) (.Values.spm.enabled) }}
     {{- if and (not .Values.global.logzioSpmToken) (not .Values.secrets.logzioSpmToken) }}

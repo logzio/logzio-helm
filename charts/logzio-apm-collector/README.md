@@ -26,7 +26,7 @@ The chart provides options for enabling the following:
 
 
 ```shell
-helm install logzio-apm-collector -n monitoring \
+helm install -n monitoring --create-namespace \
 --set enabled=true \
 --set spm.enabled=true \
 --set serviceGraph.enabled=true \

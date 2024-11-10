@@ -1,6 +1,6 @@
 # A basic manifest for creating a service endpoint for your deployment
 {{ if .Values.enabled }}
-{{- if .service.enabled }}
+{{- if .Values.service.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -36,7 +36,7 @@ spec:
   {{- end }}
   selector:
     {{- include "apm-collector.selectorLabels" . | nindent 4 }}
-  internalTrafficPolicy: {{ .service.internalTrafficPolicy | default "Cluster" }}
+  internalTrafficPolicy: {{ .Values.service.internalTrafficPolicy | default "Cluster" }}
   {{- if and (eq .Values.service.type "LoadBalancer") (.Values.service.externalTrafficPolicy) }}
   externalTrafficPolicy: {{ .Values.service.externalTrafficPolicy | default "Cluster" }}
   {{- end }}

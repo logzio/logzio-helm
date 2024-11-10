@@ -1,9 +1,10 @@
-{{ if and (.Values.enabled) (.otel-operator.enabled) }}
+{{ $operatorEnabled := index .Values "otel-operator" "enabled" }}
+{{ if and .Values.enabled $operatorEnabled }}
 apiVersion: opentelemetry.io/v1alpha1
 kind: Instrumentation
 metadata:
   name: {{ include "apm-collector.fullname" . }}
-  namespace: {{ .Values.instrumentation.includeNamespaces | default template "apm-collector.namespace" . }}
+  namespace: {{ .Values.instrumentation.includeNamespaces | default (include "apm-collector.namespace" .) }}
   labels:
     {{- include "apm-collector.labels" . | nindent 4 }}
     {{- include "apm-collector.component" . | nindent 4 }}

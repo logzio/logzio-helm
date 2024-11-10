@@ -18,7 +18,14 @@ serviceGraph:
 otel-operator:
   enabled: false
 
+  # Deploying the collector using the operator is not supported currently.
+  # The collector image is specified to meet operator subchart requirments.
+  manager:
+    collectorImage:
+      repository: "otel/opentelemetry-collector-contrib"
+
 # Specifies a custom name for the chart's resources
+nameOverride: ""
 fullnameOverride: ""
 namespaceOverride: ""
 

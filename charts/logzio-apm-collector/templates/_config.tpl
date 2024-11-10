@@ -48,9 +48,9 @@
 {{- if .Values.serviceGraph.enabled }}
 {{- $spmConfig := deepCopy .Values.spmConfig }}
 {{- $serviceGraphConfig := deepCopy .Values.serviceGraphConfig }}
-{{- $spmConfig.connectors = merge $spmConfig.connectors $serviceGraphConfig.connectors }}
-{{- $spmConfig.service.pipelines.traces.exporters = concat $spmConfig.service.pipelines.traces.exporters $serviceGraphConfig.service.pipelines.traces.exporters }}
-{{- $spmConfig.service.pipelines.metrics.spm-logzio.receivers = concat $spmConfig.service.pipelines.metrics.spm-logzio.receivers $serviceGraphConfig.service.pipelines.metrics.spm-logzio.receivers }}
+// TODO: fix this
+{{- $mergedConfig := merge $spmConfig $serviceGraphConfig }} 
+{{- $mergedConfig | toYaml }}
 {{- $spmConfig | toYaml }}
 {{- else }}
 {{- .Values.spmConfig | toYaml }}
