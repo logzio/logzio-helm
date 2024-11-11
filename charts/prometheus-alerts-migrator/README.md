@@ -165,6 +165,19 @@ data:
 
 
 ## Changelog
+- v2.0.3
+  - Upgrade `logzio/prometheus-alerts-migrator` image `v1.0.3`->`v1.1.0`
+    - Add support for migrating alert rules groups
+    - Upgrade GoLang version to 1.23
+    - Upgrade dependencies
+      - `k8s.io/client-go`: `v0.28.3` -> `v0.31.2`
+      - `k8s.io/apimachinery`: `v0.28.3` -> `v0.31.2`
+      - `k8s.io/api`: `v0.28.3` -> `v0.31.2`
+      - `k8s.io/klog/v2`: `v2.110.1` -> `v2.130.1`
+      - `logzio_terraform_client`: `1.20.0` -> `1.22.0`
+      - `prometheus/common`: `v0.44.0` -> `v0.60.1`
+      - `prometheus/alertmanager`: `v0.26.0` -> `v0.27.0`
+      - `prometheus/prometheus`: `v0.47.2` -> `v0.55.0`
 - v2.0.2
   - Remove default resources `limits`
 - v2.0.1

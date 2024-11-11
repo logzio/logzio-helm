@@ -4,9 +4,9 @@ description: This Helm chart serves as a Kubernetes controller that automates th
 
 type: application
 
-version: 2.0.2
+version: 2.0.3
 
-appVersion: "1.0.3"
+appVersion: "v1.1.0"
 
 maintainers:
 - name: yotamloe
