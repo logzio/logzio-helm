@@ -52,6 +52,7 @@ jobs:
           --set secrets.env_id=${{ env.ENV_ID }} \
           --set secrets.logzioLogsToken=${{ secrets.LOGZIO_LOGS_TOKEN }} \
           --set secrets.logzioRegion=us \
+          --set secrets.logType=${{ env.ENV_ID }} \
           logzio-logs-collector .
 
       - name: Run log generator

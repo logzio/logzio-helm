@@ -49,7 +49,6 @@ containers:
         valueFrom:
           fieldRef:
             fieldPath: spec.nodeName
-      {{ if .Values.secrets.enabled}}
       - name: ENV_ID
         valueFrom:
           secretKeyRef:
@@ -77,7 +76,6 @@ containers:
             name: {{ .Values.secrets.name }}
             key: custom-endpoint
       {{- end -}}
-      {{ end }}
       {{- if and (.Values.useGOMEMLIMIT) ((((.Values.resources).limits).memory))  }}
       - name: GOMEMLIMIT
         value: {{ include "logs-collector.gomemlimit" .Values.resources.limits.memory | quote }}

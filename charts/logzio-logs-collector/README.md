@@ -161,6 +161,10 @@ Changes in fields names:
   - `kubernetes.annotations.*` -> `kubernetes_annotations_*`
   
 ## Change log
+* 1.1.0
+  - Simplified user experience for independently managing logzio secrets.
+    - Remove requirment to set environment variables in the pods independently.
+    - Provided instructions in `values.yaml` regarding the process.
 * 1.0.9
   - **EKS fargate Breaking changes**:
    - Add `nest` filters to remove dots from kubernetes metadata keys.
@@ -168,7 +172,6 @@ Changes in fields names:
     - `kubernetes.*` -> `kubernetes_*`
     - `kubernetes.labels.*` -> `kubernetes_labels_*`
     - `kubernetes.annotations.*` -> `kubernetes_annotations_*`
-
 * 1.0.8
   - Bug-fix:
     - Remove comment from `_helpers.tpl` template that breaks aws-logging configmap
