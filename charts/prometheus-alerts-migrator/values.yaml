@@ -10,7 +10,7 @@ replicaCount: 1
 image:
   repository: logzio/prometheus-alerts-migrator
   pullPolicy: IfNotPresent
-  tag: "v1.0.3"
+  tag: "v1.1.0"
 
 serviceAccount:
   create: true
