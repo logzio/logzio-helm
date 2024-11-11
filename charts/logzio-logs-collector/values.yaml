@@ -23,7 +23,7 @@ secrets:
   # If you're managing the logzio secrets by yourself, set to false. 
   # Note that in order for the default configuration to work properly, you need to:
   # 1. Update secrets.name to your custom secret name
-  # 2. Include these parameters in your secret: env-id, log-type, logzio-listener-region, logzio-logs-token
+  # 2. Include these keys in your secret: env-id, log-type, logzio-listener-region, logzio-logs-token
   # To use a custom endpoint, include custom-endpoint parameter in your secret and set secrets.customEndpoint to true.
   enabled: true
   name: logzio-log-collector-secrets
