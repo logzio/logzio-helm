@@ -7633,6 +7633,21 @@ entries:
     version: 0.0.1
   prometheus-alerts-migrator:
   - apiVersion: v2
+    appVersion: v1.1.0
+    created: "2024-11-11T10:18:43.072883915Z"
+    description: This Helm chart serves as a Kubernetes controller that automates
+      the migration of Prometheus alert rules to Logz.io's alert format, facilitating
+      monitoring and alert management in a Logz.io integrated environment.
+    digest: 343cf0f3904e1bd3716900bcc01e7e27e07cf2c69b8ededb74a004be0f64e577
+    maintainers:
+    - email: yotam.loewenbach@logz.io
+      name: yotamloe
+    name: prometheus-alerts-migrator
+    type: application
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/prometheus-alerts-migrator-2.0.3/prometheus-alerts-migrator-2.0.3.tgz
+    version: 2.0.3
+  - apiVersion: v2
     appVersion: 1.0.3
     created: "2024-09-04T14:17:44.764249048Z"
     description: This Helm chart serves as a Kubernetes controller that automates
@@ -7692,4 +7707,4 @@ entries:
     urls:
     - https://logzio.github.io/logzio-helm/prometheus-alerts-migrator-1.0.0.tgz
     version: 1.0.0
-generated: "2024-11-10T10:51:34.284827583Z"
+generated: "2024-11-11T10:18:43.073301492Z"
