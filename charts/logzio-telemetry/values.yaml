@@ -308,7 +308,7 @@ spmForwarderConfig:
     pipelines:
       traces/spm:
         receivers: [jaeger, zipkin, otlp]
-        processors: [resourcedetection/all, attributes/env_id, k8sattributes]
+        processors: [resourcedetection/all, attributes/env_id, k8sattributes, batch]
         exporters: [logging, otlp]
 # Metrics standalone collector configuration 
 metricsConfig:
@@ -732,6 +732,7 @@ spanMetricsAgregator:
           - action: update_label
             label: span.name
             new_label: operation  
+      batch: {}
     connectors:
       spanmetrics:
         aggregation_temporality: AGGREGATION_TEMPORALITY_CUMULATIVE
@@ -812,6 +813,7 @@ spanMetricsAgregator:
           processors:
           - metricstransform/metrics-rename
           - metricstransform/labels-rename
+          - batch
           receivers:
           - spanmetrics
         traces:
