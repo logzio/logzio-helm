@@ -228,6 +228,9 @@ There are two possible approaches to the upgrade you can choose from:
 
 
 ## Changelog
+- **6.2.1**:
+	- Upgrade `logzio-telemetry` chart to `v4.2.9`
+		- Add batch processor to the SPM pipeline, to reduce stress and increase efficiency.
 - **6.2.0**:
 	- Upgrade `logzio-logs-collector` chart to `v1.1.0`
 		- Simplified user experience for independently managing logzio secrets.
