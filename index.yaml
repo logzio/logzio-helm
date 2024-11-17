@@ -187,6 +187,19 @@ entries:
   logzio-api-fetcher:
   - apiVersion: v2
     appVersion: 0.2.2
+    created: "2024-11-17T11:12:40.904772615Z"
+    description: Helm chart for deploying the Logz.io API Fetcher
+    digest: 4e7d11c0fb570b4be5501e75531799408287bbc725eca62826e1cff373db9b25
+    maintainers:
+    - email: yotam.loewenbach@logz.io
+      name: yotamloe
+    name: logzio-api-fetcher
+    type: application
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/logzio-api-fetcher-1.1.0/logzio-api-fetcher-1.1.0.tgz
+    version: 1.1.0
+  - apiVersion: v2
+    appVersion: 0.2.2
     created: "2024-11-10T10:51:34.28408871Z"
     description: Helm chart for deploying the Logz.io API Fetcher
     digest: b470a8d1c926e51b8028618a88dbaa1c39717318c55e81259fda87ff30df4cd4
@@ -7765,4 +7778,4 @@ entries:
     urls:
     - https://logzio.github.io/logzio-helm/prometheus-alerts-migrator-1.0.0.tgz
     version: 1.0.0
-generated: "2024-11-11T11:11:44.131703681Z"
+generated: "2024-11-17T11:12:40.905557637Z"
