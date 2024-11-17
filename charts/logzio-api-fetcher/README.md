@@ -236,6 +236,8 @@ By default `cloudflare` API type:
 
 </details>
 
+> To change the logging level, update `values.image.loglevel` (default is `INFO`).
+
 ### Example
 
 #### Auth api config:
@@ -368,7 +370,8 @@ oauth_apis:
 ```
 
 ## Changelog:
-
+- **1.1.0**:
+  - Add option to control logging level
 - **1.0.2**:
   - Update api fetcher version to 0.2.2
 - **1.0.1**:
