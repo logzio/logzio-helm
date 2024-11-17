@@ -308,7 +308,7 @@ spmForwarderConfig:
     pipelines:
       traces/spm:
         receivers: [jaeger, zipkin, otlp]
-        processors: [resourcedetection/all, attributes/env_id, k8sattributes]
+        processors: [resourcedetection/all, attributes/env_id, k8sattributes, batch]
         exporters: [logging, otlp]
 # Metrics standalone collector configuration 
 metricsConfig:
@@ -319,6 +319,7 @@ metricsConfig:
       metrics:
         datapoint:
           - 'IsMatch(metric.name, "(${K8S_360_METRICS})") == true and attributes["logzio_app"] != "kubernetes360"'
+    batch: {}
   exporters:
     prometheusremotewrite/applications:
       timeout: 30s
@@ -495,6 +496,7 @@ metricsConfig:
         processors:
           - attributes/env_id
           - filter/kubernetes360
+          - batch
         receivers:
           - prometheus/infrastructure
           - prometheus/cadvisor
@@ -673,6 +675,7 @@ k8sObjectsConfig:
           - context: log
             statements:
               - delete_key(body["object"]["metadata"], "managedFields")
+      batch: {}
     exporters:
       logzio/object_logs:
         account_token: "${OBJECTS_LOGS_TOKEN}"
@@ -683,7 +686,7 @@ k8sObjectsConfig:
       pipelines:
         logs/k8sobjects:
           receivers: [k8sobjects/pull,k8sobjects/watch]
-          processors: [transform/pulled_object,transform/remove_managedfields,transform/log_type, resource/env_id]
+          processors: [transform/pulled_object,transform/remove_managedfields,transform/log_type, resource/env_id, batch]
           exporters: [logzio/object_logs]
 # Service graph metrics configuration
 serviceGraph:
@@ -732,6 +735,7 @@ spanMetricsAgregator:
           - action: update_label
             label: span.name
             new_label: operation  
+      batch: {}
     connectors:
       spanmetrics:
         aggregation_temporality: AGGREGATION_TEMPORALITY_CUMULATIVE
@@ -812,6 +816,7 @@ spanMetricsAgregator:
           processors:
           - metricstransform/metrics-rename
           - metricstransform/labels-rename
+          - batch
           receivers:
           - spanmetrics
         traces:
@@ -997,6 +1002,7 @@ daemonsetConfig:
       actions:
         - key: job_dummy
           action: delete
+    batch: {}
   exporters:
     prometheusremotewrite/applications:
       timeout: 30s
@@ -1188,6 +1194,7 @@ daemonsetConfig:
           - filter/kubernetes360
           # workaround for duplicate metrics sent from kubernetes-service-endpoints job
           - attributes/remove_job_dummy
+          - batch
         receivers:
           - prometheus/infrastructure
           - prometheus/cadvisor

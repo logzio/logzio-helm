@@ -412,6 +412,8 @@ If you don't want the sub charts to installed add the relevant flag per sub char
 
 
 ## Change log
+* 4.2.9
+  - Add batch processor to the SPM pipeline, to reduce stress and increase efficiency.
 * 4.2.8
   - Upgrade `otel/opentelemetry-collector-contrib` image to `v0.108.0`
   - Remove default resources `limits`
