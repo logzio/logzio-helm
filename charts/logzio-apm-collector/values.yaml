@@ -35,8 +35,11 @@ namespaceOverride: ""
 secrets:
   # When secrets.enabled is true, the logzio secret will be created and managed by this Chart.
   # If you're managing the logzio secrets by yourself, set to false. 
-  # Note that in order for the default configuration to work properly, you need to create the following env variables:
-  # ENV_ID, LOGZIO_TRACES_TOKEN, LOGZIO_SPM_TOKEN, LOGZIO_REGION, LOGZIO_LISTENER
+  # Note that in order for the default configuration to work properly, you need to:
+  # 1. Update secrets.name to your custom secret name
+  # 2. Include these keys in your secret: env-id, logzio-listener-region, logzio-traces-token, logzio-spm-token
+  # To use a custom endpoint, include custom-traces-endpoint, custom-spm-endpoint or both parameters in your secret, 
+  # depending on your needs and set secrets.customTracesEndpoint and/or secrets.customSpmEndpoint to `true`.
   enabled: true
   name: logzio-apm-collector-secret
   # environment identifier attribute that will be added to all telemetry
@@ -47,7 +50,7 @@ secrets:
   logzioSpmToken: ""
   # Logz.io region code
   logzioRegion: "us"
-  # Overrides secrets.LogzioRegion listener address with a custom endpoint. For example: http://endpoint:8080
+  # Optional - Overrides secrets.LogzioRegion listener address with a custom endpoint. For example: http://endpoint:8080
   customTracesEndpoint: ""
   customSpmEndpoint: ""
 

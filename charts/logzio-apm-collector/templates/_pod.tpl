@@ -31,7 +31,7 @@ containers:
     {{- $ports := include "apm-collector.podPortsConfig" . }}
     {{- if $ports }}
     ports:
-      {{- $ports | nindent 6}}
+      {{- $ports | nindent 6 }}
     {{- end }}
     env:
       - name: MY_POD_IP
@@ -44,8 +44,7 @@ containers:
           fieldRef:
             fieldPath: spec.nodeName
       - name: SPM_SERVICE_ENDPOINT
-        value: {{ include "spm-collector.serviceAddr" . }}
-      {{- if .Values.secrets.enabled }}
+        value: {{ include "spm-collector.serviceAddr" . | quote }}
       - name: ENV_ID
         valueFrom:
           secretKeyRef:
@@ -67,7 +66,6 @@ containers:
           secretKeyRef:
             name: {{ .Values.secrets.name }}
             key: custom-traces-endpoint
-      {{- end }}
       {{- end }}
       - name: LOG_LEVEL
         value: {{ .Values.otelLogLevel | default "info" | quote }}

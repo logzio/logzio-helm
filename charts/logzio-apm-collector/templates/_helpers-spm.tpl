@@ -35,5 +35,5 @@ The SPM service address
 */}}
 {{- define "spm-collector.serviceAddr" -}}
 {{- $serviceName := include "spm-collector.fullname" .}}
-{{ printf "http://%s.%s.svc.cluster.local:4317" $serviceName .Release.Namespace }}
+{{- printf "http://%s.%s.svc.cluster.local:4317" $serviceName .Release.Namespace }}
 {{- end }}

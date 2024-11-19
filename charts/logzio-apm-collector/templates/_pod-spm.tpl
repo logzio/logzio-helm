@@ -44,7 +44,6 @@ containers:
         valueFrom:
           fieldRef:
             fieldPath: spec.nodeName
-      {{- if .Values.secrets.enabled }}
       - name: ENV_ID
         valueFrom:
           secretKeyRef:
@@ -64,7 +63,6 @@ containers:
           secretKeyRef:
             name: {{ .Values.secrets.name }}
             key: logzio-spm-token
-      {{- end }}
       - name: LOG_LEVEL
         value: {{ .Values.otelLogLevel | default "info" | quote }}
       {{- with .Values.extraEnvs }}

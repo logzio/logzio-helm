@@ -28,9 +28,9 @@
   {{- if and $.isAgent $port.hostPort }}
   hostPort: {{ $port.hostPort }}
   {{- end }}
-{{- end }}
-{{- end }}
-{{- end }}
+{{- end -}}
+{{- end -}}
+{{- end -}}
 
 {{/* Build config file for APM Collector */}}
 {{- define "apm-collector.config" -}}
@@ -48,10 +48,10 @@
 {{- if .Values.serviceGraph.enabled }}
 {{- $spmConfig := deepCopy .Values.spmConfig }}
 {{- $serviceGraphConfig := deepCopy .Values.serviceGraphConfig }}
-// TODO: fix this
-{{- $mergedConfig := merge $spmConfig $serviceGraphConfig }} 
+{{- $mergedConfig := merge $spmConfig $serviceGraphConfig }}
+{{- $_ := set (index $mergedConfig "service" "pipelines" "metrics/spm-logzio") "receivers" (concat (index $mergedConfig "service" "pipelines" "metrics/spm-logzio" "receivers") (index $serviceGraphConfig "service" "pipelines" "metrics/spm-logzio" "receivers" )) -}}
+{{- $_ := set (index $mergedConfig "service" "pipelines" "traces") "exporters" (concat (index $mergedConfig "service" "pipelines" "traces" "exporters") (index $serviceGraphConfig "service" "pipelines" "traces" "exporters" )) -}}
 {{- $mergedConfig | toYaml }}
-{{- $spmConfig | toYaml }}
 {{- else }}
 {{- .Values.spmConfig | toYaml }}
 {{- end }}

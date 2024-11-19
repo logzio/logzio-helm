@@ -85,10 +85,10 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 
 {{/* Custom pod annotations */}}
 {{- define "apm-collector.podAnnotations" -}}
-{{- if .Values.podAnnotations }}
+{{- if .Values.podAnnotations -}}
 {{- tpl (.Values.podAnnotations | toYaml) . }}
-{{- end }}
-{{- end }}
+{{- end -}}
+{{- end -}}
 
 {{/*Custom pod labels */}}
 {{- define "apm-collector.podLabels" -}}
@@ -144,5 +144,20 @@ The APM service address
 */}}
 {{- define "apm-collector.serviceAddr" -}}
 {{- $serviceName := include "apm-collector.fullname" .}}
-{{ printf "http://%s.%s.svc.cluster.local" $serviceName .Release.Namespace }}
+{{- printf "http://%s.%s.svc.cluster.local" $serviceName .Release.Namespace }}
 {{- end }}
+
+
+{{/*
+Get secret value either from the global section (parent chart is running) or the default sub chart section
+*/}}
+{{- define "getGlobalOrDefaultValue" -}}
+{{- $ctx := index . 0 -}}
+{{- $key := index . 1 -}}
+{{- $fallback := index . 2 -}}
+{{- if hasKey $ctx.Values "global" -}}
+  {{- $ctx.Values.global | default dict | get $key | default $fallback -}}
+{{- else -}}
+  {{- $fallback -}}
+{{- end -}}
+{{- end -}}
