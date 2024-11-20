@@ -23,7 +23,6 @@ containers:
     securityContext:
       {{- toYaml .Values.containerSecurityContext | nindent 6 }}
     {{- if .Values.image.digest }}
-    {{- if .Values.image.digest }}
     image: "{{ .Values.image.repository }}@{{ .Values.image.digest }}"
     {{- else }}
     image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
@@ -56,7 +55,7 @@ containers:
             name: {{ .Values.secrets.name }}
             key: custom-spm-endpoint
         {{- else }}
-        value: {{ include "spm-collector.listenerAddress" . }}
+        value: {{ include "spm-collector.listenerAddress" . | quote }}
         {{- end }}
       - name: LOGZIO_SPM_TOKEN
         valueFrom:
@@ -72,6 +71,7 @@ containers:
     envFrom:
     {{- . | toYaml | nindent 6 }}
     {{- end }}
+    {{- if .Values.lifecycleHooks }}
     lifecycle:
       {{- toYaml .Values.lifecycleHooks | nindent 6 }}
     {{- end }}

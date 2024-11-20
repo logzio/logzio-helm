@@ -8,8 +8,9 @@ metadata:
   labels:
     {{- include "apm-collector.labels" . | nindent 4 }}
     {{- include "apm-collector.component" . | nindent 4 }}
-  {{- if .Values.annotations }}
   annotations:
+    {{- include "apm-collector.otelOpAnnotations" . | nindent 4 }}
+  {{- if .Values.annotations }}
     {{- range $key, $value := .Values.annotations }}
     {{- printf "%s: %s" $key (tpl $value $ | quote) | nindent 4 }}
     {{- end }}

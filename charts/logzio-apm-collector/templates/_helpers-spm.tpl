@@ -22,11 +22,11 @@ component: spm-collector
 Create Logz.io listener address based on region
 */}}
 {{- define "spm-collector.listenerAddress" -}}
-{{- $region := .Values.secrets.logzioRegion }}
-{{- if or (eq $region "us") (not $region) }}
+{{- $region := .Values.secrets.logzioRegion -}}
+{{- if or (eq $region "us") (not $region) -}}
 https://listener.logz.io:8053
 {{- else }}
-{{ printf "https://listener-%s.logz.io:8053" $region }}
+{{- printf "https://listener-%s.logz.io:8053" $region }}
 {{- end }}
 {{- end }}
 

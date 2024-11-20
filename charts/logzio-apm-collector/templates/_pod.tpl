@@ -60,8 +60,8 @@ containers:
           secretKeyRef:
             name: {{ .Values.secrets.name }}
             key: logzio-traces-token
-      {{- if .Values.secrets.customEndpoint }}
-      - name: CUSTOM_ENDPOINT
+      {{- if .Values.secrets.customTracesEndpoint }}
+      - name: CUSTOM_TRACES_ENDPOINT
         valueFrom:
           secretKeyRef:
             name: {{ .Values.secrets.name }}
@@ -70,9 +70,9 @@ containers:
       - name: LOG_LEVEL
         value: {{ .Values.otelLogLevel | default "info" | quote }}
       - name: SAMPLING_LATENCY
-        value: {{ .Values.SamplingLatency | default 10 }}
+        value: {{ .Values.SamplingLatency | default 10 | quote}}
       - name: SAMPLING_PROBABILITY
-        value: {{ .Values.SamplingProbability | default 500 }}
+        value: {{ .Values.SamplingProbability | default 500 | quote }}
       {{- if and (.Values.useGOMEMLIMIT) (((.Values.resources).limits).memory) }}
       - name: GOMEMLIMIT
         value: {{ include "apm-collector.gomemlimit" .Values.resources.limits.memory | quote }}

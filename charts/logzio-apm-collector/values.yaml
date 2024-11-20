@@ -18,6 +18,16 @@ serviceGraph:
 otel-operator:
   enabled: false
 
+  # Ensure certificate and issuer are created after the CRDs are installed
+  admissionWebhooks:
+    certManager:
+      certificateAnnotations:
+        helm.sh/hook: "post-install, post-upgrade"
+        helm.sh/hook-delete-policy: "before-hook-creation, hook-succeeded"
+      issuerAnnotations:
+        helm.sh/hook: "post-install, post-upgrade"
+        helm.sh/hook-delete-policy: "before-hook-creation, hook-succeeded"
+
   # Deploying the collector using the operator is not supported currently.
   # The collector image is specified to meet operator subchart requirments.
   manager:
@@ -74,7 +84,7 @@ standaloneCollector:
 traceConfig:
   exporters:
     logzio:
-      endpoint: ${CUSTOM_ENDPOINT}
+      endpoint: ${CUSTOM_TRACES_ENDPOINT}
       region: ${LOGZIO_REGION}
       account_token: ${LOGZIO_TRACES_TOKEN}
       headers:
@@ -84,6 +94,8 @@ traceConfig:
       endpoint: :1777
     zpages:
       endpoint: :55679
+    health_check:
+      endpoint: :13133
   receivers:
     jaeger:
       protocols:
@@ -125,6 +137,79 @@ traceConfig:
               probabilistic: {sampling_percentage: "${SAMPLING_PROBABILITY}" }
             }       
         ]
+    k8sattributes:
+      extract:
+        metadata:
+        - k8s.pod.name
+        - k8s.deployment.name
+        - k8s.namespace.name
+        - k8s.node.name
+        - k8s.statefulset.name
+        - k8s.replicaset.name
+        - k8s.daemonset.name
+        - k8s.cronjob.name
+        - k8s.job.name
+    resource/k8s:
+      attributes:
+      # Rename fields
+      - key: pod
+        action: insert
+        from_attribute: k8s.pod.name
+      - key: kubernetes_node
+        action: insert
+        from_attribute: k8s.node.name
+      - key: kubernetes_namespace
+        action: insert
+        from_attribute: k8s.namespace.name
+      - key: kubernetes_deployment
+        action: insert
+        from_attribute: k8s.deployment.name
+      - key: kubernetes_pod_ip
+        action: insert
+        from_attribute: k8s.pod.ip
+      - key: kubernetes_statefulset
+        action: insert
+        from_attribute: k8s.statefulset.name
+      - key: kubernetes_replicaset
+        action: insert
+        from_attribute: k8s.replicaset.name
+      - key: kubernetes_cronjob
+        action: insert
+        from_attribute: k8s.cronjob.name
+      - key: kubernetes_daemonset
+        action: insert
+        from_attribute: k8s.daemonset.name
+      - key: kubernetes_job
+        action: insert
+        from_attribute: k8s.job.name
+      # Delete old
+      - key: k8s.deployment.name
+        action: delete
+      - key: k8s.pod.name
+        action: delete
+      - key: k8s.namespace.name
+        action: delete
+      - key: k8s.node.name
+        action: delete
+      - key: k8s.pod.ip
+        action: delete
+      - key: k8s.statefulset.name
+        action: delete
+      - key: k8s.replicaset.name
+        action: delete
+      - key: k8s.daemonset.name
+        action: delete
+      - key: k8s.job.name
+        action: delete
+      - key: k8s.cronjob.name
+        action: delete
+    attributes/env_id:
+      # Add env_id to all spans
+      actions:
+        - key: env_id
+          value: ${ENV_ID}
+          action: insert
+    batch: {}
   service:
     extensions: [health_check, pprof, zpages]
     pipelines:
