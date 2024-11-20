@@ -41,12 +41,14 @@ func TestContainerMetrics(t *testing.T) {
 
 func TestServiceGraphMetrics(t *testing.T) {
 	requiredMetrics := map[string][]string{
-		"traces_service_graph_request_total":          {"client", "server", "connection_type"},
-		"traces_service_graph_request_failed_total":   {"client", "server", "connection_type"},
-		"traces_service_graph_request_server_seconds": {"client", "server", "connection_type"},
-		"traces_service_graph_request_client_seconds": {"client", "server", "connection_type"},
-		"traces_service_graph_unpaired_spans_total":   {"client", "server", "connection_type"},
-		"traces_service_graph_dropped_spans_total":    {"client", "server", "connection_type"},
+		"traces_service_graph_request_total":                 {"client", "server"},
+		"traces_service_graph_request_failed_total":          {"client", "server"},
+		"traces_service_graph_request_server_seconds_bucket": {"client", "server"},
+		"traces_service_graph_request_server_seconds_count":  {"client", "server"},
+		"traces_service_graph_request_server_seconds_sum":    {"client", "server"},
+		"traces_service_graph_request_client_seconds_bucket": {"client", "server"},
+		"traces_service_graph_request_client_seconds_count":  {"client", "server"},
+		"traces_service_graph_request_client_seconds_sum":    {"client", "server"},
 	}
 	envId := os.Getenv("ENV_ID")
 	query := fmt.Sprintf(`{env_id='%s'}`, envId)
