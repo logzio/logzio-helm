@@ -73,7 +73,13 @@ jobs:
         run: |
           kubectl apply -f tests/resources/tracegen.yaml
           kubectl rollout status deployment/trace-gen --timeout=300s
-
+      - name: Run otel demo
+        run: |
+          helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+          helm repo update
+          helm install otel-demo -f tests/resources/otel-demo.yaml open-telemetry/opentelemetry-demo --version 0.32.5
+          kubectl rollout status deployment/otel-demo-loadgenerator --timeout=300s
+  
       - name: sleep for 3 minutes
         run: sleep 180
 
