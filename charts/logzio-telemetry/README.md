@@ -412,6 +412,8 @@ If you don't want the sub charts to installed add the relevant flag per sub char
 
 
 ## Change log
+* 4.3.0
+  - Set `servicegraph` connector, `metrics_flush_interval` setting to `60s` to reduce outgoing connections
 * 4.2.9
   - Add batch processor to the SPM pipeline, to reduce stress and increase efficiency.
 * 4.2.8
@@ -467,6 +469,12 @@ If you don't want the sub charts to installed add the relevant flag per sub char
       - `kubeStateMetrics.enabled`
       - `pushGateway.enabled`
       - `nodeExporter.enabled`
+
+
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
 * 2.2.0
   - Upgraded SPM collector image to version `0.80.0`.
   - Added service graph connector metrics.
@@ -479,11 +487,6 @@ If you don't want the sub charts to installed add the relevant flag per sub char
     - Add `unified_status_code` dimension
       - Takes value of `rpc_grpc_status_code` / `http_status_code`
   - Add `containerSecurityContext` configuration option for container based policies. 
-
-
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
-
 * 2.0.0
   - Upgrade sub charts to their latest versions.
     - `kube-state-metrics` to `4.24.0`
