@@ -93,8 +93,8 @@ jobs:
           --set logzio-k8s-telemetry.spm.enabled=true \
           --set logzio-k8s-telemetry.secrets.env_id='${{ env.ENV_ID }}' \
           --set logzio-k8s-telemetry.secrets.SpmToken='${{ secrets.LOGZIO_METRICS_TOKEN }}' \
-          --set logzio-k8s-telemetry.serviceGraph.enabled=true"
-          
+          --set logzio-k8s-telemetry.serviceGraph.enabled=true \
+        
           if [ "${{ matrix.environment }}" == "eks-fargate" ]; then
             HELM_CMD="$HELM_CMD --set logzio-logs-collector.fargateLogRouter.enabled='true' --set logzio-k8s-telemetry.collector.mode=standalone"
           fi
