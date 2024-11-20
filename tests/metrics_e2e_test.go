@@ -51,7 +51,7 @@ func TestServiceGraphMetrics(t *testing.T) {
 		"traces_service_graph_request_client_seconds_sum":    {"client", "server"},
 	}
 	envId := os.Getenv("ENV_ID")
-	query := fmt.Sprintf(`{env_id='%s'}`, envId)
+	query := fmt.Sprintf(`{client_env_id='%s'}`, envId)
 	testMetrics(t, requiredMetrics, query)
 }
 
