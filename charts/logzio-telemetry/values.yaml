@@ -700,6 +700,7 @@ serviceGraph:
         store:
           ttl: 5s
           max_items: 100000
+        metrics_flush_interval: 60s
     service:
       pipelines:
         traces:

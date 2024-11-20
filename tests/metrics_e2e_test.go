@@ -3,13 +3,14 @@ package tests
 import (
 	"encoding/json"
 	"fmt"
-	"go.uber.org/zap"
 	"io"
 	"net/http"
 	"net/url"
 	"os"
 	"strings"
 	"testing"
+
+	"go.uber.org/zap"
 )
 
 // MetricResponse represents the structure of the API response
@@ -36,6 +37,22 @@ func TestContainerMetrics(t *testing.T) {
 	query := fmt.Sprintf(queryTemplate, envId)
 	escapedQuery := url.QueryEscape(query)
 	testMetrics(t, requiredMetrics, escapedQuery)
+}
+
+func TestServiceGraphMetrics(t *testing.T) {
+	requiredMetrics := map[string][]string{
+		"traces_service_graph_request_total":                 {"client", "server"},
+		"traces_service_graph_request_failed_total":          {"client", "server"},
+		"traces_service_graph_request_server_seconds_bucket": {"client", "server"},
+		"traces_service_graph_request_server_seconds_count":  {"client", "server"},
+		"traces_service_graph_request_server_seconds_sum":    {"client", "server"},
+		"traces_service_graph_request_client_seconds_bucket": {"client", "server"},
+		"traces_service_graph_request_client_seconds_count":  {"client", "server"},
+		"traces_service_graph_request_client_seconds_sum":    {"client", "server"},
+	}
+	envId := os.Getenv("ENV_ID")
+	query := fmt.Sprintf(`{client_env_id='%s'}`, envId)
+	testMetrics(t, requiredMetrics, query)
 }
 
 func TestInfrastructureMetrics(t *testing.T) {
