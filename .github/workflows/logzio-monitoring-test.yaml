@@ -83,18 +83,18 @@ jobs:
           --set logzio-logs-collector.secrets.env_id='${{ env.ENV_ID }}' \
           --set logzio-logs-collector.secrets.logType='${{ env.ENV_ID }}' \
           --set metricsOrTraces.enabled=true \
+          --set logzio-k8s-telemetry.traces.enabled=true \
+          --set logzio-k8s-telemetry.spm.enabled=true \
+          --set logzio-k8s-telemetry.serviceGraph.enabled=true \
           --set logzio-k8s-telemetry.metrics.enabled=true \
           --set logzio-k8s-telemetry.secrets.MetricsToken='${{ secrets.LOGZIO_METRICS_TOKEN }}' \
           --set logzio-k8s-telemetry.secrets.ListenerHost='https://listener.logz.io:8053' \
           --set logzio-k8s-telemetry.secrets.p8s_logzio_name='${{ env.ENV_ID }}' \
-          --set logzio-k8s-telemetry.traces.enabled=true \
           --set logzio-k8s-telemetry.secrets.TracesToken='${{ secrets.LOGZIO_TRACES_TOKEN }}' \
           --set logzio-k8s-telemetry.secrets.LogzioRegion='us' \
-          --set logzio-k8s-telemetry.spm.enabled=true \
           --set logzio-k8s-telemetry.secrets.env_id='${{ env.ENV_ID }}' \
-          --set logzio-k8s-telemetry.secrets.SpmToken='${{ secrets.LOGZIO_METRICS_TOKEN }}' \
-          --set logzio-k8s-telemetry.serviceGraph.enabled=true"
-          
+          --set logzio-k8s-telemetry.secrets.SpmToken='${{ secrets.LOGZIO_METRICS_TOKEN }}' "
+        
           if [ "${{ matrix.environment }}" == "eks-fargate" ]; then
             HELM_CMD="$HELM_CMD --set logzio-logs-collector.fargateLogRouter.enabled='true' --set logzio-k8s-telemetry.collector.mode=standalone"
           fi
