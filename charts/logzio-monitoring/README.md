@@ -228,7 +228,7 @@ There are two possible approaches to the upgrade you can choose from:
 
 ## Changelog
 - **6.2.2**:
-	- Upgrade `logzio-telemetry` chart to `v4.3.0`
+  - Upgrade `logzio-telemetry` chart to `v4.3.0`
     - Set `servicegraph` connector, `metrics_flush_interval` setting to `60s` to reduce outgoing connections
 - **6.2.1**:
 	- Upgrade `logzio-telemetry` chart to `v4.2.9`
