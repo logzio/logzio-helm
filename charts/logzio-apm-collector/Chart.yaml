@@ -7,7 +7,7 @@ home: https://logz.io/
 dependencies:
   - name: opentelemetry-operator
     alias: otel-operator
-    version: ~0.71.2
+    version: ~0.74.2
     repository: https://open-telemetry.github.io/opentelemetry-helm-charts
     condition: otel-operator.enabled
 maintainers:
