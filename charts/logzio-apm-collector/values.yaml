@@ -73,6 +73,10 @@ otel-operator:
     ## Path to the CA cert.
     # caFile: ""
 
+    # The OpenTelemetry Operator webhook service may not always be ready in time, causing an error.
+    # to retry, we set `failurePolicy` to `ignore`. To block the operation if it fails, set to `Fail`.
+    failurePolicy: Ignore
+
   # Deploying the collector using the operator is not supported currently.
   # The collector image is specified to meet operator subchart requirments.
   manager:
@@ -290,6 +294,9 @@ spmConfig:
         user-agent: "{{ .Chart.Name }}-{{ .Chart.Version }}-helm"
       timeout: 30s  # Time to wait per attempt to send data
       add_metric_suffixes: false
+  extensions:
+    health_check:
+      endpoint: :13133
   receivers:
     otlp:
       protocols:
@@ -359,6 +366,7 @@ spmConfig:
         - telemetry.sdk.language
         - telemetry.sdk.name
   service:
+    extensions: [health_check]
     pipelines:
       traces:
         receivers: [otlp]

@@ -147,7 +147,6 @@ The APM service address
 {{- printf "http://%s.%s.svc.cluster.local" $serviceName .Release.Namespace }}
 {{- end }}
 
-
 {{/*
 Get secret value either from the global section (parent chart is running) or the default sub chart section
 */}}
@@ -161,7 +160,6 @@ Get secret value either from the global section (parent chart is running) or the
   {{- $fallback -}}
 {{- end -}}
 {{- end -}}
-
 
 {{/* Helm hooks annotations for otel operator */}}
 {{- define "apm-collector.otelOpAnnotations" -}}

@@ -37,9 +37,9 @@
 {{- if .Values.spm.enabled }}
 {{- $tracesConfig := deepCopy .Values.traceConfig }}
 {{- $spmForwarderConfig := deepCopy .Values.spmForwarderConfig }}
-{{- ($tracesConfig | merge $spmForwarderConfig | mustMergeOverwrite) | toYaml }}
+{{- tpl (($tracesConfig | merge $spmForwarderConfig | mustMergeOverwrite) | toYaml) . }}
 {{- else }}
-{{- .Values.traceConfig | toYaml }}
+{{- tpl (.Values.traceConfig | toYaml) . }}
 {{- end}}
 {{- end }}
 
@@ -51,8 +51,8 @@
 {{- $mergedConfig := merge $spmConfig $serviceGraphConfig }}
 {{- $_ := set (index $mergedConfig "service" "pipelines" "metrics/spm-logzio") "receivers" (concat (index $mergedConfig "service" "pipelines" "metrics/spm-logzio" "receivers") (index $serviceGraphConfig "service" "pipelines" "metrics/spm-logzio" "receivers" )) -}}
 {{- $_ := set (index $mergedConfig "service" "pipelines" "traces") "exporters" (concat (index $mergedConfig "service" "pipelines" "traces" "exporters") (index $serviceGraphConfig "service" "pipelines" "traces" "exporters" )) -}}
-{{- $mergedConfig | toYaml }}
+{{- tpl ($mergedConfig | toYaml) . }}
 {{- else }}
-{{- .Values.spmConfig | toYaml }}
+{{- tpl (.Values.spmConfig | toYaml) . }}
 {{- end }}
 {{- end }}
