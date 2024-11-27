@@ -2,7 +2,8 @@
 > [!IMPORTANT]
 > Kubernetes APM Collection Agent is still In development
 
-This Helm chart deploys an agent, which leverages the OpenTelemetry Collector, that collects traces and span metrics from Kubernetes clusters and sends them to Logz.io
+This Helm chart deploys an agent, which leverages the OpenTelemetry Collector, that collects traces and span metrics from Kubernetes clusters and sends them to Logz.io.
+It also allows enabling Service graph metrics and supports adding Auto instrumentation to the cluster applications via Opentelemetry Operator.
 
 ## Prerequisites
 - Kubernetes 1.24+
@@ -55,6 +56,7 @@ logzio-apm-collector logzio-helm/logzio-apm-collector
   - [Customize Propagator](#customize-propagator)
   - [Add a custom Sampler](#add-a-custom-sampler)
   - [Distribute namespaces](#distribute-namespaces)
+  - [TLS certificate Requirements](#tls-certificate-requirements)
 - [Manual Instrumentation](#manual-instrumentation)
 - [Custom Trace Sampling rules](#custom-trace-sampling-rules)
 
@@ -124,6 +126,28 @@ instrumentation.opentelemetry.io/inject-<APP_LANGUAGE>": "true"
 > [!TIP]
 > `<APP_LANGUAGE>` can be one of `apache-httpd`, `dotnet`, `go`, `java`, `nginx`, `nodejs` or `python`.
 
+### TLS certificate Requirements
+Openteleemtry operator requires a TLS certificate. For more details, refer to [OpenTelemetry documentation](https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-operator#tls-certificate-requirement).
+
+There are 3 TLS certificate options, by default this chart is using option 2.
+
+1. If you have `cert-manager` installed on your cluster, you can set `otel-operator.admissionWebhooks.certManager.enabled` to true and the cert-manager will generate a self-signed certificate for the otel-operator automatically.
+
+```shell
+--set otel-operator.admissionWebhooks.certManager.enabled=true \
+```
+
+2. Helm will automatically create a self-signed cert and secret for you. (Enabled by default by this chart)
+
+3. Use your own self-signed certificate, To enable this option, set `otel-operator.admissionWebhooks.autoGenerateCert.enabled` to `false` and provide the necessary `certFile`, `keyFile` and `caFile`.
+
+```shell
+--set otel-operator.admissionWebhooks.autoGenerateCert.enabled=false \
+--set otel-operator.admissionWebhooks.certFile="<<PEM_CERT_PATH>>" \
+--set otel-operator.admissionWebhooks.keyFile="<<PEM_KEY_PATH>>" \
+--set otel-operator.admissionWebhooks.caFile="<<CA_CERT_PATH>>" \
+```
+
 ## Manual Instrumentation
 If you're using manual instrumentation or a custom instrumentation agent, configure it to export data to the Logz.io APM collector by setting the export/output address as follows:
 
@@ -135,6 +159,7 @@ logzio-monitoring-otel-collector.monitoring.svc.cluster.local:<<PORT>>
 > Replace `<<PORT>>` based on the protocol your agent uses:
 > - 4317 for GRCP
 > - 4318 for HTTP
+>
 > For a complete list, see `values.yaml` >> `traceConfig` >> `receivers`.
 
 ## Custom trace sampling rules
