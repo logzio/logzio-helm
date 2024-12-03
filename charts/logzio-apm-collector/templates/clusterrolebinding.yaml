@@ -1,0 +1,24 @@
+{{ if .Values.enabled}}
+{{- if .Values.clusterRole.create }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "apm-collector.clusterRoleBindingName" . }}
+  labels:
+    {{- include "apm-collector.labels" . | nindent 4 }}
+  {{- if .Values.clusterRole.clusterRoleBinding.annotations }}
+  annotations:
+    {{- range $key, $value := .Values.clusterRole.clusterRoleBinding.annotations }}
+    {{- printf "%s: %s" $key (tpl $value $ | quote) | nindent 4 }}
+    {{- end }}
+  {{- end }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "apm-collector.clusterRoleName" . }}
+subjects:
+- kind: ServiceAccount
+  name: {{ include "apm-collector.serviceAccountName" . }}
+  namespace: {{ include "apm-collector.namespace" . }}
+{{- end }}
+{{ end }}

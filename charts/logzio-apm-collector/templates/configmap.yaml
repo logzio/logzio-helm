@@ -1,0 +1,13 @@
+{{ if .Values.enabled }}
+{{- if .Values.configMap.create }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "apm-collector.fullname" . }}
+  namespace: {{ template "apm-collector.namespace" . }}
+  labels: {{- include "apm-collector.labels" . | nindent 4 }}
+data:
+  relay: |
+    {{- include "apm-collector.config" . | nindent 4 }}
+{{- end }}
+{{ end }}
