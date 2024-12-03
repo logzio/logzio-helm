@@ -160,9 +160,3 @@ Get secret value either from the global section (parent chart is running) or the
   {{- $fallback -}}
 {{- end -}}
 {{- end -}}
-
-{{/* Helm hooks annotations for otel operator */}}
-{{- define "apm-collector.otelOpAnnotations" -}}
-helm.sh/hook: "post-install, post-upgrade"
-helm.sh/hook-delete-policy: "before-hook-creation, hook-succeeded"
-{{- end -}}

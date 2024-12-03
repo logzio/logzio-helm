@@ -13,76 +13,6 @@ spm:
 serviceGraph:
   enabled: false
 
-# Enable Auto Instrumentation
-# ref: https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-operator
-otel-operator:
-  enabled: false
-
-  # Openteleemtry operator requires a TLS certificate.
-  # ref: https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-operator#tls-certificate-requirement
-  admissionWebhooks:
-    # TLS certificate Option 1
-    # If you have cert-manager installed on your cluster, you can set `certManager.enabled` to true
-    # and the cert-manager will generate a self-signed certificate for the otel-operator automatically.
-    certManager:
-      enabled: false
-
-      # Ensure certificate and issuer are created after the CRDs are installed
-      certificateAnnotations:
-        helm.sh/hook: "post-install, post-upgrade"
-        helm.sh/hook-delete-policy: "before-hook-creation, hook-succeeded"
-      issuerAnnotations:
-        helm.sh/hook: "post-install, post-upgrade"
-        helm.sh/hook-delete-policy: "before-hook-creation, hook-succeeded"
-  
-      ## Provide the issuer kind and name to do the cert auth job.
-      ## By default, OpenTelemetry Operator will use self-signer issuer.
-      # issuerRef: {}
-      # kind:
-      # name:
-
-      ## Annotations for the cert and issuer if cert-manager is enabled.
-      # certificateAnnotations: {}
-      # issuerAnnotations: {}
-
-      # duration must be specified by a Go time.Duration (ending in s, m or h)
-      # duration: ""
-
-      # renewBefore must be specified by a Go time.Duration (ending in s, m or h)
-      # Take care when setting the renewBefore field to be very close to the duration
-      # as this can lead to a renewal loop, where the Certificate is always in the renewal period.
-      # renewBefore: ""
-    
-    # TLS certificate Option 2
-    # The default option enabled by this chart. Helm will automatically create a self-signed cert and secret for you.
-    autoGenerateCert:
-      enabled: true
-      # If set to true, new webhook key/certificate is generated on helm upgrade.
-      # recreate: true
-
-      # Cert period time in days. The default is 365 days.
-      # certPeriodDays: 365
-
-    ## TLS certificate Option 3
-    # Use your own self-signed certificate
-    # To enable this option, set `autoGenerateCert.enabled` to false and provide the necessary values:
-    ## Path to your own PEM-encoded certificate.
-    # certFile: ""
-    ## Path to your own PEM-encoded private key.
-    # keyFile: ""
-    ## Path to the CA cert.
-    # caFile: ""
-
-    # The OpenTelemetry Operator webhook service may not always be ready in time, causing an error.
-    # to retry, we set `failurePolicy` to `ignore`. To block the operation if it fails, set to `Fail`.
-    failurePolicy: Ignore
-
-  # Deploying the collector using the operator is not supported currently.
-  # The collector image is specified to meet operator subchart requirments.
-  manager:
-    collectorImage:
-      repository: "otel/opentelemetry-collector-contrib"
-
 # Specifies a custom name for the chart's resources
 nameOverride: ""
 fullnameOverride: ""
@@ -410,40 +340,7 @@ imagePullSecrets: []
 # OpenTelemetry Collector executable
 command:
   name: otelcol-contrib
-  extraArgs: []
-
-#######################################################################################################################
-# Otel Operator Auto Instrumentation configuration
-#######################################################################################################################
-instrumentation:
-  # For intensive applications, to reduce the performance impact of the operator, you can define multiple 
-  # namespaces to deploy the instrumentor resource at. This can help distribute the load in larger clusters.
-  # By default, a single instrumentation resource is deployed either in the default "monitoring" namespace, or in the
-  # "namespaceOverride" namespace (if defined).
-  includeNamespaces: ""
-
-  # Choose propagator to specify the method of injecting and extracting context from carriers.
-  # By default, "tracecontext" (W3C Trace Context) and "baggage" (W3C Correlation Context) are enabled.
-  # You can enable or disable propagators as needed, or use "none" for no automatically configured propagator
-  # ref: https://opentelemetry.io/docs/languages/sdk-configuration/general/#otel_propagators
-  propagators:
-    - tracecontext
-    - baggage
-    # - b3
-    # - b3multi
-    # - jaeger
-    # - xray
-    # - ottrace
-  
-  # Specifies the Sampler used to sample traces by the SDK. (Optional)
-  sampler:
-    # By default, "parentbased_always_on" is enabled, meaning new traces will always be recorded and if the parent span is sampled, then the child span will be sampled.
-    # ref: https://opentelemetry.io/docs/languages/sdk-configuration/general/#otel_traces_sampler
-    # type: "parentbased_always_on"
-
-    # Each Sampler type defines its own expected args input gor configuring the sampler
-    # ref: https://opentelemetry.io/docs/languages/sdk-configuration/general/#otel_traces_sampler_arg
-    # argument: "0.25"
+  extraArgs: []    
 
 #######################################################################################################################
 # Kubernetes Resources Configuration

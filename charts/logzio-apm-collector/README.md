@@ -3,7 +3,7 @@
 > Kubernetes APM Collection Agent is still In development
 
 This Helm chart deploys an agent, which leverages the OpenTelemetry Collector, that collects traces and span metrics from Kubernetes clusters and sends them to Logz.io.
-It also allows enabling Service graph metrics and supports adding Auto instrumentation to the cluster applications via Opentelemetry Operator.
+
 
 ## Prerequisites
 - Kubernetes 1.24+
@@ -23,7 +23,6 @@ The chart provides options for enabling the following:
 1. Traces
 2. SPM (Service Performance Monitoring)
 3. Service Graph 
-4. OpenTelemetry Operator (Auto-instrumentation)
 
 
 ```shell
@@ -31,7 +30,6 @@ helm install -n monitoring --create-namespace \
 --set enabled=true \
 --set spm.enabled=true \
 --set serviceGraph.enabled=true \
---set otel-operator.enabled=true \
 --set secrets.logzioTracesToken="<<LOGZIO_TRACES_TOKEN>>" \
 --set secrets.logzioSpmToken="<<LOGZIO_SPM_TOKEN>>" \
 --set secrets.logzioRegion="<<LOGZIO_REGION_CODE>>" \
@@ -40,7 +38,7 @@ logzio-apm-collector logzio-helm/logzio-apm-collector
 ```
 
 > [!NOTE]
-> To disable either one of SPM, Service Graph or OpenTelemetry Operator, remove the relevant `--set XXX.enabled` line from the above command.
+> To disable either one of SPM or Service Graph remove the relevant `--set XXX.enabled` line from the above command.
 
 > [!IMPORTANT]
 > Values of `<<LOGZIO_TRACES_TOKEN>>`, `<<LOGZIO_SPM_TOKEN>>` and `<<LOGZIO_REGION_CODE>>` can be found in your Logz.io account.  
@@ -50,109 +48,15 @@ logzio-apm-collector logzio-helm/logzio-apm-collector
 ## Configuration
 
 - [All configuration options](./VALUES.md)
-- [Enable Auto-instrumentation](#enable-auto-instrumentation)
-  - [Multi-container pods](#multi-container-pods)
-- [Customize Auto-instrumentation](#customize-auto-instrumentation)
-  - [Customize Propagator](#customize-propagator)
-  - [Add a custom Sampler](#add-a-custom-sampler)
-  - [Distribute namespaces](#distribute-namespaces)
-  - [TLS certificate Requirements](#tls-certificate-requirements)
-- [Manual Instrumentation](#manual-instrumentation)
+- [Instrumentation](#instrumentation)
 - [Custom Trace Sampling rules](#custom-trace-sampling-rules)
 
-## Enable Auto-instrumentation
-- **Step 1:** Make sure to enable the OpenTelemetry operator in the chart:
-```shell
---set otel-operator.enabled=true \
-```
 
-- **Step 2**: Add annotations to your relevant Kubernetes object (Deployment, StatefulSet, Namespace, Daemonset, or Pod)
-```yaml
-instrumentation.opentelemetry.io/inject-<APP_LANGUAGE>": "monitoring/logzio-apm-collector"
-```
-
-> [!TIP]
-> `<APP_LANGUAGE>` can be one of `apache-httpd`, `dotnet`, `go`, `java`, `nginx`, `nodejs` or `python`.
-
-
-### Multi-container pods
-By default, in multi-container pods, instrumentation is performed on the first container available in the pod spec.
-To fine tune which containers to instrument, add the below annotations to your pod:
-```yaml
-instrumentation.opentelemetry.io/inject-<APP_LANGUAGE>": "monitoring/logzio-apm-collector"
-instrumentation.opentelemetry.io/<APP_LANGUAGE>-container-names: "myapp,myapp2"
-instrumentation.opentelemetry.io/inject-<APP_LANGUAGE_2>": "monitoring/logzio-apm-collector"
-instrumentation.opentelemetry.io/<APP_LANGUAGE_2>-container-names: "myapp3"
-```
-
-> [!TIP]
-> `<APP_LANGUAGE>`, `<APP_LANGUAGE_2>` can be one of `apache-httpd`, `dotnet`, `go`, `java`, `nginx`, `nodejs` or `python`.
-
-
-## Customize Auto-instrumentation
-Below you can find multiple ways in which you can customize the OpenTelemetry Operator Auto-instrumentation.
-
-### Customize Propagator
-The propagator specifies how context is injected into and extracted from carriers for distributed tracing.
-By default, the propagators `tracecontext` (W3C Trace Context) and `baggage` (W3C Correlation Context) are enabled.
-You can customize this to include other formats ([full list here](https://opentelemetry.io/docs/languages/sdk-configuration/general/#otel_propagators)) or set it to "none" to disable automatic propagation.
-```shell
---set instrumentation.propagator={tracecontext, baggage, b3}
-```
-
-### Add a custom Sampler
-You can specify a sampler to be used by the instrumentor. You'll need to specify the below:
-- Sampler used to sample the traces ([available options](https://opentelemetry.io/docs/languages/sdk-configuration/general/#otel_traces_sampler))
-- Sampler arguments ([Sampler type expected input](https://opentelemetry.io/docs/languages/sdk-configuration/general/#otel_traces_sampler_arg))
-
-Example:
-```shell
---set instrumentation.sampler.type="parentbased_always_on" \
---set instrumentation.sampler.argument="0.25"
-```
-
-### Distribute namespaces
-For intensive applications, to reduce the performance impact of the operator, you can define multiple namespaces to deploy the instrumentor resource at, which can help distribute the load in larger clusters.
-To do so, specify which namespaces to deploy the instrumentor at: 
-```shell
---set includeNamespaces="ns1,ns2,ns3"
-```
-
-For resources in the namespaces where you configured the instrumentation, you need to add annotation in this format:
-```yaml
-instrumentation.opentelemetry.io/inject-<APP_LANGUAGE>": "true"
-```
-
-> [!TIP]
-> `<APP_LANGUAGE>` can be one of `apache-httpd`, `dotnet`, `go`, `java`, `nginx`, `nodejs` or `python`.
-
-### TLS certificate Requirements
-Openteleemtry operator requires a TLS certificate. For more details, refer to [OpenTelemetry documentation](https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-operator#tls-certificate-requirement).
-
-There are 3 TLS certificate options, by default this chart is using option 2.
-
-1. If you have `cert-manager` installed on your cluster, you can set `otel-operator.admissionWebhooks.certManager.enabled` to true and the cert-manager will generate a self-signed certificate for the otel-operator automatically.
-
-```shell
---set otel-operator.admissionWebhooks.certManager.enabled=true \
-```
-
-2. Helm will automatically create a self-signed cert and secret for you. (Enabled by default by this chart)
-
-3. Use your own self-signed certificate, To enable this option, set `otel-operator.admissionWebhooks.autoGenerateCert.enabled` to `false` and provide the necessary `certFile`, `keyFile` and `caFile`.
-
-```shell
---set otel-operator.admissionWebhooks.autoGenerateCert.enabled=false \
---set otel-operator.admissionWebhooks.certFile="<<PEM_CERT_PATH>>" \
---set otel-operator.admissionWebhooks.keyFile="<<PEM_KEY_PATH>>" \
---set otel-operator.admissionWebhooks.caFile="<<CA_CERT_PATH>>" \
-```
-
-## Manual Instrumentation
-If you're using manual instrumentation or a custom instrumentation agent, configure it to export data to the Logz.io APM collector by setting the export/output address as follows:
+## Instrumentation
+If you're using manual instrumentation or an instrumentation agent, configure it to export data to the Logz.io APM collector by setting the export/output address as follows:
 
 ```
-logzio-monitoring-otel-collector.monitoring.svc.cluster.local:<<PORT>>
+logzio-apm-collector.monitoring.svc.cluster.local:<<PORT>>
 ```
 
 > [!IMPORTANT]
@@ -161,6 +65,11 @@ logzio-monitoring-otel-collector.monitoring.svc.cluster.local:<<PORT>>
 > - 4318 for HTTP
 >
 > For a complete list, see `values.yaml` >> `traceConfig` >> `receivers`.
+
+> [!WARNING]
+> If you're deploying the chart as a sub chart of the `logzio-monitoring` chart, replace:
+> `logzio-apm-collector` >> `logzio-monitoring-otel-collector`
+
 
 ## Custom trace sampling rules
 To customize the Traces Sampling rules in the OpenTelemetry Collector, you can follow the below steps:

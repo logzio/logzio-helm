@@ -4,12 +4,6 @@ version: 1.0.0
 description: Kubernetes APM agent for Logz.io based on OpenTelemetry Collector
 type: application
 home: https://logz.io/
-dependencies:
-  - name: opentelemetry-operator
-    alias: otel-operator
-    version: ~0.74.2
-    repository: https://open-telemetry.github.io/opentelemetry-helm-charts
-    condition: otel-operator.enabled
 maintainers:
   - name: Naama Bendalak
     email: naama.bendalak@logz.io
