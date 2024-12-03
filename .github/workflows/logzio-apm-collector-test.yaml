@@ -49,7 +49,7 @@ jobs:
         run: |
           cd charts/logzio-apm-collector
           helm upgrade --install \
-          --set enabled=true \ \
+          --set enabled=true \
           --set spm.enabled=true \
           --set serviceGraph.enabled=true \
           --set secrets.logzioTracesToken=${{ secrets.LOGZIO_TRACES_TOKEN }} \
