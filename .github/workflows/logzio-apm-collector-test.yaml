@@ -62,8 +62,8 @@ jobs:
 
       - name: Run trace generator
         run: |
-          kubectl apply -f tests/resources/tracegen.yaml
-          kubectl rollout status deployment/trace-gen --timeout=300s
+          kubectl apply -f tests/resources/tracegen-apm.yaml
+          kubectl rollout status deployment/trace-gen-apm --timeout=300s
 
       - name: Run otel demo for service graph
         run: |
