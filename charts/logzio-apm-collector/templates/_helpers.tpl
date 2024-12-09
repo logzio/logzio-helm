@@ -146,17 +146,3 @@ The APM service address
 {{- $serviceName := include "apm-collector.fullname" .}}
 {{- printf "http://%s.%s.svc.cluster.local" $serviceName .Release.Namespace }}
 {{- end }}
-
-{{/*
-Get secret value either from the global section (parent chart is running) or the default sub chart section
-*/}}
-{{- define "getGlobalOrDefaultValue" -}}
-{{- $ctx := index . 0 -}}
-{{- $key := index . 1 -}}
-{{- $fallback := index . 2 -}}
-{{- if hasKey $ctx.Values "global" -}}
-  {{- $ctx.Values.global | default dict | get $key | default $fallback -}}
-{{- else -}}
-  {{- $fallback -}}
-{{- end -}}
-{{- end -}}

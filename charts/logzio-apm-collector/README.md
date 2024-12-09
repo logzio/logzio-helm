@@ -30,10 +30,10 @@ helm install -n monitoring --create-namespace \
 --set enabled=true \
 --set spm.enabled=true \
 --set serviceGraph.enabled=true \
---set secrets.logzioTracesToken="<<LOGZIO_TRACES_TOKEN>>" \
---set secrets.logzioSpmToken="<<LOGZIO_SPM_TOKEN>>" \
---set secrets.logzioRegion="<<LOGZIO_REGION_CODE>>" \
---set secrets.env_id="<<ENV_ID>>" \
+--set global.logzioTracesToken="<<LOGZIO_TRACES_TOKEN>>" \
+--set global.logzioSpmToken="<<LOGZIO_SPM_TOKEN>>" \
+--set global.logzioRegion="<<LOGZIO_REGION_CODE>>" \
+--set global.env_id="<<ENV_ID>>" \
 logzio-apm-collector logzio-helm/logzio-apm-collector
 ```
 
@@ -65,10 +65,6 @@ logzio-apm-collector.monitoring.svc.cluster.local:<<PORT>>
 > - 4318 for HTTP
 >
 > For a complete list, see `values.yaml` >> `traceConfig` >> `receivers`.
-
-> [!WARNING]
-> If you're deploying the chart as a sub chart of the `logzio-monitoring` chart, replace:
-> `logzio-apm-collector` >> `logzio-monitoring-otel-collector`
 
 
 ## Custom trace sampling rules

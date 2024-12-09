@@ -46,13 +46,13 @@ containers:
       - name: ENV_ID
         valueFrom:
           secretKeyRef:
-            name: {{ .Values.secrets.name }}
+            name: {{ .Values.secret.name }}
             key: env-id
       - name: SPM_ENDPOINT
-        {{- if .Values.secrets.customSpmEndpoint }}
+        {{- if .Values.global.customSpmEndpoint }}
         valueFrom:
           secretKeyRef:
-            name: {{ .Values.secrets.name }}
+            name: {{ .Values.secret.name }}
             key: custom-spm-endpoint
         {{- else }}
         value: {{ include "spm-collector.listenerAddress" . | quote }}
@@ -60,7 +60,7 @@ containers:
       - name: LOGZIO_SPM_TOKEN
         valueFrom:
           secretKeyRef:
-            name: {{ .Values.secrets.name }}
+            name: {{ .Values.secret.name }}
             key: logzio-spm-token
       - name: LOG_LEVEL
         value: {{ .Values.otelLogLevel | default "info" | quote }}

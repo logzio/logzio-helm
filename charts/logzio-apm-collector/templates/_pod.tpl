@@ -48,23 +48,23 @@ containers:
       - name: ENV_ID
         valueFrom:
           secretKeyRef:
-            name: {{ .Values.secrets.name }}
+            name: {{ .Values.secret.name }}
             key: env-id
       - name: LOGZIO_REGION
         valueFrom:
           secretKeyRef:
-            name: {{ .Values.secrets.name }}
+            name: {{ .Values.secret.name }}
             key: logzio-listener-region
       - name: LOGZIO_TRACES_TOKEN
         valueFrom:
           secretKeyRef:
-            name: {{ .Values.secrets.name }}
+            name: {{ .Values.secret.name }}
             key: logzio-traces-token
-      {{- if .Values.secrets.customTracesEndpoint }}
+      {{- if .Values.global.customTracesEndpoint }}
       - name: CUSTOM_TRACES_ENDPOINT
         valueFrom:
           secretKeyRef:
-            name: {{ .Values.secrets.name }}
+            name: {{ .Values.secret.name }}
             key: custom-traces-endpoint
       {{- end }}
       - name: LOG_LEVEL
