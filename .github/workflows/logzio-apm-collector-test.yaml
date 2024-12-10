@@ -47,29 +47,29 @@ jobs:
 
       - name: Deploy Helm Chart
         run: |
-          cd charts/logzio-telemetry
+          cd charts/logzio-apm-collector
           helm upgrade --install \
-          --set enabled=true \ \
+          --set enabled=true \
           --set spm.enabled=true \
           --set serviceGraph.enabled=true \
-          --set secrets.logzioTracesToken=${{ secrets.LOGZIO_TRACES_TOKEN }} \
-          --set secrets.logzioSpmToken=${{ secrets.LOGZIO_METRICS_TOKEN }} \
-          --set secrets.logzioRegion="us" \
-          --set secrets.env_id=${{ env.ENV_ID }} \
+          --set global.logzioTracesToken=${{ secrets.LOGZIO_TRACES_TOKEN }} \
+          --set global.logzioSpmToken=${{ secrets.LOGZIO_METRICS_TOKEN }} \
+          --set global.logzioRegion="us" \
+          --set global.env_id=${{ env.ENV_ID }} \
           logzio-apm-collector .
           kubectl rollout status deployment/logzio-apm-collector --timeout=300s
           kubectl rollout status deployment/logzio-apm-collector-spm --timeout=300s
 
       - name: Run trace generator
         run: |
-          kubectl apply -f tests/resources/tracegen.yaml
+          kubectl apply -f tests/resources/tracegen-apm.yaml
           kubectl rollout status deployment/trace-gen --timeout=300s
 
       - name: Run otel demo for service graph
         run: |
           helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
           helm repo update
-          helm install otel-demo -f tests/resources/otel-demo.yaml open-telemetry/opentelemetry-demo --version 0.32.5
+          helm install otel-demo -f tests/resources/otel-demo-apm.yaml open-telemetry/opentelemetry-demo --version 0.32.5
           kubectl rollout status deployment/otel-demo-loadgenerator --timeout=300s
 
       - name: sleep for 3 minutes
@@ -82,7 +82,7 @@ jobs:
         run: |
           go get go.uber.org/zap
           go test -v ./tests/traces_e2e_test.go ./tests/common.go
-          go test -v ./tests/metrics_e2e_test.go ./tests/common.go
+          go test -v ./tests/apm_metrics_e2e_test.go ./tests/common.go
 
       - name: Cleanup Environment
         run: |

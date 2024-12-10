@@ -15,7 +15,7 @@
 {{ fail "[ERROR] The logzio-apm-collector Chart's `otelLogLevel` must be one of 'info', 'warn', 'error' or 'debug'." }}
 {{- end }}
 
-{{- $region := lower .Values.secrets.logzioRegion }}
+{{- $region := lower .Values.global.logzioRegion }}
 {{- if not (or (eq $region "us") (eq $region "eu") (eq $region "uk") (eq $region "ca") (eq $region "au")) }}
 {{ print "[WARN] The `logzioRegion` expected value should be one of 'us', 'eu', 'uk', 'ca', 'au'." }}
 {{- end }}

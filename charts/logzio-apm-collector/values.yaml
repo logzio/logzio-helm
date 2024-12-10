@@ -21,16 +21,7 @@ namespaceOverride: ""
 #######################################################################################################################
 # Base Configuration Parameters
 #######################################################################################################################
-secrets:
-  # When secrets.enabled is true, the logzio secret will be created and managed by this Chart.
-  # If you're managing the logzio secrets by yourself, set to false. 
-  # Note that in order for the default configuration to work properly, you need to:
-  # 1. Update secrets.name to your custom secret name
-  # 2. Include these keys in your secret: env-id, logzio-listener-region, logzio-traces-token, logzio-spm-token
-  # To use a custom endpoint, include custom-traces-endpoint, custom-spm-endpoint or both parameters in your secret, 
-  # depending on your needs and set secrets.customTracesEndpoint and/or secrets.customSpmEndpoint to `true`.
-  enabled: true
-  name: logzio-apm-collector-secret
+global:
   # environment identifier attribute that will be added to all telemetry
   env_id: "my_env"
   # Logz.io Tracing Shipping Token
@@ -39,7 +30,7 @@ secrets:
   logzioSpmToken: ""
   # Logz.io region code
   logzioRegion: "us"
-  # Optional - Overrides secrets.LogzioRegion listener address with a custom endpoint. For example: http://endpoint:8080
+  # Optional - Overrides global.LogzioRegion listener address with a custom endpoint. For example: http://endpoint:8080
   customTracesEndpoint: ""
   customSpmEndpoint: ""
 
@@ -211,7 +202,7 @@ spmForwarderConfig:
     pipelines:
       traces/spm:
         receivers: [jaeger, zipkin, otlp]
-        processors: [resourcedetection/all, attributes/env_id, k8sattributes]
+        processors: [resourcedetection/all, attributes/env_id, k8sattributes, batch]
         exporters: [otlp]
 
 # SPM Collector configuration
@@ -233,6 +224,7 @@ spmConfig:
         grpc:
           endpoint: "0.0.0.0:4317"
   processors:
+      batch: {}
       metricstransform/metrics-rename:
         transforms:
         # rename metric duration.XXX >> latency.XXX
@@ -244,6 +236,11 @@ spmConfig:
         - action: update
           include: calls
           new_name: calls_total
+        # manually add 'seconds' unit to the relevant Service Graph metric names
+        - include: ^(traces_service_graph_request_(server|client).*)$$
+          action: update
+          match_type: regexp
+          new_name: $${1}_seconds
       metricstransform/labels-rename:
         transforms:
         # for metrics matching `latencyXXX` or `callsXXX`
@@ -303,7 +300,7 @@ spmConfig:
         exporters: [spanmetrics]
       metrics/spm-logzio:
         receivers: [spanmetrics]
-        processors: [metricstransform/metrics-rename, metricstransform/labels-rename]
+        processors: [metricstransform/metrics-rename, metricstransform/labels-rename, batch]
         exporters: [prometheusremotewrite/spm-logzio]
 
 # Service Graph configuration
@@ -340,11 +337,23 @@ imagePullSecrets: []
 # OpenTelemetry Collector executable
 command:
   name: otelcol-contrib
-  extraArgs: []    
+  extraArgs:
+    - --feature-gates=connector.spanmetrics.legacyMetricNames  # rename traces_span_metrics_xxx >> xxx
 
 #######################################################################################################################
 # Kubernetes Resources Configuration
 #######################################################################################################################
+secret:
+  # When secret.enabled is true, the logzio secret will be created and managed by this Chart.
+  # If you're managing the logzio secrets by yourself, set to false.
+  # Note that in order for the default configuration to work properly, you need to:
+  # 1. Update secrets.name to your custom secret name.
+  # 2. Include these keys in your secret: env-id, logzio-listener-region, logzio-traces-token, logzio-spm-token.
+  # To use a custom endpoint, include custom-traces-endpoint, custom-spm-endpoint or both parameters in your secret,
+  # depending on your needs and set global.customTracesEndpoint and/or global.customSpmEndpoint to `true`.
+  enabled: true
+  name: logzio-apm-collector-secret
+
 configMap:
   # Specifies whether a configMap should be created
   create: true
@@ -403,14 +412,14 @@ service:
   # Annotations to add to the Service.
   annotations: {}
 
-  # By default, Service will be created setting 'internalTrafficPolicy: Cluster'
-  # unless other value is explicitly set.
-  # Setting 'internalTrafficPolicy: Cluster' on a daemonset is not recommended (in such case, use 'internalTrafficPolicy: Local')
+  ## By default, Service will be created setting 'internalTrafficPolicy: Cluster'
+  ## unless other value is explicitly set.
+  ## Setting 'internalTrafficPolicy: Cluster' on a daemonset is not recommended (in such case, use 'internalTrafficPolicy: Local')
   # internalTrafficPolicy: Cluster
 
-  # By default, Service of type 'LoadBalancer' will be created setting 'externalTrafficPolicy: Cluster'
-  # unless other value is explicitly set.
-  # Possible values are Cluster or Local (https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip)
+  ## By default, Service of type 'LoadBalancer' will be created setting 'externalTrafficPolicy: Cluster'
+  ## unless other value is explicitly set.
+  ## Possible values are Cluster or Local (https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip)
   # externalTrafficPolicy: Cluster
 
 spmService:
@@ -420,14 +429,14 @@ spmService:
   # Annotations to add to the Service.
   annotations: {}
 
-  # By default, Service will be created setting 'internalTrafficPolicy: Cluster'
-  # unless other value is explicitly set.
-  # Setting 'internalTrafficPolicy: Cluster' on a daemonset is not recommended (in such case, use 'internalTrafficPolicy: Local')
+  ## By default, Service will be created setting 'internalTrafficPolicy: Cluster'
+  ## unless other value is explicitly set.
+  ## Setting 'internalTrafficPolicy: Cluster' on a daemonset is not recommended (in such case, use 'internalTrafficPolicy: Local')
   # internalTrafficPolicy: Cluster
 
-  # By default, Service of type 'LoadBalancer' will be created setting 'externalTrafficPolicy: Cluster'
-  # unless other value is explicitly set.
-  # Possible values are Cluster or Local (https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip)
+  ## By default, Service of type 'LoadBalancer' will be created setting 'externalTrafficPolicy: Cluster'
+  ## unless other value is explicitly set.
+  ## Possible values are Cluster or Local (https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip)
   # externalTrafficPolicy: Cluster
 
 # Configure HPA for Traces Collector.
@@ -533,8 +542,7 @@ extraVolumeMounts: []
 # resources.limits.memory
 # If no resources.limits.memory are defined enabling does nothing.
 # In a future release this setting will be enabled by default.
-# See https://github.com/open-telemetry/opentelemetry-helm-charts/issues/891
-# for more details.
+# For more details see https://github.com/open-telemetry/opentelemetry-helm-charts/issues/891
 useGOMEMLIMIT: false
 
 # Resource allocation.
@@ -616,17 +624,16 @@ lifecycleHooks: {}
 
 # liveness probe configuration
 # Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
-##
 livenessProbe:
-  # Number of seconds after the container has started before startup, liveness or readiness probes are initiated.
+  ## Number of seconds after the container has started before startup, liveness or readiness probes are initiated.
   # initialDelaySeconds: 1
-  # How often in seconds to perform the probe.
+  ## How often in seconds to perform the probe.
   # periodSeconds: 10
-  # Number of seconds after which the probe times out.
+  ## Number of seconds after which the probe times out.
   # timeoutSeconds: 1
-  # Minimum consecutive failures for the probe to be considered failed after having succeeded.
+  ## Minimum consecutive failures for the probe to be considered failed after having succeeded.
   # failureThreshold: 1
-  # Duration in seconds the pod needs to terminate gracefully upon probe failure.
+  ## Duration in seconds the pod needs to terminate gracefully upon probe failure.
   # terminationGracePeriodSeconds: 10
   httpGet:
     port: 13133
@@ -634,17 +641,16 @@ livenessProbe:
 
 # readiness probe configuration
 # Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
-##
 readinessProbe:
-  # Number of seconds after the container has started before startup, liveness or readiness probes are initiated.
+  ## Number of seconds after the container has started before startup, liveness or readiness probes are initiated.
   # initialDelaySeconds: 1
-  # How often (in seconds) to perform the probe.
+  ## How often (in seconds) to perform the probe.
   # periodSeconds: 10
-  # Number of seconds after which the probe times out.
+  ## Number of seconds after which the probe times out.
   # timeoutSeconds: 1
-  # Minimum consecutive successes for the probe to be considered successful after having failed.
+  ## Minimum consecutive successes for the probe to be considered successful after having failed.
   # successThreshold: 1
-  # Minimum consecutive failures for the probe to be considered failed after having succeeded.
+  ## Minimum consecutive failures for the probe to be considered failed after having succeeded.
   # failureThreshold: 1
   httpGet:
     port: 13133
