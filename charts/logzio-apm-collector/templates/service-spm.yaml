@@ -1,0 +1,42 @@
+{{ if and .Values.enabled .Values.spm.enabled  }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "spm-collector.fullname" . }}
+  namespace: {{ template "apm-collector.namespace" . }}
+  labels:
+    {{- include "apm-collector.labels" . | nindent 4 }}
+    {{- include "spm-collector.component" . | nindent 4 }}
+  {{- if .Values.spmService.annotations }}
+  annotations:
+    {{- range $key, $value := .Values.spmService.annotations }}
+    {{- printf "%s: %s" $key (tpl $value $ | quote) | nindent 4 }}
+    {{- end }}
+  {{- end }}
+spec:
+  type: {{ .Values.spmService.type }}
+  {{- if .Values.spmService.clusterIP }}
+  clusterIP: {{ .Values.spmService.clusterIP }}
+  {{- end }}
+  {{- if and .Values.spmService.loadBalancerIP (eq .Values.spmService.type "LoadBalancer") }}
+  loadBalancerIP: {{ .Values.spmService.loadBalancerIP }}
+  {{- end }}
+  {{- if and .Values.spmService.loadBalancerSourceRanges (eq .Values.spmService.type "LoadBalancer") }}
+  loadBalancerSourceRanges:
+    {{- range .Values.spmService.loadBalancerSourceRanges }}
+    - {{ . }}
+    {{- end }}
+  {{- end }}
+  {{- $ports := include "apm-collector.servicePortsConfig" . }}
+  {{- if $ports }}
+  ports:
+    {{- $ports | nindent 4}}
+  {{- end }}
+  selector:
+    {{- include "apm-collector.selectorLabels" . | nindent 4 }}
+    {{- include "spm-collector.component" . | nindent 4 }}
+  internalTrafficPolicy: {{ .Values.spmService.internalTrafficPolicy | default "Cluster" }}
+  {{- if and (eq .Values.spmService.type "LoadBalancer") (.Values.spmService.externalTrafficPolicy) }}
+  externalTrafficPolicy: {{ .Values.spmService.externalTrafficPolicy | default "Cluster" }}
+  {{- end }}
+{{ end }}

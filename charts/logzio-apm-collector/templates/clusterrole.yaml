@@ -1,0 +1,32 @@
+{{ if .Values.enabled }}
+{{- if (.Values.clusterRole.create) -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "apm-collector.clusterRoleName" . }}
+  labels:
+    {{- include "apm-collector.labels" . | nindent 4 }}
+  {{- if .Values.clusterRole.annotations }}
+  annotations:
+    {{- range $key, $value := .Values.clusterRole.annotations }}
+    {{- printf "%s: %s" $key (tpl $value $ | quote) | nindent 4 }}
+    {{- end }}
+  {{- end }}
+rules:
+  {{- if .Values.clusterRole.rules -}}
+  {{ toYaml .Values.clusterRole.rules | nindent 2 -}}
+  {{- end }}
+  - apiGroups: [""]
+    resources: ["events", "namespaces", "namespaces/status", "pods", "pods/status", "replicationcontrollers", "replicationcontrollers/status", "resourcequotas", "services", "endpoints"]
+    verbs: ["get", "watch", "list"]
+  - apiGroups: ["apps"]
+    resources: ["deployments", "replicasets"]
+    verbs: ["get", "watch", "list"]
+  - apiGroups: ["extensions"]
+    resources: ["deployments", "replicasets"]
+    verbs: ["get", "watch", "list"]
+  - apiGroups: ["autoscaling"]
+    resources: ["horizontalpodautoscalers"]
+    verbs: ["get", "watch", "list"]
+{{- end }}
+{{ end }}
