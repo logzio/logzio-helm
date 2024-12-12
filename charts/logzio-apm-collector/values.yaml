@@ -45,8 +45,8 @@ standaloneCollector:
 # OpenTelemetry Collector Configuration
 #######################################################################################################################
 
-# Trace sampling default rules configuration.
-# These settings do not affect the traces used for calculating SPM (span metrics).
+## Trace sampling default rules configuration.
+## These settings do not affect the traces used for calculating SPM (span metrics).
 # SamplingProbability: 10  # Traces Sampling Probability
 # SamplingLatency: 500  # Traces Sampling Latency
 
@@ -105,7 +105,7 @@ traceConfig:
               name: probability-policy,
               type: probabilistic,
               probabilistic: {sampling_percentage: "${SAMPLING_PROBABILITY}" }
-            }       
+            }
         ]
     k8sattributes:
       extract:
@@ -302,6 +302,9 @@ spmConfig:
         receivers: [spanmetrics]
         processors: [metricstransform/metrics-rename, metricstransform/labels-rename, batch]
         exporters: [prometheusremotewrite/spm-logzio]
+    telemetry:
+      logs:
+        level: ${LOG_LEVEL}
 
 # Service Graph configuration
 serviceGraphConfig:
@@ -313,6 +316,7 @@ serviceGraphConfig:
       store:
         ttl: 5s
         max_items: 100000
+      metrics_flush_interval: 60s
   service:
     pipelines:
       traces:
@@ -453,7 +457,9 @@ autoscaling:
   # targetMemoryUtilizationPercentage: 80
 
 # Configure VPA for SPM Collector.
-# The reason we use vertical scaling and not horizontal is to make sure the SPM aggregations are correct.
+# Vertical scaling is used instead of horizontal scaling to ensure the accuracy of SPM aggregations.
+# Note: This feature requires the VPA Custom Resource Definitions (CRDs) to be installed. 
+# Installation guide: https://github.com/kubernetes/autoscaler/blob/master/vertical-pod-autoscaler/docs/installation.md
 spmAutoscaling:
   # Enable the vertical scaling
   enabled: false
@@ -519,7 +525,7 @@ securityContext: {}
 nodeSelector: {}
 tolerations: []
 # Set affinity rules for the scheduler to determine where all DaemonSet pods can be placed.
-# The following configuration prevent logzio apm collector DaemonSet deploymment on fargate nodes
+# The following configuration prevent logzio APM collector DaemonSet deployment on fargate nodes
 # DaemonSet mode is not used in the current APM chart, this configuration is retained for potential future support.
 affinity:
   nodeAffinity:
@@ -538,9 +544,8 @@ extraEnvsFrom: []
 extraVolumes: []
 extraVolumeMounts: []
 
-# When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured
-# resources.limits.memory
-# If no resources.limits.memory are defined enabling does nothing.
+# When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured 'resources.limits.memory'
+# If no 'resources.limits.memory' are defined, enabling does nothing.
 # In a future release this setting will be enabled by default.
 # For more details see https://github.com/open-telemetry/opentelemetry-helm-charts/issues/891
 useGOMEMLIMIT: false

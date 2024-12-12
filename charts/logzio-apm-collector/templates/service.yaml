@@ -36,6 +36,7 @@ spec:
   {{- end }}
   selector:
     {{- include "apm-collector.selectorLabels" . | nindent 4 }}
+    {{- include "apm-collector.component" . | nindent 4 }}
   internalTrafficPolicy: {{ .Values.service.internalTrafficPolicy | default "Cluster" }}
   {{- if and (eq .Values.service.type "LoadBalancer") (.Values.service.externalTrafficPolicy) }}
   externalTrafficPolicy: {{ .Values.service.externalTrafficPolicy | default "Cluster" }}
