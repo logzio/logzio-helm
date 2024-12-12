@@ -16,7 +16,6 @@ rules:
   {{- if .Values.clusterRole.rules -}}
   {{ toYaml .Values.clusterRole.rules | nindent 2 -}}
   {{- end }}
-  # TODO: make sure if we need all of these permissions...
   - apiGroups: [""]
     resources: ["events", "namespaces", "namespaces/status", "pods", "pods/status", "replicationcontrollers", "replicationcontrollers/status", "resourcequotas", "services", "endpoints"]
     verbs: ["get", "watch", "list"]
