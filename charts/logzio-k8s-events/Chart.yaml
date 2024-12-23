@@ -5,8 +5,8 @@ keywords:
   - logging
   - k8s
   - kubernetes
-version: 0.0.7
-appVersion: 0.0.3
+version: 0.0.8
+appVersion: 0.0.4
 maintainers:
   - name: Raul Gurshumov
     email: raul.gurshumo@logz.io
