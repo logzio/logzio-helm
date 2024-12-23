@@ -227,6 +227,12 @@ There are two possible approaches to the upgrade you can choose from:
 - Before running the `helm upgrade` command, delete the old subcharts resources: `logzio-monitoring-prometheus-pushgateway` deployment and the `logzio-monitoring-prometheus-node-exporter` daemonset.
 
 ## Changelog
+- **6.2.3**:
+  - Upgrade `logzio-k8s-events` chart to `v0.0.8`
+    - Upgrade `logzio-k8s-events` image to v`0.0.4`
+      - Upgrade GoLang version to `v1.23.0`
+      - Upgrade `github.com/logzio/logzio-go` to `v1.0.9`
+      - Upgrade GoLang docker image to `golang:1.23.0-alpine3.20`
 - **6.2.2**:
   - Upgrade `logzio-telemetry` chart to `v4.3.0`
     - Set `servicegraph` connector, `metrics_flush_interval` setting to `60s` to reduce outgoing connections
