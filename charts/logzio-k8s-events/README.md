@@ -98,6 +98,11 @@ kubectl get nodes -o json | jq ".items[]|{name:.metadata.name, taints:.spec.tain
 
 
 ## Change log
+ - **0.0.8**:
+   - Upgrade `logzio-k8s-events` to v`0.0.4`
+      - Upgrade GoLang version to `v1.23.0`
+      - Upgrade `github.com/logzio/logzio-go` to `v1.0.9`
+      - Upgrade GoLang docker image to `golang:1.23.0-alpine3.20`
  - **0.0.7**:
    - Remove default resources `limits`
  - **0.0.6**:
