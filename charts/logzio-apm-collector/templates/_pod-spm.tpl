@@ -28,7 +28,7 @@ containers:
     image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
     {{- end }}
     imagePullPolicy: {{ .Values.image.pullPolicy }}
-    {{- $ports := include "apm-collector.podPortsConfig" . }}
+    {{- $ports := include "spm-collector.podPortsConfig" . }}
     {{- if $ports }}
     ports:
       {{- $ports | nindent 6}}

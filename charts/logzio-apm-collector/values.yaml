@@ -59,24 +59,16 @@ traceConfig:
       account_token: ${LOGZIO_TRACES_TOKEN}
       headers:
         user-agent: "{{ .Chart.Name }}-{{ .Chart.Version }}-helm"
+    # Exporter from Traces Collector to SPM Collector
+    # Removed from the pipeline if spm.enabled is false
+    otlp/spm_forwarder:
+      endpoint: "${SPM_SERVICE_ENDPOINT}"
+      tls:
+        insecure: true
   extensions:
-    pprof:
-      endpoint: :1777
-    zpages:
-      endpoint: :55679
     health_check:
       endpoint: :13133
   receivers:
-    jaeger:
-      protocols:
-        thrift_compact:
-          endpoint: "0.0.0.0:6831"
-        thrift_binary:
-          endpoint: "0.0.0.0:6832"
-        grpc:
-          endpoint: "0.0.0.0:14250"
-        thrift_http:
-          endpoint: "0.0.0.0:14268"
     otlp:
       protocols:
         grpc:
@@ -181,29 +173,20 @@ traceConfig:
           action: insert
     batch: {}
   service:
-    extensions: [health_check, pprof, zpages]
+    extensions: [health_check]
     pipelines:
       traces:
         receivers: [jaeger, zipkin, otlp]
         processors: [resourcedetection/all,attributes/env_id, k8sattributes, resource/k8s, tail_sampling, batch]
         exporters: [logzio]
-    telemetry:
-      logs:
-        level: ${LOG_LEVEL}
-
-# Exporter from Traces Collector to SPM Collector
-spmForwarderConfig:
-  exporters:
-    otlp:
-      endpoint: "${SPM_SERVICE_ENDPOINT}"
-      tls:
-        insecure: true
-  service:
-    pipelines:
+      # Removed if spm.enabled is false
       traces/spm:
         receivers: [jaeger, zipkin, otlp]
         processors: [resourcedetection/all, attributes/env_id, k8sattributes, batch]
-        exporters: [otlp]
+        exporters: [otlp/spm_forwarder]
+    telemetry:
+      logs:
+        level: ${LOG_LEVEL}
 
 # SPM Collector configuration
 spmConfig:
@@ -292,37 +275,27 @@ spmConfig:
         - service.name
         - telemetry.sdk.language
         - telemetry.sdk.name
+      servicegraph:
+        latency_histogram_buckets: [2ms, 8ms, 50ms, 100ms, 200ms, 500ms, 1s, 5s, 10s]
+        dimensions:
+          - env_id
+        store:
+          ttl: 5s
+          max_items: 100000
+        metrics_flush_interval: 60s
   service:
     extensions: [health_check]
     pipelines:
       traces:
         receivers: [otlp]
-        exporters: [spanmetrics]
+        exporters: []  # exporters are added according to spm.enabled and serviceGraph.enabled
       metrics/spm-logzio:
-        receivers: [spanmetrics]
+        receivers: []  # receivers are added according to spm.enabled and serviceGraph.enabled
         processors: [metricstransform/metrics-rename, metricstransform/labels-rename, batch]
         exporters: [prometheusremotewrite/spm-logzio]
     telemetry:
       logs:
         level: ${LOG_LEVEL}
-
-# Service Graph configuration
-serviceGraphConfig:
-  connectors:
-    servicegraph:
-      latency_histogram_buckets: [2ms, 8ms, 50ms, 100ms, 200ms, 500ms, 1s, 5s, 10s]
-      dimensions:
-        - env_id
-      store:
-        ttl: 5s
-        max_items: 100000
-      metrics_flush_interval: 60s
-  service:
-    pipelines:
-      traces:
-        exporters: [servicegraph]      
-      metrics/spm-logzio:
-        receivers: [servicegraph]
 
 #######################################################################################################################
 # OpenTelemetry Collector Image Settings
@@ -510,6 +483,14 @@ ports:
     containerPort: 9411
     servicePort: 9411
     hostPort: 9411
+    protocol: TCP
+
+portsSpm:
+  otlp:
+    enabled: true
+    containerPort: 4317
+    servicePort: 4317
+    hostPort: 4317
     protocol: TCP
 
 # Common labels to add to all otel-collector resources. Evaluated as a template.
