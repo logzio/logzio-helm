@@ -99,7 +99,7 @@ Update the `traceConfig` and/or `spmConfig` in `values.yaml` to include the File
 Make sure to add your custom configuration under `extensions` section and added to the `service` extensions.
 Example:
 
-```
+```yaml
 traceConfig:
   ...
   extensions:
@@ -116,7 +116,7 @@ traceConfig:
 Edit the `extraVolumes` and `extraVolumeMounts` in `values.yaml`, to contain the path where the data should be saved on disk.
 Ensure this path matches the one set in `extensions.file_storage.directory` in step 1:
 
-```
+```yaml
 extraVolumes:
   - name: varlibotelcol
     hostPath:
