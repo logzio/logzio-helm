@@ -50,6 +50,7 @@ logzio-apm-collector logzio-helm/logzio-apm-collector
 - [All configuration options](./VALUES.md)
 - [Instrumentation](#instrumentation)
 - [Custom Trace Sampling rules](#custom-trace-sampling-rules)
+- [Enable File Storage extension](#enable-file-storage-extension)
 
 
 ## Instrumentation
@@ -85,6 +86,47 @@ Edit the section under `traceConfig` >> `processors` >> `tail_sampling` in `new-
 ```shell
 helm upgrade logzio-apm-collector logzio-helm/logzio-apm-collector -n monitoring -f new-values.yaml
 ```
+
+
+## Enable File Storage extension
+The [OpenTelemetry File Storage extension](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/storage/filestorage) allows storing temporary data on disk rather than in memory. This helps reduces memory stress, particularly in high-load scenarios, and ensures that state is persisted on disk.
+
+To enable the File Storage extension, follow the below steps:
+
+- **Step 1**: Add the File Storage Extension
+
+Update the `traceConfig` and/or `spmConfig` in `values.yaml` to include the File Storage extension.
+Make sure to add your custom configuration under `extensions` section and added to the `service` extensions.
+Example:
+
+```
+traceConfig:
+  ...
+  extensions:
+    ...
+    file_storage:
+      directory: /var/lib/otelcol
+  ...
+  service:
+    extensions: [health_check, file_storage]
+```
+
+- **Step 2**: Configure Disk Storage Path
+
+Edit the `extraVolumes` and `extraVolumeMounts` in `values.yaml`, to contain the path where the data should be saved on disk.
+Ensure this path matches the one set in `extensions.file_storage.directory` in step 1:
+
+```
+extraVolumes:
+  - name: varlibotelcol
+    hostPath:
+      path: /var/lib/otelcol  # use the same path as `extensions.file_storage.directory`
+      type: DirectoryOrCreate
+extraVolumeMounts:
+  - name: varlibotelcol
+    mountPath: /var/lib/otelcol  # use the same path as `extensions.file_storage.directory`
+```
+
 
 ## Uninstalling
 To uninstall the `logzio-apm-collector` chart, you can use:

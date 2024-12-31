@@ -176,12 +176,12 @@ traceConfig:
     extensions: [health_check]
     pipelines:
       traces:
-        receivers: [jaeger, zipkin, otlp]
+        receivers: [zipkin, otlp]
         processors: [resourcedetection/all,attributes/env_id, k8sattributes, resource/k8s, tail_sampling, batch]
         exporters: [logzio]
       # Removed if spm.enabled is false
       traces/spm:
-        receivers: [jaeger, zipkin, otlp]
+        receivers: [zipkin, otlp]
         processors: [resourcedetection/all, attributes/env_id, k8sattributes, batch]
         exporters: [otlp/spm_forwarder]
     telemetry:
@@ -523,7 +523,13 @@ priorityClassName: ""
 extraEnvs: []
 extraEnvsFrom: []
 extraVolumes: []
+  # - name: varlibotelcol
+  #   hostPath:
+  #     path: /var/lib/otelcol  # use the path per `extensions.file_storage.directory`
+  #     type: DirectoryOrCreate
 extraVolumeMounts: []
+  # - name: varlibotelcol
+  #   mountPath: /var/lib/otelcol  # use the path given as per `extensions.file_storage.directory`
 
 # When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured 'resources.limits.memory'
 # If no 'resources.limits.memory' are defined, enabling does nothing.
