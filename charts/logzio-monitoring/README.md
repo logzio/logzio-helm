@@ -227,6 +227,9 @@ There are two possible approaches to the upgrade you can choose from:
 - Before running the `helm upgrade` command, delete the old subcharts resources: `logzio-monitoring-prometheus-pushgateway` deployment and the `logzio-monitoring-prometheus-node-exporter` daemonset.
 
 ## Changelog
+- **6.2.4**:
+  - Upgrade `logzio-trivy` chart to `v0.3.6`
+      - Fix `tolerations` value 
 - **6.2.3**:
   - Upgrade `logzio-k8s-events` chart to `v0.0.8`
     - Upgrade `logzio-k8s-events` image to v`0.0.4`
