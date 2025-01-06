@@ -8,4 +8,4 @@ icon: https://logzbucket.s3.eu-west-1.amazonaws.com/logz-io-img/logo400x400.png
 maintainers:
   - name: Naama Bendalak
     email: naama.bendalak@logz.io
-appVersion: 0.115.1
+appVersion: 0.116.1

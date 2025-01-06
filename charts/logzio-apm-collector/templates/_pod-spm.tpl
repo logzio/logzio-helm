@@ -5,7 +5,7 @@ imagePullSecrets:
 {{- end }}
 serviceAccountName: {{ include "apm-collector.serviceAccountName" . }}
 securityContext:
-  {{- toYaml .Values.podSecurityContext | nindent 2 }}
+  {{- toYaml .Values.spmPodSecurityContext | nindent 2 }}
 {{- with .Values.hostAliases }}
 hostAliases:
   {{- toYaml . | nindent 2 }}

@@ -69,8 +69,8 @@
 {{/* Build config file for APM Collector */}}
 {{- define "apm-collector.config" -}}
 {{- $tracesConfig := deepCopy .Values.traceConfig }}
-{{- if not (or .Values.spm.enabled .Values.serviceGraph.enabled) -}}
-{{- unset $tracesConfig.service.pipelines "traces/spm" }}
+{{- if not (or .Values.spm.enabled .Values.serviceGraph.enabled) }}
+{{- $_ := unset $tracesConfig.service.pipelines "traces/spm" }}
 {{- end -}}
 {{- tpl ($tracesConfig | toYaml) . }}
 {{- end -}}

@@ -460,24 +460,6 @@ ports:
     servicePort: 4318
     hostPort: 4318
     protocol: TCP
-  jaeger-compact:
-    enabled: true
-    containerPort: 6831
-    servicePort: 6831
-    hostPort: 6831
-    protocol: UDP
-  jaeger-thrift:
-    enabled: true
-    containerPort: 14268
-    servicePort: 14268
-    hostPort: 14268
-    protocol: TCP
-  jaeger-grpc:
-    enabled: true
-    containerPort: 14250
-    servicePort: 14250
-    hostPort: 14250
-    protocol: TCP
   zipkin:
     enabled: true
     containerPort: 9411
@@ -501,7 +483,8 @@ additionalLabels: {}
 # Pod Configuration
 #######################################################################################################################
 podSecurityContext: {}
-securityContext: {}
+spmPodSecurityContext: {}
+containerSecurityContext: {}
 
 nodeSelector: {}
 tolerations: []
@@ -600,10 +583,10 @@ initContainers: []
 #    command:
 #      - sh
 #      - '-c'
-#      - 'chown -R 10001: /var/lib/storage/otc' # use the path given as per `extensions.file_storage.directory` & `extraVolumeMounts[x].mountPath`
+#      - 'chown -R 10001: /var/lib/otelcol' # use the path given as per `extensions.file_storage.directory` & `extraVolumeMounts[x].mountPath`
 #    volumeMounts:
-#      - name: opentelemetry-collector-data # use the name of the volume used for persistence
-#        mountPath: /var/lib/storage/otc # use the path given as per `extensions.file_storage.directory` & `extraVolumeMounts[x].mountPath`
+#      - name: varlibotelcol # use the name of the volume used for persistence
+#        mountPath: /var/lib/otelcol # use the path given as per `extensions.file_storage.directory` & `extraVolumeMounts[x].mountPath`
 
 # Pod lifecycle policies.
 lifecycleHooks: {}

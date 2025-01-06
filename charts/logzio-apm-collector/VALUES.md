@@ -20,9 +20,7 @@ Below you can find a complete list of settings in `values.yaml`.
 | SamplingProbability                           | Traces Sampling Probability                                                                 | `10`                                                          |
 | SamplingLatency                               | Traces Sampling Latency                                                                     | `500`                                                         |
 | traceConfig                                   | Traces collector configuration, supports templating.                                        | see `values.yaml`                                             |
-| spmForwarderConfig                            | Collector configuration to pass traces to the SPM Collector, supports templating.           | see `values.yaml`                                             |
-| spmConfig                                     | Collector configuration to generate SPM, supports templating.                               | see `values.yaml`                                             |
-| serviceGraphConfig                            | Collector configuration to generate Service Graph metrics.                                  | see `values.yaml`                                             |
+| spmConfig                                     | Collector configuration to generate SPM and Service Graph, supports templating.             | see `values.yaml`                                             |
 | image.repository                              | Opentelemetry collector image repository.                                                   | `otel/opentelemetry-collector-contrib`                        |
 | image.pullPolicy                              | Image pull policy.                                                                          | `IfNotPresent`                                                |
 | image.tag                                     | Overrides the image tag whose default is the chart appVersion.                              | `""`                                                          |
@@ -62,7 +60,8 @@ Below you can find a complete list of settings in `values.yaml`.
 | ports                                         | Defines ports configurations                                                                | see `values.yaml`                                             |
 | additionalLabels                              | labels to add to all otel-collector resources                                               | `{}`                                                          |
 | podSecurityContext                            | Security context policies for the pod.                                                      | `{}`                                                          |
-| securityContext                               | Security context policies for the container.                                                | `{}`                                                          |
+| spmPodSecurityContext                         | Security context policies for the spm pod.                                                  | `{}`                                                          |
+| containerSecurityContext                      | Security context policies for the container.                                                | `{}`                                                          |
 | nodeSelector                                  | Node labels for pod assignment                                                              | `{}`                                                          |
 | tolerations                                   | Tolerations for pod assignment                                                              | `[]`                                                          |
 | affinity                                      | Affinity rules for pod assignment.                                                          | see `values.yaml`                                             |

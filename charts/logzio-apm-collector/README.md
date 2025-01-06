@@ -77,7 +77,7 @@ To customize the Traces Sampling rules in the OpenTelemetry Collector, you can f
 
 Get the current Chart's `values.yaml` file:
 ```shell
-helm get values logzio-apm-collector -n monitoring > new-values.yaml
+helm get values logzio-apm-collector -n monitoring -a > new-values.yaml
 ```
 
 Edit the section under `traceConfig` >> `processors` >> `tail_sampling` in `new-values.yaml` to contain the custom config which you created in step 1.
@@ -93,14 +93,22 @@ The [OpenTelemetry File Storage extension](https://github.com/open-telemetry/ope
 
 To enable the File Storage extension, follow the below steps:
 
-- **Step 1**: Add the File Storage Extension
+### **Step 1**: Add the File Storage Extension
 
 Update the `traceConfig` and/or `spmConfig` in `values.yaml` to include the File Storage extension.
-Make sure to add your custom configuration under `extensions` section and added to the `service` extensions.
+
+1. Add your custom configuration under `extensions` section
+2. Include the extension in the `service` configuration and in the exporter's `sending_queue` settings.
+
 Example:
 
 ```yaml
 traceConfig:
+  exporters:
+    logzio:
+      ...
+      sending_queue:
+        storage: file_storage
   ...
   extensions:
     ...
@@ -111,7 +119,7 @@ traceConfig:
     extensions: [health_check, file_storage]
 ```
 
-- **Step 2**: Configure Disk Storage Path
+### **Step 2**: Configure Disk Storage Path
 
 Edit the `extraVolumes` and `extraVolumeMounts` in `values.yaml`, to contain the path where the data should be saved on disk.
 Ensure this path matches the one set in `extensions.file_storage.directory` in step 1:
@@ -125,6 +133,43 @@ extraVolumes:
 extraVolumeMounts:
   - name: varlibotelcol
     mountPath: /var/lib/otelcol  # use the same path as `extensions.file_storage.directory`
+```
+
+> [!NOTE]
+> If you're using `file_storage` extension with the `compaction.directory` setting, make sure to mount that path as well
+
+
+### **Step 3**: Add user with permissions
+
+Edit the `initContainers` and `containerSecurityContext` in `values.yaml` as explained below.
+
+1. Add `initContainers` to set a user with permission to the directory.
+Ensure this path matches the one set in `extensions.file_storage.directory` in step 1:
+
+```yaml
+initContainers:
+ - name: file-storage-permissions
+   image: busybox:latest
+   command:
+     - sh
+     - '-c'
+     - 'chown -R 10001: /var/lib/otelcol'  # use the path given as per `extensions.file_storage.directory` & `extraVolumeMounts[x].mountPath`
+   volumeMounts:
+     - name: varlibotelcol  # use the name of the volume used for persistence
+       mountPath: /var/lib/otelcol  # use the path given as per `extensions.file_storage.directory` & `extraVolumeMounts[x].mountPath`
+```
+
+2. Configure `containerSecurityContext` to set the user and group for the container to match the permissions assigned in the `initContainers`:
+
+```yaml
+containerSecurityContext:
+  runAsUser: 10001  # use the user defined in initContainers per your setup
+  runAsGroup: 10001  # use the group defined in initContainers per your setup
+```
+
+### Step 4: Apply the config:
+```shell
+helm upgrade logzio-apm-collector logzio-helm/logzio-apm-collector -n monitoring -f new-values.yaml
 ```
 
 
