@@ -49,5 +49,5 @@ secrets:
 scriptLogLevel: INFO
 
 affinity: {}
-toleations: {}
+tolerations: {}
 nodeSelector: {}

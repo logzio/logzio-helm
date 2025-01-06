@@ -75,6 +75,8 @@ In these cases we can use the following `--set` command to use an alternative im
 
 
 ## Changelog
+- **0.3.6**
+  - Fix `tolerations` value 
 - **0.3.5**
   - Added `affinity` ,`nodeSelector` and `tolerations` to the deployment.
 - **0.3.4**
