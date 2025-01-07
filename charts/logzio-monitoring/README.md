@@ -226,6 +226,48 @@ There are two possible approaches to the upgrade you can choose from:
 - Reinstall the chart.
 - Before running the `helm upgrade` command, delete the old subcharts resources: `logzio-monitoring-prometheus-pushgateway` deployment and the `logzio-monitoring-prometheus-node-exporter` daemonset.
 
+### Adding Tolerations for Tainted Nodes
+
+To ensure that your pods can be scheduled on nodes with taints, you need to add tolerations to the relevant sub-charts. Here is how you can configure tolerations for each sub-chart within the `logzio-monitoring` Helm chart:
+
+1. **Identify the taints on your nodes:**
+   ```shell
+   kubectl get nodes -o json | jq '"\(.items[].metadata.name) \(.items[].spec.taints)"'
+   ```
+2. **Add tolerations to the Helm install command**:
+You can add tolerations by using the --set flag in your helm install command. Replace the placeholders with your taint values.
+- For `logzio-logs-collector`:
+```shell
+--set logzio-logs-collector.tolerations[0].key="<<TAINT-KEY>>" \
+--set logzio-logs-collector.tolerations[0].operator="<<TAINT-OPERATOR>>" \
+--set logzio-logs-collector.tolerations[0].value="<<TAINT-VALUE>>" \
+--set logzio-logs-collector.tolerations[0].effect="<<TAINT-EFFECT>>"
+```
+- For `logzio-k8s-telemetry`:
+```shell
+--set logzio-k8s-telemetry.tolerations[0].key="<<TAINT-KEY>>" \
+--set logzio-k8s-telemetry.tolerations[0].operator="<<TAINT-OPERATOR>>" \
+--set logzio-k8s-telemetry.tolerations[0].value="<<TAINT-VALUE>>" \
+--set logzio-k8s-telemetry.tolerations[0].effect="<<TAINT-EFFECT>>"
+```
+- For `logzio-trivy`:
+```shell
+--set logzio-trivy.tolerations[0].key="<<TAINT-KEY>>" \
+--set logzio-trivy.tolerations[0].operator="<<TAINT-OPERATOR>>" \
+--set logzio-trivy.tolerations[0].value="<<TAINT-VALUE>>" \
+--set logzio-trivy.tolerations[0].effect="<<TAINT-EFFECT>>"
+```
+- For `logzio-k8s-events`:
+```shell
+--set logzio-k8s-events.tolerations[0].key="<<TAINT-KEY>>" \
+--set logzio-k8s-events.tolerations[0].operator="<<TAINT-OPERATOR>>" \
+--set logzio-k8s-events.tolerations[0].value="<<TAINT-VALUE>>" \
+--set logzio-k8s-events.tolerations[0].effect="<<TAINT-EFFECT>>"
+```
+Replace `<<TAINT-KEY>>`, `<<TAINT-OPERATOR>>`, `<<TAINT-VALUE>>`, and `<<TAINT-EFFECT>>` with the appropriate values for your taints.
+
+By following these steps, you can ensure that your pods are scheduled on nodes with taints by adding the necessary tolerations to the Helm chart configuration.
+
 ## Changelog
 - **6.2.4**:
   - Upgrade `logzio-trivy` chart to `v0.3.6`
