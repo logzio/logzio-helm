@@ -1,0 +1,632 @@
+# Default values for logzio-apm-collector.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# Control the deployment of this chart by a parent chart
+enabled: false
+
+# Enable Span metrics
+spm:
+  enabled: false
+
+# Enable Service Graph metrics
+serviceGraph:
+  enabled: false
+
+# Specifies a custom name for the chart's resources
+nameOverride: ""
+fullnameOverride: ""
+namespaceOverride: ""
+
+#######################################################################################################################
+# Base Configuration Parameters
+#######################################################################################################################
+global:
+  # environment identifier attribute that will be added to all telemetry
+  env_id: "my_env"
+  # Logz.io Tracing Shipping Token
+  logzioTracesToken: ""
+  # Logz.io SPM Shipping Token
+  logzioSpmToken: ""
+  # Logz.io region code
+  logzioRegion: "us"
+  # Optional - Overrides global.LogzioRegion listener address with a custom endpoint. For example: http://endpoint:8080
+  customTracesEndpoint: ""
+  customSpmEndpoint: ""
+
+# Allows changing the OpenTelemetry Collector log level
+otelLogLevel: "info"
+
+# Number of collector replicas
+standaloneCollector:
+  replicaCount: 1
+
+#######################################################################################################################
+# OpenTelemetry Collector Configuration
+#######################################################################################################################
+
+## Trace sampling default rules configuration.
+## These settings do not affect the traces used for calculating SPM (span metrics).
+# SamplingProbability: 10  # Traces Sampling Probability
+# SamplingLatency: 500  # Traces Sampling Latency
+
+# Tracing Collector configuration 
+traceConfig:
+  exporters:
+    logzio:
+      endpoint: ${CUSTOM_TRACES_ENDPOINT}
+      region: ${LOGZIO_REGION}
+      account_token: ${LOGZIO_TRACES_TOKEN}
+      headers:
+        user-agent: "{{ .Chart.Name }}-{{ .Chart.Version }}-helm"
+    # Exporter from Traces Collector to SPM Collector
+    # Removed from the pipeline if spm.enabled is false
+    otlp/spm_forwarder:
+      endpoint: "${SPM_SERVICE_ENDPOINT}"
+      tls:
+        insecure: true
+  extensions:
+    health_check:
+      endpoint: :13133
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+          endpoint: "0.0.0.0:4317"
+        http:
+          endpoint: "0.0.0.0:4318"
+    zipkin:
+      endpoint: "0.0.0.0:9411"
+  processors:
+    resourcedetection/all:
+      detectors: [ec2, azure, gcp]
+    tail_sampling:
+      policies:
+        [
+            {
+              name: error-in-policy,
+              type: status_code,
+              status_code: {status_codes: [ERROR]}
+            },
+            {
+              name: slow-traces-policy,
+              type: latency,
+              latency: {threshold_ms: "${SAMPLING_LATENCY}" }
+            },
+            {
+              name: probability-policy,
+              type: probabilistic,
+              probabilistic: {sampling_percentage: "${SAMPLING_PROBABILITY}" }
+            }
+        ]
+    k8sattributes:
+      extract:
+        metadata:
+        - k8s.pod.name
+        - k8s.deployment.name
+        - k8s.namespace.name
+        - k8s.node.name
+        - k8s.statefulset.name
+        - k8s.replicaset.name
+        - k8s.daemonset.name
+        - k8s.cronjob.name
+        - k8s.job.name
+    resource/k8s:
+      attributes:
+      # Rename fields
+      - key: pod
+        action: insert
+        from_attribute: k8s.pod.name
+      - key: kubernetes_node
+        action: insert
+        from_attribute: k8s.node.name
+      - key: kubernetes_namespace
+        action: insert
+        from_attribute: k8s.namespace.name
+      - key: kubernetes_deployment
+        action: insert
+        from_attribute: k8s.deployment.name
+      - key: kubernetes_pod_ip
+        action: insert
+        from_attribute: k8s.pod.ip
+      - key: kubernetes_statefulset
+        action: insert
+        from_attribute: k8s.statefulset.name
+      - key: kubernetes_replicaset
+        action: insert
+        from_attribute: k8s.replicaset.name
+      - key: kubernetes_cronjob
+        action: insert
+        from_attribute: k8s.cronjob.name
+      - key: kubernetes_daemonset
+        action: insert
+        from_attribute: k8s.daemonset.name
+      - key: kubernetes_job
+        action: insert
+        from_attribute: k8s.job.name
+      # Delete old
+      - key: k8s.deployment.name
+        action: delete
+      - key: k8s.pod.name
+        action: delete
+      - key: k8s.namespace.name
+        action: delete
+      - key: k8s.node.name
+        action: delete
+      - key: k8s.pod.ip
+        action: delete
+      - key: k8s.statefulset.name
+        action: delete
+      - key: k8s.replicaset.name
+        action: delete
+      - key: k8s.daemonset.name
+        action: delete
+      - key: k8s.job.name
+        action: delete
+      - key: k8s.cronjob.name
+        action: delete
+    attributes/env_id:
+      # Add env_id to all spans
+      actions:
+        - key: env_id
+          value: ${ENV_ID}
+          action: insert
+    batch: {}
+  service:
+    extensions: [health_check]
+    pipelines:
+      traces:
+        receivers: [zipkin, otlp]
+        processors: [resourcedetection/all,attributes/env_id, k8sattributes, resource/k8s, tail_sampling, batch]
+        exporters: [logzio]
+      # Removed if spm.enabled is false
+      traces/spm:
+        receivers: [zipkin, otlp]
+        processors: [resourcedetection/all, attributes/env_id, k8sattributes, batch]
+        exporters: [otlp/spm_forwarder]
+    telemetry:
+      logs:
+        level: ${LOG_LEVEL}
+
+# SPM Collector configuration
+spmConfig:
+  exporters:
+    prometheusremotewrite/spm-logzio:
+      endpoint: ${SPM_ENDPOINT}
+      headers:
+        Authorization: Bearer ${LOGZIO_SPM_TOKEN}
+        user-agent: "{{ .Chart.Name }}-{{ .Chart.Version }}-helm"
+      timeout: 30s  # Time to wait per attempt to send data
+      add_metric_suffixes: false
+  extensions:
+    health_check:
+      endpoint: :13133
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+          endpoint: "0.0.0.0:4317"
+  processors:
+      batch: {}
+      metricstransform/metrics-rename:
+        transforms:
+        # rename metric duration.XXX >> latency.XXX
+        - include: ^duration(.*)$$
+          action: update
+          match_type: regexp
+          new_name: latency.$${1}
+        # rename metric calls >> calls_total
+        - action: update
+          include: calls
+          new_name: calls_total
+        # manually add 'seconds' unit to the relevant Service Graph metric names
+        - include: ^(traces_service_graph_request_(server|client).*)$$
+          action: update
+          match_type: regexp
+          new_name: $${1}_seconds
+      metricstransform/labels-rename:
+        transforms:
+        # for metrics matching `latencyXXX` or `callsXXX`
+        # rename label span.name >> operation
+        - action: update
+          include: ^(latency|calls)
+          match_type: regexp
+          operations:
+          - action: update_label
+            label: span.name
+            new_label: operation
+  connectors:
+      spanmetrics:
+        aggregation_temporality: AGGREGATION_TEMPORALITY_CUMULATIVE
+        dimensions:
+        - name: rpc.grpc.status_code
+        - name: http.method
+        - name: http.status_code
+        - name: k8s.pod.name
+        - name: k8s.deployment.name
+        - name: k8s.namespace.name
+        - name: k8s.node.name
+        - name: k8s.statefulset.name
+        - name: k8s.replicaset.name
+        - name: k8s.daemonset.name
+        - name: k8s.cronjob.name
+        - name: k8s.job.name
+        - name: cloud.provider
+        - name: cloud.region
+        - name: db.system
+        - name: messaging.system
+        - default: ${ENV_ID}
+          name: env_id
+        dimensions_cache_size: 100000
+        histogram:
+          explicit:
+            buckets:
+            - 2ms
+            - 8ms
+            - 50ms
+            - 100ms
+            - 200ms
+            - 500ms
+            - 1s
+            - 5s
+            - 10s
+        metrics_expiration: 5m
+        resource_metrics_key_attributes:
+        - service.name
+        - telemetry.sdk.language
+        - telemetry.sdk.name
+      servicegraph:
+        latency_histogram_buckets: [2ms, 8ms, 50ms, 100ms, 200ms, 500ms, 1s, 5s, 10s]
+        dimensions:
+          - env_id
+        store:
+          ttl: 5s
+          max_items: 100000
+        metrics_flush_interval: 60s
+  service:
+    extensions: [health_check]
+    pipelines:
+      traces:
+        receivers: [otlp]
+        exporters: []  # exporters are added according to spm.enabled and serviceGraph.enabled
+      metrics/spm-logzio:
+        receivers: []  # receivers are added according to spm.enabled and serviceGraph.enabled
+        processors: [metricstransform/metrics-rename, metricstransform/labels-rename, batch]
+        exporters: [prometheusremotewrite/spm-logzio]
+    telemetry:
+      logs:
+        level: ${LOG_LEVEL}
+
+#######################################################################################################################
+# OpenTelemetry Collector Image Settings
+#######################################################################################################################
+image:
+  # If you want to use the core image `otel/opentelemetry-collector`, you also need to change `command.name` value to `otelcol`.
+  repository: otel/opentelemetry-collector-contrib
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+  # When digest is set to a non-empty value, images will be pulled by digest (regardless of tag value).
+  digest: ""
+
+imagePullSecrets: []
+
+# OpenTelemetry Collector executable
+command:
+  name: otelcol-contrib
+  extraArgs:
+    - --feature-gates=connector.spanmetrics.legacyMetricNames  # rename traces_span_metrics_xxx >> xxx
+
+#######################################################################################################################
+# Kubernetes Resources Configuration
+#######################################################################################################################
+secret:
+  # When secret.enabled is true, the logzio secret will be created and managed by this Chart.
+  # If you're managing the logzio secrets by yourself, set to false.
+  # Note that in order for the default configuration to work properly, you need to:
+  # 1. Update secrets.name to your custom secret name.
+  # 2. Include these keys in your secret: env-id, logzio-listener-region, logzio-traces-token, logzio-spm-token.
+  # To use a custom endpoint, include custom-traces-endpoint, custom-spm-endpoint or both parameters in your secret,
+  # depending on your needs and set global.customTracesEndpoint and/or global.customSpmEndpoint to `true`.
+  enabled: true
+  name: logzio-apm-collector-secret
+
+configMap:
+  # Specifies whether a configMap should be created
+  create: true
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+clusterRole:
+  # Specifies whether a clusterRole should be created
+  # Some presets also trigger the creation of a cluster role and cluster role binding.
+  # If using one of those presets, this field is no-op.
+  create: true
+  # Annotations to add to the clusterRole
+  # Can be used in combination with presets that create a cluster role.
+  annotations: {}
+  # The name of the clusterRole to use.
+  # If not set a name is generated using the fullname template
+  # Can be used in combination with presets that create a cluster role.
+  name: ""
+  # A set of rules as documented here : https://kubernetes.io/docs/reference/access-authn-authz/rbac/
+  # Can be used in combination with presets that create a cluster role to add additional rules.
+  rules: []
+  # - apiGroups:
+  #   - ''
+  #   resources:
+  #   - 'pods'
+  #   - 'nodes'
+  #   verbs:
+  #   - 'get'
+  #   - 'list'
+  #   - 'watch'
+  clusterRoleBinding:
+    # Annotations to add to the clusterRoleBinding
+    # Can be used in combination with presets that create a cluster role binding.
+    annotations: {}
+    # The name of the clusterRoleBinding to use.
+    # If not set a name is generated using the fullname template
+    # Can be used in combination with presets that create a cluster role binding.
+    name: ""
+
+service:
+  # Enable the creation of a Traces Collector Service.
+  enabled: true
+
+  type: ClusterIP
+  # type: LoadBalancer
+  # loadBalancerIP: 1.2.3.4
+  # loadBalancerSourceRanges: []
+
+  # Annotations to add to the Service.
+  annotations: {}
+
+  ## By default, Service will be created setting 'internalTrafficPolicy: Cluster'
+  ## unless other value is explicitly set.
+  ## Setting 'internalTrafficPolicy: Cluster' on a daemonset is not recommended (in such case, use 'internalTrafficPolicy: Local')
+  # internalTrafficPolicy: Cluster
+
+  ## By default, Service of type 'LoadBalancer' will be created setting 'externalTrafficPolicy: Cluster'
+  ## unless other value is explicitly set.
+  ## Possible values are Cluster or Local (https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip)
+  # externalTrafficPolicy: Cluster
+
+spmService:
+  # Only generated if spm.enabled is set to true.
+  type: ClusterIP
+
+  # Annotations to add to the Service.
+  annotations: {}
+
+  ## By default, Service will be created setting 'internalTrafficPolicy: Cluster'
+  ## unless other value is explicitly set.
+  ## Setting 'internalTrafficPolicy: Cluster' on a daemonset is not recommended (in such case, use 'internalTrafficPolicy: Local')
+  # internalTrafficPolicy: Cluster
+
+  ## By default, Service of type 'LoadBalancer' will be created setting 'externalTrafficPolicy: Cluster'
+  ## unless other value is explicitly set.
+  ## Possible values are Cluster or Local (https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip)
+  # externalTrafficPolicy: Cluster
+
+# Configure HPA for Traces Collector.
+# Make sure that the `service.type` is `ClusterIP` to utilize K8S ability to automatically distribute traffic across all pod replicas
+autoscaling:
+  # Enable the creation of HPA for autoscaling.
+  enabled: false
+  # Annotations to add to the HPA.
+  annotations: {}
+  # Control autoscaling scale
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+# Configure VPA for SPM Collector.
+# Vertical scaling is used instead of horizontal scaling to ensure the accuracy of SPM aggregations.
+# Note: This feature requires the VPA Custom Resource Definitions (CRDs) to be installed. 
+# Installation guide: https://github.com/kubernetes/autoscaler/blob/master/vertical-pod-autoscaler/docs/installation.md
+spmAutoscaling:
+  # Enable the vertical scaling
+  enabled: false
+  # Annotations to add to the HPA.
+  annotations: {}
+  # Control scaling limits
+  minAllowed:
+    cpu: 50m
+    memory: 70Mi
+  maxAllowed:
+    cpu: 150m
+    memory: 250Mi
+
+# Configuration for ports
+ports:
+  otlp:
+    enabled: true
+    containerPort: 4317
+    servicePort: 4317
+    hostPort: 4317
+    protocol: TCP
+  otlp-http:
+    enabled: true
+    containerPort: 4318
+    servicePort: 4318
+    hostPort: 4318
+    protocol: TCP
+  zipkin:
+    enabled: true
+    containerPort: 9411
+    servicePort: 9411
+    hostPort: 9411
+    protocol: TCP
+
+portsSpm:
+  otlp:
+    enabled: true
+    containerPort: 4317
+    servicePort: 4317
+    hostPort: 4317
+    protocol: TCP
+
+# Common labels to add to all otel-collector resources. Evaluated as a template.
+additionalLabels: {}
+#  app.kubernetes.io/part-of: my-app
+
+#######################################################################################################################
+# Pod Configuration
+#######################################################################################################################
+podSecurityContext: {}
+spmPodSecurityContext: {}
+containerSecurityContext: {}
+
+nodeSelector: {}
+tolerations: []
+# Set affinity rules for the scheduler to determine where all DaemonSet pods can be placed.
+# The following configuration prevent logzio APM collector DaemonSet deployment on fargate nodes
+# DaemonSet mode is not used in the current APM chart, this configuration is retained for potential future support.
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: eks.amazonaws.com/compute-type
+              operator: DoesNotExist
+topologySpreadConstraints: []
+
+# Allows for pod scheduler prioritisation
+priorityClassName: ""
+
+extraEnvs: []
+extraEnvsFrom: []
+extraVolumes: []
+  # - name: varlibotelcol
+  #   hostPath:
+  #     path: /var/lib/otelcol  # use the path per `extensions.file_storage.directory`
+  #     type: DirectoryOrCreate
+extraVolumeMounts: []
+  # - name: varlibotelcol
+  #   mountPath: /var/lib/otelcol  # use the path given as per `extensions.file_storage.directory`
+
+# When enabled, the chart will set the GOMEMLIMIT env var to 80% of the configured 'resources.limits.memory'
+# If no 'resources.limits.memory' are defined, enabling does nothing.
+# In a future release this setting will be enabled by default.
+# For more details see https://github.com/open-telemetry/opentelemetry-helm-charts/issues/891
+useGOMEMLIMIT: false
+
+# Resource allocation.
+resources:
+  # guaranteed resource allocation
+  requests:
+    cpu: 50m
+    memory: 70Mi
+  # upper bound the container can consume
+  # must be configured if you enable useGOMEMLIMIT
+  limits:
+    cpu: 250m
+    memory: 512Mi
+
+podAnnotations: {}
+podLabels: {}
+
+# Adding entries to Pod /etc/hosts with HostAliases
+# https://kubernetes.io/docs/tasks/network/customize-hosts-file-for-pods/
+hostAliases: []
+  # - ip: "1.2.3.4"
+  #   hostnames:
+  #     - "my.host.com"
+
+# Pod DNS policy ClusterFirst, ClusterFirstWithHostNet, None, Default
+dnsPolicy: ""
+
+# Custom DNS config. Required when DNS policy is None.
+dnsConfig: {}
+
+annotations: {}
+
+# List of extra sidecars to add
+extraContainers: []
+# extraContainers:
+#   - name: test
+#     command:
+#       - cp
+#     args:
+#       - /bin/sleep
+#       - /test/sleep
+#     image: busybox:latest
+#     volumeMounts:
+#       - name: test
+#         mountPath: /test
+
+# List of init container specs, e.g. for copying a binary to be executed as a lifecycle hook.
+# Another usage of init containers is e.g. initializing filesystem permissions to the OTLP Collector user `10001` in case you are using persistence and the volume is producing a permission denied error for the OTLP Collector container.
+initContainers: []
+# initContainers:
+#   - name: test
+#     image: busybox:latest
+#     command:
+#       - cp
+#     args:
+#       - /bin/sleep
+#       - /test/sleep
+#     volumeMounts:
+#       - name: test
+#         mountPath: /test
+#  - name: init-fs
+#    image: busybox:latest
+#    command:
+#      - sh
+#      - '-c'
+#      - 'chown -R 10001: /var/lib/otelcol' # use the path given as per `extensions.file_storage.directory` & `extraVolumeMounts[x].mountPath`
+#    volumeMounts:
+#      - name: varlibotelcol # use the name of the volume used for persistence
+#        mountPath: /var/lib/otelcol # use the path given as per `extensions.file_storage.directory` & `extraVolumeMounts[x].mountPath`
+
+# Pod lifecycle policies.
+lifecycleHooks: {}
+# lifecycleHooks:
+#   preStop:
+#     exec:
+#       command:
+#       - /test/sleep
+#       - "5"
+
+# liveness probe configuration
+# Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+livenessProbe:
+  ## Number of seconds after the container has started before startup, liveness or readiness probes are initiated.
+  # initialDelaySeconds: 1
+  ## How often in seconds to perform the probe.
+  # periodSeconds: 10
+  ## Number of seconds after which the probe times out.
+  # timeoutSeconds: 1
+  ## Minimum consecutive failures for the probe to be considered failed after having succeeded.
+  # failureThreshold: 1
+  ## Duration in seconds the pod needs to terminate gracefully upon probe failure.
+  # terminationGracePeriodSeconds: 10
+  httpGet:
+    port: 13133
+    path: /
+
+# readiness probe configuration
+# Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+readinessProbe:
+  ## Number of seconds after the container has started before startup, liveness or readiness probes are initiated.
+  # initialDelaySeconds: 1
+  ## How often (in seconds) to perform the probe.
+  # periodSeconds: 10
+  ## Number of seconds after which the probe times out.
+  # timeoutSeconds: 1
+  ## Minimum consecutive successes for the probe to be considered successful after having failed.
+  # successThreshold: 1
+  ## Minimum consecutive failures for the probe to be considered failed after having succeeded.
+  # failureThreshold: 1
+  httpGet:
+    port: 13133
+    path: /

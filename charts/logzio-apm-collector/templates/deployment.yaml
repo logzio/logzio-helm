@@ -1,0 +1,42 @@
+{{ if .Values.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "apm-collector.fullname" . }}
+  namespace: {{ template "apm-collector.namespace" . }}
+  labels:
+    {{- include "apm-collector.labels" . | nindent 4 }}
+  {{- if .Values.annotations }}
+  annotations:
+    {{- range $key, $value := .Values.annotations }}
+    {{- printf "%s: %s" $key (tpl $value $ | quote) | nindent 4 }}
+    {{- end }}
+  {{- end }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.standaloneCollector.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "apm-collector.selectorLabels" . | nindent 6 }}
+      {{- include "apm-collector.component" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        {{- include "apm-collector.podAnnotations" . | nindent 8 }}
+      labels:
+        {{- include "apm-collector.selectorLabels" . | nindent 8 }}
+        {{- include "apm-collector.podLabels" . | nindent 8 }}
+        {{- include "apm-collector.component" . | nindent 8 }}
+    spec:
+      {{- include "apm-collector.pod" . | nindent 6}}
+      hostNetwork: {{ .Values.hostNetwork }}
+      {{- with .Values.dnsPolicy }}
+      dnsPolicy: {{ . }}
+      {{- end }}
+      {{- with .Values.dnsConfig }}
+      dnsConfig:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{ end }}

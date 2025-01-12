@@ -1,0 +1,20 @@
+{{- if and (eq .Values.dnsPolicy "None") (not .Values.dnsConfig) }}
+{{- fail "[ERROR] dnsConfig should be provided when dnsPolicy is None" }}
+{{ end }}
+
+{{- if not .Values.configMap.create }}
+[WARNING] "configMap" will not be created and `traceConfig`, `spmConfig` and `serviceGraphConfig` will not take effect.
+{{ end }}
+
+{{- if not .Values.resources }}
+[WARNING] No resource limits or requests were set. Consider setter resource requests and limits for your logzio-apm-collector via the `resources` field.
+{{ end }}
+
+{{- $logLevel := lower .Values.otelLogLevel }}
+{{- if not (or (eq $logLevel "info") (eq $logLevel "warn") (eq $logLevel "error") (eq $logLevel "debug")) }}
+{{ fail "[ERROR] The logzio-apm-collector Chart's `otelLogLevel` must be one of 'info', 'warn', 'error' or 'debug'." }}
+{{- end }}
+
+{{- if and (.Values.useGOMEMLIMIT) (not ((((.Values.resources).limits).memory))) }}
+[WARNING] "useGOMEMLIMIT" is enabled but memory limits have not been supplied, which means no GOMEMLIMIT env var was configured but the Memory Ballast Extension was removed. It is highly recommended to only use "useGOMEMLIMIT" when memory limits have been set.
+{{ end }}

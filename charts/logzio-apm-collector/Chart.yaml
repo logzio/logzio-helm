@@ -1,0 +1,11 @@
+apiVersion: v2
+name: logzio-apm-collector
+version: 1.0.0
+description: Kubernetes APM agent for Logz.io based on OpenTelemetry Collector
+type: application
+home: https://logz.io/
+icon: https://logzbucket.s3.eu-west-1.amazonaws.com/logz-io-img/logo400x400.png
+maintainers:
+  - name: Naama Bendalak
+    email: naama.bendalak@logz.io
+appVersion: 0.116.1
