@@ -169,7 +169,7 @@ containerSecurityContext:
 
 ### Step 4: Apply the config:
 ```shell
-helm upgrade logzio-apm-collector logzio-helm/logzio-apm-collector -n monitoring -f new-values.yaml
+helm upgrade logzio-apm-collector logzio-helm/logzio-apm-collector -n monitoring -f values.yaml
 ```
 
 
