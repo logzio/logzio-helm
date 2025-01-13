@@ -165,6 +165,17 @@ data:
 
 
 ## Changelog
+- v2.1.0
+  - Upgrade `logzio/prometheus-alerts-migrator` image `v1.1.0`->`v1.2.0`:
+    - Add support for MS Teams contact points
+    - Update dependencies:
+      - `prometheus/common`: `v0.60.1` -> `v0.61.0`
+      - `prometheus/prometheus`: `v0.55.0` -> `v0.301.0`
+      - `k8s.io/api`: `v0.31.2` -> `v0.32.0`
+      - `k8s.io/apimachinery`: `v0.31.2` -> `v0.32.0`
+      - `k8s.io/client-go`: `v0.31.2` -> `v0.32.0`
+    - Improve error handling In event handler creation
+    - Refactor import alias names to lowercase
 - v2.0.3
   - Upgrade `logzio/prometheus-alerts-migrator` image `v1.0.3`->`v1.1.0`
     - Add support for migrating alert rules groups
