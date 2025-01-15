@@ -297,11 +297,13 @@ If needed, the fluentd image can be changed to support windows server 2022 with 
 
 ```yaml
 --set windowsImage=logzio/fluentd-windows-2022 \
---set windowsImageTag=0.0.2
+--set windowsImageTag=0.0.5
 ```
 
 
 ## Change log
+- **0.31.0**:
+   - Upgrade fluentd version to `1.18.0`
 - **0.30.5**:
    - Upgrade fluentd version to `1.17.1`
 - **0.30.4**:
@@ -315,6 +317,10 @@ If needed, the fluentd image can be changed to support windows server 2022 with 
  - **0.30.0**:
   - Upgrade fluentd version to `1.16.5`
   - Fix bug of `env-id.conf`
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
  - **0.29.2**:
   - Enhanced env_id handling to support both numeric and string formats.
  - **0.29.1**:
@@ -333,11 +339,7 @@ If needed, the fluentd image can be changed to support windows server 2022 with 
  - **0.26.0**:
    - Bump docker image to `1.5.1`.
    - Add ability to configure pos file for containers logs.
-
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
-
- - **0.25.0*:
+ - **0.25.0**:
    - Add parameter `isPrivileged` to allow running Daemonset with priviliged security context.
    - **Bug fix**: Fix template for `fluentd.serviceAccount`, and fix use of template in service account.
  - **0.24.0**:
