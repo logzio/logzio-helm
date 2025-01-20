@@ -302,7 +302,7 @@ If needed, the fluentd image can be changed to support windows server 2022 with 
 
 
 ## Change log
-- **0.31.0**:
+- **0.30.6**:
    - Upgrade fluentd version to `1.18.0`
 - **0.30.5**:
    - Upgrade fluentd version to `1.17.1`
