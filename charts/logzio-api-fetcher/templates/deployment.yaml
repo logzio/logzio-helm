@@ -21,6 +21,12 @@ spec:
             - name: config-volume
               mountPath: /app/src/shared/config.yaml
               subPath: config.yaml
+      {{- if .Values.imagePullSecrets }}
+      imagePullSecrets:
+      {{- range .Values.imagePullSecrets }}
+        - name: {{ . }}
+      {{- end }}
+      {{- end }}
       volumes:
         - name: config-volume
           configMap:
