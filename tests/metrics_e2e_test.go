@@ -92,7 +92,7 @@ func TestFargateMetrics(t *testing.T) {
 	}
 	requiredMetrics := map[string][]string{
 		"kube_pod_status_phase":                    {"p8s_logzio_name", "namespace", "pod", "phase", "uid"},
-		"kube_pod_info":                            {"p8s_logzio_name", "namespace", "host_ip", "pod"},
+		"kube_pod_info":                            {"p8s_logzio_name", "namespace", "pod"},
 		"kube_pod_container_resource_limits":       {"p8s_logzio_name", "namespace", "pod", "resource"},
 		"kube_pod_container_info":                  {"p8s_logzio_name", "namespace", "pod"},
 		"kube_pod_created":                         {"p8s_logzio_name", "namespace", "pod"},
