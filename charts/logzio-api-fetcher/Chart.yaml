@@ -2,8 +2,8 @@ apiVersion: v2
 name: logzio-api-fetcher
 description: Helm chart for deploying the Logz.io API Fetcher
 type: application
-version: 1.1.0
-appVersion: "0.2.2"
+version: 1.1.1
+appVersion: "0.3.1"
 maintainers:
   - name: yotamloe
     email: yotam.loewenbach@logz.io
