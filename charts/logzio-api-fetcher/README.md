@@ -370,6 +370,9 @@ oauth_apis:
 ```
 
 ## Changelog:
+- **1.2.0**:
+  - Update `logzio-api-fetcher` image from `0.2.2` -> `0.3.1`
+  - Add `imagePullSecrets` to `values.yaml`
 - **1.1.0**:
   - Add option to control logging level
 - **1.0.2**:
