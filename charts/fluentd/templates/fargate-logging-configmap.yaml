@@ -10,7 +10,7 @@ data:
     [FILTER]
       Name modify
       Match *
-      Add token {{ .Values.secrets.logzioShippingToken }}
+      Add token {{ .Values.logzioLogsToken | default .Values.global.logzioLogsToken }}
       Add type {{ .Values.daemonset.logType }}
       Rename log message
     [FILTER]
@@ -39,9 +39,9 @@ data:
     [OUTPUT]
       Name  es
       Match *
-      Host  {{ .Values.secrets.logzioListener }}
+      Host  {{ template "logzio.listenerHost" . }}
       HTTP_User token
-      HTTP_Passwd {{ .Values.secrets.logzioShippingToken }}
+      HTTP_Passwd {{ .Values.logzioLogsToken | default .Values.global.logzioLogsToken }}
       Port  8070
       Retry_Limit no_retries
       Index logzioCustomerIndex
