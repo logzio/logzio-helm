@@ -80,11 +80,6 @@ containers:
           secretKeyRef:
             name: {{ .Values.secrets.name }}
             key: logzio-metrics-listener
-      - name: P8S_LOGZIO_NAME
-        valueFrom:
-          secretKeyRef:
-            name: {{ .Values.secrets.name }}
-            key: p8s-logzio-name   
 {{- end }}
 {{- if .Values.traces.enabled }}
       - name: TRACES_TOKEN
@@ -92,7 +87,7 @@ containers:
           secretKeyRef:
             name: {{ .Values.secrets.name }}
             key: logzio-traces-shipping-token
-      {{ if .Values.secrets.CustomTracingEndpoint}}
+      {{ if .Values.global.CustomTracingEndpoint }}
       - name: CUSTOM_TRACING_ENDPOINT
         valueFrom:
           secretKeyRef:

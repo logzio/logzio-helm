@@ -27,18 +27,25 @@ nodeExporter:
 nameOverride: "otel-collector" # The resources name prefix 
 fullnameOverride: "" # The resources name
 
+global:
+  # Metrics account shipping token
+  logzioMetricsToken: ""
+  # Tracing account shipping token
+  logzioTracesToken: ""
+  # Span Metrics account shipping token
+  logzioSpmToken: ""
+  # Kubernetes objects Logs account shipping token
+  logzioLogsToken: ""
+  # Environment name 
+  env_id: "my_environment"
+  # Traces & Logs listener address region code - https://docs.logz.io/docs/user-guide/admin/hosting-regions/account-region/
+  logzioRegion: "us"
+  # Custom Traces listener endpoint
+  customTracesEndpoint: ""
+
 secrets:
   name: logzio-secret  # Secret name
   enabled: true  # Create secret
-  MetricsToken: ""  # Metrics account shipping token
-  TracesToken: ""  # Tracing account shipping token
-  SpmToken: ""  # Span Metrics account shipping token
-  k8sObjectsLogsToken: ""  # Kubernetes objects Logs account shipping token
-  ListenerHost: ""  # Logz.io metrics listener address - https://docs.logz.io/docs/user-guide/admin/hosting-regions/account-region/
-  env_id: "my_environment"  # Environment name 
-  LogzioRegion: "us"  # Traces & Logs listener address region code - https://docs.logz.io/docs/user-guide/admin/hosting-regions/account-region/
-  CustomTracingEndpoint: ""  # Custom Traces listener endpoint
-  p8s_logzio_name: ""  # Metrics Environment name
   windowsNodeUsername: ""  # Windows Node Username
   windowsNodePassword: ""  # Windows Node Password
   SamplingProbability: 10  # Traces Sampling Probability
@@ -325,7 +332,7 @@ metricsConfig:
       timeout: 30s
       endpoint: ${LISTENER_URL}
       external_labels:
-        p8s_logzio_name: ${P8S_LOGZIO_NAME}
+        p8s_logzio_name: ${ENV_ID}
       headers:
         Authorization: "Bearer ${METRICS_TOKEN}"
         user-agent: "{{ .Chart.Name }}-{{ .Chart.Version }}-helm"
@@ -333,7 +340,7 @@ metricsConfig:
       timeout: 30s
       endpoint: ${LISTENER_URL}
       external_labels:
-        p8s_logzio_name: ${P8S_LOGZIO_NAME}
+        p8s_logzio_name: ${ENV_ID}
       headers:
         Authorization: "Bearer ${METRICS_TOKEN}"
         user-agent: "{{ .Chart.Name }}-{{ .Chart.Version }}-helm"
@@ -1009,7 +1016,7 @@ daemonsetConfig:
       timeout: 30s
       endpoint: ${LISTENER_URL}
       external_labels:
-        p8s_logzio_name: ${P8S_LOGZIO_NAME}
+        p8s_logzio_name: ${ENV_ID}
       headers:
         Authorization: "Bearer ${METRICS_TOKEN}"
         user-agent: "{{ .Chart.Name }}-{{ .Chart.Version }}-helm"
@@ -1017,7 +1024,7 @@ daemonsetConfig:
       timeout: 30s
       endpoint: ${LISTENER_URL}
       external_labels:
-        p8s_logzio_name: ${P8S_LOGZIO_NAME}
+        p8s_logzio_name: ${ENV_ID}
       headers:
         Authorization: "Bearer ${METRICS_TOKEN}"
         user-agent: "{{ .Chart.Name }}-{{ .Chart.Version }}-helm"

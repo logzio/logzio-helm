@@ -50,13 +50,11 @@ logzio-k8s-telemetry allows you to ship metrics and traces from your Kubernetes 
 | nameOverride | string | `"otel-collector"` | Name override for the opentelemetry collector. |
 | nodeExporter.enabled | bool | `true` | Controlles the deployment of the node-exporter sub chart. |
 | pushGateway.enabled | bool | `true` | Controlles the deployment of the prometheus-pushgateway sub chart. |
-| secrets.ListenerHost | string | `""` | Logzio listener host. |
-| secrets.LogzioRegion | string | `"us"` | Logzio listener region. |
-| secrets.MetricsToken | string | `""` | Logzio metrics token. |
-| secrets.SpmToken | string | `""` | Logzio spm metrics token. |
-| secrets.TracesToken | string | `""` | Logzio traces token. |
-| secrets.env_id | string | `"my_environment"` | Env id to be used with k8s 360. |
-| secrets.p8s_logzio_name | string | `""` | Cluster name that will be added as a label. |
+| global.logzioRegion | string | `"us"` | Logzio listener region. |
+| global.logzioMetricsToken | string | `""` | Logzio metrics token. |
+| global.logzioSpmToken | string | `""` | Logzio spm metrics token. |
+| global.logzioTracesToken | string | `""` | Logzio traces token. |
+| global.env_id | string | `"my_environment"` | Env id to be used with k8s 360. |
 | secrets.windowsNodePassword | string | `""` | Windows node password - will be used to install node-exporter for windows nodes. |
 | secrets.windowsNodeUsername | string | `""` | Windows username - will be used to install node-exporter for windows nodes. |
 | standaloneCollector.resources.limits.cpu | string | `"200m"` | Cpu limit for the opentelemetry collector pod. |
