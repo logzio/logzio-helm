@@ -38,7 +38,7 @@ Builds the full logzio listener host
 {{- else if or ( eq $.Values.global.logzioRegion "us" ) ( eq $.Values.global.logzioRegion " " ) -}}
 {{- printf "https://listener.logz.io:8071" }}
 {{- else }}
-{{- printf "https://%s:8071" .Values.secrets.logzioListener -}}
+{{- printf "https://listener-%s.logz.io:8071" .Values.global.logzioRegion -}}
 {{- end -}}
 {{- end -}}
 
