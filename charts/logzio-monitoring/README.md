@@ -252,22 +252,25 @@ helm get values logzio-monitoring -n monitoring
   <summary>Logs, Metrics and Traces:</summary>
 
 ```shell
-helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitroing --version 7.0.0 /
---set global.region="<<LOGZIO-REGION>>" /
---set global.env_id="<<ENV-ID>>" /
---set global.logzioLogsToken="<<LOG-SHIPPING-TOKEN>>" /
---set global.logzioMetricsToken="<<PROMETHEUS-METRICS-SHIPPING-TOKEN>>" /
---set logzio-k8s-telemetry.traces.enabled=false /
---set logzio-apm-collector.enabled=true /
---set global.logzioTracesToken="<<TRACES-SHIPPING-TOKEN>>" /
+helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring --version 7.0.0 \
+--set global.region="<<LOGZIO-REGION>>" \
+--set global.env_id="<<ENV-ID>>" \
+--set global.logzioLogsToken="<<LOG-SHIPPING-TOKEN>>" \
+--set global.logzioMetricsToken="<<PROMETHEUS-METRICS-SHIPPING-TOKEN>>" \
+--set logzio-k8s-telemetry.traces.enabled=false \
+--set logzio-apm-collector.enabled=true \
+--set global.logzioTracesToken="<<TRACES-SHIPPING-TOKEN>>" \
 
 # If you also send SPM or ServiceGraph, add the relevant enable flag for them and the token
---set logzio-apm-collector.spm.enabled=true /
---set logzio-apm-collector.serviceGraph.enabled=true /
---set global.logzioSpmToken="<<SPM-SHIPPING-TOKEN>>" /
+--set logzio-apm-collector.spm.enabled=true \
+--set logzio-apm-collector.serviceGraph.enabled=true \
+--set global.logzioSpmToken="<<SPM-SHIPPING-TOKEN>>" \
 
 --reuse-values
 ```
+
+> [!NOTE]
+> If you were using `logzio-logs-collector.secrets.logType`, add to your command `--set global.logType=<<LOG-TYPE>> \`
 
 </details>
 
@@ -275,14 +278,17 @@ helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitroing --ver
   <summary>Logs and Metrics:</summary>
 
 ```shell
-helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitroing --version 7.0.0 /
---set global.region="<<LOGZIO-REGION>>" /
---set global.env_id="<<ENV-ID>>" /
---set global.logzioLogsToken="<<LOG-SHIPPING-TOKEN>>" /
---set global.logzioMetricsToken="<<PROMETHEUS-METRICS-SHIPPING-TOKEN>>" /
+helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring --version 7.0.0 \
+--set global.region="<<LOGZIO-REGION>>" \
+--set global.env_id="<<ENV-ID>>" \
+--set global.logzioLogsToken="<<LOG-SHIPPING-TOKEN>>" \
+--set global.logzioMetricsToken="<<PROMETHEUS-METRICS-SHIPPING-TOKEN>>" \
 
 --reuse-values
 ```
+
+> [!NOTE]
+> If you were using `logzio-logs-collector.secrets.logType`, add to your command `--set global.logType=<<LOG-TYPE>> \`
 
 </details>
 
@@ -290,18 +296,18 @@ helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitroing --ver
   <summary>Metrics and Traces:</summary>
 
 ```shell
-helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitroing --version 7.0.0 /
---set global.region="<<LOGZIO-REGION>>" /
---set global.env_id="<<ENV-ID>>" /
---set global.logzioMetricsToken="<<PROMETHEUS-METRICS-SHIPPING-TOKEN>>" /
---set logzio-k8s-telemetry.traces.enabled=false /
---set logzio-apm-collector.enabled=true /
---set global.logzioTracesToken="<<TRACES-SHIPPING-TOKEN>>" /
+helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring --version 7.0.0 \
+--set global.region="<<LOGZIO-REGION>>" \
+--set global.env_id="<<ENV-ID>>" \
+--set global.logzioMetricsToken="<<PROMETHEUS-METRICS-SHIPPING-TOKEN>>" \
+--set logzio-k8s-telemetry.traces.enabled=false \
+--set logzio-apm-collector.enabled=true \
+--set global.logzioTracesToken="<<TRACES-SHIPPING-TOKEN>>" \
 
 # If you also send SPM or ServiceGraph, add the relevant enable flag for them and the token
---set logzio-apm-collector.spm.enabled=true /
---set logzio-apm-collector.serviceGraph.enabled=true /
---set global.logzioSpmToken="<<SPM-SHIPPING-TOKEN>>" /
+--set logzio-apm-collector.spm.enabled=true \
+--set logzio-apm-collector.serviceGraph.enabled=true \
+--set global.logzioSpmToken="<<SPM-SHIPPING-TOKEN>>" \
 
 --reuse-values
 ```
@@ -312,21 +318,24 @@ helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitroing --ver
   <summary>Logs and Traces:</summary>
 
 ```shell
-helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitroing --version 7.0.0 /
---set global.region="<<LOGZIO-REGION>>" /
---set global.env_id="<<ENV-ID>>" /
---set global.logzioLogsToken="<<LOG-SHIPPING-TOKEN>>" /
---set logzio-k8s-telemetry.traces.enabled=false /
---set logzio-apm-collector.enabled=true /
---set global.logzioTracesToken="<<TRACES-SHIPPING-TOKEN>>" /
+helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring --version 7.0.0 \
+--set global.region="<<LOGZIO-REGION>>" \
+--set global.env_id="<<ENV-ID>>" \
+--set global.logzioLogsToken="<<LOG-SHIPPING-TOKEN>>" \
+--set logzio-k8s-telemetry.traces.enabled=false \
+--set logzio-apm-collector.enabled=true \
+--set global.logzioTracesToken="<<TRACES-SHIPPING-TOKEN>>" \
 
 # If you also send SPM or ServiceGraph, add the relevant enable flag for them and the token
---set logzio-apm-collector.spm.enabled=true /
---set logzio-apm-collector.serviceGraph.enabled=true /
---set global.logzioSpmToken="<<SPM-SHIPPING-TOKEN>>" /
+--set logzio-apm-collector.spm.enabled=true \
+--set logzio-apm-collector.serviceGraph.enabled=true \
+--set global.logzioSpmToken="<<SPM-SHIPPING-TOKEN>>" \
 
 --reuse-values
 ```
+
+> [!NOTE]
+> If you were using `logzio-logs-collector.secrets.logType`, add to your command `--set global.logType=<<LOG-TYPE>> \`
 
 </details>
 
@@ -335,13 +344,16 @@ helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitroing --ver
   <summary>Only Logs:</summary>
 
 ```shell
-helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitroing --version 7.0.0 /
---set global.region="<<LOGZIO-REGION>>" /
---set global.env_id="<<ENV-ID>>" /
---set global.logzioLogsToken="<<LOG-SHIPPING-TOKEN>>" /
+helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring --version 7.0.0 \
+--set global.region="<<LOGZIO-REGION>>" \
+--set global.env_id="<<ENV-ID>>" \
+--set global.logzioLogsToken="<<LOG-SHIPPING-TOKEN>>" \
 
 --reuse-values
 ```
+
+> [!NOTE]
+> If you were using `logzio-logs-collector.secrets.logType`, add to your command `--set global.logType=<<LOG-TYPE>> \`
 
 </details>
 
@@ -349,10 +361,10 @@ helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitroing --ver
   <summary>Only Metrics:</summary>
 
 ```shell
-helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitroing --version 7.0.0 /
---set global.region="<<LOGZIO-REGION>>" /
---set global.env_id="<<ENV-ID>>" /
---set global.logzioMetricsToken="<<PROMETHEUS-METRICS-SHIPPING-TOKEN>>" /
+helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring --version 7.0.0 \
+--set global.region="<<LOGZIO-REGION>>" \
+--set global.env_id="<<ENV-ID>>" \
+--set global.logzioMetricsToken="<<PROMETHEUS-METRICS-SHIPPING-TOKEN>>" \
 --reuse-values
 ```
 
@@ -362,17 +374,17 @@ helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitroing --ver
   <summary>Only Traces:</summary>
 
 ```shell
-helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitroing --version 7.0.0 /
---set global.region="<<LOGZIO-REGION>>" /
---set global.env_id="<<ENV-ID>>" /
---set logzio-k8s-telemetry.traces.enabled=false /
---set logzio-apm-collector.enabled=true /
---set global.logzioTracesToken="<<TRACES-SHIPPING-TOKEN>>" /
+helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring --version 7.0.0 \
+--set global.region="<<LOGZIO-REGION>>" \
+--set global.env_id="<<ENV-ID>>" \
+--set logzio-k8s-telemetry.traces.enabled=false \
+--set logzio-apm-collector.enabled=true \
+--set global.logzioTracesToken="<<TRACES-SHIPPING-TOKEN>>" \
 
 # If you also send SPM or ServiceGraph, add the relevant enable flag for them and the token
---set logzio-apm-collector.spm.enabled=true /
---set logzio-apm-collector.serviceGraph.enabled=true /
---set global.logzioSpmToken="<<SPM-SHIPPING-TOKEN>>" /
+--set logzio-apm-collector.spm.enabled=true \
+--set logzio-apm-collector.serviceGraph.enabled=true \
+--set global.logzioSpmToken="<<SPM-SHIPPING-TOKEN>>" \
 
 --reuse-values
 ```
@@ -383,8 +395,8 @@ helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitroing --ver
 If you manage your own secret for the Logz.io charts, please also add to your command:
 
  ```shell
---set sub-chart-name.secret.name="<<NAME-OF-SECRET>>" /
---set sub-chart-name.secret.enabled=false /
+--set sub-chart-name.secret.name="<<NAME-OF-SECRET>>" \
+--set sub-chart-name.secret.enabled=false \
 ```
 
 > [!IMPORTANT]
@@ -395,12 +407,12 @@ Replace `sub-chart-name` with the name of the sub chart which you manage the sec
 For example, if you manage secret for both `logzio-logs-collector` and for `logzio-trivy`, use:
 
  ```shell
-helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitroing --version 7.0.0 /
---set global.region="<<LOGZIO-REGION>>" /
---set global.env_id="<<ENV-ID>>" /
---set logzio-logs-collector.secret.name="<<NAME-OF-SECRET>>" /
---set logzio-logs-collector.secret.enabled=false /
---set logzio-trivy.secret.name="<<NAME-OF-SECRET>>" /
---set logzio-trivy.secret.enabled=false /
+helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring --version 7.0.0 \
+--set global.region="<<LOGZIO-REGION>>" \
+--set global.env_id="<<ENV-ID>>" \
+--set logzio-logs-collector.secret.name="<<NAME-OF-SECRET>>" \
+--set logzio-logs-collector.secret.enabled=false \
+--set logzio-trivy.secret.name="<<NAME-OF-SECRET>>" \
+--set logzio-trivy.secret.enabled=false \
 --reuse-values
 ```
