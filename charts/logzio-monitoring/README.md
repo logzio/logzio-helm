@@ -178,7 +178,7 @@ Set `global.customTracesEndpoint` value to send your traces to a custom endpoint
 Set logzio-k8s-telemetry `ListenerHost` value to send your metrics to a custom endpoint (example: "https://endpoint.com:8080")
 
 ```shell
---set logzio-k8s-telemetry.secrets.ListenerHost="<<CUSTOM_ENDPOINT>>"
+--set global.customMetricsEndpoint="<<CUSTOM_METRICS_ENDPOINT>>"
 ```
 
 ### Adding Tolerations for Tainted Nodes
