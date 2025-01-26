@@ -2,9 +2,9 @@ logs:
   # Enables the deployment of the sub chart for sending logs
   enabled: false
 
-metricsOrTraces:
-  # Enables the deployment of the sub chart for sending metrics and traces (and SPM)
-  enabled: false
+logzio-k8s-telemetry:
+  metrics:
+    enabled: false
 
 securityReport:
   # Enables the deployment of the sub chart for creating and sending security reports
@@ -26,6 +26,9 @@ logzio-fluentd:
 
 logzio-logs-collector:
   enabled: true
+
+logzio-apm-collector:
+  enabled: false
 
 # Override values for the opencost sub-chart
 opencost:
