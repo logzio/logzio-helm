@@ -408,6 +408,7 @@ If you don't want the sub charts to installed add the relevant flag per sub char
       - `secrets.LogzioRegion` >> `global.logzioRegion`
       - `secrets.CustomTracingEndpoint` >> `global.customTracesEndpoint`
       - Deprecate `secrets.p8s_logzio_name` and `secrets.ListenerHost`
+        - Add `global.customMetricsEndpoint` to support sending metrics to a custom endpoint
 * 4.3.0
   - Set `servicegraph` connector, `metrics_flush_interval` setting to `60s` to reduce outgoing connections
 * 4.2.9

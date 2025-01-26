@@ -40,8 +40,10 @@ global:
   env_id: "my_environment"
   # Traces & Logs listener address region code - https://docs.logz.io/docs/user-guide/admin/hosting-regions/account-region/
   logzioRegion: "us"
-  # Custom Traces listener endpoint
+  # Custom Traces endpoint, overrides global.LogzioRegion listener address
   customTracesEndpoint: ""
+  # Custom Metrics endpoint, overrides global.LogzioRegion listener address
+  customMetricsEndpoint: ""
 
 secrets:
   name: logzio-secret  # Secret name
