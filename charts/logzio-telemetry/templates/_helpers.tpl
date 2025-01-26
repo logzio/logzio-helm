@@ -154,7 +154,6 @@ If any OOB filters is being used the function return the OOB filter concatenated
 Builds the full logzio listener host
 */}}
 {{- define "metrics-collector.listenerAddress" }}
-{{- if .Values.global.customMetricsEndpoint }}
 {{- if not (eq .Values.global.customMetricsEndpoint "") -}}
 {{- printf "%s" .Values.global.customMetricsEndpoint -}}
 {{- else }}
