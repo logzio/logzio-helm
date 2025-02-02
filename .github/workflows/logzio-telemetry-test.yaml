@@ -54,18 +54,9 @@ jobs:
           kubectl apply -f tests/resources/pvc.yaml
           kubectl rollout status deployment/pvc-deployment --timeout=300s
 
-      - name: Wait for PVC to be Bound
-        run: |
-          echo "Waiting for PVC to be bound..."
-          for i in {1..30}; do
-            STATUS=$(kubectl get pvc my-pvc -o jsonpath="{.status.phase}")
-            echo "PVC status: $STATUS"
-            if [[ "$STATUS" == "Bound" ]]; then
-              echo "PVC is bound."
-              break
-            fi
-            sleep 5
-          done
+      - name: sleep 
+        run: sleep 60
+
       - name: Print Kubelet Metrics
         run: |
           # Get any worker node name
@@ -86,7 +77,7 @@ jobs:
 
           # Kill the kubectl proxy process
           kill %1
-          
+
       - name: Deploy Helm Chart
         run: |
           cd charts/logzio-telemetry
