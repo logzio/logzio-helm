@@ -110,9 +110,9 @@ func TestFargateMetrics(t *testing.T) {
 
 func TestKubeletMetrics(t *testing.T) {
 	requiredMetrics := map[string][]string{
-		"kubelet_volume_stats_inodes":      {"p8s_logzio_name", "namespace", "pod", "volume"},
-		"kubelet_volume_stats_inodes_used": {"p8s_logzio_name", "namespace", "pod", "volume"},
-		"kubelet_volume_stats_used_bytes":  {"p8s_logzio_name", "namespace", "pod", "volume"},
+		"kubelet_volume_stats_inodes":      {"p8s_logzio_name", "namespace", "persistentvolumeclaim"},
+		"kubelet_volume_stats_inodes_used": {"p8s_logzio_name", "namespace", "persistentvolumeclaim"},
+		"kubelet_volume_stats_used_bytes":  {"p8s_logzio_name", "namespace", "persistentvolumeclaim"},
 	}
 	envId := os.Getenv("ENV_ID")
 	query := fmt.Sprintf(`{env_id='%s'}`, envId)
