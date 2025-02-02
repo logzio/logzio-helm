@@ -49,6 +49,10 @@ jobs:
           kind create cluster --name kind-${{ github.run_id }}-${{ matrix.mode }}
           kubectl cluster-info
 
+      - name: Create persistent volume
+        run: |
+          kubectl apply -f tests/resources/pvc.yaml
+
       - name: Deploy Helm Chart
         run: |
           cd charts/logzio-telemetry
@@ -68,10 +72,6 @@ jobs:
           logzio-k8s-telemetry .
           kubectl rollout status deployment/logzio-k8s-telemetry-otel-collector-standalone --timeout=300s
           kubectl rollout status deployment/logzio-k8s-telemetry-otel-collector-spm --timeout=300s
-      
-      - name: create persistent volume
-        run: |
-          kubectl apply -f tests/resources/pvc.yaml
       
       - name: Run trace generator
         run: |
