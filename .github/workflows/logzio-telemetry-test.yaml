@@ -88,6 +88,27 @@ jobs:
       - name: sleep for 3 minutes
         run: sleep 180
 
+      - name: Print Kubelet Metrics
+        run: |
+          # Get any worker node name
+          NODE_NAME=$(kubectl get nodes --no-headers -o custom-columns=":metadata.name" | head -n 1)
+
+          echo "Fetching metrics from Kubelet on node: $NODE_NAME"
+
+          # Use kubectl proxy to securely access the Kubelet API
+          kubectl proxy &
+
+          # Wait for proxy to start
+          sleep 5
+
+          # Fetch and print kubelet metrics
+          curl -s --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt \
+              --header "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" \
+              http://127.0.0.1:8001/api/v1/nodes/$NODE_NAME/proxy/metrics
+
+          # Kill the kubectl proxy process
+          kill %1
+
       - name: Run Go Tests
         env:
           LOGZIO_METRICS_API_KEY: ${{ secrets.LOGZIO_METRICS_API_KEY }}
