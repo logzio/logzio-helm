@@ -10,9 +10,17 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: manual
   local:
-    path: "/mnt/data" 
+    path: "/mnt/data"
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/os
+          operator: In
+          values:
+          - linux
 
----       
+---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
