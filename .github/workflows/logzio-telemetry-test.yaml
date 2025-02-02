@@ -47,40 +47,6 @@ jobs:
         run: |
           kind create cluster --name kind-${{ github.run_id }}-${{ matrix.mode }}
           kubectl cluster-info
-          
-      - name: Create directory on Kind node
-        run: |
-          NODE_NAME=$(kubectl get nodes --no-headers -o custom-columns=":metadata.name" | head -n 1)
-          kubectl exec -it $NODE_NAME -- mkdir -p /mnt/data
-
-      - name: Create persistent volume
-        run: |
-          kubectl apply -f tests/resources/pvc.yaml
-          kubectl rollout status deployment/pvc-deployment --timeout=300s
-
-      - name: sleep 
-        run: sleep 60
-
-      - name: Print Kubelet Metrics
-        run: |
-          # Get any worker node name
-          NODE_NAME=$(kubectl get nodes --no-headers -o custom-columns=":metadata.name" | head -n 1)
-
-          echo "Fetching metrics from Kubelet on node: $NODE_NAME"
-
-          # Use kubectl proxy to securely access the Kubelet API
-          kubectl proxy &
-
-          # Wait for proxy to start
-          sleep 5
-
-          # Fetch and print kubelet metrics
-          curl -s --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt \
-              --header "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" \
-              http://127.0.0.1:8001/api/v1/nodes/$NODE_NAME/proxy/metrics
-
-          # Kill the kubectl proxy process
-          kill %1
 
       - name: Deploy Helm Chart
         run: |
