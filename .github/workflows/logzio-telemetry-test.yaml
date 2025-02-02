@@ -8,7 +8,6 @@ on:
       - 'charts/logzio-telemetry/templates/**'
       - 'charts/logzio-telemetry/Chart.yaml'
       - 'charts/logzio-telemetry/values.yaml'
-      - 'charts/logzio-telemetry/nginx/**'
       - 'charts/logzio-telemetry/windows_exporter_installer/**'
 jobs:
   test-helm-chart:
@@ -48,6 +47,11 @@ jobs:
         run: |
           kind create cluster --name kind-${{ github.run_id }}-${{ matrix.mode }}
           kubectl cluster-info
+          
+      - name: Create directory on Kind node
+        run: |
+          NODE_NAME=$(kubectl get nodes --no-headers -o custom-columns=":metadata.name" | head -n 1)
+          kubectl exec -it $NODE_NAME -- mkdir -p /mnt/data
 
       - name: Create persistent volume
         run: |
