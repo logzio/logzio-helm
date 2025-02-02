@@ -1085,10 +1085,10 @@ daemonsetConfig:
             - field: metadata.name=$KUBE_NODE_NAME
               role: node
           metric_relabel_configs:
-          - action: keep
-            regex: kubelet_volume_stats_inodes|kubelet_volume_stats_inodes_used|kubelet_volume_stats_used_bytes
-            source_labels:
-            - __name__
+          # - action: keep
+          #   regex: kubelet_volume_stats_inodes|kubelet_volume_stats_inodes_used|kubelet_volume_stats_used_bytes
+          #   source_labels:
+          #   - __name__
           metrics_path: /metrics
           relabel_configs:
           - action: labelmap
