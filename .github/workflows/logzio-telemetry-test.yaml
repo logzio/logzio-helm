@@ -52,7 +52,7 @@ jobs:
       - name: Create persistent volume
         run: |
           kubectl apply -f tests/resources/pvc.yaml
-          kubeclt rollout status deployment/pvc-deployment --timeout=300s
+          kubectl rollout status deployment/pvc-deployment --timeout=300s
 
       - name: Deploy Helm Chart
         run: |
