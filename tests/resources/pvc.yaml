@@ -28,7 +28,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: my-deployment
+  name: pvc-deployment
 spec:
   replicas: 1
   selector:
