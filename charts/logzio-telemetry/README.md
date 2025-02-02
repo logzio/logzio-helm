@@ -412,6 +412,8 @@ If you don't want the sub charts to installed add the relevant flag per sub char
 
 
 ## Change log
+* 4.3.1
+  - Add `prometheus/kubelet` job for kubelet metrics
 * 4.3.0
   - Set `servicegraph` connector, `metrics_flush_interval` setting to `60s` to reduce outgoing connections
 * 4.2.9
