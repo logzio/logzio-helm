@@ -8,7 +8,6 @@ on:
       - 'charts/logzio-telemetry/templates/**'
       - 'charts/logzio-telemetry/Chart.yaml'
       - 'charts/logzio-telemetry/values.yaml'
-      - 'charts/logzio-telemetry/nginx/**'
       - 'charts/logzio-telemetry/windows_exporter_installer/**'
 jobs:
   test-helm-chart:
@@ -40,7 +39,7 @@ jobs:
 
       - name: Install Kind
         run: |
-          curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.11.1/kind-Linux-amd64"
+          curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.26.0/kind-Linux-amd64"
           chmod +x ./kind
           mv ./kind /usr/local/bin/kind
 
@@ -68,7 +67,7 @@ jobs:
           logzio-k8s-telemetry .
           kubectl rollout status deployment/logzio-k8s-telemetry-otel-collector-standalone --timeout=300s
           kubectl rollout status deployment/logzio-k8s-telemetry-otel-collector-spm --timeout=300s
-
+      
       - name: Run trace generator
         run: |
           kubectl apply -f tests/resources/tracegen.yaml
@@ -79,7 +78,7 @@ jobs:
           helm repo update
           helm install otel-demo -f tests/resources/otel-demo.yaml open-telemetry/opentelemetry-demo --version 0.32.5
           kubectl rollout status deployment/otel-demo-loadgenerator --timeout=300s
-  
+
       - name: sleep for 3 minutes
         run: sleep 180
 
