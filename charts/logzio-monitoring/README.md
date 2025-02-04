@@ -19,6 +19,18 @@ This project packages the following Helm Charts:
 | > 3.0.0 | v1.22.0 - v1.28.0 |
 | < 2.0.0 | <= v1.22.0 |
 
+### Table of content
+- [Installation instructions](#instructions-for-standard-deployment)
+  - [EKS on fargate](#sending-telemetry-data-from-eks-on-fargate)
+  - [Custom config](#further-configuration)
+    - [Custom endpoint for logs](#send-logs-to-a-custom-endpoint)
+    - [Custom endpoint for metrics](#send-metrics-to-a-custom-endpoint)
+    - [Custom endpoint for traces](#send-traces-to-a-custom-endpoint)
+  - [Image pull rate limit issue](#handling-image-pull-rate-limit)
+  - [Add tolerations for tainted nodes](#adding-tolerations-for-tainted-nodes)
+  - [Migrating to logzio-monitoring v7.0.0](#migrating-to-logzio-monitoring-700)
+  - [Enabled Auto-Instrumentation](#enable-auto-instrumentation)
+
 ## Instructions for standard deployment:
 
 ### Before installing the chart
@@ -418,4 +430,98 @@ helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring \
 --set logzio-trivy.secret.name="<<NAME-OF-SECRET>>" \
 --set logzio-trivy.secret.enabled=false \
 --reuse-values
+```
+
+## Enable Auto-instrumentation
+
+The Opentelemetry Operator manages auto-instrumentation of workloads using OpenTelemetry instrumentation libraries, automatically generating traces and metrics.
+
+To send the instrumentation data it generates to Logz.io,, you need to enable the operator within the `logzio-monitoring` chart, along with either the `logzio-apm-collector` (for traces), `logzio-k8s-telemetry` (for metrics), or both, both—depending on the type of data you want to forward to the Logz.io platform.
+
+Follow the guide below to enable this feature.
+
+- [Step by step guide](#enable-auto-instrumentation)
+  - [Multi-container pods](#multi-container-pods)
+- [Customize Auto-instrumentation](#customize-auto-instrumentation)
+  - [Customize Propagator](#customize-propagator)
+  - [Add a custom Sampler](#add-a-custom-sampler)
+  - [TLS certificate Requirements](#tls-certificate-requirements)
+
+### Step by step
+
+**Step 1:** Make sure to enable the OpenTelemetry operator in the chart:
+```shell
+--set otel-operator.enabled=true \
+```
+
+> [!NOTE]
+> It can take a few minutes for the OpenTelemetry Operator components to be installed and deployed on your cluster.
+
+**Step 2:** Add annotations to your relevant Kubernetes object. You can annotate individual resources such as a Deployment, StatefulSet, DaemonSet, or Pod, or apply annotations at the Namespace level to instrument all pods within that namespace. These annotations should specify the programming language used in your application:
+```yaml
+instrumentation.opentelemetry.io/inject-<APP_LANGUAGE>: "monitoring/logzio-otel-instrumentation"
+```
+
+> [!TIP]
+> `<APP_LANGUAGE>` can be one of `apache-httpd`, `dotnet`, `go`, `java`, `nginx`, `nodejs` or `python`.
+
+> [!IMPORTANT]
+> If the chart is deployed in a namespace other than `monitoring`, adjust the annotation to reflect the correct namespace.
+
+### Multi-container pods
+By default, in multi-container pods, instrumentation is performed on the first container available in the pod spec.
+To fine tune which containers to instrument, add the below annotations to your pod:
+```yaml
+instrumentation.opentelemetry.io/inject-<APP_LANGUAGE>: "monitoring/logzio-apm-collector"
+instrumentation.opentelemetry.io/<APP_LANGUAGE>-container-names: "myapp,myapp2"
+instrumentation.opentelemetry.io/inject-<APP_LANGUAGE_2>: "monitoring/logzio-apm-collector"
+instrumentation.opentelemetry.io/<APP_LANGUAGE_2>-container-names: "myapp3"
+```
+
+> [!TIP]
+> `<APP_LANGUAGE>`, `<APP_LANGUAGE_2>` can be one of `apache-httpd`, `dotnet`, `go`, `java`, `nginx`, `nodejs` or `python`.
+
+
+## Customize Auto-instrumentation
+Below you can find multiple ways in which you can customize the OpenTelemetry Operator Auto-instrumentation.
+
+### Customize Propagator
+The propagator specifies how context is injected into and extracted from carriers for distributed tracing.
+By default, the propagators `tracecontext` (W3C Trace Context) and `baggage` (W3C Correlation Context) are enabled.
+You can customize this to include other formats ([full list here](https://opentelemetry.io/docs/languages/sdk-configuration/general/#otel_propagators)) or set it to "none" to disable automatic propagation.
+```shell
+--set instrumentation.propagator={tracecontext, baggage, b3}
+```
+
+### Add a custom Sampler
+You can specify a sampler to be used by the instrumentor. You'll need to specify the below:
+- Sampler used to sample the traces ([available options](https://opentelemetry.io/docs/languages/sdk-configuration/general/#otel_traces_sampler))
+- Sampler arguments ([Sampler type expected input](https://opentelemetry.io/docs/languages/sdk-configuration/general/#otel_traces_sampler_arg))
+
+Example:
+```shell
+--set instrumentation.sampler.type="parentbased_always_on" \
+--set instrumentation.sampler.argument="0.25"
+```
+
+### TLS certificate Requirements
+Opentelemetry operator requires a TLS certificate. For more details, refer to [OpenTelemetry documentation](https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-operator#tls-certificate-requirement).
+
+There are 3 TLS certificate options, by default this chart is using option 2.
+
+**1.** If you have `cert-manager` installed on your cluster, you can set `otel-operator.admissionWebhooks.certManager.enabled` to true and the cert-manager will generate a self-signed certificate for the otel-operator automatically.
+
+```shell
+--set otel-operator.admissionWebhooks.certManager.enabled=true \
+```
+
+**2.** Helm will automatically create a self-signed cert and secret for you. (Enabled by default by this chart)
+
+**3.** Use your own self-signed certificate, To enable this option, set `otel-operator.admissionWebhooks.autoGenerateCert.enabled` to `false` and provide the necessary `certFile`, `keyFile` and `caFile`.
+
+```shell
+--set otel-operator.admissionWebhooks.autoGenerateCert.enabled=false \
+--set otel-operator.admissionWebhooks.certFile="<<PEM_CERT_PATH>>" \
+--set otel-operator.admissionWebhooks.keyFile="<<PEM_KEY_PATH>>" \
+--set otel-operator.admissionWebhooks.caFile="<<CA_CERT_PATH>>" \
 ```
