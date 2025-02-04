@@ -14,6 +14,16 @@ nameOverride: ""
 # Overrides the full name of the resources
 fullnameOverride: ""
 
+global:
+  # Secret with your logzio shipping token
+  logzioLogsToken: ""
+  # Secret with your logzio region code. For example - us, eu...
+  logzioRegion: ""
+  # Secret with your custom endpoint, for example:http://endpoint:8080. Overrides global.logzioRegion
+  customLogsEndpoint: ""
+  # Add to your logs field env_id with identification of the environment you're shipping logs from, usually your k8s cluster name
+  env_id: "my_environment"
+
 # API versions for the resources
 apiVersions:
   # Daemonset API version
@@ -44,9 +54,6 @@ serviceAccount:
 fargateLogRouter:
   # Boolen to decide if to configure fargate log router
   enabled: false
-
-# Add to your logs field env_id with identification of the environment you're shipping logs from, usually your k8s cluster name
-env_id: "my_environment"
 
 daemonset:
   # Security context for the pod level
@@ -230,18 +237,11 @@ clusterRole:
     - list
     - watch
 
-secrets:
+secret:
   # When true, the logzio secret will be created and managed by this Chart. If you're managing the logzio secret by yourself, set to false
   enabled: true
-  # Secret with your logzio shipping token
-  logzioShippingToken: ""
-  # Secret with your logzio listener host. For example - listener.logz.io
-  logzioListener: ""
-  # Secret with your custom endpoint, for example:http://endpoint:8080. Overrides secrets.logzioListener
-  customEndpoint: ""
-
-# Name of the secret, can be configured in case it's placed from an external source
-secretName: logzio-logs-secret
+  # Name of the secret, can be configured in case it's placed from an external source
+  name: logzio-logs-secret
 
 # Initial includes for fluent.conf
 configMapIncludes: |

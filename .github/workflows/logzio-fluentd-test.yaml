@@ -50,9 +50,9 @@ jobs:
         run: |
           cd charts/fluentd
           helm upgrade --install \
-          --set env_id=${{ env.ENV_ID }} \
-          --set secrets.logzioShippingToken=${{ secrets.LOGZIO_LOGS_TOKEN }} \
-          --set secrets.logzioListener=listener.logz.io \
+          --set global.env_id=${{ env.ENV_ID }} \
+          --set global.logzioLogsToken=${{ secrets.LOGZIO_LOGS_TOKEN }} \
+          --set global.logzioRegion=us \
           logzio-fluentd .
 
       - name: Run log generator
