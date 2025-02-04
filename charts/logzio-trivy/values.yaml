@@ -25,8 +25,6 @@ schedule: "07:00"
 image: logzio/trivy-to-logzio
 # Container image tag
 imageTag: 0.2.3
-# The name for your environment's identifier (cluster name), to easily identify the telemetry data for each environment
-env_id: ""
 # Termination period (in seconds) to wait before killing Fluentd pod process on pod shutdown
 terminationGracePeriodSeconds: 30
 serviceAccount:
@@ -35,15 +33,19 @@ serviceAccount:
   # Name of the service account
   name: ""
 
-secrets:
+global:
+  # The name for your environment's identifier (cluster name), to easily identify the telemetry data for each environment
+  env_id: ""
+  # Your logz.io log shipping token
+  logzioLogsToken: ""
+  # Your logz.io listener host, for example - listener.logz.io
+  logzioRegion: "us"
+
+secret:
   # Specifies wheter to create a secret for the Deployment
   enabled: true
   # Secret name
   name: "logzio-logs-secret-trivy"
-  # Your logz.io log shipping token
-  logzioShippingToken: ""
-  # Your logz.io listener host, for example - listener.logz.io
-  logzioListener: ""
 
 # Log level of the script that sends security risk to Logz.io. Can be one of: DEBUG, INFO, WARNING, ERROR, CRITICAL.
 scriptLogLevel: INFO

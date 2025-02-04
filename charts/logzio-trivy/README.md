@@ -21,16 +21,16 @@ Use the following command, and replace the placeholders with your parameters:
 
 ```sh
 helm install -n monitoring --create-namespace \
---set env_id="<<ENV-ID>>" \
---set secrets.logzioShippingToken="<<LOG-SHIPPING-TOKEN>>" \
---set secrets.logzioListener="<<LISTENER-HOST>>" \
+--set global.env_id="<<ENV-ID>>" \
+--set global.logzioLogsToken="<<LOG-SHIPPING-TOKEN>>" \
+--set global.logzioRegion="<<LOGZIO-REGION>>" \
 logzio-trivy logzio-helm/logzio-trivy
 ```
 
 | Parameter | Description |
 | --- | --- |
 | `<<LOG-SHIPPING-TOKEN>>` | Your [logs shipping token](https://app.logz.io/#/dashboard/settings/general). |
-| `<<LISTENER-HOST>>` | Your account's [listener host](https://app.logz.io/#/dashboard/settings/manage-tokens/data-shipping?product=logs). For example - `listener.logz.io` |
+| `<<LOGZIO-REGION>>` | Your account's [region code](https://docs.logz.io/docs/user-guide/admin/hosting-regions/account-region/). For example - `us` |
 | `<<ENV-ID>>` | The name for your environment's identifier, to easily identify the telemetry data for each environment. |
 
 
@@ -52,14 +52,14 @@ However, you can modify the Chart by using the `--set` flag in your `helm instal
 | `schedule` | Time for daily scanning for security reports and send them to Logz.io, in format "HH:MM" | `"07:00"` |
 | `image` | Container image | `logzio/trivy-to-logzio` |
 | `imageTag` | Container image tag | `0.2.1` |
-| `env_id` | The name for your environment's identifier, to easily identify the telemetry data for each environment | `""` |
+| `global.env_id` | The name for your environment's identifier, to easily identify the telemetry data for each environment | `""` |
 | `terminationGracePeriodSeconds` | Termination period (in seconds) to wait before killing Fluentd pod process on pod shutdown. | `30` |
 | `serviceAccount.create` | Specifies whether to create a service account for the Deployment | `true` |
 | `serviceAccount.name` | Name of the service account. | `""` |
-| `secrets.enabled` | Specifies wheter to create a secret for the deployment | `true` |
-| `secrets.name` | Secret name | `"logzio-logs-secret-trivy"` |
-| `secrets.logzioShippingToken` | Your logz.io log shipping token | `""` |
-| `secrets.logzioListener` | Your logz.io listener host, for example - `listener.logz.io` | `""` (defaults to us region) |
+| `secret.enabled` | Specifies wheter to create a secret for the deployment | `true` |
+| `secret.name` | Secret name | `"logzio-logs-secret-trivy"` |
+| `global.logzioLogsToken` | Your logz.io log shipping token | `""` |
+| `global.logzioRegion` | Your logz.io region code, for example - `eu` | `"us"` (defaults to us region) |
 | `scriptLogLevel` | Log level of the script that sends security risk to Logz.io. Can be one of: `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`. | `INFO` |
 
 ### Handling image pull rate limit
@@ -72,36 +72,3 @@ In these cases we can use the following `--set` command to use an alternative im
 ```shell
 --set image=public.ecr.aws/logzio/trivy-to-logzio
 ```
-
-
-## Changelog
-- **0.3.6**
-  - Fix `tolerations` value 
-- **0.3.5**
-  - Added `affinity` ,`nodeSelector` and `tolerations` to the deployment.
-- **0.3.4**
-  - Bump Trivy-Operator version to `0.24.1`.
-- **0.3.3**:
-  - Upgrade to image `logzio/trivy-to-logzio:0.3.3`.
-    - Upgrade python version to 3.12.5.
-    - Re-build image to include the latest version of git(CVE-2024-32002).
-  - Bump Trivy-Operator version to `0.24.0`.
-- **0.3.2**:
-  - Added 'user-agent' header for telemetry data.
-- **0.3.0**:
-  - Bump Trivy-Operator version to `0.15.1`.
-- **0.2.1**:
-  - Default to disable unused reports (config audit, rbac assessment, infra assessment, cluster compliance).
-  - Bump Trivy-Operator version to `0.13.1`.
-  - Bump logzio-trivy version to `0.2.1`.
-- **0.2.0**:
-  - Upgrade to image `logzio/trivy-to-logzio:0.2.0`:
-    - Watch for new reports, in addition to daily scan.
-- **0.1.0**:
-  - Upgrade to image `logzio/trivy-to-logzio:0.1.0`.
-  - **Breaking changes**:
-    - Deprecation of CronJob, using Deployment instead.
-    - Scanning for reports will occur once upon container deployment, then once a day at the scheduled time. 
-    - Not using cron expressions anymore. Instead, set a time for the daily run in form of HH:MM. 
-- **0.0.2**: Add quotes to schedule expression to avoid errors. 
-- **0.0.1**: Initial release.
