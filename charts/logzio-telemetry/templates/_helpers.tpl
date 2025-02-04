@@ -149,3 +149,19 @@ If any OOB filters is being used the function return the OOB filter concatenated
 {{- end }}
 {{- $metrics }}
 {{- end }}
+
+{{/*
+Builds the full logzio listener host
+*/}}
+{{- define "metrics-collector.listenerAddress" }}
+{{- if not (eq .Values.global.customMetricsEndpoint "") -}}
+{{- printf "%s" .Values.global.customMetricsEndpoint -}}
+{{- else }}
+{{- $region := .Values.global.logzioRegion -}}
+{{- if or (eq $region "us") (not $region) -}}
+https://listener.logz.io:8053
+{{- else }}
+{{- printf "https://listener-%s.logz.io:8053" $region }}
+{{- end }}
+{{- end }}
+{{- end }}

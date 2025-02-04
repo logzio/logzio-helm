@@ -43,22 +43,17 @@ helm repo update
 To deploy the Helm chart, enter the relevant parameters for the placeholders and run the code. 
 
 ###### Configure the parameters in the code
-Replace `<<*P8S-LOGZIO-NAME*>>` with the name for the environment's metrics, to easily identify the metrics for each environment.
-Replace `<<*ENV-ID*>>` with the name for your environment's identifier, to easily identify the telemetry data for each environment.
+- Replace `<<*ENV-ID*>>` with the name for your environment's identifier, to easily identify the telemetry data for each environment.
+- Replace `<<LOGZIO-REGION>>` with the name of your Logz.io region e.g `us`,`eu`.
 
 #### For metrics:
-Enable the metrics configuration for this chart: `--set metrics.enabled=true`
+- Enable the metrics configuration for this chart: `--set metrics.enabled=true`
+- Replace the Logz-io `<<PROMETHEUS-METRICS-SHIPPING-TOKEN>>` with the [token](https://app.logz.io/#/dashboard/settings/manage-tokens/data-shipping) of the metrics account to which you want to send your data.
 
-Replace the Logz-io `<<PROMETHEUS-METRICS-SHIPPING-TOKEN>>` with the [token](https://app.logz.io/#/dashboard/settings/manage-tokens/data-shipping) of the metrics account to which you want to send your data.
-
-Replace `<<LISTENER-HOST>>` with your region’s listener host (for example, `https://listener.logz.io:8053`). For more information on finding your account’s region, see [Account region](https://docs.logz.io/user-guide/accounts/account-region.html).
 
 #### For traces:
-Enable the traces configuration for this chart: --set traces.enabled=true
-
-Replace the Logz-io `<<TRACES-SHIPPING-TOKEN>>` with the [token](https://app.logz.io/#/dashboard/settings/manage-tokens/data-shipping) of the traces account to which you want to send your data.
-
-Replace `<<LOGZIO-REGION>>` with the name of your Logz.io region e.g `us`,`eu`.
+- Enable the traces configuration for this chart: --set traces.enabled=true
+- Replace the Logz-io `<<TRACES-SHIPPING-TOKEN>>` with the [token](https://app.logz.io/#/dashboard/settings/manage-tokens/data-shipping) of the traces account to which you want to send your data.
 
 
 
@@ -68,10 +63,9 @@ Replace `<<LOGZIO-REGION>>` with the name of your Logz.io region e.g `us`,`eu`.
 ```
 helm install  \
 --set metrics.enabled=true \
---set secrets.MetricsToken=<<PROMETHEUS-METRICS-SHIPPING-TOKEN>> \
---set secrets.ListenerHost=<<LISTENER-HOST>> \
---set secrets.p8s_logzio_name=<<P8S-LOGZIO-NAME>> \
---set secrets.env_id=<<ENV-ID>> \
+--set global.logzioMetricsToken=<<PROMETHEUS-METRICS-SHIPPING-TOKEN>> \
+--set global.logzioRegion=<<LOGZIO-REGION>> \
+--set global.env_id=<<ENV-ID>> \
 logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry
 ```
 
@@ -79,10 +73,9 @@ logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry
 ```
 helm install \
 --set traces.enabled=true \
---set secrets.TracesToken=<<TRACES-SHIPPING-TOKEN>> \
---set secrets.LogzioRegion=<<LOGZIO-REGION>> \
---set secrets.p8s_logzio_name=<<P8S-LOGZIO-NAME>> \
---set secrets.env_id=<<ENV-ID>> \
+--set global.logzioTracesToken=<<TRACES-SHIPPING-TOKEN>> \
+--set global.logzioRegion=<<LOGZIO-REGION>> \
+--set global.env_id=<<ENV-ID>> \
 logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry
 ```
 
@@ -92,12 +85,10 @@ logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry
 helm install \
 --set traces.enabled=true \
 --set spm.enabled=true \
---set secrets.SpmToken=<<SPM-SHIPPING-TOKEN>> \
---set secrets.TracesToken=<<TRACES-SHIPPING-TOKEN>> \
---set secrets.LogzioRegion=<<LOGZIO-REGION>> \
---set secrets.ListenerHost=<<LISTENER-HOST>> \
---set secrets.p8s_logzio_name=<<P8S-LOGZIO-NAME>> \
---set secrets.env_id=<<ENV-ID>> \
+--set global.logzioSpmToken=<<SPM-SHIPPING-TOKEN>> \
+--set global.logzioTracesToken=<<TRACES-SHIPPING-TOKEN>> \
+--set global.logzioRegion=<<LOGZIO-REGION>> \
+--set global.env_id=<<ENV-ID>> \
 logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry
 ```
 
@@ -107,14 +98,12 @@ logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry
 helm install  \
 --set traces.enabled=true \
 --set spm.enabled=true \
---set secrets.TracesToken=<<TRACES-SHIPPING-TOKEN>> \
---set secrets.SpmToken=<<SPM-SHIPPING-TOKEN>> \
---set secrets.LogzioRegion=<<LOGZIO-REGION>> \
+--set global.logzioTracesToken=<<TRACES-SHIPPING-TOKEN>> \
+--set global.logzioSpmToken=<<SPM-SHIPPING-TOKEN>> \
+--set global.logzioRegion=<<LOGZIO-REGION>> \
 --set metrics.enabled=true \
---set secrets.MetricsToken=<<PROMETHEUS-METRICS-SHIPPING-TOKEN>> \
---set secrets.ListenerHost=<<LISTENER-HOST>> \
---set secrets.p8s_logzio_name=<<P8S-LOGZIO-NAME>> \
---set secrets.env_id=<<ENV-ID>> \
+--set global.logzioMetricsToken=<<PROMETHEUS-METRICS-SHIPPING-TOKEN>> \
+--set global.env_id=<<ENV-ID>> \
 logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry
 ```
 
@@ -125,14 +114,12 @@ helm install  \
 --set traces.enabled=true \
 --set spm.enabled=true \
 --set serviceGraph.enabled=true \
---set secrets.TracesToken=<<TRACES-SHIPPING-TOKEN>> \
---set secrets.SpmToken=<<SPM-SHIPPING-TOKEN>> \
---set secrets.LogzioRegion=<<LOGZIO-REGION>> \
+--set global.logzioTracesToken=<<TRACES-SHIPPING-TOKEN>> \
+--set global.logzioSpmToken=<<SPM-SHIPPING-TOKEN>> \
+--set global.logzioRegion=<<LOGZIO-REGION>> \
 --set metrics.enabled=true \
---set secrets.MetricsToken=<<PROMETHEUS-METRICS-SHIPPING-TOKEN>> \
---set secrets.ListenerHost=<<LISTENER-HOST>> \
---set secrets.p8s_logzio_name=<<P8S-LOGZIO-NAME>> \
---set secrets.env_id=<<ENV-ID>> \
+--set global.logzioMetricsToken=<<PROMETHEUS-METRICS-SHIPPING-TOKEN>> \
+--set global.env_id=<<ENV-ID>> \
 logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry
 ```
 
@@ -142,12 +129,10 @@ logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry
 helm install  \
 --set metrics.enabled=true \
 --set k8sObjectsConfig.enabled=true \
---set secrets.LogzioRegion=<<LOGZIO-REGION>> \
---set secrets.k8sObjectsLogsToken=<<LOGZIO-LOG-SHIPPING-TOKEN>> \
---set secrets.MetricsToken=<<PROMETHEUS-METRICS-SHIPPING-TOKEN>> \
---set secrets.ListenerHost=<<LISTENER-HOST>> \
---set secrets.p8s_logzio_name=<<P8S-LOGZIO-NAME>> \
---set secrets.env_id=<<ENV-ID>> \
+--set global.logzioRegion=<<LOGZIO-REGION>> \
+--set global.logzioLogsToken=<<LOGZIO-LOG-SHIPPING-TOKEN>> \
+--set global.logzioMetricsToken=<<PROMETHEUS-METRICS-SHIPPING-TOKEN>> \
+--set global.env_id=<<ENV-ID>> \
 logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry
 ```
 #### Handling image pull rate limit
@@ -196,9 +181,9 @@ under `How do I change the administrator password for Windows Server nodes on my
 
 ```
 helm install  \
---set secrets.MetricsToken=<<PROMETHEUS-METRICS-SHIPPING-TOKEN>> \
---set secrets.ListenerHost=<<LISTENER-HOST>> \
---set secrets.p8s_logzio_name=<<ENV-TAG>> \
+--set global.logzioMetricsToken=<<PROMETHEUS-METRICS-SHIPPING-TOKEN>> \
+--set global.logzioRegion=<<LISTENER-HOST>> \
+--set global.env_id=<<ENV-TAG>> \
 --set secrets.windowsNodeUsername=<<WINDOWS-NODE-USERNAME>> \
 --set secrets.windowsNodePassword=<<WINDOWS-NODE-PASSWORD>> \
 logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry
@@ -412,6 +397,18 @@ If you don't want the sub charts to installed add the relevant flag per sub char
 
 
 ## Change log
+* 5.0.0
+  - **Breaking Changes**
+    - Logz.io secret values are now global
+      - `secrets.MetricsToken` >> `global.logzioMetricsToken`
+      - `secrets.TracesToken` >> `global.logzioTracesToken`
+      - `secrets.SpmToken` >> `global.logzioSpmToken`
+      - `secrets.k8sObjectsLogsToken` >> `global.logzioLogsToken`
+      - `secrets.env_id` >> `global.env_id`
+      - `secrets.LogzioRegion` >> `global.logzioRegion`
+      - `secrets.CustomTracingEndpoint` >> `global.customTracesEndpoint`
+      - Deprecate `secrets.p8s_logzio_name` and `secrets.ListenerHost`
+        - Add `global.customMetricsEndpoint` to support sending metrics to a custom endpoint
 * 4.3.2
   - Fix `prometheus/kubelet` scrape endpoint for standalone deployment
 * 4.3.1
