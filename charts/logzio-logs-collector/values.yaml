@@ -18,15 +18,10 @@ fargateLogRouter:
   # Boolen to decide if to configure fargate log router (eks fargate envirinments)
   enabled: false
 
-secrets:
-  # When secrets.enabled is true, the logzio secret will be created and managed by this Chart.
-  # If you're managing the logzio secrets by yourself, set to false. 
-  # Note that in order for the default configuration to work properly, you need to:
-  # 1. Update secrets.name to your custom secret name
-  # 2. Include these keys in your secret: env-id, log-type, logzio-listener-region, logzio-logs-token
-  # To use a custom endpoint, include custom-endpoint parameter in your secret and set secrets.customEndpoint to true.
-  enabled: true
-  name: logzio-log-collector-secrets
+#######################################################################################################################
+# Base Configuration Parameters
+#######################################################################################################################
+global:
   # environment indentifier attribute that will be added to all logs
   env_id: "my_env"
   # defualt log type field
@@ -36,22 +31,21 @@ secrets:
   # Secret with your logzio region
   logzioRegion: "us"
   # Secret with your custom endpoint, for example:http://endpoint:8080. Overrides secrets.LogzioRegion listener adress
-  customEndpoint: ""
-
-configMap:
-  # Specifies whether a configMap should be created (true by default)
-  create: true
+  customLogsEndpoint: ""
 
 standaloneCollector:
   # Number of replicas in standalone collector mode
   replicaCount: 1
+
+#######################################################################################################################
+# OpenTelemetry Collector Configuration
+#######################################################################################################################
 
 # Base collector configuration.
 # Supports templating. To escape existing instances of {{ }}, use {{` <original content> `}}.
 # For example, {{ REDACTED_EMAIL }} becomes {{` {{ REDACTED_EMAIL }} `}}.
 config:
   exporters:
-    logging: {}
     logzio/logs:
       account_token: ${env:LOGZIO_LOGS_TOKEN}
       region: ${env:LOGZIO_REGION}
@@ -184,7 +178,6 @@ config:
       logs:
         exporters:
         - logzio/logs
-        - logging
         processors:
         - k8sattributes
         - transform/log_level
@@ -200,6 +193,9 @@ config:
       logs:
         level: info
 
+#######################################################################################################################
+# OpenTelemetry Collector Image Settings
+#######################################################################################################################
 image:
   # If you want to use the core image `otel/opentelemetry-collector`, you also need to change `command.name` value to `otelcol`.
   repository: otel/opentelemetry-collector-contrib
@@ -214,6 +210,23 @@ imagePullSecrets: []
 command:
   name: otelcol-contrib
   extraArgs: []
+
+#######################################################################################################################
+# Kubernetes Resources Configuration
+#######################################################################################################################
+secret:
+  # When secret.enabled is true, the logzio secret will be created and managed by this Chart.
+  # If you're managing the logzio secrets by yourself, set to false. 
+  # Note that in order for the default configuration to work properly, you need to:
+  # 1. Update secret.name to your custom secret name
+  # 2. Include these keys in your secret: env-id, log-type, logzio-listener-region, logzio-logs-token
+  # To use a custom endpoint, include custom-endpoint parameter in your secret and set global.customLogsEndpoint to true.
+  enabled: true
+  name: logzio-log-collector-secrets
+
+configMap:
+  # Specifies whether a configMap should be created (true by default)
+  create: true
 
 serviceAccount:
   # Specifies whether a service account should be created

@@ -36,7 +36,7 @@ spec:
       containers:
         - name: {{ .Values.k8sApp }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        {{- if (or .Values.secretName .Values.envVars) }}
+        {{- if (or .Values.secret.name .Values.envVars) }}
           env:
           {{- range .Values.envVars }}
             - name: {{ .name | quote }}
@@ -48,21 +48,21 @@ spec:
             {{ .valueFrom | toYaml | indent 16 }}
             {{- end }}
           {{- end }}
-          {{- if .Values.secretName }}
+          {{- if .Values.secret.name }}
             - name: LOGZIO_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: {{.Values.secretName}}
+                  name: {{.Values.secret.name}}
                   key: logzio-log-shipping-token
             - name: LOGZIO_LISTENER
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.secretName }}
+                  name: {{ .Values.secret.name }}
                   key: logzio-log-listener
             - name: ENV_ID
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.secretName }}
+                  name: {{ .Values.secret.name }}
                   key: env-id     
           {{- end }}
         {{- end }}

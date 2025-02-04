@@ -52,28 +52,28 @@ containers:
       - name: ENV_ID
         valueFrom:
           secretKeyRef:
-            name: {{ .Values.secrets.name }}
+            name: {{ .Values.secret.name }}
             key: env-id
       - name: LOG_TYPE
         valueFrom:
           secretKeyRef:
-            name: {{ .Values.secrets.name }}
+            name: {{ .Values.secret.name }}
             key: log-type
       - name: LOGZIO_REGION
         valueFrom:
           secretKeyRef:
-            name: {{ .Values.secrets.name }}
+            name: {{ .Values.secret.name }}
             key: logzio-listener-region
       - name: LOGZIO_LOGS_TOKEN
         valueFrom:
           secretKeyRef:
-            name: {{ .Values.secrets.name }}
+            name: {{ .Values.secret.name }}
             key: logzio-logs-token
-      {{- if .Values.secrets.customEndpoint }}
+      {{- if .Values.global.customLogsEndpoint }}
       - name: CUSTOM_ENDPOINT
         valueFrom:
           secretKeyRef:
-            name: {{ .Values.secrets.name }}
+            name: {{ .Values.secret.name }}
             key: custom-endpoint
       {{- end -}}
       {{- if and (.Values.useGOMEMLIMIT) ((((.Values.resources).limits).memory))  }}

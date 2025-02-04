@@ -47,6 +47,10 @@
   - Upgrade `logzio-logs-collector` chart to `2.0.0`
     - Upgrade `otel/opentelemetry-collector-contrib` image to `v.0.109.0`
 
+## 6.2.6
+- Upgrade `logzio-telemetry` chart to `v4.3.2`
+	- Add `prometheus/kubelet` metrics receiver
+
 ## 6.2.5
 - Upgrade `logzio-fluentd` chart to `v0.30.6`
     - Upgrade fluentd version to `1.18.0`

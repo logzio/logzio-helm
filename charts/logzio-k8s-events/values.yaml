@@ -21,6 +21,12 @@ apiVersions:
 nameOverride: ""
 fullnameOverride: ""
 
+global:
+  logzioLogsToken: ""
+  logzioRegion: "" # Defaults to us
+  env_id: ""
+  customLogsEndpoint: "" # Overrides Logz.io listener
+
 isRBAC: true
 
 serviceAccount:
@@ -38,14 +44,9 @@ terminationGracePeriodSeconds: 30
 nodeArchitectures: 
   - arm64
   - amd64
-secrets:
+secret:
   enabled: true
-  logzioShippingToken: ""
-  logzioListener: "" # Defaults to listener.logz.io
-  env_id: ""
-  customListener: "" # Overrides Logz.io listener
-
-secretName: logzio-k8s-events-secret
+  name: logzio-k8s-events-secret
 
 clusterRole:
   rules:

@@ -188,7 +188,7 @@ Allow the release namespace to be overridden
 Calculate Logz.io listener address based on region
 */}}
 {{- define "logzio.listenerAddress" -}}
-{{- $region := .Values.secrets.LogzioRegion -}}
+{{- $region := .Values.global.logzioRegion -}}
 {{- if eq $region "us" -}}
 listener.logz.io
 {{- else if eq $region "au" -}}

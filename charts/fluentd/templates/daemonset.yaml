@@ -83,12 +83,12 @@ spec:
         - name: LOGZIO_LOG_SHIPPING_TOKEN
           valueFrom:
             secretKeyRef:
-              name: {{ .Values.secretName }}
+              name: {{ .Values.secret.name }}
               key: logzio-log-shipping-token
         - name: LOGZIO_LOG_LISTENER
           valueFrom:
             secretKeyRef:
-              name: {{ .Values.secretName }}
+              name: {{ .Values.secret.name }}
               key: logzio-log-listener
         - name: LOG_FILE_REFRESH_INTERVAL
           value: {{ .Values.daemonset.LogFileRefreshInterval | quote }}
@@ -130,9 +130,9 @@ spec:
           value: {{ .Values.daemonset.logType | quote }}
         - name: POS_FILE_PATH
           value: {{ .Values.daemonset.posFile | quote }}
-        {{- if .Values.env_id }}
+        {{- if .Values.global.env_id }}
         - name: ENV_ID
-          value: {{ .Values.env_id | quote }}
+          value: {{ .Values.global.env_id | quote }}
         {{- end }}
         {{- if .Values.daemonset.extraEnv }}
 {{ toYaml .Values.daemonset.extraEnv | indent 8 }}
@@ -236,12 +236,12 @@ spec:
         - name: LOGZIO_LOG_SHIPPING_TOKEN
           valueFrom:
             secretKeyRef:
-              name: {{ .Values.secretName }}
+              name: {{ .Values.secret.name }}
               key: logzio-log-shipping-token
         - name: LOGZIO_LOG_LISTENER
           valueFrom:
             secretKeyRef:
-              name: {{ .Values.secretName }}
+              name: {{ .Values.secret.name }}
               key: logzio-log-listener
         - name: LOG_FILE_REFRESH_INTERVAL
           value: {{ .Values.windowsDaemonset.LogFileRefreshInterval | quote }}
@@ -281,9 +281,9 @@ spec:
           value: {{ .Values.windowsDaemonset.containersPath | quote }}
         - name: POS_FILE_PATH
           value: {{ .Values.daemonset.posFile | quote }}
-        {{- if .Values.env_id }}
+        {{- if .Values.global.env_id }}
         - name: ENV_ID
-          value: {{ .Values.env_id | quote}}
+          value: {{ .Values.global.env_id | quote}}
         {{- end }}
         {{- if .Values.windowsDaemonset.extraEnv }}
 {{ toYaml .Values.windowsDaemonset.extraEnv | indent 8 }}

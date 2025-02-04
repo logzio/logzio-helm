@@ -10,8 +10,8 @@ data:
     [FILTER]
       Name modify
       Match *
-      Add token {{ .Values.secrets.logzioLogsToken }}
-      Add type {{ .Values.secrets.logType }}
+      Add token {{ .Values.logzioLogsToken | default .Values.global.logzioLogsToken }}
+      Add type {{ .Values.global.logType }}
       Rename log message
     [FILTER]
       Name kubernetes
@@ -60,7 +60,7 @@ data:
       Match *
       Host  {{ template "logzio.listenerAddress" . }}
       HTTP_User token
-      HTTP_Passwd {{ .Values.secrets.logzioLogsToken }}
+      HTTP_Passwd {{ .Values.logzioLogsToken | default .Values.global.logzioLogsToken }}
       Port  8070
       Retry_Limit no_retries
       Index logzioCustomerIndex
