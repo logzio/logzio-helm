@@ -1239,6 +1239,23 @@ entries:
   logzio-k8s-events:
   - apiVersion: v2
     appVersion: 0.0.4
+    created: "2025-02-04T13:10:07.182804252Z"
+    description: A Helm chart for shipping Kubernetes deployments event information
+      logs to Logz.io.
+    digest: 329b5ef8c9ab316b0db19702019b4c4f6150f37e8768ec1c93a17360ee641a9f
+    keywords:
+    - logging
+    - k8s
+    - kubernetes
+    maintainers:
+    - email: raul.gurshumo@logz.io
+      name: Raul Gurshumov
+    name: logzio-k8s-events
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/logzio-k8s-events-1.0.0/logzio-k8s-events-1.0.0.tgz
+    version: 1.0.0
+  - apiVersion: v2
+    appVersion: 0.0.4
     created: "2024-12-23T15:10:06.935011001Z"
     description: A Helm chart for shipping Kubernetes deployments event information
       logs to Logz.io.
@@ -8335,4 +8352,4 @@ entries:
     urls:
     - https://logzio.github.io/logzio-helm/prometheus-alerts-migrator-1.0.0.tgz
     version: 1.0.0
-generated: "2025-02-04T13:09:06.430497336Z"
+generated: "2025-02-04T13:10:07.183406049Z"
