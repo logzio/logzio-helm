@@ -32,9 +32,10 @@ Create the name of the service account to use
 Builds the full logzio listener host
 */}}
 {{- define "trivyToLogzio.listenerHost" }}
-{{- if or ( eq $.Values.secrets.logzioListener "listener.logz.io" ) ( eq $.Values.secrets.logzioListener "" ) -}}
-{{- printf "https://listener.logz.io:8071" }}
+{{- $region := .Values.global.logzioRegion -}}
+{{- if or (eq $region "us") (not $region) -}}
+https://listener.logz.io:8071
 {{- else }}
-{{- printf "https://%s:8071" .Values.secrets.logzioListener -}}
-{{- end -}}
-{{- end -}}
+{{- printf "https://listener-%s.logz.io:8071" $region }}
+{{- end }}
+{{- end }}

@@ -33,12 +33,12 @@ Create the name of the service account to use
 Builds the full logzio listener host
 */}}
 {{- define "logzio.listenerHost" }}
-{{- if ne $.Values.secrets.customEndpoint "" -}}
-{{- printf "%s" .Values.secrets.customEndpoint  }}
-{{- else if or ( eq $.Values.secrets.logzioListener "listener.logz.io" ) ( eq $.Values.secrets.logzioListener " " ) -}}
+{{- if ne $.Values.global.customLogsEndpoint "" -}}
+{{- printf "%s" .Values.global.customLogsEndpoint  }}
+{{- else if or ( eq $.Values.global.logzioRegion "us" ) ( eq $.Values.global.logzioRegion " " ) -}}
 {{- printf "https://listener.logz.io:8071" }}
 {{- else }}
-{{- printf "https://%s:8071" .Values.secrets.logzioListener -}}
+{{- printf "https://listener-%s.logz.io:8071" .Values.global.logzioRegion -}}
 {{- end -}}
 {{- end -}}
 

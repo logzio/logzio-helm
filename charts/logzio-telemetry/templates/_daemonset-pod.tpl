@@ -71,11 +71,6 @@ containers:
           secretKeyRef:
             name: {{ .Values.secrets.name }}
             key: logzio-metrics-listener
-      - name: P8S_LOGZIO_NAME
-        valueFrom:
-          secretKeyRef:
-            name: {{ .Values.secrets.name }}
-            key: p8s-logzio-name
       - name: ENV_ID
         valueFrom:
           secretKeyRef:
