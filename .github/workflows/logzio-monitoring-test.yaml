@@ -103,7 +103,7 @@ jobs:
 
       - name: Wait for pods to be ready
         run: |
-          kubectl rollout status deployment/logzio-apm-collector --timeout=300s
+          kubectl rollout status deployment/logzio-apm-collector --timeout=500s
           kubectl rollout status deployment/logzio-apm-collector-spm --timeout=300s
           kubectl rollout status deployment/logzio-monitoring-kube-state-metrics --timeout=300s
           if [ "${{ matrix.environment }}" == "eks-linux" ]; then
@@ -151,17 +151,6 @@ jobs:
           kubectl rollout status deployment/otel-demo-loadgenerator --timeout=300s
       - name: Sleep
         run: sleep 180
-
-      - name: Get Logs
-        run: |
-          echo "logzio-monitoring-otel-collector-standalone: "
-          kubectl logs deployment/logzio-monitoring-otel-collector-standalone
-          echo "logzio-monitoring-otel-collector-spm: "
-          kubectl logs deployment/logzio-monitoring-otel-collector-spm
-          if [ "${{ matrix.environment }}" == "eks-linux" ]; then
-            echo "logzio-monitoring-otel-collector-ds: "
-            kubectl logs ds/logzio-monitoring-otel-collector-ds
-          fi
 
       - name: Run logs tests
         id: logs_tests
