@@ -488,16 +488,7 @@ containerSecurityContext: {}
 
 nodeSelector: {}
 tolerations: []
-# Set affinity rules for the scheduler to determine where all DaemonSet pods can be placed.
-# The following configuration prevent logzio APM collector DaemonSet deployment on fargate nodes
-# DaemonSet mode is not used in the current APM chart, this configuration is retained for potential future support.
-affinity:
-  nodeAffinity:
-    requiredDuringSchedulingIgnoredDuringExecution:
-      nodeSelectorTerms:
-        - matchExpressions:
-            - key: eks.amazonaws.com/compute-type
-              operator: DoesNotExist
+affinity: {}
 topologySpreadConstraints: []
 
 # Allows for pod scheduler prioritisation
