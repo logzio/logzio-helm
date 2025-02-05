@@ -97,7 +97,7 @@ Full list of available configuration per sub chart:
 - [logzio-k8s-telemetry Chart](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-telemetry)
 - [logzio-apm-collector Chart](https://github.com/logzio/logzio-helm/blob/master/charts/logzio-apm-collector/VALUES.md)
 - [logzio-trivy Chart](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-trivy#further-configuration)
-- [logzio-k8s-events](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-k8s-events)
+- [logzio-k8s-events Chart](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-k8s-events)
 
 
 If you want to modify one of the values, use the `--set` flag, and add the chart name as prefix.
