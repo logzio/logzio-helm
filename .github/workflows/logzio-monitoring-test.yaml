@@ -103,8 +103,6 @@ jobs:
 
       - name: Wait for pods to be ready
         run: |
-          kubectl rollout status deployment/logzio-apm-collector --timeout=300s
-          kubectl rollout status deployment/logzio-apm-collector-spm --timeout=300s
           kubectl rollout status deployment/logzio-monitoring-kube-state-metrics --timeout=300s
           if [ "${{ matrix.environment }}" == "eks-linux" ]; then
             kubectl rollout status ds/logzio-monitoring-prometheus-node-exporter --timeout=300s
