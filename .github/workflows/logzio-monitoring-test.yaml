@@ -91,7 +91,7 @@ jobs:
           --set global.logzioSpmToken='${{ secrets.LOGZIO_METRICS_TOKEN }}' "
         
           if [ "${{ matrix.environment }}" == "eks-fargate" ]; then
-            HELM_CMD="$HELM_CMD --set logzio-logs-collector.fargateLogRouter.enabled='true' --set logzio-k8s-telemetry.collector.mode=standalone"
+            HELM_CMD="$HELM_CMD --set logzio-logs-collector.fargateLogRouter.enabled='true' --set logzio-k8s-telemetry.collector.mode=standalone --set logzio-apm-collector.livenessProbe.initialDelaySeconds=15 --set logzio-apm-collector.readinessProbe.initialDelaySeconds=15"
           fi
           
           HELM_CMD="$HELM_CMD logzio-monitoring ."
