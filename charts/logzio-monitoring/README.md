@@ -459,7 +459,7 @@ Follow the guide below to enable this feature.
 
 **Step 2:** Add annotations to your relevant Kubernetes object. You can annotate individual resources such as a Deployment, StatefulSet, DaemonSet, or Pod, or apply annotations at the Namespace level to instrument all pods within that namespace. These annotations should specify the programming language used in your application:
 ```yaml
-instrumentation.opentelemetry.io/inject-<APP_LANGUAGE>: "monitoring/logzio-otel-instrumentation"
+instrumentation.opentelemetry.io/inject-<APP_LANGUAGE>: "monitoring/logzio-monitoring-instrumentation"
 ```
 
 > [!TIP]

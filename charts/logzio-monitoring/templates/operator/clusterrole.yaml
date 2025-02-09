@@ -1,0 +1,18 @@
+{{ $operatorEnabled := index .Values "otel-operator" "enabled" }}
+{{- if $operatorEnabled -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "otel-operator.fullname" . }}
+  labels:
+    {{- include "otel-operator.labels" . | nindent 4 }}
+  annotations:
+    {{- include "otel-operator.annotations" . | nindent 4 }}
+    {{- include "otel-operator.cleanupAnnotations" . | nindent 4 }}
+    helm.sh/hook-weight: "1"
+rules:
+- apiGroups: ["opentelemetry.io"]
+  resources:
+  - instrumentations
+  verbs: ["patch", "get", "create"]
+{{- end -}}

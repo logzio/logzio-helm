@@ -1,0 +1,4 @@
+{{ $operatorEnabled := index .Values "otel-operator" "enabled" }}
+{{- if $operatorEnabled -}}
+{{- include "otel-operator.instrumentation" . }}
+{{- end -}}

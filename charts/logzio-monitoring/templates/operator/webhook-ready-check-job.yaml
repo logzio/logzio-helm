@@ -1,0 +1,61 @@
+{{ $operatorEnabled := index .Values "otel-operator" "enabled" }}
+{{- if $operatorEnabled -}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "otel-operator.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    {{- include "otel-operator.annotations" . | nindent 4 }}
+    {{- include "otel-operator.cleanupAnnotations" . | nindent 4 }}
+    helm.sh/hook-weight: "2"
+spec:
+  ttlSecondsAfterFinished: 30
+  template:
+    spec:
+      serviceAccountName: {{ include "otel-operator.fullname" . }}
+      containers:
+        - name: curl
+          image: kube-tools:v2.0.0
+          args:
+            - sh
+            - -c
+            - |
+              max_wait=180
+              SECONDS=0
+              until curl -k https://logzio-monitoring-otel-operator-webhook.monitoring.svc:443/mutate-opentelemetry-io-v1alpha1-instrumentation; do
+                if [ $SECONDS -ge $max_wait ]; then
+                  echo "Opentelemetry Operator webhook readiness timeout exceeded, instrumentation resource was not applied."
+                  exit 1
+                fi
+                echo "Waiting for Opentelemetry Operator webhook to become ready..."
+                sleep 2
+              done
+              echo "Opentelemetry Operator webhook is ready,applying Instrumentation resources"
+              until kubectl get instrumentation {{ include "otel-operator.fullname" . }} -n {{ .Release.Namespace }}; do
+                while ! kubectl apply -f /conf/relay.yaml
+                do
+                  echo "Retrying apply, waiting for {{ include "otel-operator.fullname" . }}"
+                  sleep 5
+                  if [ $SECONDS -ge $max_wait ]; then
+                    echo "Timeout exceeded while applying Instrumentation, instrumentation resource was not applied."
+                    exit 1
+                  fi
+                done
+                echo "Applied Instrumentation, verifying..."
+                sleep 5
+              done
+              echo "Successfully applied Instrumentation resources"
+          volumeMounts:
+            - mountPath: /conf
+              name: logzio-otel-instrumentation
+      restartPolicy: OnFailure
+      volumes:
+        - name: logzio-otel-instrumentation
+          configMap:
+            name: logzio-otel-instrumentation
+            items:
+              - key: relay
+                path: relay.yaml
+  backoffLimit: 4
+{{- end -}}
