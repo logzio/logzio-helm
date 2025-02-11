@@ -253,7 +253,7 @@ helm get values logzio-monitoring -n monitoring
   <summary>Logs, Metrics and Traces:</summary>
 
 ```shell
-helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring --version 7.0.0 \
+helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring \
 --set global.logzioRegion="<<LOGZIO-REGION>>" \
 --set global.env_id="<<ENV-ID>>" \
 --set global.logzioLogsToken="<<LOG-SHIPPING-TOKEN>>" \
@@ -279,7 +279,7 @@ helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring --ver
   <summary>Logs and Metrics:</summary>
 
 ```shell
-helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring --version 7.0.0 \
+helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring \
 --set global.logzioRegion="<<LOGZIO-REGION>>" \
 --set global.env_id="<<ENV-ID>>" \
 --set global.logzioLogsToken="<<LOG-SHIPPING-TOKEN>>" \
@@ -297,7 +297,7 @@ helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring --ver
   <summary>Metrics and Traces:</summary>
 
 ```shell
-helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring --version 7.0.0 \
+helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring \
 --set global.logzioRegion="<<LOGZIO-REGION>>" \
 --set global.env_id="<<ENV-ID>>" \
 --set global.logzioMetricsToken="<<PROMETHEUS-METRICS-SHIPPING-TOKEN>>" \
@@ -319,7 +319,7 @@ helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring --ver
   <summary>Logs and Traces:</summary>
 
 ```shell
-helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring --version 7.0.0 \
+helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring \
 --set global.logzioRegion="<<LOGZIO-REGION>>" \
 --set global.env_id="<<ENV-ID>>" \
 --set global.logzioLogsToken="<<LOG-SHIPPING-TOKEN>>" \
@@ -345,7 +345,7 @@ helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring --ver
   <summary>Only Logs:</summary>
 
 ```shell
-helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring --version 7.0.0 \
+helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring \
 --set global.logzioRegion="<<LOGZIO-REGION>>" \
 --set global.env_id="<<ENV-ID>>" \
 --set global.logzioLogsToken="<<LOG-SHIPPING-TOKEN>>" \
@@ -362,7 +362,7 @@ helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring --ver
   <summary>Only Metrics:</summary>
 
 ```shell
-helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring --version 7.0.0 \
+helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring \
 --set global.logzioRegion="<<LOGZIO-REGION>>" \
 --set global.env_id="<<ENV-ID>>" \
 --set global.logzioMetricsToken="<<PROMETHEUS-METRICS-SHIPPING-TOKEN>>" \
@@ -375,7 +375,7 @@ helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring --ver
   <summary>Only Traces:</summary>
 
 ```shell
-helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring --version 7.0.0 \
+helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring \
 --set global.logzioRegion="<<LOGZIO-REGION>>" \
 --set global.env_id="<<ENV-ID>>" \
 --set logzio-k8s-telemetry.traces.enabled=false \
@@ -408,7 +408,7 @@ Replace `sub-chart-name` with the name of the sub chart which you manage the sec
 For example, if you manage secret for both `logzio-logs-collector` and for `logzio-trivy`, use:
 
  ```shell
-helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring --version 7.0.0 \
+helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring \
 --set global.logzioRegion="<<LOGZIO-REGION>>" \
 --set global.env_id="<<ENV-ID>>" \
 --set logzio-logs-collector.secret.name="<<NAME-OF-SECRET>>" \

@@ -40,10 +40,10 @@
         - `secrets` >> `secret`
         - `secretName` >> `secret.name`
 - **New features:**
-  - Add `logzio-apm-collector` chart `1.1.0` as part of transition to replace `logzio-k8s-telemetry` for improved load distribute in large clusters.
+  - Add `logzio-apm-collector` chart `1.2.0` as part of transition to replace `logzio-k8s-telemetry` for improved load distribute in large clusters.
     - Deprecate `jaeger` receivers
     - New `otelLogLevel` flag to easily change the OTEL Collector logging level
-    - Upgrade `otel/opentelemetry-collector-contrib` image to `v.0.117.0`
+    - Upgrade `otel/opentelemetry-collector-contrib` image to `v.0.119.0`
   - Upgrade `logzio-logs-collector` chart to `2.0.0`
     - Upgrade `otel/opentelemetry-collector-contrib` image to `v.0.109.0`
 
