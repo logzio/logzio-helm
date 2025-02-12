@@ -78,25 +78,20 @@ jobs:
           HELM_CMD="helm upgrade --install \
           --set logs.enabled=true \
           --set logzio-logs-collector.enabled=true \
-          --set logzio-logs-collector.secrets.logzioLogsToken='${{ secrets.LOGZIO_LOGS_TOKEN }}' \
-          --set logzio-logs-collector.secrets.logzioRegion='us' \
-          --set logzio-logs-collector.secrets.env_id='${{ env.ENV_ID }}' \
-          --set logzio-logs-collector.secrets.logType='${{ env.ENV_ID }}' \
-          --set metricsOrTraces.enabled=true \
-          --set logzio-k8s-telemetry.traces.enabled=true \
-          --set logzio-k8s-telemetry.spm.enabled=true \
-          --set logzio-k8s-telemetry.serviceGraph.enabled=true \
+          --set global.logzioLogsToken='${{ secrets.LOGZIO_LOGS_TOKEN }}' \
+          --set global.logzioRegion='us' \
+          --set global.env_id='${{ env.ENV_ID }}' \
+          --set global.logType='${{ env.ENV_ID }}' \
+          --set logzio-apm-collector.enabled=true \
+          --set logzio-apm-collector.spm.enabled=true \
+          --set logzio-apm-collector.serviceGraph.enabled=true \
           --set logzio-k8s-telemetry.metrics.enabled=true \
-          --set logzio-k8s-telemetry.secrets.MetricsToken='${{ secrets.LOGZIO_METRICS_TOKEN }}' \
-          --set logzio-k8s-telemetry.secrets.ListenerHost='https://listener.logz.io:8053' \
-          --set logzio-k8s-telemetry.secrets.p8s_logzio_name='${{ env.ENV_ID }}' \
-          --set logzio-k8s-telemetry.secrets.TracesToken='${{ secrets.LOGZIO_TRACES_TOKEN }}' \
-          --set logzio-k8s-telemetry.secrets.LogzioRegion='us' \
-          --set logzio-k8s-telemetry.secrets.env_id='${{ env.ENV_ID }}' \
-          --set logzio-k8s-telemetry.secrets.SpmToken='${{ secrets.LOGZIO_METRICS_TOKEN }}' "
+          --set global.logzioMetricsToken='${{ secrets.LOGZIO_METRICS_TOKEN }}' \
+          --set global.logzioTracesToken='${{ secrets.LOGZIO_TRACES_TOKEN }}' \
+          --set global.logzioSpmToken='${{ secrets.LOGZIO_METRICS_TOKEN }}' "
         
           if [ "${{ matrix.environment }}" == "eks-fargate" ]; then
-            HELM_CMD="$HELM_CMD --set logzio-logs-collector.fargateLogRouter.enabled='true' --set logzio-k8s-telemetry.collector.mode=standalone"
+            HELM_CMD="$HELM_CMD --set logzio-logs-collector.fargateLogRouter.enabled='true' --set logzio-k8s-telemetry.collector.mode=standalone --set logzio-apm-collector.livenessProbe.initialDelaySeconds=15 --set logzio-apm-collector.readinessProbe.initialDelaySeconds=15"
           fi
           
           HELM_CMD="$HELM_CMD logzio-monitoring ."
@@ -108,8 +103,8 @@ jobs:
 
       - name: Wait for pods to be ready
         run: |
-          kubectl rollout status deployment/logzio-monitoring-otel-collector-standalone --timeout=300s
-          kubectl rollout status deployment/logzio-monitoring-otel-collector-spm --timeout=300s   
+          kubectl rollout status deployment/logzio-apm-collector --timeout=300s
+          kubectl rollout status deployment/logzio-apm-collector-spm --timeout=300s
           kubectl rollout status deployment/logzio-monitoring-kube-state-metrics --timeout=300s
           if [ "${{ matrix.environment }}" == "eks-linux" ]; then
             kubectl rollout status ds/logzio-monitoring-prometheus-node-exporter --timeout=300s
@@ -156,17 +151,6 @@ jobs:
           kubectl rollout status deployment/otel-demo-loadgenerator --timeout=300s
       - name: Sleep
         run: sleep 180
-
-      - name: Get Logs
-        run: |
-          echo "logzio-monitoring-otel-collector-standalone: "
-          kubectl logs deployment/logzio-monitoring-otel-collector-standalone
-          echo "logzio-monitoring-otel-collector-spm: "
-          kubectl logs deployment/logzio-monitoring-otel-collector-spm
-          if [ "${{ matrix.environment }}" == "eks-linux" ]; then
-            echo "logzio-monitoring-otel-collector-ds: "
-            kubectl logs ds/logzio-monitoring-otel-collector-ds
-          fi
 
       - name: Run logs tests
         id: logs_tests

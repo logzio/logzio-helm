@@ -16,7 +16,7 @@ spec:
           image: ghcr.io/frzifus/jaeger-otel-test:latest
           args:
             [
-              '-otel.agent.host=logzio-monitoring-otel-collector',
+              '-otel.agent.host=logzio-apm-collector',
               '-otel.agent.port=4317',
             ]
           env:
