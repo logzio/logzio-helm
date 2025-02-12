@@ -183,8 +183,10 @@ Liveness probe failed: HTTP probe failed with statuscode: 503
 Try increasing the initial delay for the liveness and readiness probes:
 
 ```sh
+helm upgrade logzio-apm-collector logzio-helm/logzio-apm-collector -n monitoring \
 --set livenessProbe.initialDelaySeconds=10 \
 --set readinessProbe.initialDelaySeconds=10 \
+--reuse-values
 ```
 
 > [!NOTE]
