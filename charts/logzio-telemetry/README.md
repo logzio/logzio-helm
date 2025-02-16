@@ -397,6 +397,8 @@ If you don't want the sub charts to installed add the relevant flag per sub char
 
 
 ## Change log
+* 5.0.1
+  - Add `otlp` receivers to the metrics pipeline.
 * 5.0.0
   - **Breaking Changes**
     - Logz.io secret values are now global

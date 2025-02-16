@@ -347,6 +347,12 @@ metricsConfig:
         Authorization: "Bearer ${METRICS_TOKEN}"
         user-agent: "{{ .Chart.Name }}-{{ .Chart.Version }}-helm"
   receivers:
+    otlp:
+      protocols:
+        grpc:
+          endpoint: "0.0.0.0:4317"
+        http:
+          endpoint: "0.0.0.0:4318"
     prometheus/applications:
       config:
         global:
@@ -544,6 +550,7 @@ metricsConfig:
           - prometheus/cadvisor
           - prometheus/kubelet
           - prometheus/collector
+          - otlp
           
 # Shared params for daemonsetCollector and standaloneCollector deployment pods.
 # Can be overridden here or for any component independently using the same keys.
@@ -1065,6 +1072,12 @@ daemonsetConfig:
         Authorization: "Bearer ${METRICS_TOKEN}"
         user-agent: "{{ .Chart.Name }}-{{ .Chart.Version }}-helm"
   receivers:
+    otlp:
+      protocols:
+        grpc:
+          endpoint: "0.0.0.0:4317"
+        http:
+          endpoint: "0.0.0.0:4318"
     prometheus/applications:
       config:
         global:
@@ -1268,6 +1281,7 @@ daemonsetConfig:
           - prometheus/cadvisor
           - prometheus/kubelet
           - prometheus/collector
+          - otlp
     telemetry:
       logs:
         level: "info" 
