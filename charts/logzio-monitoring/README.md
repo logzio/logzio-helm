@@ -2,8 +2,6 @@
 
 The `logzio-monitoring` Helm Chart facilitates the process of sending Kubernetes telemetry data—such as logs, metrics, traces, and security reports—to your Logz.io account.
 
-**Note:** This project is currently in *beta* and may undergo changes.
-
 ## Overview
 
 This project packages the following Helm Charts:
