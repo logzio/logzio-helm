@@ -51,6 +51,7 @@ logzio-apm-collector logzio-helm/logzio-apm-collector
 - [Instrumentation](#instrumentation)
 - [Custom Trace Sampling rules](#custom-trace-sampling-rules)
 - [Enable File Storage extension](#enable-file-storage-extension)
+- [Resolve `Readiness probe` and `Liveness probe` failures](#resolve-readiness-probe-and-liveness-probe-failures)
 
 
 ## Instrumentation
@@ -172,6 +173,24 @@ containerSecurityContext:
 helm upgrade logzio-apm-collector logzio-helm/logzio-apm-collector -n monitoring -f values.yaml
 ```
 
+## Resolve `Readiness probe` and `Liveness probe` failures
+If, after installing the chart, the `logzio-apm-collector` or `logzio-spm-collector` (if you enabled SPM) pod fails to get scheduled on a node, and describing the pod shows the following errors
+```txt
+Readiness probe failed: HTTP probe failed with statuscode: 503
+Liveness probe failed: HTTP probe failed with statuscode: 503
+```
+
+Try increasing the initial delay for the liveness and readiness probes:
+
+```sh
+helm upgrade logzio-apm-collector logzio-helm/logzio-apm-collector -n monitoring \
+--set livenessProbe.initialDelaySeconds=10 \
+--set readinessProbe.initialDelaySeconds=10 \
+--reuse-values
+```
+
+> [!NOTE]
+> If `10s` is insufficient, try increasing it to `15s` or higher.
 
 ## Uninstalling
 To uninstall the `logzio-apm-collector` chart, you can use:
