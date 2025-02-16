@@ -165,6 +165,10 @@ data:
 
 
 ## Changelog
+- v2.1.1
+  - Upgrade `logzio/prometheus-alerts-migrator` image `v1.2.0`->`v1.2.1`:
+    - Add support for MS Teams v2 contact points
+    - Update `prometheus/alertmanager`: `v0.27.0` -> `v0.28.0`
 - v2.1.0
   - Upgrade `logzio/prometheus-alerts-migrator` image `v1.1.0`->`v1.2.0`:
     - Add support for MS Teams contact points
