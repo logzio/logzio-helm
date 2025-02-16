@@ -1,6 +1,9 @@
 # Changes by Version
 
 <!-- next version -->
+## 7.0.1
+- Upgrade `logzio-telemetry` chart to `v5.0.1`
+  - Add `otlp` receivers to the metrics pipeline.
 
 ## 7.0.0
 - **Breaking changes:**
