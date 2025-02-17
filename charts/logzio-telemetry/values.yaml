@@ -629,6 +629,12 @@ ports:
     servicePort: 6831
     hostPort: 6831
     protocol: UDP
+  jaeger-binary:
+    enabled: true
+    containerPort: 6832
+    servicePort: 6832
+    hostPort: 6832
+    protocol: UDP    
   jaeger-thrift:
     enabled: true
     containerPort: 14268
