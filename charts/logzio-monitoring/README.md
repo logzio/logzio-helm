@@ -131,12 +131,6 @@ helm install -n monitoring \
 logzio-monitoring logzio-helm/logzio-monitoring
 ```
 
-Then use `kubectl port-forward` to accsess the user intefrace in your browser:
-
-```shell
-kubectl port-forward svc/ezkonnect-ui -n monitoring 31032:31032
-```
-
 ### Handling image pull rate limit
 
 In scenarios (e.g., spot clusters) where pods/nodes are frequently replaced, you may encounter Dockerhub's pull rate limits. In these cases, use the following `--set` commands to use alternative image repositories:
@@ -271,6 +265,9 @@ helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring \
 > [!NOTE]
 > If you were using `logzio-logs-collector.secrets.logType`, add to your command `--set global.logType=<<LOG-TYPE>> \`
 
+> [!IMPORTANT]
+> Make sure to update your Instrumentation service endpoint from `logzio-monitoring-otel-collector.default.svc.cluster.local` to `logzio-apm-collector.monitoring.svc.cluster.local`.
+
 </details>
 
 <details>
@@ -282,7 +279,6 @@ helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring \
 --set global.env_id="<<ENV-ID>>" \
 --set global.logzioLogsToken="<<LOG-SHIPPING-TOKEN>>" \
 --set global.logzioMetricsToken="<<PROMETHEUS-METRICS-SHIPPING-TOKEN>>" \
-
 --reuse-values
 ```
 
@@ -311,6 +307,9 @@ helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring \
 --reuse-values
 ```
 
+> [!IMPORTANT]
+> Make sure to update your Instrumentation service endpoint from `logzio-monitoring-otel-collector.default.svc.cluster.local` to `logzio-apm-collector.monitoring.svc.cluster.local`.
+
 </details>
 
 <details>
@@ -336,6 +335,9 @@ helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring \
 > [!NOTE]
 > If you were using `logzio-logs-collector.secrets.logType`, add to your command `--set global.logType=<<LOG-TYPE>> \`
 
+> [!IMPORTANT]
+> Make sure to update your Instrumentation service endpoint from `logzio-monitoring-otel-collector.default.svc.cluster.local` to `logzio-apm-collector.monitoring.svc.cluster.local`.
+
 </details>
 
 
@@ -347,7 +349,6 @@ helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring \
 --set global.logzioRegion="<<LOGZIO-REGION>>" \
 --set global.env_id="<<ENV-ID>>" \
 --set global.logzioLogsToken="<<LOG-SHIPPING-TOKEN>>" \
-
 --reuse-values
 ```
 
@@ -387,6 +388,9 @@ helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring \
 
 --reuse-values
 ```
+
+> [!IMPORTANT]
+> Make sure to update your Instrumentation service endpoint from `logzio-monitoring-otel-collector.default.svc.cluster.local` to `logzio-apm-collector.monitoring.svc.cluster.local`.
 
 </details>
 
