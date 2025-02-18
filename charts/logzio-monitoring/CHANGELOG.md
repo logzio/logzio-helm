@@ -3,8 +3,6 @@
 <!-- next version -->
 
 ## 7.1.0
-- Upgrade `logzio-k8s-telemetry` chart to `5.0.1`
-  - Add `otlp` receivers to the metrics pipeline.
 - Add option to enable OpenTelemetry Operator for auto-instrumentation of the cluster applications.
   - Included `opentelemetry-operator` chart in version `~0.79.0`
   - Allow customization of propagators, sampler, data type to collect and libraries to enable.
