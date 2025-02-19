@@ -7,6 +7,10 @@
   - Included `opentelemetry-operator` chart in version `~0.79.0`
   - Allow customization of propagators, sampler, data type to collect and libraries to enable.
 
+## 7.0.3
+- Upgrade `logzio-telemetry` chart to `v5.0.3`
+  - Exposed span metrics collector service port for `thrift_binary` jaeger receiver
+
 ## 7.0.2
 - Upgrade `logzio-telemetry` chart to `v5.0.2`
   - Exposed collector service port for `thrift_binary` jaeger receiver

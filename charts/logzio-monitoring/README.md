@@ -278,7 +278,7 @@ helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring \
 > If you were using `logzio-logs-collector.secrets.logType`, add to your command `--set global.logType=<<LOG-TYPE>> \`
 
 > [!IMPORTANT]
-> Make sure to update your Instrumentation service endpoint from `logzio-monitoring-otel-collector.default.svc.cluster.local` to `logzio-apm-collector.monitoring.svc.cluster.local`.
+> Make sure to update your Instrumentation service endpoint from `logzio-monitoring-otel-collector.monitoring.svc.cluster.local` to `logzio-apm-collector.monitoring.svc.cluster.local`.
 
 </details>
 
@@ -320,7 +320,7 @@ helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring \
 ```
 
 > [!IMPORTANT]
-> Make sure to update your Instrumentation service endpoint from `logzio-monitoring-otel-collector.default.svc.cluster.local` to `logzio-apm-collector.monitoring.svc.cluster.local`.
+> Make sure to update your Instrumentation service endpoint from `logzio-monitoring-otel-collector.monitoring.svc.cluster.local` to `logzio-apm-collector.monitoring.svc.cluster.local`.
 
 </details>
 
@@ -348,7 +348,7 @@ helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring \
 > If you were using `logzio-logs-collector.secrets.logType`, add to your command `--set global.logType=<<LOG-TYPE>> \`
 
 > [!IMPORTANT]
-> Make sure to update your Instrumentation service endpoint from `logzio-monitoring-otel-collector.default.svc.cluster.local` to `logzio-apm-collector.monitoring.svc.cluster.local`.
+> Make sure to update your Instrumentation service endpoint from `logzio-monitoring-otel-collector.monitoring.svc.cluster.local` to `logzio-apm-collector.monitoring.svc.cluster.local`.
 
 </details>
 
@@ -402,7 +402,7 @@ helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring \
 ```
 
 > [!IMPORTANT]
-> Make sure to update your Instrumentation service endpoint from `logzio-monitoring-otel-collector.default.svc.cluster.local` to `logzio-apm-collector.monitoring.svc.cluster.local`.
+> Make sure to update your Instrumentation service endpoint from `logzio-monitoring-otel-collector.monitoring.svc.cluster.local` to `logzio-apm-collector.monitoring.svc.cluster.local`.
 
 </details>
 
