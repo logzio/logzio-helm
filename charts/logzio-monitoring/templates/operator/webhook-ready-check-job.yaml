@@ -16,7 +16,7 @@ spec:
       serviceAccountName: {{ include "otel-operator.fullname" . }}
       containers:
         - name: curl
-          image: kube-tools:v2.0.0
+          image: logzio/kube-tools:0.0.1
           args:
             - sh
             - -c
