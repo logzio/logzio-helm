@@ -9,7 +9,7 @@ metadata:
   labels:
     {{- include "otel-operator.labels" . | nindent 4 }}
   annotations:
-    {{- include "otel-operator.annotations" . | nindent 4 }}
+    {{- include "otel-operator.instrumentationAnnotations" . | nindent 4 }}
     helm.sh/hook-weight: "3"
 spec:
   env:

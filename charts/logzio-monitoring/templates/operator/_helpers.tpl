@@ -21,6 +21,10 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 helm.sh/hook: "post-install, post-upgrade"
 {{- end -}}
 
+{{- define "otel-operator.instrumentationAnnotations" -}}
+helm.sh/hook: "post-install"
+{{- end -}}
+
 {{/* Common annotations */}}
 {{- define "otel-operator.cleanupAnnotations" -}}
 helm.sh/hook-delete-policy: "before-hook-creation, hook-succeeded, hook-failed"

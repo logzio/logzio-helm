@@ -137,12 +137,12 @@ instrumentation:
     # - ottrace
   
   # Specifies the Sampler used to sample traces by the SDK. (Optional)
-  sampler: {}
-    ## By default, "parentbased_always_on" is enabled, meaning new traces will always be recorded and if the parent span is sampled, then the child span will be sampled.
-    ## ref: https://opentelemetry.io/docs/languages/sdk-configuration/general/#otel_traces_sampler
-    # type: "parentbased_always_on"
+  sampler:
+    # By default, "parentbased_always_on" is enabled, meaning new traces will always be recorded and if the parent span is sampled, then the child span will be sampled.
+    # ref: https://opentelemetry.io/docs/languages/sdk-configuration/general/#otel_traces_sampler
+    type: "parentbased_always_on"
 
-    ## Each Sampler type defines its own expected args input gor configuring the sampler
+    ## Each Sampler type defines its own expected args input for configuring the sampler
     ## ref: https://opentelemetry.io/docs/languages/sdk-configuration/general/#otel_traces_sampler_arg
     # argument: "0.25"
   

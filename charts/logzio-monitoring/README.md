@@ -440,6 +440,10 @@ To send the instrumentation data it generates to Logz.io,, you need to enable th
 
 Follow the guide below to enable this feature.
 
+> [!WARNING]
+> The Operator does not support Windows nodes at the moment.
+
+
 - [Step by step guide](#enable-auto-instrumentation)
   - [Multi-container pods](#multi-container-pods)
 - [Customize Auto-instrumentation](#customize-auto-instrumentation)

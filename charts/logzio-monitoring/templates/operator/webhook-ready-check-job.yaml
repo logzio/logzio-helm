@@ -23,6 +23,18 @@ spec:
             - |
               max_wait=180
               SECONDS=0
+
+              apply_instrumentation() {
+                while ! kubectl apply -f /conf/relay.yaml; do
+                  echo "Retrying apply, waiting for {{ include "otel-operator.fullname" . }}"
+                  sleep 5
+                  if [ $SECONDS -ge $max_wait ]; then
+                    echo "Timeout exceeded while applying Instrumentation, instrumentation resource was not applied."
+                    exit 1
+                  fi
+                done
+              }
+
               until curl -k https://logzio-monitoring-otel-operator-webhook.monitoring.svc:443/mutate-opentelemetry-io-v1alpha1-instrumentation; do
                 if [ $SECONDS -ge $max_wait ]; then
                   echo "Opentelemetry Operator webhook readiness timeout exceeded, instrumentation resource was not applied."
@@ -31,17 +43,34 @@ spec:
                 echo "Waiting for Opentelemetry Operator webhook to become ready..."
                 sleep 2
               done
-              echo "Opentelemetry Operator webhook is ready,applying Instrumentation resources"
-              until kubectl get instrumentation {{ include "otel-operator.fullname" . }} -n {{ .Release.Namespace }}; do
-                while ! kubectl apply -f /conf/relay.yaml
-                do
-                  echo "Retrying apply, waiting for {{ include "otel-operator.fullname" . }}"
-                  sleep 5
+
+              echo "Opentelemetry Operator webhook is ready, checking if Instrumentation resource exists"
+              if kubectl get instrumentation logzio-monitoring-instrumentation -n monitoring; then
+                echo "Instrumentation resource already exists, checking for changes"
+                while true; do
+                  kubectl diff -f /conf/relay.yaml
+                  exit_code=$?
+                  if [ $exit_code -eq 0 ]; then
+                    echo "No changes were detected, skipping apply"
+                    exit 0
+                  elif [ $exit_code -eq 1 ]; then
+                    echo "Detected changes in Instrumentation resource, applying"
+                    apply_instrumentation
+                    exit 0
+                  else
+                    echo "Error while checking for changes, retrying"
+                    sleep 5
+                  fi
                   if [ $SECONDS -ge $max_wait ]; then
-                    echo "Timeout exceeded while applying Instrumentation, instrumentation resource was not applied."
+                    echo "Timeout exceeded while applying Instrumentation, instrumentation resource was not updated."
                     exit 1
                   fi
                 done
+              fi
+
+              echo "Applying Instrumentation resources"
+              until kubectl get instrumentation {{ include "otel-operator.fullname" . }} -n {{ .Release.Namespace }}; do
+                apply_instrumentation
                 echo "Applied Instrumentation, verifying..."
                 sleep 5
               done
