@@ -28,8 +28,8 @@ This project packages the following Helm Charts:
     - [Custom endpoint for traces](#send-traces-to-a-custom-endpoint)
   - [Image pull rate limit issue](#handling-image-pull-rate-limit)
   - [Add tolerations for tainted nodes](#adding-tolerations-for-tainted-nodes)
-  - [Migrating to logzio-monitoring v7.0.0](#migrating-to-logzio-monitoring-700)
-  - [Enabled Auto-Instrumentation](#enable-auto-instrumentation)
+- [Migrating to logzio-monitoring v7.0.0](#migrating-to-logzio-monitoring-700)
+- [Enabled Auto-Instrumentation](#enable-auto-instrumentation)
 
 ## Instructions for standard deployment:
 
@@ -436,7 +436,7 @@ helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring \
 
 The Opentelemetry Operator manages auto-instrumentation of workloads using OpenTelemetry instrumentation libraries, automatically generating traces and metrics.
 
-To send the instrumentation data it generates to Logz.io,, you need to enable the operator within the `logzio-monitoring` chart, along with either the `logzio-apm-collector` (for traces), `logzio-k8s-telemetry` (for metrics), or both, both—depending on the type of data you want to forward to the Logz.io platform.
+To send the instrumentation data it generates to Logz.io, you need to enable the operator within the `logzio-monitoring` chart, along with either the `logzio-apm-collector` (for traces), `logzio-k8s-telemetry` (for metrics), or both, both—depending on the type of data you want to forward to the Logz.io platform.
 
 Follow the guide below to enable this feature.
 
