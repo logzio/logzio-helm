@@ -41,3 +41,158 @@ opencost:
     service:
       annotations:
         prometheus.io/scrape: "true"
+
+#######################################################################################################################
+# Enable Auto Instrumentation
+# ref: https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-operator
+#######################################################################################################################
+otel-operator:
+  enabled: false
+
+  # Openteleemtry operator requires a TLS certificate.
+  # ref: https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-operator#tls-certificate-requirement
+  admissionWebhooks:
+    # TLS certificate Option 1
+    # If you have cert-manager installed on your cluster, you can set `certManager.enabled` to true
+    # and the cert-manager will generate a self-signed certificate for the otel-operator automatically.
+    certManager:
+      enabled: false
+
+      # Ensure certificate and issuer are created after the CRDs are installed
+      certificateAnnotations:
+        helm.sh/hook: "post-install, post-upgrade"
+        helm.sh/hook-delete-policy: "before-hook-creation, hook-succeeded"
+      issuerAnnotations:
+        helm.sh/hook: "post-install, post-upgrade"
+        helm.sh/hook-delete-policy: "before-hook-creation, hook-succeeded"
+  
+      ## Provide the issuer kind and name to do the cert auth job.
+      ## By default, OpenTelemetry Operator will use self-signer issuer.
+      # issuerRef: {}
+      # kind:
+      # name:
+
+      ## Annotations for the cert and issuer if cert-manager is enabled.
+      # certificateAnnotations: {}
+      # issuerAnnotations: {}
+
+      ## duration must be specified by a Go time.Duration (ending in s, m or h)
+      # duration: ""
+
+      ## renewBefore must be specified by a Go time.Duration (ending in s, m or h)
+      ## Take care when setting the renewBefore field to be very close to the duration
+      ## as this can lead to a renewal loop, where the Certificate is always in the renewal period.
+      # renewBefore: ""
+    
+    # TLS certificate Option 2
+    # The default option enabled by this chart. Helm will automatically create a self-signed cert and secret for you.
+    autoGenerateCert:
+      enabled: true
+      ## If set to true, new webhook key/certificate is generated on helm upgrade.
+      # recreate: true
+
+      ## Cert period time in days. The default is 365 days.
+      # certPeriodDays: 365
+
+    ## TLS certificate Option 3
+    ## Use your own self-signed certificate
+    ## To enable this option, set `autoGenerateCert.enabled` to false and provide the necessary values:
+    ## Path to your own PEM-encoded certificate.
+    # certFile: ""
+    ## Path to your own PEM-encoded private key.
+    # keyFile: ""
+    ## Path to the CA cert.
+    # caFile: ""
+
+  # Deploying the collector using the operator is not supported currently.
+  # The collector image is specified to meet operator subchart requirments.
+  manager:
+    collectorImage:
+      repository: "otel/opentelemetry-collector-contrib"
+
+#######################################################################################################################
+# Otel Operator Auto Instrumentation configuration
+#######################################################################################################################
+instrumentation:
+  # Set the service name for metrics and traces data endpoints.
+  # If you have modified the default service names using `nameOverride` or `fullnameOverride` in the subcharts 
+  # (`logzio-apm-collector`, `logzio-k8s-telemetry`), update these values accordingly.
+  metricsServiceName: "logzio-monitoring-otel-collector"
+  tracesServiceName: "logzio-apm-collector"
+
+  # Defines whether K8s UID attributes should be collected (e.g. k8s.deployment.uid)
+  addK8sUIDAttributes: false
+
+  # Choose propagator to specify the method of injecting and extracting context from carriers.
+  # By default, "tracecontext" (W3C Trace Context) and "baggage" (W3C Correlation Context) are enabled.
+  # You can enable or disable propagators as needed, or use "none" for no automatically configured propagator
+  # ref: https://opentelemetry.io/docs/languages/sdk-configuration/general/#otel_propagators
+  propagators:
+    - tracecontext
+    - baggage
+    # - b3
+    # - b3multi
+    # - jaeger
+    # - xray
+    # - ottrace
+  
+  # Specifies the Sampler used to sample traces by the SDK. (Optional)
+  sampler:
+    # By default, "parentbased_always_on" is enabled, meaning new traces will always be recorded and if the parent span is sampled, then the child span will be sampled.
+    # ref: https://opentelemetry.io/docs/languages/sdk-configuration/general/#otel_traces_sampler
+    type: "parentbased_always_on"
+
+    ## Each Sampler type defines its own expected args input for configuring the sampler
+    ## ref: https://opentelemetry.io/docs/languages/sdk-configuration/general/#otel_traces_sampler_arg
+    # argument: "0.25"
+  
+  # Specifies the environment variables for the instrumentor.
+  # By default, the auto-instrumentation used with many instrumentation libraries.
+  # To turn them off, you can specify the libraries to exclude under `<<LANGUAGE>>.extraEnv`
+  dotnet:
+    traces:
+      enabled: true
+    metrics:
+      enabled: true
+    extraEnv:
+    ## ref: https://opentelemetry.io/docs/kubernetes/operator/automatic/#dotnet-excluding-auto-instrumentation
+    # - name: OTEL_DOTNET_AUTO_TRACES_GRPCNETCLIENT_INSTRUMENTATION_ENABLED
+    #   value: false
+    # - name: OTEL_DOTNET_AUTO_METRICS_PROCESS_INSTRUMENTATION_ENABLED
+    #   value: false
+
+  java:
+    traces:
+      enabled: true
+    metrics:
+      enabled: true
+    extraEnv: {}
+    ## ref: https://opentelemetry.io/docs/kubernetes/operator/automatic/#java-excluding-auto-instrumentation
+    # - name: OTEL_INSTRUMENTATION_COMMON_DEFAULT_ENABLED  # to disable all default libraries and enable only the ones specified
+    #   value: false
+    # - name: OTEL_INSTRUMENTATION_KAFKA_ENABLED
+    #   value: true
+    # - name: OTEL_INSTRUMENTATION_REDISCALA_ENABLED
+    #   value: true
+
+  python:
+    traces:
+      enabled: true
+    metrics:
+      enabled: true
+    extraEnv:
+    ## ref: https://opentelemetry.io/docs/kubernetes/operator/automatic/#python-excluding-auto-instrumentation
+    # - name: OTEL_PYTHON_DISABLED_INSTRUMENTATIONS
+    #   value: redis,kafka,grpc_client
+
+  nodejs:
+    traces:
+      enabled: true
+    metrics:
+      enabled: true
+    extraEnv: {}
+      ## ref: https://opentelemetry.io/docs/kubernetes/operator/automatic/#js-excluding-instrumentation-libraries
+      # - name: OTEL_NODE_ENABLED_INSTRUMENTATIONS
+      #   value: "http,express"
+      # - name: OTEL_NODE_DISABLED_INSTRUMENTATIONS
+      #   value: "fs,grpc"
