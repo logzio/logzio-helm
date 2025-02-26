@@ -1,0 +1,17 @@
+{{ $operatorEnabled := index .Values "otel-operator" "enabled" }}
+{{- if $operatorEnabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: logzio-otel-instrumentation
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "otel-operator.labels" . | nindent 4 }}
+  annotations:
+    {{- include "otel-operator.annotations" . | nindent 4 }}
+    {{- include "otel-operator.cleanupAnnotations" . | nindent 4 }}
+    helm.sh/hook-weight: "1"
+data:
+  relay: |
+    {{- include "otel-operator.instrumentation" . | nindent 4 }}
+{{- end -}}
