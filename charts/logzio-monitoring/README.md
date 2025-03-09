@@ -478,9 +478,9 @@ instrumentation.opentelemetry.io/inject-<APP_LANGUAGE>: "monitoring/logzio-monit
 By default, in multi-container pods, instrumentation is performed on the first container available in the pod spec.
 To fine tune which containers to instrument, add the below annotations to your pod:
 ```yaml
-instrumentation.opentelemetry.io/inject-<APP_LANGUAGE>: "monitoring/logzio-apm-collector"
+instrumentation.opentelemetry.io/inject-<APP_LANGUAGE>: "monitoring/logzio-monitoring-instrumentation"
 instrumentation.opentelemetry.io/<APP_LANGUAGE>-container-names: "myapp,myapp2"
-instrumentation.opentelemetry.io/inject-<APP_LANGUAGE_2>: "monitoring/logzio-apm-collector"
+instrumentation.opentelemetry.io/inject-<APP_LANGUAGE_2>: "monitoring/logzio-monitoring-instrumentation"
 instrumentation.opentelemetry.io/<APP_LANGUAGE_2>-container-names: "myapp3"
 ```
 
