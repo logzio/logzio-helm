@@ -109,6 +109,9 @@ otel-operator:
   manager:
     collectorImage:
       repository: "otel/opentelemetry-collector-contrib"
+    # To enable Go instrumentation support
+    # extraArgs:
+    #   - "--enable-go-instrumentation=true"
 
 #######################################################################################################################
 # Otel Operator Auto Instrumentation configuration
