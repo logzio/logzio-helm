@@ -2,7 +2,7 @@ apiVersion: v2
 name: logzio-monitoring
 description: logzio-monitoring allows you to ship logs, metrics, traces and security reports from your Kubernetes cluster using the OpenTelemetry collector for metrics and traces, Fluentd for logs, and Trivy for security reports.
 type: application
-version: 7.1.0
+version: 7.1.1
 
 
 
@@ -39,7 +39,7 @@ dependencies:
     condition: logzio-apm-collector.enabled
   - name: opentelemetry-operator
     alias: otel-operator
-    version: ~0.79.0
+    version: ~0.81.1
     repository: https://open-telemetry.github.io/opentelemetry-helm-charts
     condition: otel-operator.enabled
 maintainers:

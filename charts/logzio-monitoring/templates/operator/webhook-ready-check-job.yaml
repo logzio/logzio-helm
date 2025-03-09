@@ -45,7 +45,7 @@ spec:
               done
 
               echo "Opentelemetry Operator webhook is ready, checking if Instrumentation resource exists"
-              if kubectl get instrumentation logzio-monitoring-instrumentation -n monitoring; then
+              if kubectl get instrumentation.opentelemetry.io logzio-monitoring-instrumentation -n monitoring; then
                 echo "Instrumentation resource already exists, checking for changes"
                 while true; do
                   kubectl diff -f /conf/relay.yaml
@@ -69,7 +69,7 @@ spec:
               fi
 
               echo "Applying Instrumentation resources"
-              until kubectl get instrumentation {{ include "otel-operator.fullname" . }} -n {{ .Release.Namespace }}; do
+              until kubectl get instrumentation.opentelemetry.io {{ include "otel-operator.fullname" . }} -n {{ .Release.Namespace }}; do
                 apply_instrumentation
                 echo "Applied Instrumentation, verifying..."
                 sleep 5

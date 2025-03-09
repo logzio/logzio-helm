@@ -453,7 +453,8 @@ Follow the guide below to enable this feature.
 
 ### Step by step
 
-**Step 1:** Make sure to enable the OpenTelemetry operator in the chart:
+#### Step 1:
+Make sure to enable the OpenTelemetry operator in the chart:
 ```shell
 --set otel-operator.enabled=true \
 ```
@@ -461,7 +462,8 @@ Follow the guide below to enable this feature.
 > [!NOTE]
 > It can take a few minutes for the OpenTelemetry Operator components to be installed and deployed on your cluster.
 
-**Step 2:** Add annotations to your relevant Kubernetes object. You can annotate individual resources such as a Deployment, StatefulSet, DaemonSet, or Pod, or apply annotations at the Namespace level to instrument all pods within that namespace. These annotations should specify the programming language used in your application:
+#### Step 2:
+Add annotations to your relevant Kubernetes object. You can annotate individual resources such as a Deployment, StatefulSet, DaemonSet, or Pod, or apply annotations at the Namespace level to instrument all pods within that namespace. These annotations should specify the programming language used in your application:
 ```yaml
 instrumentation.opentelemetry.io/inject-<APP_LANGUAGE>: "monitoring/logzio-monitoring-instrumentation"
 ```
@@ -485,6 +487,8 @@ instrumentation.opentelemetry.io/<APP_LANGUAGE_2>-container-names: "myapp3"
 > [!TIP]
 > `<APP_LANGUAGE>`, `<APP_LANGUAGE_2>` can be one of `apache-httpd`, `dotnet`, `go`, `java`, `nginx`, `nodejs` or `python`.
 
+> [!WARNING]
+> Go auto-instrumentation does not support multicontainer pods.
 
 ## Customize Auto-instrumentation
 Below you can find multiple ways in which you can customize the OpenTelemetry Operator Auto-instrumentation.
@@ -529,3 +533,22 @@ There are 3 TLS certificate options, by default this chart is using option 2.
 --set otel-operator.admissionWebhooks.keyFile="<<PEM_KEY_PATH>>" \
 --set otel-operator.admissionWebhooks.caFile="<<CA_CERT_PATH>>" \
 ```
+
+### Enable Go Instrumentation
+Go Instrumentation is disabled by default in the OpenTelemetry Operator. To enable it, follow the below steps:
+
+#### Step 1
+Add the following configuration to your `values.yaml`:
+
+```yaml
+otel-operator:
+  manager:
+    extraArgs:
+      - "--enable-go-instrumentation=true"
+```
+
+#### Step 2
+Set the `OTEL_GO_AUTO_TARGET_EXE` environment variable in your Go application to the path of the target executable.
+
+> [!NOTE]
+> For further details, refer to the [OpenTelemetry Go Instrumentation documentation](https://github.com/open-telemetry/opentelemetry-go-instrumentation/blob/v0.21.0/docs/how-it-works.md#opentelemetry-go-instrumentation---how-it-works).

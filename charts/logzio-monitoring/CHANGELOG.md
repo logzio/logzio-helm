@@ -2,6 +2,10 @@
 
 <!-- next version -->
 
+## 7.1.1
+- Upgrade `opentelemetry-operator` chart to `~0.81.1`
+- Explicitly specified the API group when applying the `instrumentation` resource to prevent conflicts in clusters that have multiple `Instrumentation` CRDs from different API groups
+
 ## 7.1.0
 - Add option to enable OpenTelemetry Operator for auto-instrumentation of the cluster applications.
   - Included `opentelemetry-operator` chart in version `~0.79.0`
