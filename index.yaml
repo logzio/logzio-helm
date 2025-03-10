@@ -3958,6 +3958,58 @@ entries:
     version: 1.0.0
   logzio-monitoring:
   - apiVersion: v2
+    created: "2025-03-10T11:27:44.821819961Z"
+    dependencies:
+    - condition: logs.enabled
+      name: logzio-fluentd
+      repository: https://logzio.github.io/logzio-helm/
+      version: 1.0.0
+    - condition: logzio-k8s-telemetry.metrics.enabled
+      name: logzio-k8s-telemetry
+      repository: https://logzio.github.io/logzio-helm/
+      version: 5.0.3
+    - condition: securityReport.enabled
+      name: logzio-trivy
+      repository: https://logzio.github.io/logzio-helm/
+      version: 1.0.0
+    - condition: finops.enabled
+      name: opencost
+      repository: https://opencost.github.io/opencost-helm-chart
+      version: 1.3.0
+    - condition: deployEvents.enabled
+      name: logzio-k8s-events
+      repository: https://logzio.github.io/logzio-helm/
+      version: 1.0.0
+    - condition: logs.enabled
+      name: logzio-logs-collector
+      repository: https://logzio.github.io/logzio-helm/
+      version: 2.0.0
+    - condition: logzio-apm-collector.enabled
+      name: logzio-apm-collector
+      repository: https://logzio.github.io/logzio-helm/
+      version: 1.2.0
+    - alias: otel-operator
+      condition: otel-operator.enabled
+      name: opentelemetry-operator
+      repository: https://open-telemetry.github.io/opentelemetry-helm-charts
+      version: ~0.81.1
+    description: logzio-monitoring allows you to ship logs, metrics, traces and security
+      reports from your Kubernetes cluster using the OpenTelemetry collector for metrics
+      and traces, Fluentd for logs, and Trivy for security reports.
+    digest: 6e4e5ca045985063c01865a30ab10c277fe83566402d0d5b7412206400ca9fab
+    maintainers:
+    - email: yotam.loewenbach@logz.io
+      name: yotamloe
+    - email: raul.gurshumo@logz.io
+      name: ralongit
+    name: logzio-monitoring
+    sources:
+    - https://github.com/logzio/logzio-helm
+    type: application
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/logzio-monitoring-7.1.1/logzio-monitoring-7.1.1.tgz
+    version: 7.1.1
+  - apiVersion: v2
     created: "2025-02-26T10:33:44.351885801Z"
     dependencies:
     - condition: logs.enabled
@@ -8765,4 +8817,4 @@ entries:
     urls:
     - https://logzio.github.io/logzio-helm/prometheus-alerts-migrator-1.0.0.tgz
     version: 1.0.0
-generated: "2025-03-10T07:16:32.408982513Z"
+generated: "2025-03-10T11:27:44.822820375Z"
