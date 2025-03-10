@@ -2,6 +2,12 @@
 
 <!-- next version -->
 
+## 7.1.2
+- Upgrade `opentelemetry-operator` chart to `~0.82.0`
+  - Resolve errors regarding `ServiceMonitor` and `PodMonitor` resources which are not utilized by this chart.
+- Upgrade `logzio-fluentd` chart to `1.0.1`
+  - Upgrade ARM and AMD fluentd image version to `v1.18.0-debian-logzio-amd64-1.3` and `v1.18.0-debian-logzio-arm64-1.3`
+
 ## 7.1.1
 - Upgrade `opentelemetry-operator` chart to `~0.81.1`
 - Explicitly specified the API group when applying the `instrumentation` resource to prevent conflicts in clusters that have multiple `Instrumentation` CRDs from different API groups
