@@ -2,6 +2,10 @@
 
 <!-- next version -->
 
+## 1.0.1
+- Upgrade docker image to `1.5.6`.
+  - Upgrade ARM and AMD fluentd image version to `v1.18.0-debian-logzio-amd64-1.3` and `v1.18.0-debian-logzio-arm64-1.3`
+
 ## 1.0.0
 - **Breaking changes**
   - Secret values are now global to prevent duplicate values in the parent chart
