@@ -165,6 +165,19 @@ data:
 
 
 ## Changelog
+- v3.0.0
+  - Upgrade `logzio/prometheus-alerts-migrator` image `v1.2.1`->`v1.3.0`:
+    - Upgrade to Grafana 10 API
+      - Remove support for `MSTeamsConfigs` (`msteams_configs`) due to deprecation in Grafana 10.
+    - Upgrade GoLang version to 1.24
+    - Upgrade dependencies
+      - `logzio_terraform_client`: `1.22.0` -> `v1.23.2`
+      - `prometheus/alertmanager`: `v0.28.0` -> `v0.28.1`
+      - `prometheus/common`: `v0.61.0` -> `v0.62.0`
+      - `prometheus/prometheus`: `v0.301.0` -> `v0.302.1`
+      - `k8s.io/api`: `v0.32.0` -> `v0.32.2`
+      - `k8s.io/apimachinery`: `v0.32.0` -> `v0.32.2`
+      - `k8s.io/client-go`: `v0.32.0` -> `v0.32.2`
 - v2.1.1
   - Upgrade `logzio/prometheus-alerts-migrator` image `v1.2.0`->`v1.2.1`:
     - Add support for MS Teams v2 contact points
