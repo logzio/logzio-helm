@@ -1,4 +1,4 @@
-FROM fluent/fluentd:v1.18.0-windows-ltsc2019-1.0
+FROM fluent/fluentd:v1.18.0-windows-ltsc2022-1.0
 LABEL version=0.0.5-test
 RUN gem install fluent-plugin-detect-exceptions \
 && gem install fluent-plugin-logzio \
