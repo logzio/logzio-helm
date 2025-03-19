@@ -18,26 +18,21 @@ jobs:
       - name: Get new image version
         id: extract_version
         shell: cmd
-        run: for /f "tokens=2 delims==" %%a in ('type "fluentd_windows.dockerfile" ^|findstr "version"') do @echo NEW_VERSION=%%a >> $GITHUB_ENV
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        working-directory: charts/fluentd/docker_windows
+        run: for /f "tokens=2 delims==" %%a in ('type "fluentd_windows.dockerfile" ^|findstr "version"') do @echo NEW_VERSION=%%a >> %GITHUB_ENV%
+      - name: Debug NEW_VERSION
+        run: echo "${{ env.NEW_VERSION }}"
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Build and push
-        uses: docker/build-push-action@v5
-        with:
-          push: true
-          platforms: windows/amd64
-          sbom: true
-          provenance: mode=max
-          tags: logzio/fluentd-windows:latest, logzio/fluentd-windows:${{ env.NEW_VERSION }}
-          context: charts/logzio-fluend/docker_windows
-          file: fluentd_windows.dockerfile
+        working-directory: charts/fluentd/docker_windows
+        run: |
+          docker build -t logzio/fluentd-windows:${{ env.NEW_VERSION }} -t logzio/fluentd-windows:latest --platform windows/amd64 -f fluentd_windows.dockerfile .
+          docker push logzio/fluentd-windows:${{ env.NEW_VERSION }} 
+          docker push logzio/fluentd-windows:latest
 
   release-docker-windows2022:
     name: release fluentd windows 2022 docker image
@@ -48,23 +43,18 @@ jobs:
       - name: Get new image version
         id: extract_version
         shell: cmd
-        run: for /f "tokens=2 delims==" %%a in ('type "fluentd_windows.dockerfile" ^|findstr "version"' do @echo NEW_VERSION=%%a) >> $GITHUB_ENV
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        working-directory: charts/fluentd/docker_windows
+        run: for /f "tokens=2 delims==" %%a in ('type "fluentd_windows2022.dockerfile" ^|findstr "version"') do @echo NEW_VERSION=%%a >> %GITHUB_ENV%
+      - name: Debug NEW_VERSION
+        run: echo "${{ env.NEW_VERSION }}"
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Build and push
-        uses: docker/build-push-action@v5
-        with:
-          push: true
-          platforms: windows/amd64
-          sbom: true
-          provenance: mode=max
-          tags: logzio/fluentd-windows-2022:latest, logzio/fluentd-windows-2022:${{ env.NEW_VERSION }}
-          context: charts/logzio-fluend/docker_windows
-          file: fluentd_windows2022.dockerfile
+        working-directory: charts/fluentd/docker_windows
+        run: |
+          docker build -t logzio/fluentd-windows-2022:${{ env.NEW_VERSION }} -t logzio/fluentd-windows-2022:latest --platform windows/amd64 -f fluentd_windows2022.dockerfile .
+          docker push logzio/fluentd-windows-2022:${{ env.NEW_VERSION }} 
+          docker push logzio/fluentd-windows-2022:latest
