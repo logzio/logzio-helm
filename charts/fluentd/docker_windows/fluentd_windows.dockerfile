@@ -1,5 +1,5 @@
 FROM fluent/fluentd:v1.18.0-windows-ltsc2019-1.0
-LABEL version=0.0.5-test
+LABEL version=0.0.5
 RUN gem install fluent-plugin-detect-exceptions \
 && gem install fluent-plugin-logzio \
 && gem install fluent-plugin-concat \
