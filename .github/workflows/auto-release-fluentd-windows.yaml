@@ -3,7 +3,7 @@ name: Release flunetd windows docker image
 on:
   push:
     branches:
-      - ci/dev-work-windows-auto-release-fix
+      - master
     paths:
       - 'charts/fluentd/docker_windows/fluentd_windows.dockerfile'
       - 'charts/fluentd/docker_windows/fluentd_windows2022.dockerfile'
@@ -20,7 +20,7 @@ jobs:
         shell: cmd
         working-directory: charts/fluentd/docker_windows
         run: for /f "tokens=2 delims==" %%a in ('type "fluentd_windows.dockerfile" ^|findstr "version"') do @echo NEW_VERSION=%%a >> %GITHUB_ENV%
-      - name: Debug NEW_VERSION
+      - name: Print NEW_VERSION
         run: echo "${{ env.NEW_VERSION }}"
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
@@ -45,7 +45,7 @@ jobs:
         shell: cmd
         working-directory: charts/fluentd/docker_windows
         run: for /f "tokens=2 delims==" %%a in ('type "fluentd_windows2022.dockerfile" ^|findstr "version"') do @echo NEW_VERSION=%%a >> %GITHUB_ENV%
-      - name: Debug NEW_VERSION
+      - name: Print NEW_VERSION
         run: echo "${{ env.NEW_VERSION }}"
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
