@@ -1,7 +1,9 @@
 # Changes by Version
 
 <!-- next version -->
-
+## 7.1.3
+- Upgrade `logzio-trivy` chart to `1.0.1`
+  - Fix `tolerations` value to be an array.
 ## 7.1.2
 - Upgrade `opentelemetry-operator` chart to `~0.82.0`
   - Resolve errors regarding `ServiceMonitor` and `PodMonitor` resources which are not utilized by this chart.
