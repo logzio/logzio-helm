@@ -195,36 +195,33 @@ To ensure that your pods can be scheduled on nodes with taints, you need to add 
    kubectl get nodes -o json | jq '"\(.items[].metadata.name) \(.items[].spec.taints)"'
    ```
 2. **Add tolerations to the Helm install command**:
-You can add tolerations by using the --set flag in your helm install command. Replace the placeholders with your taint values.
-- For `logzio-logs-collector`:
+You can add tolerations by using the --set flag in your helm install command. Replace the placeholders with your taint and subchart values.
+
+Replace `<SUBCHART>` with one of the following options:
+- logzio-logs-collector
+- logzio-k8s-telemetry
+- logzio-trivy
+- logzio-k8s-events
+
 ```shell
---set logzio-logs-collector.tolerations[0].key="<<TAINT-KEY>>" \
---set logzio-logs-collector.tolerations[0].operator="<<TAINT-OPERATOR>>" \
---set logzio-logs-collector.tolerations[0].value="<<TAINT-VALUE>>" \
---set logzio-logs-collector.tolerations[0].effect="<<TAINT-EFFECT>>"
+--set '<SUBCHART>.tolerations[0].key=<<TAINT-KEY>>' \
+--set '<SUBCHART>.tolerations[0].operator=<<TAINT-OPERATOR>>' \
+--set '<SUBCHART>.tolerations[0].value=<<TAINT-VALUE>>' \
+--set '<SUBCHART>.tolerations[0].effect=<<TAINT-EFFECT>>'
 ```
-- For `logzio-k8s-telemetry`:
-```shell
---set logzio-k8s-telemetry.tolerations[0].key="<<TAINT-KEY>>" \
---set logzio-k8s-telemetry.tolerations[0].operator="<<TAINT-OPERATOR>>" \
---set logzio-k8s-telemetry.tolerations[0].value="<<TAINT-VALUE>>" \
---set logzio-k8s-telemetry.tolerations[0].effect="<<TAINT-EFFECT>>"
-```
-- For `logzio-trivy`:
-```shell
---set logzio-trivy.tolerations[0].key="<<TAINT-KEY>>" \
---set logzio-trivy.tolerations[0].operator="<<TAINT-OPERATOR>>" \
---set logzio-trivy.tolerations[0].value="<<TAINT-VALUE>>" \
---set logzio-trivy.tolerations[0].effect="<<TAINT-EFFECT>>"
-```
-- For `logzio-k8s-events`:
-```shell
---set logzio-k8s-events.tolerations[0].key="<<TAINT-KEY>>" \
---set logzio-k8s-events.tolerations[0].operator="<<TAINT-OPERATOR>>" \
---set logzio-k8s-events.tolerations[0].value="<<TAINT-VALUE>>" \
---set logzio-k8s-events.tolerations[0].effect="<<TAINT-EFFECT>>"
-```
+
 Replace `<<TAINT-KEY>>`, `<<TAINT-OPERATOR>>`, `<<TAINT-VALUE>>`, and `<<TAINT-EFFECT>>` with the appropriate values for your taints.
+
+For example, if you need to tolerate the CriticalAddonsOnly:NoSchedule taint for the logzio-logs-collector after installation, you could use:
+
+```shell
+helm upgrade -n monitoring \
+  --reuse-values \
+  --set 'logzio-logs-collector.tolerations[0].key=CriticalAddonsOnly' \
+  --set 'logzio-logs-collector.tolerations[0].operator=Exists' \
+  --set 'logzio-logs-collector.tolerations[0].effect=NoSchedule' \
+  logzio-monitoring logzio-helm/logzio-monitoring
+```
 
 By following these steps, you can ensure that your pods are scheduled on nodes with taints by adding the necessary tolerations to the Helm chart configuration.
 
