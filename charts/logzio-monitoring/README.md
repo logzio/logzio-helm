@@ -197,7 +197,7 @@ To ensure that your pods can be scheduled on nodes with taints, you need to add 
 2. **Add tolerations to the Helm install command**:
 You can add tolerations by using the --set flag in your helm install command. Replace the placeholders with your taint and subchart values.
 
-Replace <SUBCHART> with one of the following options:
+Replace `<SUBCHART>` with one of the following options:
 - logzio-logs-collector
 - logzio-k8s-telemetry
 - logzio-trivy
