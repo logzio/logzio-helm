@@ -33,11 +33,11 @@ spec:
       affinity:
 {{ toYaml .Values.daemonset.affinity | indent 8 }}
       {{- end }}
-      {{- if or .Values.global.tolerations .Values.daemonset.tolerations }}
+      {{- if or .Values.daemonset.tolerations .Values.global.tolerations }} }}
       tolerations:
 {{- $globalTolerations := .Values.global.tolerations | default list }}
 {{- $chartTolerations := .Values.daemonset.tolerations | default list }}
-{{- toYaml (append $globalTolerations $chartTolerations) | indent 6 }}
+{{- toYaml (merge $globalTolerations $chartTolerations) | indent 6 }}
       {{- end }}
       {{- if .Values.daemonset.podSecurityContext }}
       securityContext: {{ toYaml .Values.daemonset.podSecurityContext | nindent 8 }}
