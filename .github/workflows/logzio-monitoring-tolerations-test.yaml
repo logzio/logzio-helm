@@ -1,0 +1,66 @@
+name: Test Tolerations for Helm Charts
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'charts/logzio-monitoring/templates/**'
+      - 'charts/logzio-monitoring/Chart.yaml'
+      - 'charts/logzio-monitoring/values.yaml'
+
+jobs:
+  test-tolerations:
+    name: Test Tolerations
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.20'
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Install Kind
+        run: |
+          curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64
+          chmod +x ./kind
+          sudo mv ./kind /usr/local/bin/kind
+
+      - name: Create Kind cluster
+        run: kind create cluster
+
+      - name: Deploy Helm Charts
+        run: |
+          cd charts/logzio-monitoring
+          helm dependency build
+          helm upgrade --install logzio-monitoring . \
+            --set global.tolerations[0].key='global-key' \
+            --set global.tolerations[0].operator='Equal' \
+            --set global.tolerations[0].value='global-value' \
+            --set global.tolerations[0].effect='NoSchedule' \
+            --set logzio-apm-collector.tolerations[0].key='chart-key' \
+            --set logzio-apm-collector.tolerations[0].operator='Equal' \
+            --set logzio-apm-collector.tolerations[0].value='chart-value' \
+            --set logzio-apm-collector.tolerations[0].effect='NoExecute'
+            --set logs.enabled=true \
+            --set logzio-logs-collector.enabled=true \
+            --set global.logzioLogsToken='${{ secrets.LOGZIO_LOGS_TOKEN }}' \
+            --set global.logzioRegion='us' \
+            --set global.env_id='${{ env.ENV_ID }}' \
+            --set global.logType='${{ env.ENV_ID }}' \
+            --set logzio-apm-collector.enabled=true \
+            --set logzio-apm-collector.spm.enabled=true \
+            --set logzio-apm-collector.serviceGraph.enabled=true \
+            --set logzio-k8s-telemetry.metrics.enabled=true \
+            --set global.logzioMetricsToken='${{ secrets.LOGZIO_METRICS_TOKEN }}' \
+            --set global.logzioTracesToken='${{ secrets.LOGZIO_TRACES_TOKEN }}' \
+            --set global.logzioSpmToken='${{ secrets.LOGZIO_METRICS_TOKEN }}'
+
+      - name: Run Tolerations Test
+        run: go test -v ./tests/tolerations_e2e_test.go
