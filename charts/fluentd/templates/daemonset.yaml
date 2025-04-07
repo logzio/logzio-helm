@@ -35,8 +35,8 @@ spec:
       {{- end }}
       {{- if or .Values.global.tolerations .Values.daemonset.tolerations }}
       tolerations:
-        {{- $globalTolerations := .Values.global.tolerations | default list }}
-        {{- $chartTolerations := .Values.daemonset.tolerations | default list }}
+{{- $globalTolerations := .Values.global.tolerations | default list }}
+{{- $chartTolerations := .Values.daemonset.tolerations | default list }}
 {{- toYaml (append $globalTolerations $chartTolerations) | indent 6 }}
       {{- end }}
       {{- if .Values.daemonset.podSecurityContext }}
