@@ -1,0 +1,48 @@
+name: Logzio K8S Events Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Kind
+        run: |
+          curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.11.1/kind-Linux-amd64"
+          chmod +x ./kind
+          mv ./kind /usr/local/bin/kind
+
+      - name: Create Kind cluster
+        run: |
+          kind create cluster --name kind-${{ github.run_id }}
+          kubectl cluster-info
+
+      - name: Deploy K8S Events Helm Chart
+        run: |
+          cd charts/logzio-k8s-events
+          helm upgrade --install \
+          --set global.env_id=${{ env.ENV_ID }} \
+          --set global.tolerations[0].key="global-key" \
+          --set global.tolerations[0].operator="Equal" \
+          --set global.tolerations[0].value="global-value" \
+          --set global.tolerations[0].effect="NoSchedule" \
+          --set global.logzioLogsToken=${{ secrets.LOGZIO_LOGS_TOKEN }} \
+          --set global.logzioRegion=us \
+          logzio-k8s-events .
+          kubectl rollout status daemonset/logzio-k8s-events --timeout=300s
+          kubectl get daemonset logzio-k8s-events -o jsonpath='{.spec.template.spec.tolerations}' | grep -q 'global-key'
+
+      - name: Verify DaemonSet Status
+        run: |
+          kubectl get daemonset logzio-k8s-events -o json | jq '.status.numberReady == .status.desiredNumberScheduled'
+
+      - name: Cleanup Environment
+        run: |
+          kind delete cluster --name kind-${{ github.run_id }}
