@@ -157,8 +157,10 @@ nodeSelector:
 affinity:
   {{- toYaml . | nindent 2 }}
 {{- end }}
-{{- with .Values.tolerations }}
+{{- if or .Values.tolerations .Values.global.tolerations }}
 tolerations:
-  {{- toYaml . | nindent 2 }}
+  {{- $globalTolerations := .Values.global.tolerations | default list }}
+  {{- $chartTolerations := .Values.tolerations | default list }}
+  {{- toYaml (merge $globalTolerations $chartTolerations) | nindent 2 }}
 {{- end }}
 {{- end }}

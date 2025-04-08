@@ -72,8 +72,6 @@ jobs:
           kubectl rollout status deployment/logzio-k8s-telemetry-otel-collector-spm --timeout=300s
           kubectl describe deployment/logzio-k8s-telemetry-otel-collector-spm
           kubectl describe deployment/logzio-k8s-telemetry-otel-collector-standalone
-          kubectl rollout status daemonset/logzio-k8s-telemetry-otel-collector-ds --timeout=300s
-          kubectl describe daemonset/logzio-k8s-telemetry-otel-collector-ds
 
       
       - name: Run trace generator
