@@ -1,7 +1,8 @@
 # Changes by Version
 
 <!-- next version -->
-
+## 1.0.1
+- Add support for configuring tolerations
 ## 1.0.0
 - **Breaking changes:**
   - Secret values are now global and aligned to prevent duplicate values in the parent chart

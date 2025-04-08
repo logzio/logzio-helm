@@ -18,6 +18,12 @@ spec:
         k8s-app: {{ .Values.k8sApp }}
         {{- include "logzio-k8s-events.selectorLabels" . | nindent 8 }}
     spec:
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- $globalTolerations := .Values.global.tolerations | default list }}
+        {{- $chartTolerations := .Values.tolerations | default list }}
+        {{- toYaml (merge $globalTolerations $chartTolerations) | nindent 8 }}
+      {{- end }}
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
