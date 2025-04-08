@@ -74,6 +74,8 @@ affinity:
 {{- end }}
 {{- with .Values.tolerations }}
 tolerations:
-{{- toYaml . | nindent 2 }}
+  {{- $globalTolerations := .Values.global.tolerations | default list }}
+  {{- $chartTolerations := .Values.tolerations | default list }}
+  {{- toYaml (merge $globalTolerations $chartTolerations) | nindent 2 }}
 {{- end }}
 {{- end}}

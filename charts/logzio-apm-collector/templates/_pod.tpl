@@ -172,7 +172,7 @@ affinity:
 tolerations:
   {{- $globalTolerations := .Values.global.tolerations | default list }}
   {{- $chartTolerations := .Values.tolerations | default list }}
-  {{- toYaml (append $globalTolerations $chartTolerations) | nindent 2 }}
+  {{- toYaml (merge $globalTolerations $chartTolerations) | nindent 2 }}
 {{- end }}
 {{- with .Values.topologySpreadConstraints }}
 topologySpreadConstraints:
