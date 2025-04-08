@@ -44,18 +44,6 @@ jobs:
         run: |
           kind create cluster --name kind-${{ github.run_id }}
           kubectl cluster-info
-      - name: template
-        run: |
-          cd charts/logzio-logs-collector
-          helm template \
-            --set global.env_id=${{ env.ENV_ID }} \
-            --set global.tolerations[0].key="global-key" \
-            --set global.tolerations[0].operator="Equal" \
-            --set global.tolerations[0].value="global-value" \
-            --set global.tolerations[0].effect="NoSchedule" \
-            --set global.logzioLogsToken=${{ secrets.LOGZIO_LOGS_TOKEN }} \
-            --set global.logzioRegion=us \
-            logzio-logs-collector .
       - name: Deploy Helm Chart
         run: |
           cd charts/logzio-logs-collector
@@ -70,7 +58,8 @@ jobs:
           --set global.tolerations[0].effect="NoSchedule" \
           logzio-logs-collector .
           kubectl rollout status daemonset/logzio-logs-collector --timeout=300s
-          kubectl describe daemonset/logzio-logs-collector
+          # validate tolerations
+          kubectl get daemonset/logzio-logs-collector -o jsonpath='{.spec.template.spec.tolerations}' | grep -q 'global-key'
 
       - name: Run log generator
         run: |

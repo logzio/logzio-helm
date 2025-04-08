@@ -71,7 +71,9 @@ jobs:
           kubectl rollout status deployment/logzio-k8s-telemetry-otel-collector-spm --timeout=300s
           kubectl describe deployment/logzio-k8s-telemetry-otel-collector-spm
           kubectl describe deployment/logzio-k8s-telemetry-otel-collector-standalone
-
+          # validate tolerations
+          kubectl get deployment/logzio-k8s-telemetry-otel-collector-spm -o jsonpath='{.spec.template.spec.tolerations}' | jq -r '.[] | select(.key=="global-key")'
+          kubectl get deployment/logzio-k8s-telemetry-otel-collector-standalone -o jsonpath='{.spec.template.spec.tolerations}' | jq -r '.[] | select(.key=="global-key")'
       
       - name: Run trace generator
         run: |
