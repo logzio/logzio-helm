@@ -58,6 +58,8 @@ jobs:
           --set global.tolerations[0].value="global-value" \
           --set global.tolerations[0].effect="NoSchedule" \
           logzio-logs-collector .
+          kubectl rollout status daemonset/logzio-logs-collector --timeout=300s
+          kubectl describe daemonset/logzio-logs-collector
 
       - name: Run log generator
         run: |

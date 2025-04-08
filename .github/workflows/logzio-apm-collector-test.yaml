@@ -63,6 +63,8 @@ jobs:
           logzio-apm-collector .
           kubectl rollout status deployment/logzio-apm-collector --timeout=300s
           kubectl rollout status deployment/logzio-apm-collector-spm --timeout=300s
+          kubectl describe deployment/logzio-apm-collector-spm
+          kubectl describe deployment/logzio-apm-collector
 
       - name: Run trace generator
         run: |
