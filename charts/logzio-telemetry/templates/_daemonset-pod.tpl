@@ -159,8 +159,7 @@ affinity:
 {{- end }}
 {{- if or .Values.tolerations .Values.global.tolerations }}
 tolerations:
-  {{- $globalTolerations := .Values.global.tolerations | default list }}
-  {{- $chartTolerations := .Values.tolerations | default list }}
-  {{- toYaml (merge $globalTolerations $chartTolerations) | nindent 2 }}
+  {{- $allTolerations := concat (.Values.tolerations | default list) (.Values.global.tolerations | default list) }}
+  {{ toYaml $allTolerations | indent 2 }}
 {{- end }}
 {{- end }}
