@@ -57,6 +57,10 @@ jobs:
           --set spm.enabled=true \
           --set serviceGraph.enabled=true \
           --set metrics.enabled=true \
+          --set global.tolerations[0].key="global-key" \
+          --set global.tolerations[0].operator="Equal" \
+          --set global.tolerations[0].value="global-value" \
+          --set global.tolerations[0].effect="NoSchedule" \
           --set global.logzioTracesToken=${{ secrets.LOGZIO_TRACES_TOKEN }} \
           --set global.logzioSpmToken=${{ secrets.LOGZIO_METRICS_TOKEN }} \
           --set global.logzioMetricsToken=${{ secrets.LOGZIO_METRICS_TOKEN }} \

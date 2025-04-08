@@ -53,6 +53,10 @@ jobs:
           --set global.logzioLogsToken=${{ secrets.LOGZIO_LOGS_TOKEN }} \
           --set global.logzioRegion=us \
           --set global.logType=${{ env.ENV_ID }} \
+          --set global.tolerations[0].key="global-key" \
+          --set global.tolerations[0].operator="Equal" \
+          --set global.tolerations[0].value="global-value" \
+          --set global.tolerations[0].effect="NoSchedule" \
           logzio-logs-collector .
 
       - name: Run log generator
@@ -69,7 +73,6 @@ jobs:
         run: |
           go get go.uber.org/zap
           go test -v ./tests/logs_e2e_test.go ./tests/common.go
-
       - name: Cleanup Environment
         run: |
           helm uninstall logzio-logs-collector
