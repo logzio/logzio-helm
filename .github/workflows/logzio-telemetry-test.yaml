@@ -50,7 +50,7 @@ jobs:
       - name: template helm chart
         run: |
           cd charts/logzio-telemetry
-          helm template logzio-k8s-telemetry . \
+          helm template \
             --set traces.enabled=true \
             --set spm.enabled=true \
             --set serviceGraph.enabled=true \

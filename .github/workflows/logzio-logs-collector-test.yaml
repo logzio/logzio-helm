@@ -47,7 +47,7 @@ jobs:
       - name: template
         run: |
           cd charts/logzio-logs-collector
-          helm template logzio-logs-collector . \
+          helm template \
             --set global.env_id=${{ env.ENV_ID }} \
             --set global.tolerations[0].key="global-key" \
             --set global.tolerations[0].operator="Equal" \
