@@ -21,7 +21,7 @@ spec:
       {{- if or .Values.tolerations .Values.global.tolerations }}
       tolerations:
       {{- $allTolerations := concat (.Values.tolerations | default list) (.Values.global.tolerations | default list) }}
-      {{ toYaml $allTolerations | indent 8 }}
+      {{ toYaml $allTolerations | nindent 8 }}
       {{- end }}
       affinity:
         nodeAffinity:

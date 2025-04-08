@@ -50,6 +50,7 @@ jobs:
       - name: template helm chart
         run: |
           cd charts/logzio-telemetry
+          helm dependency build
           helm template \
             --set traces.enabled=true \
             --set spm.enabled=true \

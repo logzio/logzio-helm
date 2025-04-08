@@ -151,7 +151,7 @@ affinity:
 {{- if or .Values.tolerations .Values.global.tolerations }}
 tolerations:
   {{- $allTolerations := concat (.Values.tolerations | default list) (.Values.global.tolerations | default list) }}
-  {{ toYaml $allTolerations | indent 2 }}
+  {{ toYaml $allTolerations | nindent 2 }}
 {{- end }}
 {{- with .Values.topologySpreadConstraints }}
 topologySpreadConstraints:
