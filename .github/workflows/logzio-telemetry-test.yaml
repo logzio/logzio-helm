@@ -47,7 +47,25 @@ jobs:
         run: |
           kind create cluster --name kind-${{ github.run_id }}-${{ matrix.mode }}
           kubectl cluster-info
-
+      - name: template helm chart
+        run: |
+          cd charts/logzio-telemetry
+          helm template logzio-k8s-telemetry . \
+            --set traces.enabled=true \
+            --set spm.enabled=true \
+            --set serviceGraph.enabled=true \
+            --set metrics.enabled=true \
+            --set global.tolerations[0].key="global-key" \
+            --set global.tolerations[0].operator="Equal" \
+            --set global.tolerations[0].value="global-value" \
+            --set global.tolerations[0].effect="NoSchedule" \
+            --set global.logzioTracesToken=${{ secrets.LOGZIO_TRACES_TOKEN }} \
+            --set global.logzioSpmToken=${{ secrets.LOGZIO_METRICS_TOKEN }} \
+            --set global.logzioMetricsToken=${{ secrets.LOGZIO_METRICS_TOKEN }} \
+            --set global.logzioRegion=us \
+            --set global.env_id=${{ env.ENV_ID }} \
+            --set collector.mode=${{ matrix.mode }} \
+            logzio-k8s-telemetry .
       - name: Deploy Helm Chart
         run: |
           cd charts/logzio-telemetry

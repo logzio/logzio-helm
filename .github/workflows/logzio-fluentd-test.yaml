@@ -45,12 +45,27 @@ jobs:
         run: |
           kind create cluster --name kind-${{ github.run_id }}
           kubectl cluster-info
-
+      - name: template
+        run: |
+          cd charts/fluentd
+          helm template logzio-fluentd . \
+            --set global.env_id=${{ env.ENV_ID }} \
+            --set global.tolerations[0].key="global-key" \
+            --set global.tolerations[0].operator="Equal" \
+            --set global.tolerations[0].value="global-value" \
+            --set global.tolerations[0].effect="NoSchedule" \
+            --set global.logzioLogsToken=${{ secrets.LOGZIO_LOGS_TOKEN }} \
+            --set global.logzioRegion=us \
+            logzio-fluentd .
       - name: Deploy Helm Chart
         run: |
           cd charts/fluentd
           helm upgrade --install \
           --set global.env_id=${{ env.ENV_ID }} \
+          --set global.tolerations[0].key="global-key" \
+          --set global.tolerations[0].operator="Equal" \
+          --set global.tolerations[0].value="global-value" \
+          --set global.tolerations[0].effect="NoSchedule" \
           --set global.logzioLogsToken=${{ secrets.LOGZIO_LOGS_TOKEN }} \
           --set global.logzioRegion=us \
           logzio-fluentd .

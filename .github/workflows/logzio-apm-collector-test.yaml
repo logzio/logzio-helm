@@ -44,7 +44,19 @@ jobs:
         run: |
           kind create cluster --name kind-${{ github.run_id }}-${{ matrix.mode }}
           kubectl cluster-info
-
+      - name: template helm chart
+        run: |
+          cd charts/logzio-apm-collector
+          helm template logzio-apm-collector . \
+            --set global.env_id=${{ env.ENV_ID }} \
+            --set global.tolerations[0].key="global-key" \
+            --set global.tolerations[0].operator="Equal" \
+            --set global.tolerations[0].value="global-value" \
+            --set global.tolerations[0].effect="NoSchedule" \
+            --set global.logzioTracesToken=${{ secrets.LOGZIO_TRACES_TOKEN }} \
+            --set global.logzioSpmToken=${{ secrets.LOGZIO_METRICS_TOKEN }} \
+            --set global.logzioRegion="us" \
+            logzio-apm-collector . 
       - name: Deploy Helm Chart
         run: |
           cd charts/logzio-apm-collector
@@ -65,6 +77,10 @@ jobs:
           kubectl rollout status deployment/logzio-apm-collector-spm --timeout=300s
           kubectl describe deployment/logzio-apm-collector-spm
           kubectl describe deployment/logzio-apm-collector
+          # script to validate existence of tolerations 
+          # in the deployment
+          kubectl get deployment/logzio-apm-collector -o jsonpath='{.spec.template.spec.tolerations}' | grep -q 'global-key'
+          kubectl get deployment/logzio-apm-collector-spm -o jsonpath='{.spec.template.spec.tolerations}' | grep -q 'global-key'
 
       - name: Run trace generator
         run: |
