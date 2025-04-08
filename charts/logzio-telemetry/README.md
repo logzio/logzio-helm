@@ -397,6 +397,8 @@ If you don't want the sub charts to installed add the relevant flag per sub char
 
 
 ## Change log
+* 5.0.4
+  - Add support for global tolerations
 * 5.0.3
   - Exposed span metrics collector service port for `thrift_binary` jaeger receiver
 * 5.0.2

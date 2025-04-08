@@ -1,7 +1,8 @@
 # Changes by Version
 
 <!-- next version -->
-
+## 2.0.1
+- Add support for global tolerations
 ## 2.0.0
 - **Breaking changes**
     - Secret values are now global

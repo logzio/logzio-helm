@@ -1,6 +1,9 @@
 # Changes by Version
 
 <!-- next version -->
+## 1.2.1
+- Add support for global tolerations
+
 ## 1.2.0
 - Resolve issue preventing APM chart deployment on Fargate
 - Upgrade OpenTelemetry Collector from `0.117.0` to `0.119.0`
