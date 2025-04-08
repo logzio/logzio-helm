@@ -33,9 +33,11 @@ spec:
       affinity:
 {{ toYaml .Values.daemonset.affinity | indent 8 }}
       {{- end }}
-      {{- if .Values.daemonset.tolerations }}
+      {{- if or .Values.global.tolerations .Values.daemonset.tolerations }}
       tolerations:
-{{ toYaml .Values.daemonset.tolerations | indent 8 }}
+        {{- $globalTolerations := .Values.global.tolerations | default list }}
+        {{- $chartTolerations := .Values.daemonset.tolerations | default list }}
+        {{- toYaml (merge $globalTolerations $chartTolerations) | nindent 8 }}
       {{- end }}
       {{- if .Values.daemonset.podSecurityContext }}
       securityContext: {{ toYaml .Values.daemonset.podSecurityContext | nindent 8 }}
@@ -212,9 +214,11 @@ spec:
       serviceAccount: {{ template "fluentd.serviceAccount" . }}
       serviceAccountName: {{ template "fluentd.serviceAccount" . }}
       {{- end }}
-      {{- if .Values.windowsDaemonset.tolerations }}
+      {{- if or .Values.global.tolerations .Values.windowsDaemonset.tolerations }}
       tolerations:
-{{ toYaml .Values.windowsDaemonset.tolerations | indent 6 }}
+        {{- $globalTolerations := .Values.global.tolerations | default list }}
+        {{- $chartTolerations := .Values.windowsDaemonset.tolerations | default list }}
+        {{- toYaml (merge $globalTolerations $chartTolerations) | nindent 8 }}
       {{- end }}
       {{- with .Values.windowsDaemonset.nodeSelector }}
       nodeSelector:
