@@ -1,6 +1,6 @@
 module github.com/logzio/logzio-helm
 
-go 1.20.0
+go 1.20
 
 require go.uber.org/zap v1.27.0
 
