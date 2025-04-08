@@ -34,8 +34,8 @@ spec:
 {{ toYaml .Values.daemonset.affinity | indent 8 }}
       {{- end }}
       {{- if or .Values.daemonset.tolerations .Values.global.tolerations }}
-      tolerations:
       {{- $allTolerations := concat (.Values.daemonset.tolerations | default list) (.Values.global.tolerations | default list) }}
+      tolerations:
 {{ toYaml $allTolerations | indent 8 }}
       {{- end }}
       {{- if .Values.daemonset.podSecurityContext }}
@@ -214,8 +214,8 @@ spec:
       serviceAccountName: {{ template "fluentd.serviceAccount" . }}
       {{- end }}
       {{- if or .Values.windowsDaemonset.tolerations .Values.global.tolerations }}
-      tolerations:
       {{- $allWindowsTolerations := concat (.Values.windowsDaemonset.tolerations | default list) (.Values.global.tolerations | default list) }}
+      tolerations:
 {{ toYaml $allWindowsTolerations | indent 8 }}
       {{- end }}
       {{- with .Values.windowsDaemonset.nodeSelector }}

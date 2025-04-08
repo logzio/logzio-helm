@@ -19,8 +19,8 @@ spec:
         {{- include "logzio-k8s-events.selectorLabels" . | nindent 8 }}
     spec:
       {{- if or .Values.tolerations .Values.global.tolerations }}
-      tolerations:
       {{- $allTolerations := concat (.Values.tolerations | default list) (.Values.global.tolerations | default list) }}
+      tolerations:
       {{ toYaml $allTolerations | nindent 8 }}
       {{- end }}
       affinity:

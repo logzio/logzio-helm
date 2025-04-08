@@ -73,8 +73,8 @@ affinity:
 {{- toYaml . | nindent 2 }}
 {{- end }}
 {{- if or .Values.tolerations .Values.global.tolerations }}
-tolerations:
   {{- $allTolerations := concat (.Values.tolerations | default list) (.Values.global.tolerations | default list) }}
+tolerations:
   {{ toYaml $allTolerations | nindent 2 }}
 {{- end }}
 {{- end}}
