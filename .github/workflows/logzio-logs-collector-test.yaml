@@ -44,7 +44,6 @@ jobs:
         run: |
           kind create cluster --name kind-${{ github.run_id }}
           kubectl cluster-info
-
       - name: Deploy Helm Chart
         run: |
           cd charts/logzio-logs-collector
@@ -53,7 +52,16 @@ jobs:
           --set global.logzioLogsToken=${{ secrets.LOGZIO_LOGS_TOKEN }} \
           --set global.logzioRegion=us \
           --set global.logType=${{ env.ENV_ID }} \
+          --set global.tolerations[0].key="global-key" \
+          --set global.tolerations[0].operator="Equal" \
+          --set global.tolerations[0].value="global-value" \
+          --set global.tolerations[0].effect="NoSchedule" \
           logzio-logs-collector .
+          
+      - name: Verify deployment Status
+        run: |
+          kubectl rollout status daemonset/logzio-logs-collector --timeout=300s
+          kubectl get daemonset/logzio-logs-collector -o jsonpath='{.spec.template.spec.tolerations}' | grep -q 'global-key'
 
       - name: Run log generator
         run: |
@@ -69,7 +77,6 @@ jobs:
         run: |
           go get go.uber.org/zap
           go test -v ./tests/logs_e2e_test.go ./tests/common.go
-
       - name: Cleanup Environment
         run: |
           helm uninstall logzio-logs-collector
