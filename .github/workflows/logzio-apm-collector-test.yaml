@@ -60,13 +60,16 @@ jobs:
           --set global.tolerations[0].value="global-value" \
           --set global.tolerations[0].effect="NoSchedule" \
           logzio-apm-collector .
+
+      - name: Verify deployment Status
+        run: |
           kubectl rollout status deployment/logzio-apm-collector --timeout=300s
           kubectl rollout status deployment/logzio-apm-collector-spm --timeout=300s
           kubectl describe deployment/logzio-apm-collector-spm
           kubectl describe deployment/logzio-apm-collector
           kubectl get deployment/logzio-apm-collector -o jsonpath='{.spec.template.spec.tolerations}' | grep -q 'global-key'
           kubectl get deployment/logzio-apm-collector-spm -o jsonpath='{.spec.template.spec.tolerations}' | grep -q 'global-key'
-
+      
       - name: Run trace generator
         run: |
           kubectl apply -f tests/resources/tracegen-apm.yaml

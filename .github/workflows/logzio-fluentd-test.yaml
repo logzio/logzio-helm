@@ -57,8 +57,11 @@ jobs:
           --set global.logzioLogsToken=${{ secrets.LOGZIO_LOGS_TOKEN }} \
           --set global.logzioRegion=us \
           logzio-fluentd .
+      - name: Verify deployment Status
+        run: |
           kubectl rollout status daemonset/logzio-fluentd --timeout=300s
           kubectl get daemonset logzio-fluentd -o jsonpath='{.spec.template.spec.tolerations}' | grep -q 'global-key'
+          
       - name: Run log generator
         run: |
           kubectl apply -f tests/resources/logsgen.yaml

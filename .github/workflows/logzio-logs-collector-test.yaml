@@ -57,8 +57,10 @@ jobs:
           --set global.tolerations[0].value="global-value" \
           --set global.tolerations[0].effect="NoSchedule" \
           logzio-logs-collector .
+          
+      - name: Verify deployment Status
+        run: |
           kubectl rollout status daemonset/logzio-logs-collector --timeout=300s
-          # validate tolerations
           kubectl get daemonset/logzio-logs-collector -o jsonpath='{.spec.template.spec.tolerations}' | grep -q 'global-key'
 
       - name: Run log generator
