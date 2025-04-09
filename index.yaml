@@ -253,6 +253,21 @@ entries:
   logzio-apm-collector:
   - apiVersion: v2
     appVersion: 0.119.0
+    created: "2025-04-09T16:16:12.487144051Z"
+    description: Kubernetes APM agent for Logz.io based on OpenTelemetry Collector
+    digest: e9e30986a501e18939fb73fc29e9bb6fde1bef30ef197ef0ac5353077de30f81
+    home: https://logz.io/
+    icon: https://logzbucket.s3.eu-west-1.amazonaws.com/logz-io-img/logo400x400.png
+    maintainers:
+    - email: naama.bendalak@logz.io
+      name: Naama Bendalak
+    name: logzio-apm-collector
+    type: application
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/logzio-apm-collector-1.2.1/logzio-apm-collector-1.2.1.tgz
+    version: 1.2.1
+  - apiVersion: v2
+    appVersion: 0.119.0
     created: "2025-02-05T15:10:13.47560837Z"
     description: Kubernetes APM agent for Logz.io based on OpenTelemetry Collector
     digest: c0ea13c74551bd3894b47e63654bce6983533cc08950fdaf11af50f7a0d89ce8
@@ -472,6 +487,21 @@ entries:
     - https://logzio.github.io/logzio-helm/logzio-fluent-bit-0.0.1.tgz
     version: 0.0.1
   logzio-fluentd:
+  - apiVersion: v2
+    appVersion: 1.5.6
+    created: "2025-04-09T16:16:12.633875605Z"
+    description: A Helm chart for shipping Kubernetes logs via Fluentd.
+    digest: 5b2cddb0cb6e2b2bde4f5749cf798b181ff841a4fd1ef847ce4efde963ff5b6c
+    keywords:
+    - logging
+    - fluentd
+    maintainers:
+    - email: yotam.loewenbach@logz.io
+      name: Yotam loewenbach
+    name: logzio-fluentd
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/logzio-fluentd-1.0.2/logzio-fluentd-1.0.2.tgz
+    version: 1.0.2
   - apiVersion: v2
     appVersion: 1.5.6
     created: "2025-03-10T15:05:44.860490203Z"
@@ -1269,6 +1299,23 @@ entries:
   logzio-k8s-events:
   - apiVersion: v2
     appVersion: 0.0.4
+    created: "2025-04-09T16:16:12.757563791Z"
+    description: A Helm chart for shipping Kubernetes deployments event information
+      logs to Logz.io.
+    digest: 72d68024714aa3c7918a8cb7bb0989e81260cb836cfa957a1f1206bf08724aa9
+    keywords:
+    - logging
+    - k8s
+    - kubernetes
+    maintainers:
+    - email: raul.gurshumo@logz.io
+      name: Raul Gurshumov
+    name: logzio-k8s-events
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/logzio-k8s-events-1.0.1/logzio-k8s-events-1.0.1.tgz
+    version: 1.0.1
+  - apiVersion: v2
+    appVersion: 0.0.4
     created: "2025-02-04T13:10:07.182804252Z"
     description: A Helm chart for shipping Kubernetes deployments event information
       logs to Logz.io.
@@ -1558,6 +1605,38 @@ entries:
     - https://logzio.github.io/logzio-helm/logzio-k8s-metrics-0.0.1.tgz
     version: 0.0.1
   logzio-k8s-telemetry:
+  - apiVersion: v2
+    appVersion: 0.108.0
+    created: "2025-04-09T16:16:12.914762897Z"
+    dependencies:
+    - condition: kubeStateMetrics.enabled
+      name: kube-state-metrics
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 4.24.0
+    - condition: nodeExporter.enabled
+      name: prometheus-node-exporter
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 4.29.0
+    - condition: pushGateway.enabled
+      name: prometheus-pushgateway
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 2.4.2
+    description: logzio-k8s-telemetry allows you to ship metrics and traces from your
+      Kubernetes cluster using the OpenTelemetry collector.
+    digest: 33457729ebeb69554e195de4f40d0550ba3fbc1d1971f41c91895e7227ec8204
+    maintainers:
+    - email: yotam.loewenbach@logz.io
+      name: yotamloe
+    - email: raul.gurshumo@logz.io
+      name: ralongit
+    name: logzio-k8s-telemetry
+    sources:
+    - https://github.com/prometheus/node_exporter
+    - https://github.com/kubernetes/kube-state-metrics
+    type: application
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/logzio-k8s-telemetry-5.0.4/logzio-k8s-telemetry-5.0.4.tgz
+    version: 5.0.4
   - apiVersion: v2
     appVersion: 0.108.0
     created: "2025-02-18T12:35:29.543813612Z"
@@ -3791,6 +3870,21 @@ entries:
     - https://logzio.github.io/logzio-helm/logzio-k8s-telemetry-0.0.1.tgz
     version: 0.0.1
   logzio-logs-collector:
+  - apiVersion: v2
+    appVersion: 0.109.0
+    created: "2025-04-09T16:16:13.063606764Z"
+    description: kubernetes logs collection agent for logz.io based on opentelemetry
+      collector
+    digest: 6d2e5dd350ba1befa3f7830cc25ae75a2e26284002efb16df5f040f76b3c7b38
+    home: https://logz.io/
+    maintainers:
+    - email: yotam.loewenbach@logz.io
+      name: yotam loewenbach
+    name: logzio-logs-collector
+    type: application
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/logzio-logs-collector-2.0.1/logzio-logs-collector-2.0.1.tgz
+    version: 2.0.1
   - apiVersion: v2
     appVersion: 0.109.0
     created: "2025-02-04T13:07:28.789607971Z"
@@ -8458,6 +8552,31 @@ entries:
   logzio-trivy:
   - apiVersion: v2
     appVersion: 0.2.3
+    created: "2025-04-09T16:16:13.332348547Z"
+    dependencies:
+    - name: trivy-operator
+      repository: https://aquasecurity.github.io/helm-charts/
+      version: 0.24.1
+    description: A Helm chart for deploying Trivy operator for scanning security risks
+      on your cluster, and shipping them to Logz.io
+    digest: df225d2d259d01f9a48f28207667dc554961ad0d9f5dbe2e6e53990ea7170032
+    keywords:
+    - logging
+    - trivy
+    - security
+    maintainers:
+    - email: miri.ignatiev@logz.io
+      name: Miri Bar
+    - email: raul.gurshumo@logz.io
+      name: Raul Gurshumov
+    name: logzio-trivy
+    sources:
+    - https://github.com/logzio/logzio-helm
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/logzio-trivy-1.0.2/logzio-trivy-1.0.2.tgz
+    version: 1.0.2
+  - apiVersion: v2
+    appVersion: 0.2.3
     created: "2025-03-23T15:31:47.887431784Z"
     dependencies:
     - name: trivy-operator
@@ -8909,4 +9028,4 @@ entries:
     urls:
     - https://logzio.github.io/logzio-helm/prometheus-alerts-migrator-1.0.0.tgz
     version: 1.0.0
-generated: "2025-03-23T15:31:47.887894437Z"
+generated: "2025-04-09T16:16:13.332984357Z"
