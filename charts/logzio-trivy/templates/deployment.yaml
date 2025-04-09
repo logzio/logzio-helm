@@ -50,5 +50,5 @@ spec:
       {{- if or .Values.tolerations .Values.global.tolerations }}
       {{- $allTolerations := concat (.Values.tolerations | default list) (.Values.global.tolerations | default list) }}
       tolerations:
-      {{ toYaml $allTolerations | nindent 8 }}
+{{ toYaml $allTolerations | nindent 8 }}
       {{- end }}
