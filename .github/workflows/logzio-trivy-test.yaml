@@ -27,6 +27,7 @@ jobs:
       - name: Deploy Trivy Helm Chart
         run: |
           cd charts/logzio-trivy
+          helm dependency build
           helm upgrade --install \
           --set global.env_id=${{ env.ENV_ID }} \
           --set global.tolerations[0].key="global-key" \

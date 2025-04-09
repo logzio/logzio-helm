@@ -36,12 +36,12 @@ jobs:
           --set global.logzioLogsToken=${{ secrets.LOGZIO_LOGS_TOKEN }} \
           --set global.logzioRegion=us \
           logzio-k8s-events .
-          kubectl rollout status daemonset/logzio-k8s-events --timeout=300s
-          kubectl get daemonset logzio-k8s-events -o jsonpath='{.spec.template.spec.tolerations}' | grep -q 'global-key'
+          kubectl rollout status deployment/logzio-k8s-events --timeout=300s
+          kubectl get deployment logzio-k8s-events -o jsonpath='{.spec.template.spec.tolerations}' | grep -q 'global-key'
 
-      - name: Verify DaemonSet Status
+      - name: Verify deployment Status
         run: |
-          kubectl get daemonset logzio-k8s-events -o json | jq '.status.numberReady == .status.desiredNumberScheduled'
+          kubectl get deployment logzio-k8s-events -o json | jq '.status.numberReady == .status.desiredNumberScheduled'
 
       - name: Cleanup Environment
         run: |
