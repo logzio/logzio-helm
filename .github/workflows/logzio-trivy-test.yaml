@@ -1,5 +1,4 @@
-name: Logzio Trivy Test
-
+name: Test `logzio-trivy` chart
 on:
   push:
     branches:
@@ -38,12 +37,10 @@ jobs:
           --set global.logzioRegion=us \
           logzio-trivy .
           kubectl rollout status deployment/logzio-trivy --timeout=300s
-          kubectl get deployment logzio-trivy -o jsonpath='{.spec.template.spec.tolerations}' | grep -q 'global-key'
-
       - name: Verify Deployment Status
         run: |
           kubectl get deployment logzio-trivy -o json | jq '.status.conditions[] | select(.type=="Available" and .status=="True")'
-
+          kubectl get deployment logzio-trivy -o jsonpath='{.spec.template.spec.tolerations}' | grep -q 'global-key'
       - name: Cleanup Environment
         run: |
           kind delete cluster --name kind-${{ github.run_id }}

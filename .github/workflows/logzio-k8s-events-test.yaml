@@ -1,5 +1,4 @@
-name: Logzio K8S Events Test
-
+name: Test `logzio-k8s-events` chart
 on:
   push:
     branches:
@@ -37,11 +36,11 @@ jobs:
           --set global.logzioRegion=us \
           logzio-k8s-events .
           kubectl rollout status deployment/logzio-k8s-events --timeout=300s
-          kubectl get deployment logzio-k8s-events -o jsonpath='{.spec.template.spec.tolerations}' | grep -q 'global-key'
 
       - name: Verify deployment Status
         run: |
           kubectl get deployment logzio-k8s-events -o json | jq '.status.numberReady == .status.desiredNumberScheduled'
+          kubectl get deployment logzio-k8s-events -o jsonpath='{.spec.template.spec.tolerations}' | grep -q 'global-key'
 
       - name: Cleanup Environment
         run: |
