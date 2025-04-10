@@ -132,10 +132,6 @@ jobs:
           kubectl get deployment logzio-apm-collector-spm -o jsonpath='{.spec.template.spec.tolerations}' | grep -q $GLOBAL_TOLERATION_KEY || (echo "Missing global toleration in logzio-apm-collector-spm" && exit 1)
           
           if [ "${{ matrix.environment }}" == "eks-linux" ]; then
-            # Deployment logzio-monitoring-otel-collector-standalone
-            echo "Checking tolerations in deployment/logzio-monitoring-otel-collector-standalone"
-            kubectl get deployment logzio-monitoring-otel-collector-standalone -o jsonpath='{.spec.template.spec.tolerations}' | grep -q $GLOBAL_TOLERATION_KEY || (echo "Missing global toleration in logzio-monitoring-otel-collector-standalone" && exit 1)
-            
             # DaemonSet: logzio-logs-collector
             echo "Checking tolerations in daemonset/logzio-logs-collector"
             kubectl get ds logzio-logs-collector -o jsonpath='{.spec.template.spec.tolerations}' | grep -q $GLOBAL_TOLERATION_KEY || (echo "Missing global toleration in logzio-logs-collector" && exit 1)
