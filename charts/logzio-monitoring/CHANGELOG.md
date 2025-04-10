@@ -1,6 +1,15 @@
 # Changes by Version
 
 <!-- next version -->
+## 7.2.0
+- All subcharts now support `global.tolerations`
+  - Upgrade `logzio-fluentd` chart to `1.0.2`
+  - Upgrade `logzio-k8s-telemetry` chart to `5.0.4`
+  - Upgrade `logzio-logs-collector` chart to `2.0.1`
+  - Upgrade `logzio-apm-collector` chart to `1.2.1`
+  - Upgrade `logzio-trivy` chart to `1.0.1`
+- Upgrade `logzio-k8s-events` chart to `1.0.1`
+  - Added support for `tolerations` and `global.tolerations`
 
 ## 7.1.2
 - Upgrade `opentelemetry-operator` chart to `~0.82.0`
