@@ -1,9 +1,12 @@
 name: Test `logzio-k8s-events` chart
 on:
-  push:
-    branches:
-      - main
   pull_request:
+    branches:
+      - master
+    paths:
+      - 'charts/logzio-k8s-events/Chart.yaml'
+      - 'charts/logzio-k8s-events/templates/**'
+      - 'charts/logzio-k8s-events/values.yaml'
 
 jobs:
   test:
