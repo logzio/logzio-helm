@@ -1,9 +1,12 @@
 name: Test `logzio-trivy` chart
 on:
-  push:
-    branches:
-      - main
   pull_request:
+    branches:
+      - master
+    paths:
+      - 'charts/logzio-trivy/Chart.yaml'
+      - 'charts/logzio-trivy/templates/**'
+      - 'charts/logzio-trivy/values.yaml'
 
 jobs:
   test:

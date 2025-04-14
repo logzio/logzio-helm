@@ -88,7 +88,15 @@ jobs:
           --set logzio-k8s-telemetry.metrics.enabled=true \
           --set global.logzioMetricsToken='${{ secrets.LOGZIO_METRICS_TOKEN }}' \
           --set global.logzioTracesToken='${{ secrets.LOGZIO_TRACES_TOKEN }}' \
-          --set global.logzioSpmToken='${{ secrets.LOGZIO_METRICS_TOKEN }}' "
+          --set global.logzioSpmToken='${{ secrets.LOGZIO_METRICS_TOKEN }}' \
+          --set global.tolerations[0].key='example-global-key' \
+          --set global.tolerations[0].operator='Equal' \
+          --set global.tolerations[0].value='example-global-value' \
+          --set global.tolerations[0].effect='NoSchedule' \
+          --set logzio-logs-collector.tolerations[0].key='example-collector-key' \
+          --set logzio-logs-collector.tolerations[0].operator='Equal' \
+          --set logzio-logs-collector.tolerations[0].value='example-collector-value' \
+          --set logzio-logs-collector.tolerations[0].effect='NoSchedule' "
         
           if [ "${{ matrix.environment }}" == "eks-fargate" ]; then
             HELM_CMD="$HELM_CMD --set logzio-logs-collector.fargateLogRouter.enabled='true' --set logzio-k8s-telemetry.collector.mode=standalone --set logzio-apm-collector.livenessProbe.initialDelaySeconds=15 --set logzio-apm-collector.readinessProbe.initialDelaySeconds=15"
@@ -98,8 +106,6 @@ jobs:
           
           echo "Running Helm command: $HELM_CMD"
           eval $HELM_CMD
-          
-        
 
       - name: Wait for pods to be ready
         run: |
@@ -110,6 +116,32 @@ jobs:
             kubectl rollout status ds/logzio-monitoring-prometheus-node-exporter --timeout=300s
             kubectl rollout status ds/logzio-monitoring-otel-collector-ds --timeout=300s
           fi
+
+      - name: Validate Tolerations on Deployments and DaemonSets
+        run: |
+          echo "Validating tolerations on Helm subcharts..."
+          GLOBAL_TOLERATION_KEY="example-global-key"
+          SUBCHART_TOLERATION_KEY="example-collector-key"
+
+          # Deployment: logzio-apm-collector
+          echo "Checking tolerations in deployment/logzio-apm-collector"
+          kubectl get deployment logzio-apm-collector -o jsonpath='{.spec.template.spec.tolerations}' | grep -q $GLOBAL_TOLERATION_KEY || (echo "Missing global toleration in logzio-apm-collector" && exit 1)
+
+          # Deployment: logzio-apm-collector-spm
+          echo "Checking tolerations in deployment/logzio-apm-collector-spm"
+          kubectl get deployment logzio-apm-collector-spm -o jsonpath='{.spec.template.spec.tolerations}' | grep -q $GLOBAL_TOLERATION_KEY || (echo "Missing global toleration in logzio-apm-collector-spm" && exit 1)
+          
+          if [ "${{ matrix.environment }}" == "eks-linux" ]; then
+            # DaemonSet: logzio-logs-collector
+            echo "Checking tolerations in daemonset/logzio-logs-collector"
+            kubectl get ds logzio-logs-collector -o jsonpath='{.spec.template.spec.tolerations}' | grep -q $GLOBAL_TOLERATION_KEY || (echo "Missing global toleration in logzio-logs-collector" && exit 1)
+            kubectl get ds logzio-logs-collector -o jsonpath='{.spec.template.spec.tolerations}' | grep -q $SUBCHART_TOLERATION_KEY || (echo "Missing collector-specific toleration in logzio-logs-collector" && exit 1)
+            
+            # DaemonSet: logzio-monitoring-otel-collector-ds
+            echo "Checking tolerations in daemonset/logzio-monitoring-otel-collector-ds"
+            kubectl get ds logzio-monitoring-otel-collector-ds -o jsonpath='{.spec.template.spec.tolerations}' | grep -q $GLOBAL_TOLERATION_KEY || (echo "Missing global toleration in logzio-monitoring-otel-collector-ds" && exit 1)
+          fi
+          echo "✅ All expected tolerations are present."
 
       - name: Check `aws-observability` namespace and configmap (fargate)
         if: matrix.environment == 'eks-fargate'
