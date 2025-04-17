@@ -97,7 +97,8 @@ jobs:
           --set logzio-logs-collector.tolerations[0].operator='Equal' \
           --set logzio-logs-collector.tolerations[0].value='example-collector-value' \
           --set logzio-logs-collector.tolerations[0].effect='NoSchedule' \
-          --set logzio-apm-collector.spmConfig.connectors.spanmetrics.histogram.disable=true"
+          --set logzio-apm-collector.spmConfig.connectors.spanmetrics.histogram.disable=true \
+          --set logzio-k8s-telemetry.enableMetricsFilter.eks=true"
         
           if [ "${{ matrix.environment }}" == "eks-fargate" ]; then
             HELM_CMD="$HELM_CMD --set logzio-logs-collector.fargateLogRouter.enabled='true' --set logzio-k8s-telemetry.collector.mode=standalone --set logzio-apm-collector.livenessProbe.initialDelaySeconds=15 --set logzio-apm-collector.readinessProbe.initialDelaySeconds=15"

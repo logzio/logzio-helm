@@ -67,6 +67,7 @@ jobs:
           --set global.env_id=${{ env.ENV_ID }} \
           --set collector.mode=${{ matrix.mode }} \
           --set spanMetricsAgregator.config.connectors.spanmetrics.histogram.disable=true \
+          --set enableMetricsFilter.eks=true \
           logzio-k8s-telemetry .
       
       - name: Verify deployment Status
