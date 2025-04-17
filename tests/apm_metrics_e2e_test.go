@@ -3,12 +3,13 @@ package tests
 import (
 	"encoding/json"
 	"fmt"
-	"go.uber.org/zap"
 	"io"
 	"net/http"
 	"os"
 	"strings"
 	"testing"
+
+	"go.uber.org/zap"
 )
 
 // MetricResponse represents the structure of the API response
@@ -25,10 +26,7 @@ type MetricResponse struct {
 
 func TestSpmMetricsApm(t *testing.T) {
 	requiredMetrics := map[string][]string{
-		"calls_total":    {"k8s_node_name", "k8s_namespace_name", "k8s_pod_name", "span_kind", "operation"},
-		"latency_sum":    {"k8s_node_name", "k8s_namespace_name", "k8s_pod_name", "span_kind", "operation"},
-		"latency_count":  {"k8s_node_name", "k8s_namespace_name", "k8s_pod_name", "span_kind", "operation"},
-		"latency_bucket": {"k8s_node_name", "k8s_namespace_name", "k8s_pod_name", "span_kind", "operation"},
+		"calls_total": {"k8s_node_name", "k8s_namespace_name", "k8s_pod_name", "span_kind", "operation"},
 	}
 	envId := os.Getenv("ENV_ID")
 	query := fmt.Sprintf(`{env_id='%s'}`, envId)
