@@ -59,7 +59,7 @@ jobs:
           --set global.tolerations[0].operator="Equal" \
           --set global.tolerations[0].value="global-value" \
           --set global.tolerations[0].effect="NoSchedule" \
-          --set spmConfig.connectors.spanmetrics.histogram.disabled=true \
+          --set spmConfig.connectors.spanmetrics.histogram.disable=true \
           logzio-apm-collector .
 
       - name: Verify deployment Status
