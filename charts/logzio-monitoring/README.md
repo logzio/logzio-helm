@@ -186,6 +186,41 @@ Set logzio-k8s-telemetry `ListenerHost` value to send your metrics to a custom e
 --set global.customMetricsEndpoint="<<CUSTOM_METRICS_ENDPOINT>>"
 ```
 
+### Adding Global Tolerations
+
+Global tolerations allow you to define tolerations that apply to all subcharts in the `logzio-monitoring` Helm chart. This simplifies the process of managing tolerations across multiple components.
+
+1. **Identify the taints on your nodes:**
+Run the following command to list the taints on your nodes:
+
+```shell
+kubectl get nodes -o json | jq '"\(.items[].metadata.name) \(.items[].spec.taints)"'
+```
+
+2. **Add globsl tolerations to the Helm install command**:
+
+You can add global tolerations by using the `--set` flag in your `helm install` or `helm upgrade` command. Replace the placeholders with the appropriate values for your taints.
+
+```shell
+--set global.tolerations[0].key="<<TAINT-KEY>>" \
+--set global.tolerations[0].operator="<<TAINT-OPERATOR>>" \
+--set global.tolerations[0].value="<<TAINT-VALUE>>" \
+--set global.tolerations[0].effect="<<TAINT-EFFECT>>"
+```
+
+For example, to tolerate the `CriticalAddonsOnly:NoSchedule` taint, use the following command:
+
+```shell
+helm upgrade -n monitoring \
+  --reuse-values \
+  --set global.tolerations[0].key="CriticalAddonsOnly" \
+  --set global.tolerations[0].operator="Exists" \
+  --set global.tolerations[0].effect="NoSchedule" \
+  logzio-monitoring logzio-helm/logzio-monitoring
+```
+
+> **Note:** Global tolerations are supported in all subcharts starting from version `7.2.0`.
+
 ### Adding Tolerations for Tainted Nodes
 
 To ensure that your pods can be scheduled on nodes with taints, you need to add tolerations to the relevant sub-charts. Here is how you can configure tolerations for each sub-chart within the `logzio-monitoring` Helm chart:
