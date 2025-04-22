@@ -1152,6 +1152,7 @@ daemonsetConfig:
             selectors:
             - field: metadata.name=$KUBE_NODE_NAME
               role: node
+          metric_relabel_configs: []
           metrics_path: /metrics
           relabel_configs:
           - action: labelmap
