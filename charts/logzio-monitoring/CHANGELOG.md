@@ -2,6 +2,11 @@
 
 <!-- next version -->
 ## 7.2.0
+- Upgrade `logzio-k8s-telemetry` chart to `5.1.0`
+  - Respect metric filters in `prometheus/kubelet` scrape endpoint
+- Upgrade `opentelemetry-operator` chart to `~0.86.2`
+
+## 7.1.3
 - All subcharts now support `global.tolerations`
   - Upgrade `logzio-fluentd` chart to `1.0.2`
   - Upgrade `logzio-k8s-telemetry` chart to `5.0.4`
