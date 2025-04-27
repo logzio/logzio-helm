@@ -1,5 +1,7 @@
 # Logzio Kubernetes Helm Charts
 
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) 
+
 Helm is a tool for managing packages of pre-configured Kubernetes resources using Charts.   
 This repository contains Helm charts for shipping logs, metrics, and traces to Logz.io. 
 
@@ -7,19 +9,21 @@ This repository contains Helm charts for shipping logs, metrics, and traces to L
 
 Please refer to the documentation in each chart directory for more details:
 
-- [Logzio Monitoring](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-monitoring)  
+- [Logzio Monitoring](./charts/logzio-monitoring/README.md)  
   A unified chart for shipping logs, metrics, traces, and SPM.
-- [Logzio Trivy](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-trivy)  
-  A chart for integrating Trivy vulnerability scanner with Logz.io.
-- [Logzio K8S Events](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-k8s-events)  
-  A chart for shipping Kubernetes events to Logz.io.
-- [Logzio api fetcher](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-api-fetcher) A chart to retrive logs from custom apis.
-- [Fluentd](https://github.com/logzio/logzio-helm/tree/master/charts/fluentd)  
-  A chart for shipping logs using Fluentd.
-- [Dotnet Monitor](https://github.com/logzio/logzio-helm/tree/master/charts/dotnet-monitor)  
+  - [Logzio Trivy](./charts/logzio-trivy/README.md)  
+    A chart for integrating Trivy vulnerability scanner with Logz.io.
+  - [Logzio K8S Events](./charts/logzio-k8s-events/README.md)  
+    A chart for shipping Kubernetes events to Logz.io.
+  - [Fluentd](./charts/fluentd/README.md)  
+    A chart for shipping logs using Fluentd.
+- [Logzio API Fetcher](./charts/logzio-api-fetcher/README.md)  
+  A chart to retrive logs from custom apis.
+- [Dotnet Monitor](./charts/dotnet-monitor/README.md)  
   A chart for monitoring .NET applications.
-- [Fluentbit](https://github.com/logzio/logzio-helm/tree/master/charts/fluentbit)  
+- [Fluentbit](./charts/fluentbit/README.md)  
   A chart for shipping logs using Fluent Bit.
-- [Filebeat](https://github.com/logzio/logzio-helm/tree/master/charts/filebeat)  
-  A chart for shipping logs using Filebeat.
-- [Logzio api fetcher](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-api-fetcher)
+
+## Contributing
+
+Please see [CONTRIBUTING.md](./CONTRIBUTING.md).
