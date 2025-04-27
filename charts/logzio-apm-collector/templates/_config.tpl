@@ -72,6 +72,18 @@
 {{- if not (or .Values.spm.enabled .Values.serviceGraph.enabled) }}
 {{- $_ := unset $tracesConfig.service.pipelines "traces/spm" }}
 {{- end -}}
+
+{{- if (eq (include "apm-collector.resourceDetectionEnabled" .) "true") }}
+{{- $resDetectionConfig := (include "apm-collector.resourceDetectionConfig" .Values.global.distribution | fromYaml) }}
+  {{- if $resDetectionConfig }}
+    {{- range $key, $value := $resDetectionConfig }}
+      {{- $_ := set $tracesConfig "processors" (merge (index $tracesConfig "processors") (dict $key $value)) }}
+      {{- $_ := set (index $tracesConfig "service" "pipelines" "traces") "processors" (prepend (index $tracesConfig "service" "pipelines" "traces" "processors") $key) }}
+      {{- $_ := set (index $tracesConfig "service" "pipelines" "traces/spm") "processors" (prepend (index $tracesConfig "service" "pipelines" "traces/spm" "processors") $key) }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+
 {{- tpl ($tracesConfig | toYaml) . }}
 {{- end -}}
 
@@ -87,4 +99,27 @@
 {{- $_ := set (index $spmConfig "service" "pipelines" "traces") "exporters" (append (index $spmConfig "service" "pipelines" "traces" "exporters") "spanmetrics") -}}
 {{- end }}
 {{- tpl ($spmConfig | toYaml) . }}
+{{- end }}
+
+{{/* Build config for Resource Detection according to distribution */}}
+{{- define "apm-collector.resourceDetectionConfig" -}}
+{{- if . }}
+{{- if eq . "eks" }}
+resourcedetection/distribution:
+  timeout: 15s
+  detectors: ["eks", "ec2"]
+{{- else if eq . "aks" }}
+resourcedetection/distribution:
+  detectors: ["env", "aks"]
+{{- else if eq . "gke" }}
+resourcedetection/distribution:
+  detectors: ["env", "gcp"]
+{{- else }}
+resourcedetection/all:
+  detectors: [ec2, azure, gcp]
+{{- end }}
+{{- else }}
+resourcedetection/all:
+  detectors: [ec2, azure, gcp]
+{{- end }}
 {{- end }}
