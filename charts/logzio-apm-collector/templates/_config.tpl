@@ -110,10 +110,10 @@ resourcedetection/distribution:
   detectors: ["eks", "ec2"]
 {{- else if eq . "aks" }}
 resourcedetection/distribution:
-  detectors: ["env", "aks"]
+  detectors: ["aks", "azure"]
 {{- else if eq . "gke" }}
 resourcedetection/distribution:
-  detectors: ["env", "gcp"]
+  detectors: ["gcp"]
 {{- else }}
 resourcedetection/all:
   detectors: [ec2, azure, gcp]

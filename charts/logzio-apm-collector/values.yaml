@@ -37,7 +37,12 @@ global:
   distribution: ""
   # Optional - Control enabling of the OpenTelemetry Collector's resource detection feature. Dependent on `distribution` value.
   resourceDetection:
-    enabled: true
+    enabled: false
+
+# Optional - Overrides `global.resourceDetection.enabled`.
+# Control whether the OpenTelemetry Collector's resource detection feature is enabled. Dependent on `distribution` value.
+resourceDetection:
+  enabled: true
 
 # Allows changing the OpenTelemetry Collector log level
 otelLogLevel: "info"
