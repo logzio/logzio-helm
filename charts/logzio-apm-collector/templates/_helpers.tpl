@@ -146,3 +146,18 @@ The APM service address
 {{- $serviceName := include "apm-collector.fullname" .}}
 {{- printf "http://%s.%s.svc.cluster.local" $serviceName .Release.Namespace }}
 {{- end }}
+
+{{/*
+Returns the value of resource detection enablement state
+*/}}
+{{- define "apm-collector.resourceDetectionEnabled" -}}
+{{- if (hasKey .Values "resourceDetection") }}
+{{- if (hasKey .Values.resourceDetection "enabled") }}
+{{- .Values.resourceDetection.enabled }}
+{{- else }}
+{{- .Values.global.resourceDetection.enabled }}
+{{- end }}
+{{- else }}
+{{- .Values.global.resourceDetection.enabled }}
+{{- end }}
+{{- end }}

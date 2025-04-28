@@ -33,6 +33,16 @@ global:
   # Optional - Overrides global.LogzioRegion listener address with a custom endpoint. For example: http://endpoint:8080
   customTracesEndpoint: ""
   customSpmEndpoint: ""
+  # Optional - Identifier for the Kubernetes distribution used. One of "eks", "aks" or "gke".
+  distribution: ""
+  # Optional - Control enabling of the OpenTelemetry Collector's resource detection feature. Dependent on `distribution` value.
+  resourceDetection:
+    enabled: false
+
+# Optional - Overrides `global.resourceDetection.enabled`.
+# Control whether the OpenTelemetry Collector's resource detection feature is enabled. Dependent on `distribution` value.
+resourceDetection:
+  enabled: true
 
 # Allows changing the OpenTelemetry Collector log level
 otelLogLevel: "info"
@@ -78,8 +88,6 @@ traceConfig:
     zipkin:
       endpoint: "0.0.0.0:9411"
   processors:
-    resourcedetection/all:
-      detectors: [ec2, azure, gcp]
     tail_sampling:
       policies:
         [
@@ -177,12 +185,12 @@ traceConfig:
     pipelines:
       traces:
         receivers: [zipkin, otlp]
-        processors: [resourcedetection/all,attributes/env_id, k8sattributes, resource/k8s, tail_sampling, batch]
+        processors: [attributes/env_id, k8sattributes, resource/k8s, tail_sampling, batch]
         exporters: [logzio]
       # Removed if spm.enabled is false
       traces/spm:
         receivers: [zipkin, otlp]
-        processors: [resourcedetection/all, attributes/env_id, k8sattributes, batch]
+        processors: [attributes/env_id, k8sattributes, batch]
         exporters: [otlp/spm_forwarder]
     telemetry:
       logs:
