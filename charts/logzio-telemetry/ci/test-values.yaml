@@ -262,3 +262,13 @@ autoscaling:
   maxReplicas: 10
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
+
+
+# Ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
+podDisruptionBudget:
+  enabled: false
+# Set the minimum available replicas
+#  minAvailable: 1
+# OR Set the maximum unavailable replicas
+#  maxUnavailable: 1
+# If both defined only maxUnavailable will be used

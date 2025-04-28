@@ -397,6 +397,8 @@ If you don't want the sub charts to installed add the relevant flag per sub char
 
 
 ## Change log
+* 5.1.1
+  - Add support for Pod Disruption Budget
 * 5.1.0
   - Respect metric filters in `prometheus/kubelet` scrape endpoint
 * 5.0.4
