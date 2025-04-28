@@ -1,8 +1,12 @@
 # Changes by Version
 
 <!-- next version -->
+## 2.0.2
+- Add support for auto resource detection with `distribution` and `resourceDetection.enabled` flags.
+
 ## 2.0.1
 - Add support for global tolerations
+
 ## 2.0.0
 - **Breaking changes**
     - Secret values are now global

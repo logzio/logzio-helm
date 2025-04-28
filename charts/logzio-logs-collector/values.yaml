@@ -32,6 +32,11 @@ global:
   logzioRegion: "us"
   # Secret with your custom endpoint, for example:http://endpoint:8080. Overrides secrets.LogzioRegion listener adress
   customLogsEndpoint: ""
+  # Optional - Identifier for the Kubernetes distribution used. One of "eks", "aks" or "gke".
+  distribution: ""
+  # Optional - Control enabling of the OpenTelemetry Collector's resource detection feature. Dependent on `distribution` value.
+  resourceDetection:
+    enabled: false
 
 standaloneCollector:
   # Number of replicas in standalone collector mode
