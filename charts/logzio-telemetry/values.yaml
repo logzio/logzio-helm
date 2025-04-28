@@ -44,6 +44,11 @@ global:
   customTracesEndpoint: ""
   # Custom Metrics endpoint, overrides global.LogzioRegion listener address
   customMetricsEndpoint: ""
+  # Optional - Identifier for the Kubernetes distribution used. One of "eks", "aks" or "gke".
+  distribution: ""
+  # Optional - Control enabling of the OpenTelemetry Collector's resource detection feature. Dependent on `distribution` value.
+  resourceDetection:
+    enabled: false
 
 secrets:
   name: logzio-secret  # Secret name
@@ -275,8 +280,6 @@ tracesConfig:
     zipkin:
       endpoint: "0.0.0.0:9411"
   processors:
-    resourcedetection/all:
-      detectors: [ec2, azure, gcp]
     tail_sampling:
       policies:
         [
@@ -304,7 +307,7 @@ tracesConfig:
     pipelines:
       traces:
         receivers: [jaeger, zipkin, otlp]
-        processors: [resourcedetection/all,attributes/env_id, k8sattributes, resource/k8s, tail_sampling, batch]
+        processors: [attributes/env_id, k8sattributes, resource/k8s, tail_sampling, batch]
         exporters: [logzio]
 
 spmForwarderConfig:
@@ -317,7 +320,7 @@ spmForwarderConfig:
     pipelines:
       traces/spm:
         receivers: [jaeger, zipkin, otlp]
-        processors: [resourcedetection/all, attributes/env_id, k8sattributes, batch]
+        processors: [attributes/env_id, k8sattributes, batch]
         exporters: [logging, otlp]
 # Metrics standalone collector configuration 
 metricsConfig:
@@ -1052,8 +1055,6 @@ daemonsetConfig:
   extensions:
     health_check: {}
   processors:
-    resourcedetection/all:
-      detectors: [ec2, azure, gcp]
     filter/kubernetes360:
       metrics:
         datapoint:
