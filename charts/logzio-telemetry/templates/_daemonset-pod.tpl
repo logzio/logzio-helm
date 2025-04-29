@@ -18,7 +18,7 @@ containers:
       {{- toYaml .Values.containerSecurityContext | nindent 6 }}
     image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
     imagePullPolicy: {{ .Values.image.pullPolicy }}
-{{- if (and (not .Values.traces.enabled) .Values.metrics.enabled) }}
+{{- if .Values.metrics.enabled }}
     ports:
       {{- range $key, $port := .Values.ports }}
       {{- if $port.enabled }}
