@@ -474,6 +474,12 @@ ports:
     servicePort: 9411
     hostPort: 9411
     protocol: TCP
+  metrics:
+    enabled: true
+    containerPort: 8888
+    servicePort: 8888
+    hostPort: 8888
+    protocol: TCP
 
 portsSpm:
   otlp:
@@ -482,7 +488,12 @@ portsSpm:
     servicePort: 4317
     hostPort: 4317
     protocol: TCP
-
+  metrics:
+    enabled: true
+    containerPort: 8888
+    servicePort: 8888
+    hostPort: 8888
+    protocol: TCP
 # Common labels to add to all otel-collector resources. Evaluated as a template.
 additionalLabels: {}
 #  app.kubernetes.io/part-of: my-app
