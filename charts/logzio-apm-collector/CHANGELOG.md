@@ -1,6 +1,8 @@
 # Changes by Version
 
 <!-- next version -->
+## 1.2.3
+- Expose collector metrics port by default 
 ## 1.2.2
 - Add support for auto resource detection with `distribution` and `resourceDetection.enabled` flags.
   - The old `resourcedetection/all` configuration now serves as fallback if `distribution` is empty or with unknown value.

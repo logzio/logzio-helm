@@ -165,3 +165,18 @@ https://listener.logz.io:8053
 {{- end }}
 {{- end }}
 {{- end }}
+
+{{/*
+Returns the value of resource detection enablement state
+*/}}
+{{- define "opentelemetry-collector.resourceDetectionEnabled" -}}
+{{- if (hasKey .Values "resourceDetection") }}
+{{- if (hasKey .Values.resourceDetection "enabled") }}
+{{- .Values.resourceDetection.enabled }}
+{{- else }}
+{{- .Values.global.resourceDetection.enabled }}
+{{- end }}
+{{- else }}
+{{- .Values.global.resourceDetection.enabled }}
+{{- end }}
+{{- end }}

@@ -397,6 +397,14 @@ If you don't want the sub charts to installed add the relevant flag per sub char
 
 
 ## Change log
+* 5.2.0
+  - Expose collector metrics port by default
+  - Add `podDisruptionBudget` (Contributed by @jod972)
+  - Add `topologySpreadConstraints` (Contributed by @jod972)
+  - Add support for auto resource detection with `distribution` and `resourceDetection.enabled` flags.
+    - The old `resourcedetection/all` configuration now serves as fallback if `distribution` is empty or with unknown value.
+  - **Breaking changes:** Resource detection is disabled by default. Meaning, the old `resourcedetection/all` for trace and SPM is not applied by default.
+    - If you use this chart for trace and SPM collection, you can enable it by setting `resourceDetection.enabled=true`.
 * 5.1.0
   - Respect metric filters in `prometheus/kubelet` scrape endpoint
 * 5.0.4
