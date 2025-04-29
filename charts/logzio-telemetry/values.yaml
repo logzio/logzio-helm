@@ -653,7 +653,7 @@ ports:
     servicePort: 9411
     hostPort: 9411
     protocol: TCP
-  collector-metrics:
+  metrics:
     enabled: true
     containerPort: 8888
     servicePort: 8888
