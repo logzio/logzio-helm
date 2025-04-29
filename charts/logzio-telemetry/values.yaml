@@ -653,6 +653,12 @@ ports:
     servicePort: 9411
     hostPort: 9411
     protocol: TCP
+  collector-metrics:
+    enabled: true
+    containerPort: 8888
+    servicePort: 8888
+    hostPort: 8888
+    protocol: TCP
 
 # Kubernetes Object logs
 k8sObjectsConfig:
