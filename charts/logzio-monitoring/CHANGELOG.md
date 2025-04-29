@@ -1,6 +1,18 @@
 # Changes by Version
 
 <!-- next version -->
+## 7.3.0
+- Upgrade `logzio-apm-collector` chart to `1.2.3`
+  - Add support for auto resource detection with `distribution` and `resourceDetection.enabled` flags.
+- Upgrade `logzio-logs-collector` chart to `2.0.2`
+  - Add support for auto resource detection with `distribution` and `resourceDetection.enabled` flags.
+- Upgrade `logzio-k8s-telemetry` chart to `5.2.0`
+  - Expose collector metrics port by default
+  - Add `podDisruptionBudget` (Contributed by @jod972)
+  - Add `topologySpreadConstraints` (Contributed by @jod972)
+  - Add support for auto resource detection with `distribution` and `resourceDetection.enabled` flags.
+- Update Operator await job to dynamically determine the webhook path based on the release namespace and chart name.
+
 ## 7.2.0
 - Upgrade `logzio-k8s-telemetry` chart to `5.1.0`
   - Respect metric filters in `prometheus/kubelet` scrape endpoint
