@@ -253,6 +253,21 @@ entries:
   logzio-apm-collector:
   - apiVersion: v2
     appVersion: 0.123.0
+    created: "2025-04-29T10:07:51.955535619Z"
+    description: Kubernetes APM agent for Logz.io based on OpenTelemetry Collector
+    digest: 5ba9a4250adbd01dd791e68229861745b18f59cf2e7d19baaf5e255beeae77a8
+    home: https://logz.io/
+    icon: https://logzbucket.s3.eu-west-1.amazonaws.com/logz-io-img/logo400x400.png
+    maintainers:
+    - email: naama.bendalak@logz.io
+      name: Naama Bendalak
+    name: logzio-apm-collector
+    type: application
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/logzio-apm-collector-1.2.3/logzio-apm-collector-1.2.3.tgz
+    version: 1.2.3
+  - apiVersion: v2
+    appVersion: 0.123.0
     created: "2025-04-28T10:53:54.09222071Z"
     description: Kubernetes APM agent for Logz.io based on OpenTelemetry Collector
     digest: 60b0a2407b8405ccdf53a6eb99e8302b7889ca4de7ee1da48a202d008f551f6c
@@ -1620,6 +1635,38 @@ entries:
     - https://logzio.github.io/logzio-helm/logzio-k8s-metrics-0.0.1.tgz
     version: 0.0.1
   logzio-k8s-telemetry:
+  - apiVersion: v2
+    appVersion: 0.108.0
+    created: "2025-04-29T10:07:52.155668852Z"
+    dependencies:
+    - condition: kubeStateMetrics.enabled
+      name: kube-state-metrics
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 4.24.0
+    - condition: nodeExporter.enabled
+      name: prometheus-node-exporter
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 4.29.0
+    - condition: pushGateway.enabled
+      name: prometheus-pushgateway
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 2.4.2
+    description: logzio-k8s-telemetry allows you to ship metrics and traces from your
+      Kubernetes cluster using the OpenTelemetry collector.
+    digest: 932dc52d417f158cb4984a9b42475aa87619508e92b948c00ee82e8ada2fa0af
+    maintainers:
+    - email: yotam.loewenbach@logz.io
+      name: yotamloe
+    - email: raul.gurshumo@logz.io
+      name: ralongit
+    name: logzio-k8s-telemetry
+    sources:
+    - https://github.com/prometheus/node_exporter
+    - https://github.com/kubernetes/kube-state-metrics
+    type: application
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/logzio-k8s-telemetry-5.2.0/logzio-k8s-telemetry-5.2.0.tgz
+    version: 5.2.0
   - apiVersion: v2
     appVersion: 0.108.0
     created: "2025-04-22T06:30:41.883346982Z"
@@ -9194,4 +9241,4 @@ entries:
     urls:
     - https://logzio.github.io/logzio-helm/prometheus-alerts-migrator-1.0.0.tgz
     version: 1.0.0
-generated: "2025-04-29T07:26:54.814766707Z"
+generated: "2025-04-29T10:07:52.156611686Z"
