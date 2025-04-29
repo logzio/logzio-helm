@@ -397,8 +397,10 @@ If you don't want the sub charts to installed add the relevant flag per sub char
 
 
 ## Change log
-* 5.1.1
+* 5.2.0
   - Expose collector metrics port by default
+  - Add `podDisruptionBudget` (Contributed by @jod972)
+  - Add `topologySpreadConstraints` (Contributed by @jod972)
 * 5.1.0
   - Respect metric filters in `prometheus/kubelet` scrape endpoint
 * 5.0.4
