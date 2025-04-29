@@ -604,6 +604,11 @@ tolerations: []
 
 affinity: {}
 
+## Topology spread constraints for pod assignment
+## Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
+topologySpreadConstraints: []
+
+
 extraEnvs: []
 extraHostPathMounts: []
 secretMounts: []

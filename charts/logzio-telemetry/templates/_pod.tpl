@@ -202,4 +202,8 @@ affinity:
 tolerations:
 {{ toYaml $allTolerations | nindent 2 }}
 {{- end }}
+{{- if .Values.topologySpreadConstraints }}
+topologySpreadConstraints:
+{{ toYaml .Values.topologySpreadConstraints | indent 8 }}
+{{- end }}
 {{- end }}
