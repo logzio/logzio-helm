@@ -8,6 +8,7 @@ metadata:
   labels:
     {{- include "logs-collector.labels" . | nindent 4 }}
 data:
-  relay: {{- include "logs-collector.loggingDaemonsetConfig" . | nindent 4 }}
+  relay: |
+    {{- include "logs-collector.loggingDaemonsetConfig" . | nindent 4 }}
 {{- end }}
 {{ end }}
