@@ -604,6 +604,19 @@ tolerations: []
 
 affinity: {}
 
+## Topology spread constraints for pod assignment
+## Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
+topologySpreadConstraints: []
+
+# Ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
+podDisruptionBudget:
+  enabled: false
+# Set the minimum available replicas
+#  minAvailable: 1
+# OR Set the maximum unavailable replicas
+#  maxUnavailable: 1
+# If both defined only maxUnavailable will be used
+
 extraEnvs: []
 extraHostPathMounts: []
 secretMounts: []
