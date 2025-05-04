@@ -4,6 +4,8 @@
 ## 7.3.0
 - Upgrade `logzio-apm-collector` chart to `1.2.3`
   - Add support for auto resource detection with `distribution` and `resourceDetection.enabled` flags.
+  - Upgrade OpenTelemetry Collector from `0.119.0` to `0.123.0`
+  - Expose collector metrics port by default
 - Upgrade `logzio-logs-collector` chart to `2.0.2`
   - Add support for auto resource detection with `distribution` and `resourceDetection.enabled` flags.
 - Upgrade `logzio-k8s-telemetry` chart to `5.2.0`
