@@ -92,7 +92,15 @@ Selector labels
 {{- define "opentelemetry-collector.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "opentelemetry-collector.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
+component: component: logzio-telemetry-collector
 {{- end }}
+
+{{- define "opentelemetry-collector-spm.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "opentelemetry-collector.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+component: standalone-collector-spm
+{{- end }}
+
 
 {{/*
 Create the name of the service account to use
