@@ -94,6 +94,13 @@ app.kubernetes.io/name: {{ include "opentelemetry-collector.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
+{{- define "opentelemetry-collector-spm.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "opentelemetry-collector.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+component: standalone-collector-spm
+{{- end }}
+
+
 {{/*
 Create the name of the service account to use
 */}}
