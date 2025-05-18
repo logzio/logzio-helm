@@ -92,7 +92,7 @@ Selector labels
 {{- define "opentelemetry-collector.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "opentelemetry-collector.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
-component: component: logzio-telemetry-collector
+component: logzio-telemetry-collector
 {{- end }}
 
 {{- define "opentelemetry-collector-spm.selectorLabels" -}}
