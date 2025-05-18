@@ -397,6 +397,9 @@ If you don't want the sub charts to installed add the relevant flag per sub char
 
 
 ## Change log
+* 5.2.1
+  - Fix Pod disruption budget selector label for SPM collector
+  - Add PriorityClassName for SPM collector
 * 5.2.0
   - Expose collector metrics port by default
   - Add `podDisruptionBudget` (Contributed by @jod972)

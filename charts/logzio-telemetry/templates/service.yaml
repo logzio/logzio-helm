@@ -26,5 +26,4 @@ spec:
     {{- end }}
   selector:
     {{- include "opentelemetry-collector.selectorLabels" . | nindent 4 }}
-    component: logzio-telemetry-collector
 {{- end }}

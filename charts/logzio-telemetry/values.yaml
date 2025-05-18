@@ -982,6 +982,8 @@ standaloneCollector:
   # Configuration override that will be merged into the collector default config
   configOverride: {}
 
+  replicaCount: 1
+  
 daemonsetCollector:
   enabled: false
 
