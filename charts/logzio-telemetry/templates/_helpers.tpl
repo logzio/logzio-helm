@@ -92,13 +92,13 @@ Selector labels
 {{- define "opentelemetry-collector.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "opentelemetry-collector.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
-component: logzio-telemetry-collector
+{{ include "opentelemetry-collector.component" . }}
 {{- end }}
 
 {{- define "opentelemetry-collector-spm.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "opentelemetry-collector.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
-component: standalone-collector-spm
+{{ include "spm-collector.component" . }}
 {{- end }}
 
 
@@ -187,4 +187,22 @@ Returns the value of resource detection enablement state
 {{- else }}
 {{- .Values.global.resourceDetection.enabled }}
 {{- end }}
+{{- end }}
+
+{{/*
+Get component name
+*/}}
+{{- define "opentelemetry-collector.component" -}}
+{{- if eq .Values.collector.mode "daemonset" -}}
+component: logzio-telemetry-collector
+{{- else if eq .Values.collector.mode "standalone" -}}
+component: logzio-telemetry-collector-standalone
+{{- end -}}
+{{- end }}
+
+{{/*
+Get SPM component name
+*/}}
+{{- define "spm-collector.component" -}}
+component: standalone-collector-spm
 {{- end }}
