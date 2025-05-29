@@ -1,9 +1,0 @@
-
-FROM mcr.microsoft.com/windows/nanoserver:1809
-
-USER ContainerAdministrator
-RUN curl -o winlogbeat.zip https://artifacts.elastic.co/downloads/beats/winlogbeat/winlogbeat-7.15.2-windows-x86_64.zip \
-    && tar -xf winlogbeat.zip \
-    && curl -o cert.crt https://raw.githubusercontent.com/logzio/public-certificates/master/TrustExternalCARoot_and_USERTrustRSAAAACA.crt
-
-CMD ["c:\\winlogbeat-7.15.2-windows-x86_64\\winlogbeat.exe", "-c", "c:\\winlogbeat-7.15.2-windows-x86_64\\etc\\winlogbeat.yml", "-e"]

@@ -1,9 +1,0 @@
-apiVersion: v2
-name: easy-connect
-description: Easily add otel auto instrumentation and log types to your Kubernetes applications
-type: application
-version: 1.0.8
-
-maintainers:
-- name: yotamloe
-  email: yotam.loewenbach@logz.io

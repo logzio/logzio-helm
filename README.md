@@ -1,5 +1,7 @@
 # Logzio Kubernetes Helm Charts
 
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) 
+
 Helm is a tool for managing packages of pre-configured Kubernetes resources using Charts.   
 This repository contains Helm charts for shipping logs, metrics, and traces to Logz.io. 
 
@@ -7,19 +9,25 @@ This repository contains Helm charts for shipping logs, metrics, and traces to L
 
 Please refer to the documentation in each chart directory for more details:
 
-- [Logzio Monitoring](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-monitoring)  
+- [Logzio Monitoring](./charts/logzio-monitoring/README.md)  
   A unified chart for shipping logs, metrics, traces, and SPM.
-- [Logzio Trivy](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-trivy)  
-  A chart for integrating Trivy vulnerability scanner with Logz.io.
-- [Logzio K8S Events](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-k8s-events)  
-  A chart for shipping Kubernetes events to Logz.io.
-- [Logzio api fetcher](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-api-fetcher) A chart to retrive logs from custom apis.
-- [Fluentd](https://github.com/logzio/logzio-helm/tree/master/charts/fluentd)  
-  A chart for shipping logs using Fluentd.
-- [Dotnet Monitor](https://github.com/logzio/logzio-helm/tree/master/charts/dotnet-monitor)  
+  - [Logzio Logs collector](./charts/logzio-logs-collector/README.md)  
+  A chart for shipping logs using OpenTelemetry to Logz.io.
+  - [Logzio APM collector](./charts/logzio-apm-collector/README.md)  
+  A chart for shipping traces and span metrics to Logz.io.
+  - [Logzio Telemetry collector](./charts/logzio-telemetry/README.md)  
+  A chart for sending metrics to Logz.io.
+  - [Logzio Trivy](./charts/logzio-trivy/README.md)  
+    A chart for integrating Trivy vulnerability scanner with Logz.io.
+  - [Logzio K8S Events](./charts/logzio-k8s-events/README.md)  
+    A chart for shipping Kubernetes events to Logz.io.
+- [Logzio API Fetcher](./charts/logzio-api-fetcher/README.md)  
+  A chart to retrive logs from custom apis.
+- [Dotnet Monitor](./charts/dotnet-monitor/README.md)  
   A chart for monitoring .NET applications.
-- [Fluentbit](https://github.com/logzio/logzio-helm/tree/master/charts/fluentbit)  
-  A chart for shipping logs using Fluent Bit.
-- [Filebeat](https://github.com/logzio/logzio-helm/tree/master/charts/filebeat)  
-  A chart for shipping logs using Filebeat.
-- [Logzio api fetcher](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-api-fetcher)
+- [Prometheus alerts migrator](./charts/prometheus-alerts-migrator/README.md)  
+  A chart for migrating Prometheus alert rules to Logz.io's alert format.
+
+## Contributing
+
+Please see [CONTRIBUTING.md](./CONTRIBUTING.md).

@@ -1,3 +1,0 @@
-"source_labels": [__meta_kubernetes_service_name]
-"action": drop
-"regex": kube-dns

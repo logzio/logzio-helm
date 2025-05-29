@@ -1,9 +1,0 @@
-{{- if .Values.managedServiceAccount }}
-apiVersion: {{ .Values.apiVersions.ClusterRole }}
-kind: ClusterRole
-metadata:
-  name: metricbeat
-  labels:
-    k8s-app: metricbeat
-rules: {{ toYaml .Values.clusterRoleRules | nindent 2 -}}
-{{- end -}}
