@@ -31,14 +31,17 @@ This Helm chart deploys the Logz.io API Fetcher to collect data from Auth/OAuth 
 
 Edit the configuration in `values.config`. There are 2 sections of the configuration:
 
-#### logzio
+### Logz.io output
 
 | Parameter Name | Description | Required/Optional | Default |
 | --- | --- | ---| ---|
 | url | The Logz.io Listener URL for your region with port 8071. For example: https://listener.logz.io:8071 | Optional | `https://listener.logz.io:8071` |
 | token | Your Logz.io log shipping token securely directs the data to your Logz.io account. | Required | - |
 
-#### apis
+> [!NOTE]
+> To configure multiple outputs, please see [multiple outputs example](https://github.com/logzio/logzio-api-fetcher/tree/main/src/output#multiple-outputs)
+
+### APIs input
 
 <details>
   <summary>
@@ -235,12 +238,100 @@ By default `cloudflare` API type:
 | pagination_off          | True if builtin pagination should be off, False otherwise                                                                                  | Optional          | `False`           |
 
 </details>
+<details>
+  <summary>
+    <span><a href="https://github.com/logzio/logzio-api-fetcher/tree/main/src/apis/onepassword">1Password</a></span>
+  </summary>
 
+By default `1password` API type has built in pagination settings and sets the `response_data_path` to `items` field.
+
+## Configuration Options
+| Parameter Name           | Description                                                                                                  | Required/Optional | Default           |
+|--------------------------|--------------------------------------------------------------------------------------------------------------|-------------------|-------------------|
+| name                     | Name of the API (custom name)                                                                                | Optional          | the defined `url` |
+| onepassword_bearer_token | The 1Password Bearer token                                                                                   | Required          | -                 |
+| url                      | The request URL                                                                                              | Required          | -                 |
+| method                   | The request method (`GET` or `POST`)                                                                         | Optional          | `GET`             |
+| additional_fields        | Additional custom fields to add to the logs before sending to logzio                                         | Optional          | -                 |
+| days_back_fetch          | The amount of days to fetch back in the first request. Applies a filter on 1password `start_time` parameter. | Optional          | -                 |
+| scrape_interval          | Time interval to wait between runs (unit: `minutes`)                                                         | Optional          | 1 (minute)        |
+| onepassword_limit        | 1Password limit for number of events to return in a single request (allowed range: 100 to 1000)              | Optional          | 100               |
+| pagination_off           | True if builtin pagination should be off, False otherwise                                                    | Optional          | `False`           |
+
+</details>
+
+<details>
+  <summary>
+    <span><a href="https://github.com/logzio/logzio-api-fetcher/tree/main/src/apis/dockerhub">Dockerhub</a></span>
+  </summary>
+
+For dockerhub audit logs, use type `dockerhub` with the below parameters.
+
+## Configuration Options
+| Parameter Name         | Description                                                                           | Required/Optional | Default           |
+|------------------------|---------------------------------------------------------------------------------------|-------------------|-------------------|
+| name                   | Name of the API (custom name)                                                         | Optional          | the defined `url` |
+| dockerhub_user         | DockerHub username                                                                    | Required          | -                 |
+| dockerhub_token        | DockerHub personal access token or password                                           | Required          | -                 |
+| url                    | The request URL                                                                       | Required          | -                 |
+| next_url               | URL for the next page of results (used for pagination)                                | Optional          | -                 |
+| method                 | The request method (`GET` or `POST`)                                                  | Optional          | `GET`             |
+| days_back_fetch        | Number of days to fetch back in the first request. Adds a filter on `from` parameter. | Optional          | -1                |
+| refresh_token_interval | Interval in minutes to refresh the JWT token                                          | Optional          | 30 (minute)       |
+| scrape_interval        | Time interval to wait between runs (unit: `minutes`)                                  | Optional          | 1 (minute)        |
+| additional_fields      | Additional custom fields to add to the logs before sending to logzio                  | Optional          | -                 |
+
+
+</details>
+<details>
+  <summary>
+    <span><a href="https://github.com/logzio/logzio-api-fetcher/tree/main/src/apis/google#google-workspace-activities">Google Workspace Activity</a></span>
+  </summary>
+
+For Google Workspace Activity, use type `google_activity` with the below parameters.
+
+
+## Configuration Options
+| Parameter Name              | Description                                                                                                                                                                                                                                         | Required/Optional | Default                                 |
+|-----------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------|-----------------------------------------|
+| name                        | Name of the API (custom name)                                                                                                                                                                                                                       | Optional          | `Google Workspace`                      |
+| google_ws_sa_file_name      | The name of the service account credentials file. **Required unless** `google_ws_sa_file_path` is set.                                                                                                                                              | Required*         | `""`                                    |
+| google_ws_sa_file_path      | The path to the service account credentials file. **Required unless** `google_ws_sa_file_name` is set. Use this if mounting the file to a different path than the default.                                                                          | Optional*         | `./src/shared/<google_ws_sa_file_name>` |
+| google_ws_delegated_account | The email of the user for which the application is requesting delegated access                                                                                                                                                                      | Required          | -                                       |
+| application_name            | Specifies the [Google Workspace application](https://developers.google.com/workspace/admin/reports/reference/rest/v1/activities/list#applicationname) to fetch activity data from (e.g., `saml`, `user_accounts`, `login`, `admin`, `groups`, etc). | Required          | -                                       |
+| user_key                    | The unique ID of the user to fetch activity data for                                                                                                                                                                                                | Optional          | `all`                                   |
+| additional_fields           | Additional custom fields to add to the logs before sending to logzio                                                                                                                                                                                | Optional          | -                                       |
+| days_back_fetch             | The amount of days to fetch back in the first request                                                                                                                                                                                               | Optional          | 1 (day)                                 |
+| scrape_interval             | Time interval to wait between runs (unit: `minutes`)                                                                                                                                                                                                | Optional          | 1 (minute)                              |
+
+
+</details>
+<details>
+  <summary>
+    <span><a href="https://github.com/logzio/logzio-api-fetcher/tree/main/src/apis/google#google-workspace-general">Google Workspace General API</a></span>
+  </summary>
+
+For structuring custom general Google Workspace API calls use type `google_workspace` API with the parameters below.
+
+| Parameter Name              | Description                                                                                                                                                                | Required/Optional | Default                                                            |
+|-----------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------|--------------------------------------------------------------------|
+| name                        | Name of the API (custom name)                                                                                                                                              | Optional          | `Google Workspace`                                                 |
+| google_ws_sa_file_name      | The name of the service account credentials file. **Required unless** `google_ws_sa_file_path` is set.                                                                     | Required*         | `""`                                                               |
+| google_ws_sa_file_path      | The path to the service account credentials file. **Required unless** `google_ws_sa_file_name` is set. Use this if mounting the file to a different path than the default. | Optional*         | `./src/shared/<google_ws_sa_file_name>`                            |
+| google_ws_delegated_account | The email of the user for which the application is requesting delegated access                                                                                             | Required          | -                                                                  |
+| scopes                      | The OAuth 2.0 scopes that you might need to request to access Google APIs                                                                                                  | Optional          | `["https://www.googleapis.com/auth/admin.reports.audit.readonly"]` |
+| data_request                | Nest here any detail relevant to the data request. (Options in [General API](../general/README.md))                                                                        | Required          | -                                                                  |
+| additional_fields           | Additional custom fields to add to the logs before sending to logzio                                                                                                       | Optional          | -                                                                  |
+| days_back_fetch             | The amount of days to fetch back in the first request                                                                                                                      | Optional          | 1 (day)                                                            |
+| scrape_interval             | Time interval to wait between runs (unit: `minutes`)                                                                                                                       | Optional          | 1 (minute)                                                         |
+
+</details>
+
+
+> [!TIP]
 > To change the logging level, update `values.image.loglevel` (default is `INFO`).
 
 ### Example
-
-#### Auth api config:
 
 ```yaml
 logzio:
@@ -283,93 +374,13 @@ apis:
 
 ```
 
-#### OAuth Api config:
-
-```yaml
-logzio:
-  url: https://listener.logz.io:8071
-  token: 123456789a
-
-oauth_apis:
-  - type: azure_graph
-    name: azure_test
-    credentials:
-      id: <<AZURE_AD_SECRET_ID>>
-      key: <<AZURE_AD_SECRET_VALUE>>
-    token_http_request:
-      url: https://login.microsoftonline.com/<<AZURE_AD_TENANT_ID>>/oauth2/v2.0/token
-      body: client_id=<<AZURE_AD_CLIENT_ID>>
-        &scope=https://graph.microsoft.com/.default
-        &client_secret=<<AZURE_AD_SECRET_VALUE>>
-        &grant_type=client_credentials
-      headers:
-      method: POST
-    data_http_request:
-      url: https://graph.microsoft.com/v1.0/auditLogs/signIns
-      method: GET
-      headers:
-    json_paths:
-      data_date: createdDateTime
-      next_url:
-      data:
-    settings:
-      time_interval: 1
-      days_back_fetch: 30
-  - type: general
-    name: general_test
-    credentials:
-      id: aaaa-bbbb-cccc
-      key: abcabcabc
-    token_http_request:
-      url: https://login.microsoftonline.com/abcd-efgh-abcd-efgh/oauth2/v2.0/token
-      body: client_id=aaaa-bbbb-cccc
-            &scope=https://graph.microsoft.com/.default
-            &client_secret=abcabcabc
-            &grant_type=client_credentials
-      headers:
-      method: POST
-    data_http_request:
-      url: https://graph.microsoft.com/v1.0/auditLogs/directoryAudits
-      headers:
-    json_paths:
-      data_date: activityDateTime
-      data: value
-      next_url: '@odata.nextLink'
-    settings:
-      time_interval: 1
-    start_date_name: activityDateTime
-  - type: azure_mail_reports
-    name: mail_reports
-    credentials:
-      id: <<AZURE_AD_SECRET_ID>>
-      key: <<AZURE_AD_SECRET_VALUE>>
-    token_http_request:
-      url: https://login.microsoftonline.com/abcd-efgh-abcd-efgh/oauth2/v2.0/token
-      body: client_id=<<AZURE_AD_CLIENT_ID>>
-        &scope=https://outlook.office365.com/.default
-        &client_secret=<<AZURE_AD_SECRET_VALUE>>
-        &grant_type=client_credentials
-      headers:
-      method: POST
-    data_http_request:
-      url: https://reports.office365.com/ecp/reportingwebservice/reporting.svc/MessageTrace
-      method: GET
-      headers:
-    json_paths:
-      data_date: EndDate
-      next_url:
-      data:
-    filters:
-      format: Json
-    settings:
-      time_interval: 60 # for mail reports we suggest no less than 60 minutes
-      days_back_fetch: 8 # for mail reports we suggest up to 8 days
-    start_date_name: StartDate
-    end_date_name: EndDate
-
-```
-
 ## Changelog:
+- **1.2.1**:
+  - Update `logzio-api-fetcher` image from `0.3.1` -> `2.0.0`
+    - **Note:** No breaking changes, major version bump is made to align with semantic versioning in future releases.
+    - Add Google Workspace API support.
+    - Add option to configure multiple Logz.io outputs.
+    - Bug fix for Cloudflare `next_url` to be optional.
 - **1.2.0**:
   - Update `logzio-api-fetcher` image from `0.2.2` -> `0.3.1`
   - Add `imagePullSecrets` to `values.yaml`
