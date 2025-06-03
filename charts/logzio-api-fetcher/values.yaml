@@ -1,6 +1,6 @@
 image:
   repository: logzio/logzio-api-fetcher
-  tag: 0.3.1
+  tag: 2.0.0
   pullPolicy: IfNotPresent
   loglevel: INFO  # One of INFO, WARN, ERROR, DEBUG
 
