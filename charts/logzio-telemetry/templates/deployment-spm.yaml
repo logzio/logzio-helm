@@ -11,11 +11,11 @@ spec:
 {{- end }}
   selector:
     matchLabels:
-      {{- include "opentelemetry-collector.selectorLabels" . | nindent 6 }}
+      {{- include "opentelemetry-collector-spm.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "opentelemetry-collector.selectorLabels" . | nindent 8 }}
+        {{- include "opentelemetry-collector-spm.selectorLabels" . | nindent 8 }}
         {{- with .Values.standaloneCollector.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}  
