@@ -4,7 +4,7 @@ kind: Deployment
 metadata:
   name: {{ include "opentelemetry-spm.fullname" . }}
   labels:
-    {{- include "opentelemetry-collector.labels" . | nindent 4 }}
+    {{- include "opentelemetry-collector-spm.labels" . | nindent 4 }}
 spec:
 {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.standaloneCollector.replicaCount }}
