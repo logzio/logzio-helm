@@ -30,6 +30,7 @@ This project packages the following Helm Charts:
   - [Add tolerations for tainted nodes](#adding-tolerations-for-tainted-nodes)
 - [Migrating to logzio-monitoring v7.0.0](#migrating-to-logzio-monitoring-700)
 - [Enabled Auto-Instrumentation](#enable-auto-instrumentation)
+- [Enable resource detection](#enable-resource-detection)
 
 ## Instructions for standard deployment:
 
@@ -584,3 +585,24 @@ Set the `OTEL_GO_AUTO_TARGET_EXE` environment variable in your Go application to
 
 > [!NOTE]
 > For further details, refer to the [OpenTelemetry Go Instrumentation documentation](https://github.com/open-telemetry/opentelemetry-go-instrumentation/blob/v0.21.0/docs/how-it-works.md#opentelemetry-go-instrumentation---how-it-works).
+
+## Enable resource detection
+
+### Auto resource detection
+To enable automatic resource detection, set the following flags in your chart installation:
+
+For all
+```shell
+--set global.resourceDetection.enabled=true \
+--set global.distribution="<<CLOUD-SERVICE>>" \
+```
+
+> [!NOTE]
+> `<<CLOUD-SERVICE>>` can be one of `eks`, `aks` or `gke`. 
+> If `distribution` is unset or unrecognized, resource detection will be enabled for all environments by default.
+
+> [!TIP]
+> To enable resource detection only for a specific sub chart, set `--set <<SUB_CHART_NAME>>.resourceDetection.enabled=true` instead of configuring it globally.
+
+### Custom resource detection
+To customize resource detection settings, add the [OpenTelemetry `resourcedetection` processor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/resourcedetectionprocessor) to the sub-chart configuration within your `values.yaml` file.
