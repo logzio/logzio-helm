@@ -1,6 +1,16 @@
 # Changes by Version
 
 <!-- next version -->
+## 7.3.1
+- Upgrade `logzio-k8s-telemetry` chart to `5.2.1`
+  - Fix Pod disruption budget selector label for SPM collector (Contributed by @jod972)
+  - Add PriorityClassName for SPM collector (Contributed by @jod972)
+  - Add Replica Count for traces & SPM collectors
+- Upgrade `logzio-logs-collector` chart to `2.1.0`
+  - **Breaking changes**
+    - Upgrade `otel/opentelemetry-collector-contrib` image to version `0.127.0`
+      - The `time` attribute is no longer present as field in the log record. The log timestamp is now only available under `@timestamp` in Logz.io.  
+
 ## 7.3.0
 - Upgrade `logzio-apm-collector` chart to `1.2.3`
   - Add support for auto resource detection with `distribution` and `resourceDetection.enabled` flags.
