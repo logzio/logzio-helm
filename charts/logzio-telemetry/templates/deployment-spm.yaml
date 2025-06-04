@@ -4,20 +4,18 @@ kind: Deployment
 metadata:
   name: {{ include "opentelemetry-spm.fullname" . }}
   labels:
-    {{- include "opentelemetry-collector.labels" . | nindent 4 }}
+    {{- include "opentelemetry-collector-spm.labels" . | nindent 4 }}
 spec:
 {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.standaloneCollector.replicaCount }}
 {{- end }}
   selector:
     matchLabels:
-      {{- include "opentelemetry-collector.selectorLabels" . | nindent 6 }}
-      component: standalone-collector-spm
+      {{- include "opentelemetry-collector-spm.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "opentelemetry-collector.selectorLabels" . | nindent 8 }}
-        component: standalone-collector-spm
+        {{- include "opentelemetry-collector-spm.selectorLabels" . | nindent 8 }}
         {{- with .Values.standaloneCollector.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}  

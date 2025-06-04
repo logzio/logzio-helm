@@ -87,12 +87,32 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
 {{/*
+SPM labels
+*/}}
+{{- define "opentelemetry-collector-spm.labels" -}}
+helm.sh/chart: {{ include "opentelemetry-collector.chart" . }}
+{{ include "opentelemetry-collector-spm.selectorLabels" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
+{{/*
 Selector labels
 */}}
 {{- define "opentelemetry-collector.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "opentelemetry-collector.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
+{{ include "opentelemetry-collector.component" . }}
 {{- end }}
+
+{{- define "opentelemetry-collector-spm.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "opentelemetry-collector.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{ include "spm-collector.component" . }}
+{{- end }}
+
 
 {{/*
 Create the name of the service account to use
@@ -179,4 +199,22 @@ Returns the value of resource detection enablement state
 {{- else }}
 {{- .Values.global.resourceDetection.enabled }}
 {{- end }}
+{{- end }}
+
+{{/*
+Get component name
+*/}}
+{{- define "opentelemetry-collector.component" -}}
+{{- if eq .Values.collector.mode "daemonset" -}}
+component: logzio-telemetry-collector
+{{- else if eq .Values.collector.mode "standalone" -}}
+component: logzio-telemetry-collector-standalone
+{{- end -}}
+{{- end }}
+
+{{/*
+Get SPM component name
+*/}}
+{{- define "spm-collector.component" -}}
+component: standalone-collector-spm
 {{- end }}

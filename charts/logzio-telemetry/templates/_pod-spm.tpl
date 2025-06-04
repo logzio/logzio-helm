@@ -57,6 +57,9 @@ containers:
     volumeMounts:
       - mountPath: /conf
         name: {{ .Chart.Name }}-configmap-spm    
+{{- if .Values.priorityClassName }}
+priorityClassName: {{ .Values.priorityClassName | quote }}
+{{- end }}
 volumes:
   - name: {{ .Chart.Name }}-configmap-spm
     configMap:
