@@ -1,6 +1,11 @@
 # Changes by Version
 
 <!-- next version -->
+## 7.3.1
+- Upgrade `logzio-k8s-telemetry` chart to `5.2.1`
+  - Fix Pod disruption budget selector label for SPM collector (Contributed by @jod972)
+  - Add PriorityClassName for SPM collector (Contributed by @jod972)
+  - Add Replica Count for traces & SPM collectors
 ## 7.3.0
 - Upgrade `logzio-apm-collector` chart to `1.2.3`
   - Add support for auto resource detection with `distribution` and `resourceDetection.enabled` flags.
