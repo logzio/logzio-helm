@@ -9,7 +9,6 @@ spec:
   selector:
     matchLabels:
       {{- include "opentelemetry-collector.selectorLabels" . | nindent 6 }}
-      component: logzio-telemetry-collector
   template:
     metadata:
       annotations:
@@ -19,7 +18,6 @@ spec:
         {{- end }}
       labels:
         {{- include "opentelemetry-collector.selectorLabels" . | nindent 8 }}
-        component: logzio-telemetry-collector
         {{- with .Values.daemonsetCollector.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}

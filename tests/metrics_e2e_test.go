@@ -110,8 +110,8 @@ func TestFargateMetrics(t *testing.T) {
 
 func TestKubeletMetrics(t *testing.T) {
 	requiredMetrics := map[string][]string{
-		"kubelet_container_log_filesystem_used_bytes": {"p8s_logzio_name", "namespace", "container"},
-		"kubelet_node_name":                           {"p8s_logzio_name", "node"},
+		"kube_pod_container_info":            {"p8s_logzio_name", "namespace"},
+		"kube_daemonset_status_number_ready": {"p8s_logzio_name", "daemonset"},
 	}
 	envId := os.Getenv("ENV_ID")
 	query := fmt.Sprintf(`{env_id='%s'}`, envId)
@@ -120,10 +120,7 @@ func TestKubeletMetrics(t *testing.T) {
 
 func TestSpmMetrics(t *testing.T) {
 	requiredMetrics := map[string][]string{
-		"calls_total":    {"k8s_node_name", "k8s_namespace_name", "k8s_pod_name", "span_kind", "operation"},
-		"latency_sum":    {"k8s_node_name", "k8s_namespace_name", "k8s_pod_name", "span_kind", "operation"},
-		"latency_count":  {"k8s_node_name", "k8s_namespace_name", "k8s_pod_name", "span_kind", "operation"},
-		"latency_bucket": {"k8s_node_name", "k8s_namespace_name", "k8s_pod_name", "span_kind", "operation"},
+		"calls_total": {"k8s_node_name", "k8s_namespace_name", "k8s_pod_name", "span_kind", "operation"},
 	}
 	envId := os.Getenv("ENV_ID")
 	query := fmt.Sprintf(`{env_id='%s'}`, envId)

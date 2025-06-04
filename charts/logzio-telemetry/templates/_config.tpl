@@ -41,6 +41,19 @@ Build config file for standalone OpenTelemetry Collector
 {{- $metricsConfig = deepCopy $k8sObjectsConfig | merge $metricsConfig | mustMergeOverwrite -}}
 {{- end -}}
 
+{{- if (eq (include "opentelemetry-collector.resourceDetectionEnabled" .) "true") }}
+{{- $resDetectionConfig := (include "opentelemetry-collector.resourceDetectionConfig" .Values.global.distribution | fromYaml) }}
+  {{- if $resDetectionConfig }}
+    {{- range $key, $value := $resDetectionConfig }}
+      {{- $_ := set $metricsConfig "processors" (merge (index $metricsConfig "processors") (dict $key $value)) }}
+      {{- $_ := set $tracesConfig "processors" (merge (index $tracesConfig "processors") (dict $key $value)) }}
+      {{- $_ := set (index $metricsConfig "service" "pipelines" "metrics/infrastructure") "processors" (prepend (index $metricsConfig "service" "pipelines" "metrics/infrastructure" "processors") $key) }}
+      {{- $_ := set (index $tracesConfig "service" "pipelines" "traces") "processors" (prepend (index $tracesConfig "service" "pipelines" "traces" "processors") $key) }}
+      {{- $_ := set (index $spmConfig "service" "pipelines" "traces/spm") "processors" (prepend (index $spmConfig "service" "pipelines" "traces/spm" "processors") $key) }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+
 {{- if and (and (eq .Values.collector.mode "standalone") (.Values.metrics.enabled)) .Values.traces.enabled  .Values.spm.enabled }}
 {{- $configData = $metricsConfig  | merge $tracesConfig | merge $spmConfig | mustMergeOverwrite }}
 
@@ -91,6 +104,16 @@ Build config file for standalone OpenTelemetry Collector
   {{- if .Values.applicationMetrics.enabled -}}
     {{- $metricsApplications := dict "exporters" (list "prometheusremotewrite/applications") "processors" (list "attributes/env_id" "filter/kubernetes360") "receivers" (list "prometheus/applications") -}}
     {{- $_ := set .Values.metricsConfig.service.pipelines "metrics/applications" $metricsApplications -}}
+  {{- end -}}
+
+  {{- range $job := (index $configData "receivers" "prometheus/kubelet" "config" "scrape_configs") -}}
+    {{- range $key,$filter := ($infraFilters | fromJson) -}}
+      {{- if contains "metric" $key -}}
+        {{- $_ := set $job ("metric_relabel_configs" | toYaml)  ( append $job.metric_relabel_configs ($filter)) -}}
+      {{- else -}}
+        {{- $_ := set $job ("relabel_configs" | toYaml)  ( append $job.relabel_configs ($filter)) -}}
+      {{- end -}}
+    {{- end -}} 
   {{- end -}}
 {{- end -}}
 {{- .Values.standaloneCollector.configOverride | merge $configData | mustMergeOverwrite $config | toYaml}}
@@ -251,7 +274,26 @@ Build config file for standalone OpenTelemetry Collector daemonset
     {{- $_ := set .Values.daemonsetConfig.service.pipelines "metrics/applications" $metricsApplications -}}
   {{- end -}}
 
+  {{- range $job := (index $configData "receivers" "prometheus/kubelet" "config" "scrape_configs") -}}
+    {{- range $key,$filter := ($infraFilters | fromJson) -}}
+      {{- if contains "metric" $key -}}
+        {{- $_ := set $job ("metric_relabel_configs" | toYaml)  ( append $job.metric_relabel_configs ($filter)) -}}
+      {{- else -}}
+        {{- $_ := set $job ("relabel_configs" | toYaml)  ( append $job.relabel_configs ($filter)) -}}
+      {{- end -}}
+    {{- end -}} 
+  {{- end -}}
 {{- end -}}
+
+{{- if (eq (include "opentelemetry-collector.resourceDetectionEnabled" .) "true") }}
+{{- $resDetectionConfig := (include "opentelemetry-collector.resourceDetectionConfig" .Values.global.distribution | fromYaml) }}
+  {{- if $resDetectionConfig }}
+    {{- range $key, $value := $resDetectionConfig }}
+      {{- $_ := set $configData "processors" (merge (index $configData "processors") (dict $key $value)) }}
+      {{- $_ := set (index $configData "service" "pipelines" "metrics/infrastructure") "processors" (prepend (index $configData "service" "pipelines" "metrics/infrastructure" "processors") $key) }}
+    {{- end }}
+  {{- end }}
+{{- end }}
 
 {{- .Values.daemonsetCollector.configOverride | merge $configData | mustMergeOverwrite $config | toYaml}}
 {{- end -}}
@@ -439,9 +481,25 @@ service:
 {{- end }}
 {{- end }}
 
-
-
-
-
-
-
+{{/* Build config for Resource Detection according to distribution */}}
+{{- define "opentelemetry-collector.resourceDetectionConfig" -}}
+{{- if . }}
+{{- if eq . "eks" }}
+resourcedetection/distribution:
+  timeout: 15s
+  detectors: ["eks", "ec2"]
+{{- else if eq . "aks" }}
+resourcedetection/distribution:
+  detectors: ["aks", "azure"]
+{{- else if eq . "gke" }}
+resourcedetection/distribution:
+  detectors: ["gcp"]
+{{- else }}
+resourcedetection/all:
+  detectors: [ec2, azure, gcp]
+{{- end }}
+{{- else }}
+resourcedetection/all:
+  detectors: [ec2, azure, gcp]
+{{- end }}
+{{- end }}

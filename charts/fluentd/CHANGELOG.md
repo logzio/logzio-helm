@@ -1,6 +1,8 @@
 # Changes by Version
 
 <!-- next version -->
+## 1.0.2
+- Add support for `global.tolerations`
 
 ## 1.0.1
 - Upgrade docker image to `1.5.6`.

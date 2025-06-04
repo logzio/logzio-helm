@@ -44,6 +44,11 @@ global:
   customTracesEndpoint: ""
   # Custom Metrics endpoint, overrides global.LogzioRegion listener address
   customMetricsEndpoint: ""
+  # Optional - Identifier for the Kubernetes distribution used. One of "eks", "aks" or "gke".
+  distribution: ""
+  # Optional - Control enabling of the OpenTelemetry Collector's resource detection feature. Dependent on `distribution` value.
+  resourceDetection:
+    enabled: false
 
 secrets:
   name: logzio-secret  # Secret name
@@ -275,8 +280,6 @@ tracesConfig:
     zipkin:
       endpoint: "0.0.0.0:9411"
   processors:
-    resourcedetection/all:
-      detectors: [ec2, azure, gcp]
     tail_sampling:
       policies:
         [
@@ -304,7 +307,7 @@ tracesConfig:
     pipelines:
       traces:
         receivers: [jaeger, zipkin, otlp]
-        processors: [resourcedetection/all,attributes/env_id, k8sattributes, resource/k8s, tail_sampling, batch]
+        processors: [attributes/env_id, k8sattributes, resource/k8s, tail_sampling, batch]
         exporters: [logzio]
 
 spmForwarderConfig:
@@ -317,7 +320,7 @@ spmForwarderConfig:
     pipelines:
       traces/spm:
         receivers: [jaeger, zipkin, otlp]
-        processors: [resourcedetection/all, attributes/env_id, k8sattributes, batch]
+        processors: [attributes/env_id, k8sattributes, batch]
         exporters: [logging, otlp]
 # Metrics standalone collector configuration 
 metricsConfig:
@@ -604,6 +607,19 @@ tolerations: []
 
 affinity: {}
 
+## Topology spread constraints for pod assignment
+## Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
+topologySpreadConstraints: []
+
+# Ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
+podDisruptionBudget:
+  enabled: false
+# Set the minimum available replicas
+#  minAvailable: 1
+# OR Set the maximum unavailable replicas
+#  maxUnavailable: 1
+# If both defined only maxUnavailable will be used
+
 extraEnvs: []
 extraHostPathMounts: []
 secretMounts: []
@@ -652,6 +668,12 @@ ports:
     containerPort: 9411
     servicePort: 9411
     hostPort: 9411
+    protocol: TCP
+  metrics:
+    enabled: true
+    containerPort: 8888
+    servicePort: 8888
+    hostPort: 8888
     protocol: TCP
 
 # Kubernetes Object logs
@@ -960,6 +982,8 @@ standaloneCollector:
   # Configuration override that will be merged into the collector default config
   configOverride: {}
 
+  replicaCount: 1
+  
 daemonsetCollector:
   enabled: false
 
@@ -1052,8 +1076,6 @@ daemonsetConfig:
   extensions:
     health_check: {}
   processors:
-    resourcedetection/all:
-      detectors: [ec2, azure, gcp]
     filter/kubernetes360:
       metrics:
         datapoint:
@@ -1152,6 +1174,7 @@ daemonsetConfig:
             selectors:
             - field: metadata.name=$KUBE_NODE_NAME
               role: node
+          metric_relabel_configs: []
           metrics_path: /metrics
           relabel_configs:
           - action: labelmap

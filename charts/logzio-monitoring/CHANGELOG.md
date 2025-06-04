@@ -1,6 +1,44 @@
 # Changes by Version
 
 <!-- next version -->
+## 7.3.1
+- Upgrade `logzio-k8s-telemetry` chart to `5.2.1`
+  - Fix Pod disruption budget selector label for SPM collector (Contributed by @jod972)
+  - Add PriorityClassName for SPM collector (Contributed by @jod972)
+  - Add Replica Count for traces & SPM collectors
+- Upgrade `logzio-logs-collector` chart to `2.1.0`
+  - **Breaking changes**
+    - Upgrade `otel/opentelemetry-collector-contrib` image to version `0.127.0`
+      - The `time` attribute is no longer present as field in the log record. The log timestamp is now only available under `@timestamp` in Logz.io.  
+
+## 7.3.0
+- Upgrade `logzio-apm-collector` chart to `1.2.3`
+  - Add support for auto resource detection with `distribution` and `resourceDetection.enabled` flags.
+  - Upgrade OpenTelemetry Collector from `0.119.0` to `0.123.0`
+  - Expose collector metrics port by default
+- Upgrade `logzio-logs-collector` chart to `2.0.2`
+  - Add support for auto resource detection with `distribution` and `resourceDetection.enabled` flags.
+- Upgrade `logzio-k8s-telemetry` chart to `5.2.0`
+  - Expose collector metrics port by default
+  - Add `podDisruptionBudget` (Contributed by @jod972)
+  - Add `topologySpreadConstraints` (Contributed by @jod972)
+  - Add support for auto resource detection with `distribution` and `resourceDetection.enabled` flags.
+- Update Operator await job to dynamically determine the webhook path based on the release namespace and chart name.
+
+## 7.2.0
+- Upgrade `logzio-k8s-telemetry` chart to `5.1.0`
+  - Respect metric filters in `prometheus/kubelet` scrape endpoint
+- Upgrade `opentelemetry-operator` chart to `~0.86.2`
+
+## 7.1.3
+- All subcharts now support `global.tolerations`
+  - Upgrade `logzio-fluentd` chart to `1.0.2`
+  - Upgrade `logzio-k8s-telemetry` chart to `5.0.4`
+  - Upgrade `logzio-logs-collector` chart to `2.0.1`
+  - Upgrade `logzio-apm-collector` chart to `1.2.1`
+  - Upgrade `logzio-trivy` chart to `1.0.1`
+- Upgrade `logzio-k8s-events` chart to `1.0.1`
+  - Added support for `tolerations` and `global.tolerations`
 
 ## 7.1.2
 - Upgrade `opentelemetry-operator` chart to `~0.82.0`

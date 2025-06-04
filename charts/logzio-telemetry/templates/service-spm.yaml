@@ -25,6 +25,5 @@ spec:
     {{- end }}
     {{- end }}
   selector:
-    {{- include "opentelemetry-collector.selectorLabels" . | nindent 4 }}
-    component: standalone-collector-spm
+    {{- include "opentelemetry-collector-spm.selectorLabels" . | nindent 4 }}
 {{- end }}

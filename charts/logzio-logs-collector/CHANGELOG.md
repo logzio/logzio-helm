@@ -1,6 +1,16 @@
 # Changes by Version
 
 <!-- next version -->
+## 2.1.0
+- **Breaking changes**
+  - Upgrade `otel/opentelemetry-collector-contrib` image to version `0.127.0`
+    - The `time` attribute is no longer present as field in the log record. The log timestamp is now only available under `@timestamp` in Logz.io.
+
+## 2.0.2
+- Add support for auto resource detection with `distribution` and `resourceDetection.enabled` flags.
+
+## 2.0.1
+- Add support for global tolerations
 
 ## 2.0.0
 - **Breaking changes**

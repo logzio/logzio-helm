@@ -204,3 +204,17 @@ listener.logz.io
 {{- end -}}
 {{- end }}
 
+{{/*
+Returns the value of resource detection enablement state
+*/}}
+{{- define "logs-collector.resourceDetectionEnabled" -}}
+{{- if (hasKey .Values "resourceDetection") }}
+{{- if (hasKey .Values.resourceDetection "enabled") }}
+{{- .Values.resourceDetection.enabled }}
+{{- else }}
+{{- .Values.global.resourceDetection.enabled }}
+{{- end }}
+{{- else }}
+{{- .Values.global.resourceDetection.enabled }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,51 @@
+name: Test `logzio-trivy` chart
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'charts/logzio-trivy/Chart.yaml'
+      - 'charts/logzio-trivy/templates/**'
+      - 'charts/logzio-trivy/values.yaml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Kind
+        run: |
+          curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.11.1/kind-Linux-amd64"
+          chmod +x ./kind
+          mv ./kind /usr/local/bin/kind
+
+      - name: Create Kind cluster
+        run: |
+          kind create cluster --name kind-${{ github.run_id }}
+          kubectl cluster-info
+
+      - name: Deploy Trivy Helm Chart
+        run: |
+          cd charts/logzio-trivy
+          helm dependency build
+          helm upgrade --install \
+          --set global.env_id=${{ env.ENV_ID }} \
+          --set global.tolerations[0].key="global-key" \
+          --set global.tolerations[0].operator="Equal" \
+          --set global.tolerations[0].value="global-value" \
+          --set global.tolerations[0].effect="NoSchedule" \
+          --set global.logzioLogsToken=${{ secrets.LOGZIO_LOGS_TOKEN }} \
+          --set global.logzioRegion=us \
+          logzio-trivy .
+
+      - name: Verify Deployment Status
+        run: |
+          kubectl rollout status deployment/logzio-trivy --timeout=300s
+          kubectl get deployment logzio-trivy -o json | jq '.status.conditions[] | select(.type=="Available" and .status=="True")'
+          kubectl get deployment logzio-trivy -o jsonpath='{.spec.template.spec.tolerations}' | grep -q 'global-key'
+      
+      - name: Cleanup Environment
+        run: |
+          kind delete cluster --name kind-${{ github.run_id }}

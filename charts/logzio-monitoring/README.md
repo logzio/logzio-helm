@@ -30,6 +30,7 @@ This project packages the following Helm Charts:
   - [Add tolerations for tainted nodes](#adding-tolerations-for-tainted-nodes)
 - [Migrating to logzio-monitoring v7.0.0](#migrating-to-logzio-monitoring-700)
 - [Enabled Auto-Instrumentation](#enable-auto-instrumentation)
+- [Enable resource detection](#enable-resource-detection)
 
 ## Instructions for standard deployment:
 
@@ -186,6 +187,41 @@ Set logzio-k8s-telemetry `ListenerHost` value to send your metrics to a custom e
 --set global.customMetricsEndpoint="<<CUSTOM_METRICS_ENDPOINT>>"
 ```
 
+### Adding Global Tolerations
+
+Global tolerations allow you to define tolerations that apply to all subcharts in the `logzio-monitoring` Helm chart. This simplifies the process of managing tolerations across multiple components.
+
+1. **Identify the taints on your nodes:**
+Run the following command to list the taints on your nodes:
+
+```shell
+kubectl get nodes -o json | jq '"\(.items[].metadata.name) \(.items[].spec.taints)"'
+```
+
+2. **Add globsl tolerations to the Helm install command**:
+
+You can add global tolerations by using the `--set` flag in your `helm install` or `helm upgrade` command. Replace the placeholders with the appropriate values for your taints.
+
+```shell
+--set global.tolerations[0].key="<<TAINT-KEY>>" \
+--set global.tolerations[0].operator="<<TAINT-OPERATOR>>" \
+--set global.tolerations[0].value="<<TAINT-VALUE>>" \
+--set global.tolerations[0].effect="<<TAINT-EFFECT>>"
+```
+
+For example, to tolerate the `CriticalAddonsOnly:NoSchedule` taint, use the following command:
+
+```shell
+helm upgrade -n monitoring \
+  --reuse-values \
+  --set global.tolerations[0].key="CriticalAddonsOnly" \
+  --set global.tolerations[0].operator="Exists" \
+  --set global.tolerations[0].effect="NoSchedule" \
+  logzio-monitoring logzio-helm/logzio-monitoring
+```
+
+> **Note:** Global tolerations are supported in all subcharts starting from version `7.2.0`.
+
 ### Adding Tolerations for Tainted Nodes
 
 To ensure that your pods can be scheduled on nodes with taints, you need to add tolerations to the relevant sub-charts. Here is how you can configure tolerations for each sub-chart within the `logzio-monitoring` Helm chart:
@@ -195,36 +231,33 @@ To ensure that your pods can be scheduled on nodes with taints, you need to add 
    kubectl get nodes -o json | jq '"\(.items[].metadata.name) \(.items[].spec.taints)"'
    ```
 2. **Add tolerations to the Helm install command**:
-You can add tolerations by using the --set flag in your helm install command. Replace the placeholders with your taint values.
-- For `logzio-logs-collector`:
+You can add tolerations by using the --set flag in your helm install command. Replace the placeholders with your taint and subchart values.
+
+Replace `<SUBCHART>` with one of the following options:
+- logzio-logs-collector
+- logzio-k8s-telemetry
+- logzio-trivy
+- logzio-k8s-events
+
 ```shell
---set logzio-logs-collector.tolerations[0].key="<<TAINT-KEY>>" \
---set logzio-logs-collector.tolerations[0].operator="<<TAINT-OPERATOR>>" \
---set logzio-logs-collector.tolerations[0].value="<<TAINT-VALUE>>" \
---set logzio-logs-collector.tolerations[0].effect="<<TAINT-EFFECT>>"
+--set '<SUBCHART>.tolerations[0].key=<<TAINT-KEY>>' \
+--set '<SUBCHART>.tolerations[0].operator=<<TAINT-OPERATOR>>' \
+--set '<SUBCHART>.tolerations[0].value=<<TAINT-VALUE>>' \
+--set '<SUBCHART>.tolerations[0].effect=<<TAINT-EFFECT>>'
 ```
-- For `logzio-k8s-telemetry`:
-```shell
---set logzio-k8s-telemetry.tolerations[0].key="<<TAINT-KEY>>" \
---set logzio-k8s-telemetry.tolerations[0].operator="<<TAINT-OPERATOR>>" \
---set logzio-k8s-telemetry.tolerations[0].value="<<TAINT-VALUE>>" \
---set logzio-k8s-telemetry.tolerations[0].effect="<<TAINT-EFFECT>>"
-```
-- For `logzio-trivy`:
-```shell
---set logzio-trivy.tolerations[0].key="<<TAINT-KEY>>" \
---set logzio-trivy.tolerations[0].operator="<<TAINT-OPERATOR>>" \
---set logzio-trivy.tolerations[0].value="<<TAINT-VALUE>>" \
---set logzio-trivy.tolerations[0].effect="<<TAINT-EFFECT>>"
-```
-- For `logzio-k8s-events`:
-```shell
---set logzio-k8s-events.tolerations[0].key="<<TAINT-KEY>>" \
---set logzio-k8s-events.tolerations[0].operator="<<TAINT-OPERATOR>>" \
---set logzio-k8s-events.tolerations[0].value="<<TAINT-VALUE>>" \
---set logzio-k8s-events.tolerations[0].effect="<<TAINT-EFFECT>>"
-```
+
 Replace `<<TAINT-KEY>>`, `<<TAINT-OPERATOR>>`, `<<TAINT-VALUE>>`, and `<<TAINT-EFFECT>>` with the appropriate values for your taints.
+
+For example, if you need to tolerate the CriticalAddonsOnly:NoSchedule taint for the logzio-logs-collector after installation, you could use:
+
+```shell
+helm upgrade -n monitoring \
+  --reuse-values \
+  --set 'logzio-logs-collector.tolerations[0].key=CriticalAddonsOnly' \
+  --set 'logzio-logs-collector.tolerations[0].operator=Exists' \
+  --set 'logzio-logs-collector.tolerations[0].effect=NoSchedule' \
+  logzio-monitoring logzio-helm/logzio-monitoring
+```
 
 By following these steps, you can ensure that your pods are scheduled on nodes with taints by adding the necessary tolerations to the Helm chart configuration.
 
@@ -552,3 +585,24 @@ Set the `OTEL_GO_AUTO_TARGET_EXE` environment variable in your Go application to
 
 > [!NOTE]
 > For further details, refer to the [OpenTelemetry Go Instrumentation documentation](https://github.com/open-telemetry/opentelemetry-go-instrumentation/blob/v0.21.0/docs/how-it-works.md#opentelemetry-go-instrumentation---how-it-works).
+
+## Enable resource detection
+
+### Auto resource detection
+To enable automatic resource detection, set the following flags in your chart installation:
+
+For all
+```shell
+--set global.resourceDetection.enabled=true \
+--set global.distribution="<<CLOUD-SERVICE>>" \
+```
+
+> [!NOTE]
+> `<<CLOUD-SERVICE>>` can be one of `eks`, `aks` or `gke`. 
+> If `distribution` is unset or unrecognized, resource detection will be enabled for all environments by default.
+
+> [!TIP]
+> To enable resource detection only for a specific sub chart, set `--set <<SUB_CHART_NAME>>.resourceDetection.enabled=true` instead of configuring it globally.
+
+### Custom resource detection
+To customize resource detection settings, add the [OpenTelemetry `resourcedetection` processor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/resourcedetectionprocessor) to the sub-chart configuration within your `values.yaml` file.

@@ -35,7 +35,7 @@ spec:
                 done
               }
 
-              until curl -k https://logzio-monitoring-otel-operator-webhook.monitoring.svc:443/mutate-opentelemetry-io-v1alpha1-instrumentation; do
+              until curl -k https://{{ .Chart.Name }}-otel-operator-webhook.{{ .Release.Namespace }}.svc:443/mutate-opentelemetry-io-v1alpha1-instrumentation; do
                 if [ $SECONDS -ge $max_wait ]; then
                   echo "Opentelemetry Operator webhook readiness timeout exceeded, instrumentation resource was not applied."
                   exit 1

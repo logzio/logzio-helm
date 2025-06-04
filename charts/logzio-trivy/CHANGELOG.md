@@ -1,7 +1,11 @@
 # Changes by Version
 
 <!-- next version -->
+## 1.0.2
+- Add support for global tolerations
 
+## 1.0.1
+- Fix `tolerations` value to be an array.
 ## 1.0.0
 - **Breaking changes**
     - Secret values are now global and aligned to prevent duplicate values in the parent chart
