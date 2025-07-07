@@ -1,6 +1,14 @@
 # Changes by Version
 
 <!-- next version -->
+## 7.3.2
+- Upgrade `opentelemetry-operator` chart to `~0.90.4`
+- Change Java instrumentation default endpoint to `otlp/grpc` instead of `otlp/http` for compatibility with the Java instrumentation version used by the Operator
+- Upgrade `logzio-apm-collector` chart to `1.2.4`
+  - Resolve resource detection installation error when only traces is enabled.
+  - Upgrade OpenTelemetry Collector from `0.123.0` to `0.129.0`
+    - `logzioexporter` now exports logs and traces in `otlp` format.
+
 ## 7.3.1
 - Upgrade `logzio-k8s-telemetry` chart to `5.2.1`
   - Fix Pod disruption budget selector label for SPM collector (Contributed by @jod972)
