@@ -1,0 +1,3 @@
+filters:
+  exclude:
+    namespace: "kube-system" 

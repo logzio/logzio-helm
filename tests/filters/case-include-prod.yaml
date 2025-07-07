@@ -1,0 +1,3 @@
+filters:
+  include:
+    namespace: "prod" 
