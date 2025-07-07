@@ -1,8 +1,14 @@
 # Changes by Version
 
 <!-- next version -->
+## 1.2.4
+- Resolve resource detection installation error when only traces is enabled.
+- Upgrade OpenTelemetry Collector from `0.123.0` to `0.129.0`
+  - `logzioexporter` now exports logs and traces in `otlp` format.
+
 ## 1.2.3
 - Expose collector metrics port by default 
+
 ## 1.2.2
 - Add support for auto resource detection with `distribution` and `resourceDetection.enabled` flags.
   - The old `resourcedetection/all` configuration now serves as fallback if `distribution` is empty or with unknown value.

@@ -69,9 +69,6 @@
 {{/* Build config file for APM Collector */}}
 {{- define "apm-collector.config" -}}
 {{- $tracesConfig := deepCopy .Values.traceConfig }}
-{{- if not (or .Values.spm.enabled .Values.serviceGraph.enabled) }}
-{{- $_ := unset $tracesConfig.service.pipelines "traces/spm" }}
-{{- end -}}
 
 {{- if (eq (include "apm-collector.resourceDetectionEnabled" .) "true") }}
 {{- $resDetectionConfig := (include "apm-collector.resourceDetectionConfig" .Values.global.distribution | fromYaml) }}
@@ -83,6 +80,10 @@
     {{- end }}
   {{- end }}
 {{- end }}
+
+{{- if not (or .Values.spm.enabled .Values.serviceGraph.enabled) }}
+{{- $_ := unset $tracesConfig.service.pipelines "traces/spm" }}
+{{- end -}}
 
 {{- tpl ($tracesConfig | toYaml) . }}
 {{- end -}}
