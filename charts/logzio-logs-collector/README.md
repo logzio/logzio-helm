@@ -196,5 +196,3 @@ Processing order:
 3. If no include rules exist, everything not excluded is forwarded.
 
 The chart translates these rules into OpenTelemetry `filter` processors and injects them directly **after** the `k8sattributes` processor so Kubernetes metadata is available during matching.
-
-> ℹ️  For complete examples see the files under `tests/filters/` in this repository.
