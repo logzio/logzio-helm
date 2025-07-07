@@ -5,8 +5,14 @@
 - Add **trace filtering** capability via the new `filters` values key.
   - Supports `exclude` (drop) and `include` (keep) rules on `namespace`, `service`, any `attribute.*` or `resource.*` fields using regular expressions.
   - Rules are converted into OpenTelemetry `filter` processors and injected right after `k8sattributes` so span/resource metadata is available.
+## 1.2.4
+- Resolve resource detection installation error when only traces is enabled.
+- Upgrade OpenTelemetry Collector from `0.123.0` to `0.129.0`
+  - `logzioexporter` now exports logs and traces in `otlp` format.
+
 ## 1.2.3
 - Expose collector metrics port by default 
+
 ## 1.2.2
 - Add support for auto resource detection with `distribution` and `resourceDetection.enabled` flags.
   - The old `resourcedetection/all` configuration now serves as fallback if `distribution` is empty or with unknown value.
