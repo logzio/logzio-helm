@@ -1,6 +1,6 @@
 apiVersion: v2
 name: logzio-apm-collector
-version: 1.2.3
+version: 1.3.0
 description: Kubernetes APM agent for Logz.io based on OpenTelemetry Collector
 type: application
 home: https://logz.io/
