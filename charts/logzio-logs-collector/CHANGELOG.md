@@ -73,3 +73,9 @@
 
 ## 1.0.0
 - kubernetes logs collection agent for logz.io based on opentelemetry collector
+
+## 2.2.0
+- Introduce advanced **log filtering** support via the new `filters` values key.
+  - Users can now `exclude` (drop) or `include` (keep) logs based on `namespace`, `service`, or any `resource.*` / `attribute.*` fields using regular expressions.
+  - The chart automatically converts the rules into [OpenTelemetry filter processors](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/filterprocessor) and injects them **immediately after** the `k8sattributes` processor so Kubernetes metadata is available for matching.
+  - Precedence: *exclude* rules run first (logical **OR**), then *include* rules run second (logical **AND**).

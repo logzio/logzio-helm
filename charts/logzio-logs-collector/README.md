@@ -126,6 +126,7 @@ The table below lists the configurable parameters of the `logzio-logs-collector`
 | podMonitor.enabled       | Enable the creation of a PodMonitor.                                             | `false`                                  |
 | networkPolicy.enabled    | Enable NetworkPolicy creation.                                                   | `false`                                  |
 | useGOMEMLIMIT            | Set GOMEMLIMIT env var to a percentage of resources.limits.memory.               | `false`                                 |
+| filters                  | Include / exclude rules for dropping or keeping logs before shipping (see "Filtering logs" section). | `{}` |
 
 ### Configure customization options
 
@@ -160,3 +161,40 @@ Changes in fields names:
   - `kubernetes.labels.*` -> `kubernetes_labels_*`
   - `kubernetes.annotations.*` -> `kubernetes_annotations_*`
   
+Filtering logs (since 2.2.0)
+-----------------------------
+You can drop or keep logs **before** they leave the cluster using the new `filters` key in `values.yaml`.
+
+### Syntax overview
+
+```yaml
+filters:
+  exclude:                  # evaluated first (OR logic)
+    namespace: "kube-system|monitoring"
+    service: "^synthetic-.*$"
+    attribute:
+      log.level: "debug|trace"
+    resource:
+      k8s.pod.name: "^debug-.*$"
+
+  include:                  # evaluated second (AND logic)
+    namespace: "prod"
+    service: "^app-.*$"
+```
+
+Rules use full [RE2 regular expressions](https://github.com/google/re2/wiki/Syntax).  
+The available top-level targets are:
+
+* **namespace** – matches `resource.attributes["k8s.namespace.name"]`
+* **service** – matches `resource.attributes["service.name"]`
+* **attribute.&lt;key&gt;** – matches any log attribute key
+* **resource.&lt;key&gt;** – matches any resource attribute key
+
+Processing order:
+1. **exclude** – if a log record matches *any* exclude rule it is dropped immediately.
+2. **include** – if include rules exist, the remaining records must match *all* of them to be kept.
+3. If no include rules exist, everything not excluded is forwarded.
+
+The chart translates these rules into OpenTelemetry `filter` processors and injects them directly **after** the `k8sattributes` processor so Kubernetes metadata is available during matching.
+
+> ℹ️  For complete examples see the files under `tests/filters/` in this repository.
