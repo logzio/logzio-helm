@@ -14,6 +14,9 @@
   {{- include "logs-collector.addResourceDetectionProcessors" (dict "config" $config "distribution" .Values.global.distribution) }}
 {{- end }}
 
+{{- /* Inject dynamic filters */}}
+{{- include "logs-collector.addFilterProcessors" (dict "config" $config "filters" .Values.filters) }}
+
 {{- tpl ($config | toYaml) . -}}
 {{- end }}
 
@@ -26,6 +29,8 @@
 {{- if (eq (include "logs-collector.resourceDetectionEnabled" .) "true") }}
   {{- include "logs-collector.addResourceDetectionProcessors" (dict "config" $config "distribution" .Values.global.distribution) }}
 {{- end }}
+
+{{- include "logs-collector.addFilterProcessors" (dict "config" $config "filters" .Values.filters) }}
 
 {{- tpl ($config | toYaml) . -}}
 {{- end }}
@@ -97,4 +102,102 @@ resourcedetection/all:
       {{- $_ := set (index $config "service" "pipelines" "logs") "processors" (prepend (index $config "service" "pipelines" "logs" "processors") $key) }}
     {{- end }}
   {{- end }}
+{{- end }}
+
+{{/* Build OTTL expression for a single filter rule */}}
+{{- define "logs-collector.filterExpression" -}}
+{{- $target := .target -}}
+{{- $sub := .sub | default "" -}}
+{{- $regex := .regex -}}
+{{- if eq $target "namespace" -}}
+IsMatch(resource.attributes["k8s.namespace.name"], "{{ $regex }}")
+{{- else if eq $target "service" -}}
+IsMatch(resource.attributes["service.name"], "{{ $regex }}")
+{{- else if eq $target "attribute" -}}
+IsMatch(attributes["{{ $sub }}"], "{{ $regex }}")
+{{- else if eq $target "resource" -}}
+IsMatch(resource.attributes["{{ $sub }}"], "{{ $regex }}")
+{{- end -}}
+{{- end }}
+
+{{/* Append filter processors based on .filters to the provided config */}}
+{{- define "logs-collector.addFilterProcessors" -}}
+{{- $config := .config -}}
+{{- $filters := .filters | default dict -}}
+{{- if or $filters.exclude $filters.include }}
+  {{- /* Prepare slices for exclude and include expressions */}}
+  {{- $excludeExprs := list -}}
+  {{- $includeExprs := list -}}
+
+  {{- /* Iterate over exclude rules */}}
+  {{- with $filters.exclude }}
+    {{- range $tkey, $val := . }}
+      {{- if or (eq $tkey "namespace") (eq $tkey "service") }}
+        {{- $expr := include "logs-collector.filterExpression" (dict "target" $tkey "regex" $val) }}
+        {{- $excludeExprs = append $excludeExprs $expr }}
+      {{- else if or (eq $tkey "attribute") (eq $tkey "resource") }}
+        {{- range $subk, $subv := $val }}
+          {{- $expr := include "logs-collector.filterExpression" (dict "target" $tkey "sub" $subk "regex" $subv) }}
+          {{- $excludeExprs = append $excludeExprs $expr }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+
+  {{- /* Iterate over include rules (generate NOT expressions) */}}
+  {{- with $filters.include }}
+    {{- range $tkey, $val := . }}
+      {{- if or (eq $tkey "namespace") (eq $tkey "service") }}
+        {{- $expr := include "logs-collector.filterExpression" (dict "target" $tkey "regex" $val) }}
+        {{- $includeExprs = append $includeExprs (printf "not (%s)" $expr) }}
+      {{- else if or (eq $tkey "attribute") (eq $tkey "resource") }}
+        {{- range $subk, $subv := $val }}
+          {{- $expr := include "logs-collector.filterExpression" (dict "target" $tkey "sub" $subk "regex" $subv) }}
+          {{- $includeExprs = append $includeExprs (printf "not (%s)" $expr) }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+
+  {{- /* Ensure processors map exists */}}
+  {{- if not (hasKey $config "processors") }}
+    {{- $_ := set $config "processors" (dict) }}
+  {{- end }}
+
+  {{- /* Inject filter/exclude processor */}}
+  {{- if gt (len $excludeExprs) 0 }}
+    {{- $_ := set (index $config "processors") "filter/exclude" (dict "error_mode" "ignore" "logs" (dict "log_record" $excludeExprs)) }}
+  {{- end }}
+
+  {{- /* Inject filter/include processor */}}
+  {{- if gt (len $includeExprs) 0 }}
+    {{- $_ := set (index $config "processors") "filter/include" (dict "error_mode" "ignore" "logs" (dict "log_record" $includeExprs)) }}
+  {{- end }}
+
+  {{- /* Update pipeline order */}}
+  {{- $pipeline := index $config "service" "pipelines" "logs" }}
+  {{- $orig := $pipeline.processors | default list }}
+  {{- $new := list }}
+  {{- $filtersAdded := false }}
+  {{- range $i, $p := $orig }}
+    {{- $new = append $new $p }}
+    {{- if and (eq $p "k8sattributes") (not $filtersAdded) }}
+      {{- if gt (len $excludeExprs) 0 }}
+        {{- $new = append $new "filter/exclude" }}
+      {{- end }}
+      {{- if gt (len $includeExprs) 0 }}
+        {{- $new = append $new "filter/include" }}
+      {{- end }}
+      {{- $filtersAdded = true }}
+    {{- end }}
+  {{- end }}
+  {{- /* If k8sattributes wasn't present, append filters at start */}}
+  {{- if and (not $filtersAdded) (or (gt (len $excludeExprs) 0) (gt (len $includeExprs) 0)) }}
+    {{- $new = append (list "filter/exclude") $new }}
+    {{- if gt (len $includeExprs) 0 }}
+      {{- $new = append (list "filter/include") $new }}
+    {{- end }}
+  {{- end }}
+  {{- $_ := set $pipeline "processors" $new }}
+{{- end }}
 {{- end }}
