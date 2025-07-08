@@ -145,6 +145,10 @@ IsMatch(attributes["{{ $sub }}"], "{{ $regex }}")
 {{- else if eq $target "resource" -}}
 IsMatch(resource.attributes["{{ $sub }}"], "{{ $regex }}")
 {{- end -}}
+{{- else }}
+{{- printf "WARNING: Unsupported filter target '%s' in apm-collector.filterExpression" $target | warn }}
+{{- end }}
+
 {{- end }}
 
 {{/* Append filter processors based on .filters to the provided config (traces pipeline) */}}
