@@ -56,6 +56,10 @@ jobs:
           --set global.tolerations[0].operator="Equal" \
           --set global.tolerations[0].value="global-value" \
           --set global.tolerations[0].effect="NoSchedule" \
+          --set filters.exclude.namespace="kube-system" \
+          --set filters.exclude.service="synthetic-.*" \
+          --set filters.exclude.attribute.log.level="debug" \
+          --set filters.exclude.resource.k8s.pod.name="debug-.*" \
           logzio-logs-collector .
           
       - name: Verify deployment Status
