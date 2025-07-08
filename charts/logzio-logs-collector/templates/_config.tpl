@@ -118,7 +118,7 @@ IsMatch(attributes["{{ $sub }}"], "{{ $regex }}")
 {{- else if eq $target "resource" -}}
 IsMatch(resource.attributes["{{ $sub }}"], "{{ $regex }}")
 {{- else }}
-{{- printf "WARNING: Unsupported filter target '%s' in logs-collector.filterExpression" $target | warn }}
+# WARNING: Unsupported filter target '{{ $target }}' in logs-collector.filterExpression
 {{- end }}
 {{- end }}
 
