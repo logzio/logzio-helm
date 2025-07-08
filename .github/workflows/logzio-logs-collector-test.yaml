@@ -74,7 +74,7 @@ jobs:
 
       - name: Show collector logs
         run: |
-          kubectl logs -n monitoring daemonset/logzio-logs-collector
+          kubectl logs daemonset/logzio-logs-collector
 
       - name: sleep
         run: sleep 120

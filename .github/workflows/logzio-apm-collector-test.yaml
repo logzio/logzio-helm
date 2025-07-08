@@ -65,10 +65,6 @@ jobs:
           --set filters.exclude.attribute.log.level="debug" \
           --set filters.exclude.resource.k8s.pod.name="debug-.*" \
           logzio-apm-collector .
-      - name: Show collector logs
-        run: |
-          kubectl logs -n monitoring deployment/logzio-apm-collector
-          kubectl logs -n monitoring deployment/logzio-apm-collector-spm
 
       - name: Verify deployment Status
         run: |
@@ -89,7 +85,12 @@ jobs:
           helm repo update
           helm install otel-demo -f tests/resources/otel-demo-apm.yaml open-telemetry/opentelemetry-demo --version 0.32.5
           kubectl rollout status deployment/otel-demo-loadgenerator --timeout=300s
-
+      
+      - name: Show collector logs
+        run: |
+          kubectl logs deployment/logzio-apm-collector
+          kubectl logs deployment/logzio-apm-collector-spm
+          
       - name: sleep for 3 minutes
         run: sleep 180
 
