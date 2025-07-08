@@ -49,9 +49,12 @@ logzio-apm-collector logzio-helm/logzio-apm-collector
 
 - [All configuration options](./VALUES.md)
 - [Instrumentation](#instrumentation)
+- [Uninstalling](#uninstalling)
 - [Custom Trace Sampling rules](#custom-trace-sampling-rules)
 - [Enable File Storage extension](#enable-file-storage-extension)
 - [Resolve `Readiness probe` and `Liveness probe` failures](#resolve-readiness-probe-and-liveness-probe-failures)
+- [Filtering traces (since 1.3.0)](#filtering-traces-since-130)
+
 
 
 ## Instrumentation
@@ -192,12 +195,6 @@ helm upgrade logzio-apm-collector logzio-helm/logzio-apm-collector -n monitoring
 > [!NOTE]
 > If `10s` is insufficient, try increasing it to `15s` or higher.
 
-## Uninstalling
-To uninstall the `logzio-apm-collector` chart, you can use:
-```shell
-helm uninstall -n monitoring logzio-apm-collector
-```
-
 ## Filtering traces (since 1.3.0)
 You can drop or keep spans **before** they leave the cluster using the new `filters` key in `values.yaml`.
 
@@ -223,8 +220,8 @@ The available top-level targets are:
 
 * **namespace** – matches `resource.attributes["k8s.namespace.name"]`
 * **service** – matches `resource.attributes["service.name"]`
-* **attribute.&lt;key&gt;** – matches any span attribute key
-* **resource.&lt;key&gt;** – matches any resource attribute key
+* **attribute.<key>** – matches any span attribute key
+* **resource.<key>** – matches any resource attribute key
 
 Processing order:
 1. **exclude** – if a span matches *any* exclude rule it is dropped immediately.
@@ -232,4 +229,11 @@ Processing order:
 3. If no include rules exist, everything not excluded is forwarded.
 
 The chart translates these rules into OpenTelemetry `filter` processors and injects them directly **after** the `k8sattributes` processor so Kubernetes metadata is available during matching.
+
+
+## Uninstalling
+To uninstall the `logzio-apm-collector` chart, you can use:
+```shell
+helm uninstall -n monitoring logzio-apm-collector
+```
 
