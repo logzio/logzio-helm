@@ -72,6 +72,10 @@ jobs:
           kubectl apply -f tests/resources/logsgen.yaml
           kubectl rollout status deployment/log-generator --timeout=300s
 
+      - name: Show collector logs
+        run: |
+          kubectl logs -n monitoring daemonset/logzio-logs-collector
+
       - name: sleep
         run: sleep 120
 
