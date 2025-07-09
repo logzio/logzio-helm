@@ -92,3 +92,64 @@ jobs:
       - name: Delete Kind cluster
         if: always()
         run: kind delete cluster --name kind-${{ github.run_id }}
+
+  filter-test:
+    name: Filter Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        filtercase:
+          - case-none.yaml
+          - case-exclude-flat.yaml
+          - case-exclude-nested.yaml
+          - case-include.yaml
+          - case-combo.yaml
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4.3.0
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Install Kind
+        run: |
+          curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.11.1/kind-Linux-amd64"
+          chmod +x ./kind
+          sudo mv ./kind /usr/local/bin/kind
+
+      - name: Create Kind cluster
+        run: |
+          kind create cluster --name kind-${{ github.run_id }}-${{ matrix.filtercase }}
+          kubectl cluster-info
+
+      - name: Deploy Helm Chart with filter case
+        run: |
+          cd charts/logzio-logs-collector
+          helm upgrade --install logzio-logs-collector . \
+            --set global.env_id=test-${{ matrix.filtercase }} \
+            --set global.logzioLogsToken=dummy \
+            --set global.logzioRegion=us \
+            --set global.logType=test-${{ matrix.filtercase }} \
+            -f ../../tests/filters/${{ matrix.filtercase }}
+
+      - name: Wait for pod to be ready
+        run: |
+          kubectl wait --for=condition=Ready pod -l app.kubernetes.io/name=logzio-logs-collector --timeout=120s
+
+      - name: Check pod logs for errors
+        run: |
+          POD=$(kubectl get pods -l app.kubernetes.io/name=logzio-logs-collector -o jsonpath='{.items[0].metadata.name}')
+          kubectl logs $POD
+          if kubectl logs $POD | grep -i 'error\|fail\|invalid configuration'; then
+            echo "Collector failed to start with filter case ${{ matrix.filtercase }}"
+            exit 1
+          fi
+
+      - name: Cleanup
+        if: always()
+        run: |
+          helm uninstall logzio-logs-collector
+          kind delete cluster --name kind-${{ github.run_id }}-${{ matrix.filtercase }}
