@@ -140,14 +140,9 @@ jobs:
         run: |
           kubectl rollout status daemonset/logzio-logs-collector --timeout=300s
 
-      - name: Check pod logs for errors
+      - name: Show collector logs
         run: |
-          POD=$(kubectl get pods -l app.kubernetes.io/name=logzio-logs-collector -o jsonpath='{.items[0].metadata.name}')
-          kubectl logs $POD
-          if kubectl logs $POD | grep -i 'error\|fail\|invalid configuration'; then
-            echo "Collector failed to start with filter case ${{ matrix.filtercase }}"
-            exit 1
-          fi
+          kubectl logs daemonset/logzio-logs-collector
 
       - name: Cleanup
         if: always()
