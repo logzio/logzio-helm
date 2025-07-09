@@ -137,9 +137,18 @@ IsMatch(resource.attributes["{{ $sub }}"], "{{ $regex }}")
       {{- if or (eq $tkey "namespace") (eq $tkey "service") }}
         {{- $expr := include "logs-collector.filterExpression" (dict "target" $tkey "regex" $val) }}
         {{- $excludeExprs = append $excludeExprs $expr }}
-      {{- else if or (eq $tkey "attribute") (eq $tkey "resource") }}
+      {{- else if eq $tkey "attribute" }}
         {{- range $subk, $subv := $val }}
           {{- $expr := include "logs-collector.filterExpression" (dict "target" $tkey "sub" $subk "regex" $subv) }}
+          {{- $excludeExprs = append $excludeExprs $expr }}
+        {{- end }}
+      {{- else if eq $tkey "resource" }}
+        {{- $flat := include "logs-collector.flattenResourceFilters" (dict "m" $val "prefix" "") | fromYamlArray }}
+        {{- range $item := $flat }}
+          {{- $parts := splitList "=" $item }}
+          {{- $key := index $parts 0 }}
+          {{- $regex := index $parts 1 }}
+          {{- $expr := include "logs-collector.filterExpression" (dict "target" "resource" "sub" $key "regex" $regex) }}
           {{- $excludeExprs = append $excludeExprs $expr }}
         {{- end }}
       {{- end }}
@@ -152,9 +161,18 @@ IsMatch(resource.attributes["{{ $sub }}"], "{{ $regex }}")
       {{- if or (eq $tkey "namespace") (eq $tkey "service") }}
         {{- $expr := include "logs-collector.filterExpression" (dict "target" $tkey "regex" $val) }}
         {{- $includeExprs = append $includeExprs (printf "not (%s)" $expr) }}
-      {{- else if or (eq $tkey "attribute") (eq $tkey "resource") }}
+      {{- else if eq $tkey "attribute" }}
         {{- range $subk, $subv := $val }}
           {{- $expr := include "logs-collector.filterExpression" (dict "target" $tkey "sub" $subk "regex" $subv) }}
+          {{- $includeExprs = append $includeExprs (printf "not (%s)" $expr) }}
+        {{- end }}
+      {{- else if eq $tkey "resource" }}
+        {{- $flat := include "logs-collector.flattenResourceFilters" (dict "m" $val "prefix" "") | fromYamlArray }}
+        {{- range $item := $flat }}
+          {{- $parts := splitList "=" $item }}
+          {{- $key := index $parts 0 }}
+          {{- $regex := index $parts 1 }}
+          {{- $expr := include "logs-collector.filterExpression" (dict "target" "resource" "sub" $key "regex" $regex) }}
           {{- $includeExprs = append $includeExprs (printf "not (%s)" $expr) }}
         {{- end }}
       {{- end }}

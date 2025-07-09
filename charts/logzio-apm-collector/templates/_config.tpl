@@ -169,6 +169,20 @@ IsMatch(resource.attributes["{{ $sub }}"], "{{ $regex }}")
           {{- $expr := include "apm-collector.filterExpression" (dict "target" $tkey "sub" $subk "regex" $subv) }}
           {{- $excludeExprs = append $excludeExprs $expr }}
         {{- end }}
+      {{- else if eq $tkey "attribute" }}
+        {{- range $subk, $subv := $val }}
+          {{- $expr := include "apm-collector.filterExpression" (dict "target" $tkey "sub" $subk "regex" $subv) }}
+          {{- $excludeExprs = append $excludeExprs $expr }}
+        {{- end }}
+      {{- else if eq $tkey "resource" }}
+        {{- $flat := include "apm-collector.flattenResourceFilters" (dict "m" $val "prefix" "") | fromYamlArray }}
+        {{- range $item := $flat }}
+          {{- $parts := splitList "=" $item }}
+          {{- $key := index $parts 0 }}
+          {{- $regex := index $parts 1 }}
+          {{- $expr := include "apm-collector.filterExpression" (dict "target" "resource" "sub" $key "regex" $regex) }}
+          {{- $excludeExprs = append $excludeExprs $expr }}
+        {{- end }}
       {{- end }}
     {{- end }}
   {{- end }}
@@ -182,6 +196,20 @@ IsMatch(resource.attributes["{{ $sub }}"], "{{ $regex }}")
       {{- else if or (eq $tkey "attribute") (eq $tkey "resource") }}
         {{- range $subk, $subv := $val }}
           {{- $expr := include "apm-collector.filterExpression" (dict "target" $tkey "sub" $subk "regex" $subv) }}
+          {{- $includeExprs = append $includeExprs (printf "not (%s)" $expr) }}
+        {{- end }}
+      {{- else if eq $tkey "attribute" }}
+        {{- range $subk, $subv := $val }}
+          {{- $expr := include "apm-collector.filterExpression" (dict "target" $tkey "sub" $subk "regex" $subv) }}
+          {{- $includeExprs = append $includeExprs (printf "not (%s)" $expr) }}
+        {{- end }}
+      {{- else if eq $tkey "resource" }}
+        {{- $flat := include "apm-collector.flattenResourceFilters" (dict "m" $val "prefix" "") | fromYamlArray }}
+        {{- range $item := $flat }}
+          {{- $parts := splitList "=" $item }}
+          {{- $key := index $parts 0 }}
+          {{- $regex := index $parts 1 }}
+          {{- $expr := include "apm-collector.filterExpression" (dict "target" "resource" "sub" $key "regex" $regex) }}
           {{- $includeExprs = append $includeExprs (printf "not (%s)" $expr) }}
         {{- end }}
       {{- end }}
