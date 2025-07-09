@@ -65,10 +65,6 @@ jobs:
           --set filters.exclude.attribute.log.level="debug" \
           --set filters.exclude.resource.k8s.pod.name="debug-.*" \
           logzio-apm-collector .
-      - name: Show collector logs
-        run: |
-          kubectl logs deployment/logzio-apm-collector
-          kubectl logs deployment/logzio-apm-collector-spm
 
       - name: Verify deployment Status
         run: |
