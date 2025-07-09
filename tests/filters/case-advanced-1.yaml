@@ -1,10 +1,9 @@
 filters:
   exclude:
-    applications:
-      namespace: "kube-system|monitoring"
-      service: "^synthetic-.*$"
-      resource:
-        k8s.pod.name: "^debug-.*$"
+    namespace: "kube-system|monitoring"
+    service: "^synthetic-.*$"
+    resource:
+      k8s.pod.name: "^debug-.*$"
 
   include:
     attribute:
