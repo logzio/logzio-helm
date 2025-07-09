@@ -125,6 +125,23 @@ jobs:
           kind create cluster --name kind-${{ github.run_id }}-${{ matrix.filtercase }}
           kubectl cluster-info
 
+      - name: Wait for all nodes to be Ready
+        run: |
+          for i in {1..36}; do
+            NOT_READY=$(kubectl get nodes --no-headers | grep -v ' Ready ' | wc -l)
+            if [[ "$NOT_READY" -eq 0 ]]; then
+              echo "All nodes are Ready."
+              kubectl get nodes
+              exit 0
+            fi
+            echo "Waiting for all nodes to be Ready..."
+            kubectl get nodes
+            sleep 5
+          done
+          echo "ERROR: Not all nodes became Ready in time."
+          kubectl get nodes
+          exit 1
+
       - name: Deploy Helm Chart with filter case
         run: |
           cd charts/logzio-logs-collector
