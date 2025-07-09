@@ -159,6 +159,19 @@ jobs:
           kubectl rollout status deployment/logzio-apm-collector --timeout=300s
           kubectl describe deployment/logzio-apm-collector
 
+      - name: Check pod is healthy
+        run: |
+          POD=$(kubectl get pods -l app.kubernetes.io/name=logzio-apm-collector -o jsonpath='{.items[0].metadata.name}')
+          PHASE=$(kubectl get pod $POD -o jsonpath='{.status.phase}')
+          READY=$(kubectl get pod $POD -o jsonpath='{.status.containerStatuses[0].ready}')
+          WAITING_REASON=$(kubectl get pod $POD -o jsonpath='{.status.containerStatuses[0].state.waiting.reason}')
+          TERMINATED_REASON=$(kubectl get pod $POD -o jsonpath='{.status.containerStatuses[0].state.terminated.reason}')
+          if [[ "$PHASE" != "Running" || "$READY" != "true" || -n "$WAITING_REASON" || -n "$TERMINATED_REASON" ]]; then
+            echo "Pod is not healthy. Phase: $PHASE, Ready: $READY, Waiting: $WAITING_REASON, Terminated: $TERMINATED_REASON"
+            kubectl logs $POD
+            exit 1
+          fi
+
       - name: Describe config map
         run: |
           kubectl describe cm logzio-apm-collector
