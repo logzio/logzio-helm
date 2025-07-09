@@ -143,7 +143,23 @@ jobs:
 
       - name: Check pod is healthy
         run: |
-          POD=$(kubectl get pods -l app.kubernetes.io/name=logzio-logs-collector -o jsonpath='{.items[0].metadata.name}')
+          # Wait up to 60s for at least one pod to appear
+          for i in {1..12}; do
+            POD=$(kubectl get pods -l app.kubernetes.io/name=logzio-logs-collector -o jsonpath='{.items[0].metadata.name}' 2>/dev/null)
+            if [[ -n "$POD" ]]; then
+              break
+            fi
+            echo "Waiting for logzio-logs-collector pod to be created..."
+            sleep 5
+          done
+
+          if [[ -z "$POD" ]]; then
+            echo "No logzio-logs-collector pod found after waiting."
+            kubectl get pods -A
+            exit 1
+          fi
+
+          # Now do the health checks as before
           PHASE=$(kubectl get pod $POD -o jsonpath='{.status.phase}')
           READY=$(kubectl get pod $POD -o jsonpath='{.status.containerStatuses[0].ready}')
           WAITING_REASON=$(kubectl get pod $POD -o jsonpath='{.status.containerStatuses[0].state.waiting.reason}')
