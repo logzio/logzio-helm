@@ -1,6 +1,10 @@
 # Changes by Version
 
 <!-- next version -->
+## 1.3.0
+- Add **trace filtering** capability via the new `filters` values key.
+  - Supports `exclude` (drop) and `include` (keep) rules on `namespace`, `service`, any `attribute.*` or `resource.*` fields using regular expressions.
+  - Rules are converted into OpenTelemetry `filter` processors and injected right after `k8sattributes` so span/resource metadata is available.
 ## 1.2.4
 - Resolve resource detection installation error when only traces is enabled.
 - Upgrade OpenTelemetry Collector from `0.123.0` to `0.129.0`

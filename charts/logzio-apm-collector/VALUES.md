@@ -83,3 +83,4 @@ Below you can find a complete list of settings in `values.yaml`.
 | lifecycleHooks                                | Pod lifecycle policies.                                                                     | `{}`                                                          |
 | livenessProbe                                 | Liveness probe configuration.                                                               | see `values.yaml`                                             |
 | readinessProbe                                | Readiness probe configuration.                                                              | see `values.yaml`                                             |
+| filters                                       | Trace filtering rules to drop or keep spans before export. See README for syntax. | `{}`                                                          |

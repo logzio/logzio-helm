@@ -1,0 +1,6 @@
+filters:
+  exclude:
+    attribute:
+      log.level: "debug"
+  include:
+    namespace: "prod" 

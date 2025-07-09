@@ -49,9 +49,12 @@ logzio-apm-collector logzio-helm/logzio-apm-collector
 
 - [All configuration options](./VALUES.md)
 - [Instrumentation](#instrumentation)
+- [Uninstalling](#uninstalling)
 - [Custom Trace Sampling rules](#custom-trace-sampling-rules)
 - [Enable File Storage extension](#enable-file-storage-extension)
 - [Resolve `Readiness probe` and `Liveness probe` failures](#resolve-readiness-probe-and-liveness-probe-failures)
+- [Filtering traces (since 1.3.0)](#filtering-traces-since-130)
+
 
 
 ## Instrumentation
@@ -192,8 +195,45 @@ helm upgrade logzio-apm-collector logzio-helm/logzio-apm-collector -n monitoring
 > [!NOTE]
 > If `10s` is insufficient, try increasing it to `15s` or higher.
 
+## Filtering traces (since 1.3.0)
+You can drop or keep spans **before** they leave the cluster using the new `filters` key in `values.yaml`.
+
+### Syntax overview
+
+```yaml
+filters:
+  exclude:                  # evaluated first (OR logic)
+    namespace: "kube-system|monitoring"
+    service: "^synthetic-.*$"
+    attribute:
+      http.status_code: "5.."
+    resource:
+      k8s.pod.name: "^debug-.*$"
+
+  include:                  # evaluated second (AND logic)
+    namespace: "prod"
+    service: "^app-.*$"
+```
+
+Rules use full [RE2 regular expressions](https://github.com/google/re2/wiki/Syntax).  
+The available top-level targets are:
+
+* **namespace** – matches `resource.attributes["k8s.namespace.name"]`
+* **service** – matches `resource.attributes["service.name"]`
+* **attribute.<key>** – matches any span attribute key
+* **resource.<key>** – matches any resource attribute key
+
+Processing order:
+1. **exclude** – if a span matches *any* exclude rule it is dropped immediately.
+2. **include** – if include rules exist, the remaining spans must match *all* of them to be kept.
+3. If no include rules exist, everything not excluded is forwarded.
+
+The chart translates these rules into OpenTelemetry `filter` processors and injects them directly **after** the `k8sattributes` processor so Kubernetes metadata is available during matching.
+
+
 ## Uninstalling
 To uninstall the `logzio-apm-collector` chart, you can use:
 ```shell
 helm uninstall -n monitoring logzio-apm-collector
 ```
+

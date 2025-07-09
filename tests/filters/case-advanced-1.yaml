@@ -1,0 +1,12 @@
+filters:
+  exclude:
+    namespace: "kube-system|monitoring"
+    service: "^synthetic-.*$"
+    resource:
+      k8s.pod.name: "^debug-.*$"
+
+  include:
+    attribute:
+      deployment.environment: "prod|stage"
+    namespace: "prod|stage"
+    service: "^app-.*$" 

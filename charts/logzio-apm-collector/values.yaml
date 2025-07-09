@@ -47,6 +47,31 @@ resourceDetection:
 # Allows changing the OpenTelemetry Collector log level
 otelLogLevel: "info"
 
+# # ------------------------------------------------------------------
+# # Filtering rules (traces)
+# # ------------------------------------------------------------------
+# # Use the high-level filtering syntax to drop or keep spans before they
+# # are shipped to Logz.io. Rules are translated into OpenTelemetry
+# # `filter` processors and injected automatically into the Collector
+# # configuration just after `k8sattributes` so Kubernetes metadata is
+# # available for matching.
+# #
+# # Structure:
+#   filters:
+#     exclude:               # drop first (OR semantics)
+#       namespace: "kube-system|monitoring"
+#       service: "^synthetic-.*$"
+#       attribute:
+#         http.status_code: "5.."
+#       resource:
+#         k8s.pod.name: "^debug-.*$"
+#
+#     include:               # keep second (AND semantics)
+#       namespace: "prod"
+#       service: "^app-.*$"
+#
+filters: {}
+
 # Number of collector replicas
 standaloneCollector:
   replicaCount: 1

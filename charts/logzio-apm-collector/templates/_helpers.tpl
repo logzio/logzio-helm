@@ -161,3 +161,22 @@ Returns the value of resource detection enablement state
 {{- .Values.global.resourceDetection.enabled }}
 {{- end }}
 {{- end }}
+
+{{/*
+Recursively flattens a map into dot-separated keys for resource filters.
+Usage: include "apm-collector.flattenFilters" (dict "m" . "prefix" "")
+Returns a YAML array of key=regex strings.
+*/}}
+{{- define "apm-collector.flattenFilters" -}}
+{{- $m := .m -}}
+{{- $prefix := .prefix | default "" -}}
+{{- $out := list -}}
+{{- range $k, $v := $m }}
+  {{- if kindIs "map" $v }}
+    {{- $out = concat $out (include "apm-collector.flattenFilters" (dict "m" $v "prefix" (printf "%s%s." $prefix $k)) | fromYamlArray) }}
+  {{- else }}
+    {{- $out = append $out (printf "%s%s=%s" $prefix $k $v) }}
+  {{- end }}
+{{- end }}
+{{- toYaml $out }}
+{{- end }}
