@@ -124,6 +124,9 @@ jobs:
         run: |
           kind create cluster --name kind-${{ github.run_id }}-${{ matrix.filtercase }}
           kubectl cluster-info
+      - name: Get nodes
+        run: |
+          kubectl get nodes
 
       - name: Deploy Helm Chart with filter case
         run: |
