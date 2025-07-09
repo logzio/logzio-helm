@@ -266,6 +266,21 @@ entries:
   logzio-apm-collector:
   - apiVersion: v2
     appVersion: 0.129.1
+    created: "2025-07-09T10:33:21.777990729Z"
+    description: Kubernetes APM agent for Logz.io based on OpenTelemetry Collector
+    digest: b45b6e9e75b42ac20d028cc5098ec9ca42c8f07507e5ebeaadf1e455c3343f04
+    home: https://logz.io/
+    icon: https://logzbucket.s3.eu-west-1.amazonaws.com/logz-io-img/logo400x400.png
+    maintainers:
+    - email: naama.bendalak@logz.io
+      name: Naama Bendalak
+    name: logzio-apm-collector
+    type: application
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/logzio-apm-collector-1.3.0/logzio-apm-collector-1.3.0.tgz
+    version: 1.3.0
+  - apiVersion: v2
+    appVersion: 0.129.1
     created: "2025-07-07T06:34:46.48024435Z"
     description: Kubernetes APM agent for Logz.io based on OpenTelemetry Collector
     digest: 29b0207eced80364c58caaef4e886e34b20ed6088170b2963cee41a18360fb0e
@@ -4024,6 +4039,21 @@ entries:
     - https://logzio.github.io/logzio-helm/logzio-k8s-telemetry-0.0.1.tgz
     version: 0.0.1
   logzio-logs-collector:
+  - apiVersion: v2
+    appVersion: 0.127.0
+    created: "2025-07-09T10:33:21.89874274Z"
+    description: kubernetes logs collection agent for logz.io based on opentelemetry
+      collector
+    digest: 4e1990068803273e868f34a9deac921debd75833d79e8591cd5abd4e0f6cc6f5
+    home: https://logz.io/
+    maintainers:
+    - email: yotam.loewenbach@logz.io
+      name: yotam loewenbach
+    name: logzio-logs-collector
+    type: application
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/logzio-logs-collector-2.2.0/logzio-logs-collector-2.2.0.tgz
+    version: 2.2.0
   - apiVersion: v2
     appVersion: 0.127.0
     created: "2025-06-04T11:17:25.21519565Z"
@@ -9472,4 +9502,4 @@ entries:
     urls:
     - https://logzio.github.io/logzio-helm/prometheus-alerts-migrator-1.0.0.tgz
     version: 1.0.0
-generated: "2025-07-07T13:07:31.751041128Z"
+generated: "2025-07-09T10:33:21.899318744Z"
