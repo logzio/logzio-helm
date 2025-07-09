@@ -124,9 +124,6 @@ jobs:
         run: |
           kind create cluster --name kind-${{ github.run_id }}-${{ matrix.filtercase }}
           kubectl cluster-info
-      - name: Get nodes
-        run: |
-          kubectl get nodes
 
       - name: Deploy Helm Chart with filter case
         run: |
@@ -143,7 +140,9 @@ jobs:
         run: |
           kubectl rollout status daemonset/logzio-logs-collector --timeout=300s
           kubectl describe daemonset/logzio-logs-collector
-
+      - name: Get nodes
+        run: |
+          kubectl get nodes
       - name: Check pod is healthy
         run: |
           # Wait up to 60s for at least one pod to appear
