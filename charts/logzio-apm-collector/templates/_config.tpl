@@ -165,7 +165,7 @@ IsMatch(resource.attributes["{{ $sub }}"], "{{ $regex }}")
         {{- $expr := include "apm-collector.filterExpression" (dict "target" $tkey "regex" $val) }}
         {{- $excludeExprs = append $excludeExprs $expr }}
       {{- else if eq $tkey "attribute" }}
-        {{- $flat := include "apm-collector.flattenResourceFilters" (dict "m" $val "prefix" "") | fromYamlArray }}
+        {{- $flat := include "apm-collector.flattenFilters" (dict "m" $val "prefix" "") | fromYamlArray }}
         {{- range $item := $flat }}
           {{- $parts := splitList "=" $item }}
           {{- $key := index $parts 0 }}
@@ -174,7 +174,7 @@ IsMatch(resource.attributes["{{ $sub }}"], "{{ $regex }}")
           {{- $excludeExprs = append $excludeExprs $expr }}
         {{- end }}
       {{- else if eq $tkey "resource" }}
-        {{- $flat := include "apm-collector.flattenResourceFilters" (dict "m" $val "prefix" "") | fromYamlArray }}
+        {{- $flat := include "apm-collector.flattenFilters" (dict "m" $val "prefix" "") | fromYamlArray }}
         {{- range $item := $flat }}
           {{- $parts := splitList "=" $item }}
           {{- $key := index $parts 0 }}
@@ -193,7 +193,7 @@ IsMatch(resource.attributes["{{ $sub }}"], "{{ $regex }}")
         {{- $expr := include "apm-collector.filterExpression" (dict "target" $tkey "regex" $val) }}
         {{- $includeExprs = append $includeExprs (printf "not (%s)" $expr) }}
       {{- else if eq $tkey "attribute" }}
-        {{- $flat := include "apm-collector.flattenResourceFilters" (dict "m" $val "prefix" "") | fromYamlArray }}
+        {{- $flat := include "apm-collector.flattenFilters" (dict "m" $val "prefix" "") | fromYamlArray }}
         {{- range $item := $flat }}
           {{- $parts := splitList "=" $item }}
           {{- $key := index $parts 0 }}
@@ -202,7 +202,7 @@ IsMatch(resource.attributes["{{ $sub }}"], "{{ $regex }}")
           {{- $includeExprs = append $includeExprs (printf "not (%s)" $expr) }}
         {{- end }}
       {{- else if eq $tkey "resource" }}
-        {{- $flat := include "apm-collector.flattenResourceFilters" (dict "m" $val "prefix" "") | fromYamlArray }}
+        {{- $flat := include "apm-collector.flattenFilters" (dict "m" $val "prefix" "") | fromYamlArray }}
         {{- range $item := $flat }}
           {{- $parts := splitList "=" $item }}
           {{- $key := index $parts 0 }}

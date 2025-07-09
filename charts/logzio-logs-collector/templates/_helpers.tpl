@@ -224,13 +224,13 @@ Recursively flattens a map into dot-separated keys for resource filters.
 Usage: include "logs-collector.flattenResourceFilters" (dict "m" . "prefix" "")
 Returns a YAML array of key=regex strings.
 */}}
-{{- define "logs-collector.flattenResourceFilters" -}}
+{{- define "logs-collector.flattenFilters" -}}
 {{- $m := .m -}}
 {{- $prefix := .prefix | default "" -}}
 {{- $out := list -}}
 {{- range $k, $v := $m }}
   {{- if kindIs "map" $v }}
-    {{- $out = concat $out (include "logs-collector.flattenResourceFilters" (dict "m" $v "prefix" (printf "%s%s." $prefix $k)) | fromYamlArray) }}
+    {{- $out = concat $out (include "logs-collector.flattenFilters" (dict "m" $v "prefix" (printf "%s%s." $prefix $k)) | fromYamlArray) }}
   {{- else }}
     {{- $out = append $out (printf "%s%s=%s" $prefix $k $v) }}
   {{- end }}

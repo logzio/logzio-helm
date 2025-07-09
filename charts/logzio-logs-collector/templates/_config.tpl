@@ -138,7 +138,7 @@ IsMatch(resource.attributes["{{ $sub }}"], "{{ $regex }}")
         {{- $expr := include "logs-collector.filterExpression" (dict "target" $tkey "regex" $val) }}
         {{- $excludeExprs = append $excludeExprs $expr }}
       {{- else if eq $tkey "attribute" }}
-        {{- $flat := include "logs-collector.flattenResourceFilters" (dict "m" $val "prefix" "") | fromYamlArray }}
+        {{- $flat := include "logs-collector.flattenFilters" (dict "m" $val "prefix" "") | fromYamlArray }}
         {{- range $item := $flat }}
           {{- $parts := splitList "=" $item }}
           {{- $key := index $parts 0 }}
@@ -147,7 +147,7 @@ IsMatch(resource.attributes["{{ $sub }}"], "{{ $regex }}")
           {{- $excludeExprs = append $excludeExprs $expr }}
         {{- end }}
       {{- else if eq $tkey "resource" }}
-        {{- $flat := include "logs-collector.flattenResourceFilters" (dict "m" $val "prefix" "") | fromYamlArray }}
+        {{- $flat := include "logs-collector.flattenFilters" (dict "m" $val "prefix" "") | fromYamlArray }}
         {{- range $item := $flat }}
           {{- $parts := splitList "=" $item }}
           {{- $key := index $parts 0 }}
@@ -166,7 +166,7 @@ IsMatch(resource.attributes["{{ $sub }}"], "{{ $regex }}")
         {{- $expr := include "logs-collector.filterExpression" (dict "target" $tkey "regex" $val) }}
         {{- $includeExprs = append $includeExprs (printf "not (%s)" $expr) }}
       {{- else if eq $tkey "attribute" }}
-        {{- $flat := include "logs-collector.flattenResourceFilters" (dict "m" $val "prefix" "") | fromYamlArray }}
+        {{- $flat := include "logs-collector.flattenFilters" (dict "m" $val "prefix" "") | fromYamlArray }}
         {{- range $item := $flat }}
           {{- $parts := splitList "=" $item }}
           {{- $key := index $parts 0 }}
@@ -175,7 +175,7 @@ IsMatch(resource.attributes["{{ $sub }}"], "{{ $regex }}")
           {{- $includeExprs = append $includeExprs (printf "not (%s)" $expr) }}
         {{- end }}
       {{- else if eq $tkey "resource" }}
-        {{- $flat := include "logs-collector.flattenResourceFilters" (dict "m" $val "prefix" "") | fromYamlArray }}
+        {{- $flat := include "logs-collector.flattenFilters" (dict "m" $val "prefix" "") | fromYamlArray }}
         {{- range $item := $flat }}
           {{- $parts := splitList "=" $item }}
           {{- $key := index $parts 0 }}
