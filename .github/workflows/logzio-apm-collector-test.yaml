@@ -148,6 +148,7 @@ jobs:
           helm upgrade --install logzio-apm-collector . \
             --set enabled=true \
             --set global.logzioTracesToken=dummy \
+            --set global.logzioSpmToken=dummy \
             --set global.logzioRegion=us \
             --set spm.enabled=false \
             --set global.env_id=test-${{ matrix.filtercase }} \
