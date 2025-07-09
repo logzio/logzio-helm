@@ -140,11 +140,10 @@ jobs:
         run: |
           kubectl rollout status daemonset/logzio-logs-collector --timeout=300s
           kubectl describe daemonset/logzio-logs-collector
-          sleep 5
 
-      - name: Show collector logs
+      - name: Describe config map
         run: |
-          kubectl logs daemonset/logzio-logs-collector
+          kubectl describe cm logzio-logs-collector-daemonset
 
       - name: Cleanup
         if: always()

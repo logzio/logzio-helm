@@ -158,7 +158,11 @@ jobs:
         run: |
           kubectl rollout status deployment/logzio-apm-collector --timeout=300s
           kubectl describe deployment/logzio-apm-collector
-          
+
+      - name: Describe config map
+        run: |
+          kubectl describe cm logzio-apm-collector
+      
       - name: Show collector logs
         run: |
           kubectl logs deployment/logzio-apm-collector
