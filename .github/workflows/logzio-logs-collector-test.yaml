@@ -139,6 +139,8 @@ jobs:
       - name: Verify deployment Status
         run: |
           kubectl rollout status daemonset/logzio-logs-collector --timeout=300s
+          kubectl describe daemonset/logzio-logs-collector
+          sleep 5
 
       - name: Show collector logs
         run: |
