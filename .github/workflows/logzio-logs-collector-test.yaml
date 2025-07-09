@@ -61,7 +61,11 @@ jobs:
           --set filters.exclude.attribute.log.level="debug" \
           --set filters.exclude.resource.k8s.pod.name="debug-.*" \
           logzio-logs-collector .
-          
+
+      - name: Show collector logs
+        run: |
+          kubectl logs daemonset/logzio-logs-collector
+
       - name: Verify deployment Status
         run: |
           kubectl rollout status daemonset/logzio-logs-collector --timeout=300s
