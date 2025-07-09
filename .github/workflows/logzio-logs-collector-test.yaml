@@ -100,9 +100,9 @@ jobs:
       matrix:
         filtercase:
           - case-none.yaml
-          - case-exclude-flat.yaml
-          - case-exclude-nested.yaml
-          - case-include.yaml
+          - case-exclude-kube.yaml
+          - case-advanced-1.yaml
+          - case-include-prod.yaml
           - case-combo.yaml
     steps:
       - name: Checkout repository
@@ -128,6 +128,7 @@ jobs:
       - name: Deploy Helm Chart with filter case
         run: |
           cd charts/logzio-logs-collector
+          pwd
           helm upgrade --install logzio-logs-collector . \
             --set global.env_id=test-${{ matrix.filtercase }} \
             --set global.logzioLogsToken=dummy \
