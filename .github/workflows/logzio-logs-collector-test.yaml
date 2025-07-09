@@ -136,9 +136,9 @@ jobs:
             --set global.logType=test-${{ matrix.filtercase }} \
             -f ../../tests/filters/${{ matrix.filtercase }}
 
-      - name: Wait for pod to be ready
+      - name: Verify deployment Status
         run: |
-          kubectl wait --for=condition=Ready pod -l app.kubernetes.io/name=logzio-logs-collector --timeout=120s
+          kubectl rollout status daemonset/logzio-logs-collector --timeout=300s
 
       - name: Check pod logs for errors
         run: |
