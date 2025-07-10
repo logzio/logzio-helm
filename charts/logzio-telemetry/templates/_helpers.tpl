@@ -218,3 +218,22 @@ Get SPM component name
 {{- define "spm-collector.component" -}}
 component: standalone-collector-spm
 {{- end }}
+
+{{/*
+Recursively flattens a map into dot-separated keys for filters.
+Usage: include "opentelemetry-collector.flattenFilters" (dict "m" . "prefix" "")
+Returns a YAML array of key=regex strings.
+*/}}
+{{- define "opentelemetry-collector.flattenFilters" -}}
+{{- $m := .m -}}
+{{- $prefix := .prefix | default "" -}}
+{{- $out := list -}}
+{{- range $k, $v := $m }}
+  {{- if kindIs "map" $v }}
+    {{- $out = concat $out (include "opentelemetry-collector.flattenFilters" (dict "m" $v "prefix" (printf "%s%s." $prefix $k)) | fromYamlArray) }}
+  {{- else }}
+    {{- $out = append $out (printf "%s%s=%s" $prefix $k $v) }}
+  {{- end }}
+{{- end }}
+{{- toYaml $out }}
+{{- end }}

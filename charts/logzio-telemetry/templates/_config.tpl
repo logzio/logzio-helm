@@ -72,48 +72,100 @@ Build config file for standalone OpenTelemetry Collector
 
 
 {{- if (and (eq .Values.collector.mode "standalone") (.Values.metrics.enabled)) -}}
+  {{- $filters := .Values.filters | default dict -}}
+  
+  {{/* Get legacy filter variables for standalone collector */}}
+  {{- $ctxParams := dict "pipeline" "infrastructure" -}}
+  {{- $ctxParams = merge $ctxParams $ -}}
+  {{- $infraFilters := include "opentelemetry-collector.getPipelineFilters" $ctxParams -}}
+  {{- $ctxParams = dict "pipeline" "applications" -}}
+  {{- $ctxParams = merge $ctxParams $ -}}
+  {{- $applicationsFilters := include "opentelemetry-collector.getPipelineFilters" $ctxParams -}}
+  
+  {{/* Apply legacy and new filters to infrastructure pipeline */}}
   {{- range $job := (index $configData "receivers" "prometheus/infrastructure" "config" "scrape_configs") -}}
+    {{- $_ := set $job "relabel_configs" (default (list) $job.relabel_configs) }}
     {{- range $key,$filter := ($infraFilters | fromJson) -}}
-      {{- if contains "metric" $key -}}
-        {{- $_ := set $job ("metric_relabel_configs" | toYaml)  ( append $job.metric_relabel_configs ($filter)) -}}
-      {{- else -}}
-        {{- $_ := set $job ("relabel_configs" | toYaml)  ( append $job.relabel_configs ($filter)) -}}
+      {{- if not (contains "metric" $key) -}}
+        {{- $_ := set $job "relabel_configs" (append $job.relabel_configs $filter) -}}
       {{- end -}}
-    {{- end -}} 
+    {{- end -}}
+    {{- $newRelabel := (include "opentelemetry-collector.getPrometheusFilters" (dict "filters" $filters "pipeline" "infrastructure" "action" "exclude")) | fromYamlArray }}
+    {{- if $newRelabel }}
+      {{- $_ := set $job "relabel_configs" (concat $job.relabel_configs $newRelabel) }}
+    {{- end }}
+    {{- $newRelabel := (include "opentelemetry-collector.getPrometheusFilters" (dict "filters" $filters "pipeline" "infrastructure" "action" "include")) | fromYamlArray }}
+    {{- if $newRelabel }}
+      {{- $_ := set $job "relabel_configs" (concat $job.relabel_configs $newRelabel) }}
+    {{- end }}
   {{- end -}}
 
+  {{/* Apply legacy and new filters to cadvisor pipeline */}}
   {{- range $job := (index $configData "receivers" "prometheus/cadvisor" "config" "scrape_configs") -}}
+    {{- $_ := set $job "relabel_configs" (default (list) $job.relabel_configs) }}
+    {{- $_ := set $job "metric_relabel_configs" (default (list) $job.metric_relabel_configs) }}
     {{- range $key,$filter := ($infraFilters | fromJson) -}}
       {{- if contains "metric" $key -}}
-        {{- $_ := set $job ("metric_relabel_configs" | toYaml)  ( append $job.metric_relabel_configs ($filter)) -}}
+        {{- $_ := set $job "metric_relabel_configs" (append $job.metric_relabel_configs $filter) -}}
       {{- else -}}
-        {{- $_ := set $job ("relabel_configs" | toYaml)  ( append $job.relabel_configs ($filter)) -}}
+        {{- $_ := set $job "relabel_configs" (append $job.relabel_configs $filter) -}}
       {{- end -}}
-    {{- end -}} 
+    {{- end -}}
+    {{- $newRelabel := (include "opentelemetry-collector.getPrometheusFilters" (dict "filters" $filters "pipeline" "infrastructure" "action" "exclude")) | fromYamlArray }}
+    {{- if $newRelabel }}
+      {{- $_ := set $job "relabel_configs" (concat $job.relabel_configs $newRelabel) }}
+    {{- end }}
+    {{- $newRelabel := (include "opentelemetry-collector.getPrometheusFilters" (dict "filters" $filters "pipeline" "infrastructure" "action" "include")) | fromYamlArray }}
+    {{- if $newRelabel }}
+      {{- $_ := set $job "relabel_configs" (concat $job.relabel_configs $newRelabel) }}
+    {{- end }}
   {{- end -}}
 
+  {{/* Apply legacy and new filters to applications pipeline */}}
   {{- range $job := (index $configData "receivers" "prometheus/applications" "config" "scrape_configs") -}}
+    {{- $_ := set $job "relabel_configs" (default (list) $job.relabel_configs) }}
+    {{- $_ := set $job "metric_relabel_configs" (default (list) $job.metric_relabel_configs) }}
     {{- range $key,$filter := ($applicationsFilters | fromJson) -}}
       {{- if contains "metric" $key -}}
-        {{- $_ := set $job ("metric_relabel_configs" | toYaml)  ( append $job.metric_relabel_configs ($filter)) -}}
+        {{- $_ := set $job "metric_relabel_configs" (append $job.metric_relabel_configs $filter) -}}
       {{- else -}}
-        {{- $_ := set $job ("relabel_configs" | toYaml)  ( append $job.relabel_configs ($filter)) -}}
+        {{- $_ := set $job "relabel_configs" (append $job.relabel_configs $filter) -}}
       {{- end -}}
-    {{- end -}} 
+    {{- end -}}
+    {{- $newRelabel := (include "opentelemetry-collector.getPrometheusFilters" (dict "filters" $filters "pipeline" "applications" "action" "exclude")) | fromYamlArray }}
+    {{- if $newRelabel }}
+      {{- $_ := set $job "relabel_configs" (concat $job.relabel_configs $newRelabel) }}
+    {{- end }}
+    {{- $newRelabel := (include "opentelemetry-collector.getPrometheusFilters" (dict "filters" $filters "pipeline" "applications" "action" "include")) | fromYamlArray }}
+    {{- if $newRelabel }}
+      {{- $_ := set $job "relabel_configs" (concat $job.relabel_configs $newRelabel) }}
+    {{- end }}
   {{- end -}}
+  
   {{- if .Values.applicationMetrics.enabled -}}
     {{- $metricsApplications := dict "exporters" (list "prometheusremotewrite/applications") "processors" (list "attributes/env_id" "filter/kubernetes360") "receivers" (list "prometheus/applications") -}}
     {{- $_ := set .Values.metricsConfig.service.pipelines "metrics/applications" $metricsApplications -}}
   {{- end -}}
 
+  {{/* Apply legacy and new filters to kubelet pipeline */}}
   {{- range $job := (index $configData "receivers" "prometheus/kubelet" "config" "scrape_configs") -}}
+    {{- $_ := set $job "relabel_configs" (default (list) $job.relabel_configs) }}
+    {{- $_ := set $job "metric_relabel_configs" (default (list) $job.metric_relabel_configs) }}
     {{- range $key,$filter := ($infraFilters | fromJson) -}}
       {{- if contains "metric" $key -}}
-        {{- $_ := set $job ("metric_relabel_configs" | toYaml)  ( append $job.metric_relabel_configs ($filter)) -}}
+        {{- $_ := set $job "metric_relabel_configs" (append $job.metric_relabel_configs $filter) -}}
       {{- else -}}
-        {{- $_ := set $job ("relabel_configs" | toYaml)  ( append $job.relabel_configs ($filter)) -}}
+        {{- $_ := set $job "relabel_configs" (append $job.relabel_configs $filter) -}}
       {{- end -}}
-    {{- end -}} 
+    {{- end -}}
+    {{- $newRelabel := (include "opentelemetry-collector.getPrometheusFilters" (dict "filters" $filters "pipeline" "infrastructure" "action" "exclude")) | fromYamlArray }}
+    {{- if $newRelabel }}
+      {{- $_ := set $job "relabel_configs" (concat $job.relabel_configs $newRelabel) }}
+    {{- end }}
+    {{- $newRelabel := (include "opentelemetry-collector.getPrometheusFilters" (dict "filters" $filters "pipeline" "infrastructure" "action" "include")) | fromYamlArray }}
+    {{- if $newRelabel }}
+      {{- $_ := set $job "relabel_configs" (concat $job.relabel_configs $newRelabel) }}
+    {{- end }}
   {{- end -}}
 {{- end -}}
 {{- .Values.standaloneCollector.configOverride | merge $configData | mustMergeOverwrite $config | toYaml}}
@@ -240,48 +292,91 @@ Build config file for standalone OpenTelemetry Collector daemonset
 {{- end }}
 
 {{- if .Values.metrics.enabled -}}
+  {{- $filters := .Values.filters | default dict -}}
+  
+  {{/* Apply legacy and new filters to infrastructure pipeline */}}
   {{- range $job := (index $configData "receivers" "prometheus/infrastructure" "config" "scrape_configs") -}}
+    {{- $_ := set $job "relabel_configs" (default (list) $job.relabel_configs) }}
     {{- range $key,$filter := ($infraFilters | fromJson) -}}
-      {{- if contains "metric" $key -}}
-        {{- $_ := set $job ("metric_relabel_configs" | toYaml)  ( append $job.metric_relabel_configs ($filter)) -}}
-      {{- else -}}
-        {{- $_ := set $job ("relabel_configs" | toYaml)  ( append $job.relabel_configs ($filter)) -}}
+      {{- if not (contains "metric" $key) -}}
+        {{- $_ := set $job "relabel_configs" (append $job.relabel_configs $filter) -}}
       {{- end -}}
-    {{- end -}} 
+    {{- end -}}
+    {{- $newRelabel := (include "opentelemetry-collector.getPrometheusFilters" (dict "filters" $filters "pipeline" "infrastructure" "action" "exclude")) | fromYamlArray }}
+    {{- if $newRelabel }}
+      {{- $_ := set $job "relabel_configs" (concat $job.relabel_configs $newRelabel) }}
+    {{- end }}
+    {{- $newRelabel := (include "opentelemetry-collector.getPrometheusFilters" (dict "filters" $filters "pipeline" "infrastructure" "action" "include")) | fromYamlArray }}
+    {{- if $newRelabel }}
+      {{- $_ := set $job "relabel_configs" (concat $job.relabel_configs $newRelabel) }}
+    {{- end }}
   {{- end -}}
 
+  {{/* Apply legacy and new filters to cadvisor pipeline */}}
   {{- range $job := (index $configData "receivers" "prometheus/cadvisor" "config" "scrape_configs") -}}
+    {{- $_ := set $job "relabel_configs" (default (list) $job.relabel_configs) }}
+    {{- $_ := set $job "metric_relabel_configs" (default (list) $job.metric_relabel_configs) }}
     {{- range $key,$filter := ($infraFilters | fromJson) -}}
       {{- if contains "metric" $key -}}
-        {{- $_ := set $job ("metric_relabel_configs" | toYaml)  ( append $job.metric_relabel_configs ($filter)) -}}
+        {{- $_ := set $job "metric_relabel_configs" (append $job.metric_relabel_configs $filter) -}}
       {{- else -}}
-        {{- $_ := set $job ("relabel_configs" | toYaml)  ( append $job.relabel_configs ($filter)) -}}
+        {{- $_ := set $job "relabel_configs" (append $job.relabel_configs $filter) -}}
       {{- end -}}
-    {{- end -}} 
+    {{- end -}}
+    {{- $newRelabel := (include "opentelemetry-collector.getPrometheusFilters" (dict "filters" $filters "pipeline" "infrastructure" "action" "exclude")) | fromYamlArray }}
+    {{- if $newRelabel }}
+      {{- $_ := set $job "relabel_configs" (concat $job.relabel_configs $newRelabel) }}
+    {{- end }}
+    {{- $newRelabel := (include "opentelemetry-collector.getPrometheusFilters" (dict "filters" $filters "pipeline" "infrastructure" "action" "include")) | fromYamlArray }}
+    {{- if $newRelabel }}
+      {{- $_ := set $job "relabel_configs" (concat $job.relabel_configs $newRelabel) }}
+    {{- end }}
   {{- end -}}
 
+  {{/* Apply legacy and new filters to applications pipeline */}}
   {{- range $job := (index $configData "receivers" "prometheus/applications" "config" "scrape_configs") -}}
+    {{- $_ := set $job "relabel_configs" (default (list) $job.relabel_configs) }}
+    {{- $_ := set $job "metric_relabel_configs" (default (list) $job.metric_relabel_configs) }}
     {{- range $key,$filter := ($applicationsFilters | fromJson) -}}
       {{- if contains "metric" $key -}}
-        {{- $_ := set $job ("metric_relabel_configs" | toYaml)  ( append $job.metric_relabel_configs ($filter)) -}}
+        {{- $_ := set $job "metric_relabel_configs" (append $job.metric_relabel_configs $filter) -}}
       {{- else -}}
-        {{- $_ := set $job ("relabel_configs" | toYaml)  ( append $job.relabel_configs ($filter)) -}}
+        {{- $_ := set $job "relabel_configs" (append $job.relabel_configs $filter) -}}
       {{- end -}}
-    {{- end -}} 
+    {{- end -}}
+    {{- $newRelabel := (include "opentelemetry-collector.getPrometheusFilters" (dict "filters" $filters "pipeline" "applications" "action" "exclude")) | fromYamlArray }}
+    {{- if $newRelabel }}
+      {{- $_ := set $job "relabel_configs" (concat $job.relabel_configs $newRelabel) }}
+    {{- end }}
+    {{- $newRelabel := (include "opentelemetry-collector.getPrometheusFilters" (dict "filters" $filters "pipeline" "applications" "action" "include")) | fromYamlArray }}
+    {{- if $newRelabel }}
+      {{- $_ := set $job "relabel_configs" (concat $job.relabel_configs $newRelabel) }}
+    {{- end }}
   {{- end -}}
+  
   {{- if .Values.applicationMetrics.enabled -}}
     {{- $metricsApplications := dict "exporters" (list "prometheusremotewrite/applications") "processors" (list "attributes/env_id" "filter/kubernetes360") "receivers" (list "prometheus/applications") -}}
     {{- $_ := set .Values.daemonsetConfig.service.pipelines "metrics/applications" $metricsApplications -}}
   {{- end -}}
 
   {{- range $job := (index $configData "receivers" "prometheus/kubelet" "config" "scrape_configs") -}}
+    {{- $_ := set $job "relabel_configs" (default (list) $job.relabel_configs) }}
+    {{- $_ := set $job "metric_relabel_configs" (default (list) $job.metric_relabel_configs) }}
     {{- range $key,$filter := ($infraFilters | fromJson) -}}
       {{- if contains "metric" $key -}}
-        {{- $_ := set $job ("metric_relabel_configs" | toYaml)  ( append $job.metric_relabel_configs ($filter)) -}}
+        {{- $_ := set $job "metric_relabel_configs" (append $job.metric_relabel_configs $filter) -}}
       {{- else -}}
-        {{- $_ := set $job ("relabel_configs" | toYaml)  ( append $job.relabel_configs ($filter)) -}}
+        {{- $_ := set $job "relabel_configs" (append $job.relabel_configs $filter) -}}
       {{- end -}}
-    {{- end -}} 
+    {{- end -}}
+    {{- $newRelabel := (include "opentelemetry-collector.getPrometheusFilters" (dict "filters" $filters "pipeline" "infrastructure" "action" "exclude")) | fromYamlArray }}
+    {{- if $newRelabel }}
+      {{- $_ := set $job "relabel_configs" (concat $job.relabel_configs $newRelabel) }}
+    {{- end }}
+    {{- $newRelabel := (include "opentelemetry-collector.getPrometheusFilters" (dict "filters" $filters "pipeline" "infrastructure" "action" "include")) | fromYamlArray }}
+    {{- if $newRelabel }}
+      {{- $_ := set $job "relabel_configs" (concat $job.relabel_configs $newRelabel) }}
+    {{- end }}
   {{- end -}}
 {{- end -}}
 
@@ -394,7 +489,7 @@ Param 1: dict: "pipeline" infrastructure/applications & global context
 receivers:
   filelog:
     include: [ /var/log/pods/*/*/*.log ]
-    # Exclude collector container's logs. The file format is /var/log/pods/<namespace_name>_<pod_name>_<pod_uid>/<container_name>/<run_id>.log
+    # Exclude collector container's logs. The file format is /var/log/pods/{{ .Release.Namespace }}_{{ include "opentelemetry-collector.fullname" . }}*_*/{{ .Chart.Name }}/*.log ]
     exclude: [ /var/log/pods/{{ .Release.Namespace }}_{{ include "opentelemetry-collector.fullname" . }}*_*/{{ .Chart.Name }}/*.log ]
     start_at: beginning
     include_file_path: true
@@ -502,4 +597,64 @@ resourcedetection/all:
 resourcedetection/all:
   detectors: [ec2, azure, gcp]
 {{- end }}
+{{- end }}
+
+{{/*
+Helper: Generate relabel config from filter key and value
+*/}}
+{{- define "opentelemetry-collector.prometheusRelabelConfig" -}}
+{{- $action := .action -}}
+{{- $target := .target -}}
+{{- $sub := .sub | default "" -}}
+{{- $regex := .regex -}}
+{{- $source_labels := list -}}
+{{- if eq $target "name" -}}
+  {{- $source_labels = list "__name__" -}}
+{{- else if eq $target "namespace" -}}
+  {{- $source_labels = list "namespace" -}}
+{{- else if eq $target "service" -}}
+  {{- $source_labels = list "service" -}}
+{{- else if eq $target "attribute" -}}
+  {{- $source_labels = list $sub -}}
+{{- else if eq $target "resource" -}}
+  {{- $source_labels = list (printf "resource.%s" $sub) -}}
+{{- else -}}
+  {{- $source_labels = list $target -}}
+{{- end }}
+- action: {{ $action }}
+  source_labels: [{{ join ", " $source_labels }}]
+  regex: "{{ $regex }}"
+{{- end }}
+
+{{/*
+Helper: Parse filters for a given pipeline and action (include/exclude)
+*/}}
+{{- define "opentelemetry-collector.getPrometheusFilters" -}}
+{{- $filters := .filters -}}
+{{- $pipeline := .pipeline -}}
+{{- $action := .action -}}
+{{- $out := list -}}
+
+{{/* Handle nested filter structure */}}
+{{- if hasKey $filters $pipeline -}}
+  {{- $pipelineFilters := index $filters $pipeline -}}
+  {{- if hasKey $pipelineFilters $action -}}
+    {{- $actionFilters := index $pipelineFilters $action -}}
+    {{- range $target, $value := $actionFilters -}}
+      {{- if kindIs "map" $value -}}
+        {{/* Handle nested attributes like attribute.deployment.environment */}}
+        {{- range $subKey, $subValue := $value -}}
+          {{- $rel := include "opentelemetry-collector.prometheusRelabelConfig" (dict "action" (ternary "keep" "drop" (eq $action "include")) "target" $target "sub" $subKey "regex" $subValue) }}
+          {{- $out = append $out $rel }}
+        {{- end }}
+      {{- else -}}
+        {{/* Handle simple key-value pairs */}}
+        {{- $rel := include "opentelemetry-collector.prometheusRelabelConfig" (dict "action" (ternary "keep" "drop" (eq $action "include")) "target" $target "regex" $value) }}
+        {{- $out = append $out $rel }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+
+{{- join "\n" $out }}
 {{- end }}
