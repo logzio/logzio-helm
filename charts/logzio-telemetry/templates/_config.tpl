@@ -89,7 +89,7 @@ Build config file for standalone OpenTelemetry Collector
       {{- if not (contains "metric" $key) -}}
         {{- $_ := set $job "relabel_configs" (append $job.relabel_configs $filter) -}}
       {{- end -}}
-    {{- end -}}
+    {{- end -}} 
     {{- $newRelabel := (include "opentelemetry-collector.getPrometheusFilters" (dict "filters" $filters "pipeline" "infrastructure" "action" "exclude")) | fromYamlArray }}
     {{- if $newRelabel }}
       {{- $_ := set $job "relabel_configs" (concat $job.relabel_configs $newRelabel) }}
@@ -110,7 +110,7 @@ Build config file for standalone OpenTelemetry Collector
       {{- else -}}
         {{- $_ := set $job "relabel_configs" (append $job.relabel_configs $filter) -}}
       {{- end -}}
-    {{- end -}}
+    {{- end -}} 
     {{- $newRelabel := (include "opentelemetry-collector.getPrometheusFilters" (dict "filters" $filters "pipeline" "infrastructure" "action" "exclude")) | fromYamlArray }}
     {{- if $newRelabel }}
       {{- $_ := set $job "relabel_configs" (concat $job.relabel_configs $newRelabel) }}
@@ -131,7 +131,7 @@ Build config file for standalone OpenTelemetry Collector
       {{- else -}}
         {{- $_ := set $job "relabel_configs" (append $job.relabel_configs $filter) -}}
       {{- end -}}
-    {{- end -}}
+    {{- end -}} 
     {{- $newRelabel := (include "opentelemetry-collector.getPrometheusFilters" (dict "filters" $filters "pipeline" "applications" "action" "exclude")) | fromYamlArray }}
     {{- if $newRelabel }}
       {{- $_ := set $job "relabel_configs" (concat $job.relabel_configs $newRelabel) }}
@@ -157,7 +157,7 @@ Build config file for standalone OpenTelemetry Collector
       {{- else -}}
         {{- $_ := set $job "relabel_configs" (append $job.relabel_configs $filter) -}}
       {{- end -}}
-    {{- end -}}
+    {{- end -}} 
     {{- $newRelabel := (include "opentelemetry-collector.getPrometheusFilters" (dict "filters" $filters "pipeline" "infrastructure" "action" "exclude")) | fromYamlArray }}
     {{- if $newRelabel }}
       {{- $_ := set $job "relabel_configs" (concat $job.relabel_configs $newRelabel) }}
@@ -301,7 +301,7 @@ Build config file for standalone OpenTelemetry Collector daemonset
       {{- if not (contains "metric" $key) -}}
         {{- $_ := set $job "relabel_configs" (append $job.relabel_configs $filter) -}}
       {{- end -}}
-    {{- end -}}
+    {{- end -}} 
     {{- $newRelabel := (include "opentelemetry-collector.getPrometheusFilters" (dict "filters" $filters "pipeline" "infrastructure" "action" "exclude")) | fromYamlArray }}
     {{- if $newRelabel }}
       {{- $_ := set $job "relabel_configs" (concat $job.relabel_configs $newRelabel) }}
@@ -322,7 +322,7 @@ Build config file for standalone OpenTelemetry Collector daemonset
       {{- else -}}
         {{- $_ := set $job "relabel_configs" (append $job.relabel_configs $filter) -}}
       {{- end -}}
-    {{- end -}}
+    {{- end -}} 
     {{- $newRelabel := (include "opentelemetry-collector.getPrometheusFilters" (dict "filters" $filters "pipeline" "infrastructure" "action" "exclude")) | fromYamlArray }}
     {{- if $newRelabel }}
       {{- $_ := set $job "relabel_configs" (concat $job.relabel_configs $newRelabel) }}
@@ -343,7 +343,7 @@ Build config file for standalone OpenTelemetry Collector daemonset
       {{- else -}}
         {{- $_ := set $job "relabel_configs" (append $job.relabel_configs $filter) -}}
       {{- end -}}
-    {{- end -}}
+    {{- end -}} 
     {{- $newRelabel := (include "opentelemetry-collector.getPrometheusFilters" (dict "filters" $filters "pipeline" "applications" "action" "exclude")) | fromYamlArray }}
     {{- if $newRelabel }}
       {{- $_ := set $job "relabel_configs" (concat $job.relabel_configs $newRelabel) }}
@@ -368,7 +368,7 @@ Build config file for standalone OpenTelemetry Collector daemonset
       {{- else -}}
         {{- $_ := set $job "relabel_configs" (append $job.relabel_configs $filter) -}}
       {{- end -}}
-    {{- end -}}
+    {{- end -}} 
     {{- $newRelabel := (include "opentelemetry-collector.getPrometheusFilters" (dict "filters" $filters "pipeline" "infrastructure" "action" "exclude")) | fromYamlArray }}
     {{- if $newRelabel }}
       {{- $_ := set $job "relabel_configs" (concat $job.relabel_configs $newRelabel) }}
