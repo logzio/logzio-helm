@@ -109,3 +109,84 @@ jobs:
         if: always()
         run: kind delete cluster --name kind-${{ github.run_id }}-${{ matrix.mode }}
 
+  filter-test:
+    name: Filter Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        testfile:
+          - tests/filters/relable-filters.yaml
+          - tests/filters/relable-simple.yaml
+        mode: [daemonset, standalone]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4.3.0
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Install Kind
+        run: |
+          curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.26.0/kind-Linux-amd64"
+          chmod +x ./kind
+          sudo mv ./kind /usr/local/bin/kind
+
+      - name: Create Kind cluster
+        run: |
+          kind create cluster --name kind-${{ github.run_id }}-${{ matrix.testfile }}-${{ matrix.mode }}
+          kubectl cluster-info
+
+      - name: Deploy Helm Chart with test values
+        run: |
+          cd charts/logzio-telemetry
+          helm dependency build
+          helm upgrade --install test . \
+            --set collector.mode=${{ matrix.mode }} \
+            --set metrics.enabled=true \
+            --set applicationMetrics.enabled=true \
+            --set global.logzioMetricsToken=dummy \
+            -f ../../${{ matrix.testfile }}
+
+      - name: Wait for ConfigMap
+        run: |
+          for i in {1..30}; do
+            if kubectl get configmap test-otel-collector-${{ matrix.mode == 'daemonset' && 'ds' || 'standalone' }}; then
+              exit 0
+            fi
+            echo "Waiting for ConfigMap..."
+            sleep 5
+          done
+          echo "ConfigMap not found after waiting."
+          kubectl get configmap
+          exit 1
+
+      - name: Wait for all pods to be Ready
+        run: |
+          for i in {1..36}; do
+            NOT_READY=$(kubectl get pods --no-headers | grep -v ' Running ' | wc -l)
+            if [[ "$NOT_READY" -eq 0 ]]; then
+              echo "All pods are Ready."
+              kubectl get pods
+              exit 0
+            fi
+            echo "Waiting for all pods to be Ready..."
+            kubectl get pods
+            sleep 5
+          done
+          echo "ERROR: Not all pods became Ready in time."
+          kubectl get pods
+          exit 1
+
+      - name: Describe config map
+        run: |
+          kubectl describe cm test-otel-collector-${{ matrix.mode == 'daemonset' && 'ds' || 'standalone' }}
+
+      - name: Cleanup
+        if: always()
+        run: |
+          helm uninstall test || true
+          kind delete cluster --name kind-${{ github.run_id }}-${{ matrix.testfile }}-${{ matrix.mode }}
+
