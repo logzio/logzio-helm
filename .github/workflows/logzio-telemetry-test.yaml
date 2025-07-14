@@ -138,6 +138,11 @@ jobs:
         run: |
           kind create cluster --name kind-${{ github.run_id }}-${{ matrix.mode }}
           kubectl cluster-info
+      
+      - name: build helm dependencies
+        run: |
+          cd charts/logzio-telemetry
+          helm dependency build
 
       - name: Deploy Helm Chart with test values
         run: |
