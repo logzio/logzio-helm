@@ -1,0 +1,13 @@
+metrics:
+  enabled: true
+
+applicationMetrics:
+  enabled: true
+
+filters:
+  infrastructure:
+    exclude:
+      namespace: "kube-system"
+  applications:
+    include:
+      namespace: "prod" 

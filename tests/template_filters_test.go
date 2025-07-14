@@ -255,3 +255,132 @@ func equalStringSlices(a, b []string) bool {
 	}
 	return true
 }
+
+// --- Relabel config tests for logzio-telemetry ---
+type TelemetryScrapeConfig struct {
+	JobName              string        `yaml:"job_name"`
+	RelabelConfigs       []interface{} `yaml:"relabel_configs"`
+	MetricRelabelConfigs []interface{} `yaml:"metric_relabel_configs"`
+}
+
+type TelemetryPrometheusReceiver struct {
+	Config struct {
+		ScrapeConfigs []TelemetryScrapeConfig `yaml:"scrape_configs"`
+	} `yaml:"config"`
+}
+
+type TelemetryRelayRoot struct {
+	Receivers map[string]TelemetryPrometheusReceiver `yaml:"receivers"`
+}
+
+type relabelRule struct {
+	action       string
+	sourceLabels []string
+	targetLabel  string
+	regex        string
+}
+
+func TestHelmTelemetryRelabelConfigs(t *testing.T) {
+	chartPath := "../charts/logzio-telemetry"
+	configMapNames := []string{"test-otel-collector-ds", "test-otel-collector-standalone"}
+
+	// Define expected relabel rules for each test case and pipeline/job
+	cases := []struct {
+		name       string
+		valuesFile string
+		expect     map[string][]relabelRule // pipeline -> expected rules
+	}{
+		{
+			name:       "relable-simple",
+			valuesFile: "../tests/filters/relable-simple.yaml",
+			expect: map[string][]relabelRule{
+				"prometheus/infrastructure": {
+					{action: "drop", targetLabel: "namespace", regex: "kube-system"},
+				},
+				"prometheus/applications": {
+					{action: "keep", targetLabel: "namespace", regex: "prod"},
+				},
+			},
+		},
+		{
+			name:       "relable-filters",
+			valuesFile: "../tests/filters/relable-filters.yaml",
+			expect: map[string][]relabelRule{
+				"prometheus/infrastructure": {
+					{action: "drop", targetLabel: "namespace", regex: "kube-system|monitoring"},
+					{action: "drop", targetLabel: "deployment.environment", regex: "dev|test"},
+					{action: "drop", targetLabel: "service.tier", regex: "internal"},
+					{action: "keep", targetLabel: "deployment.environment", regex: "prod"},
+				},
+				"prometheus/applications": {
+					{action: "drop", targetLabel: "name", regex: "go_gc_duration_seconds|http_requests_total"},
+					{action: "keep", targetLabel: "namespace", regex: "prod|staging"},
+					{action: "keep", targetLabel: "http.status_code", regex: "2..|3.."},
+				},
+			},
+		},
+	}
+
+	for _, mode := range []string{"daemonset", "standalone"} {
+		for _, tc := range cases {
+			t.Run(tc.name+"_"+mode, func(t *testing.T) {
+				args := []string{"template", "test", chartPath, "-f", tc.valuesFile, "--set", "collector.mode=" + mode, "--set", "metrics.enabled=true", "--set", "applicationMetrics.enabled=true", "--set", "global.logzioMetricsToken=dummy"}
+				cmd := exec.Command("helm", args...)
+				out, err := cmd.CombinedOutput()
+				if err != nil {
+					t.Fatalf("helm template failed: %v\n%s", err, out)
+				}
+				manifests := splitYAMLDocs(string(out))
+				var found bool
+				for _, manifest := range manifests {
+					var k8s K8sManifest
+					if err := yaml.Unmarshal([]byte(manifest), &k8s); err != nil {
+						continue
+					}
+					if k8s.Kind == "ConfigMap" && contains(configMapNames, k8s.Metadata.Name) {
+						found = true
+						relay := k8s.Data["relay"]
+						var relayCfg TelemetryRelayRoot
+						if err := yaml.Unmarshal([]byte(relay), &relayCfg); err != nil {
+							t.Fatalf("failed to parse relay YAML: %v", err)
+						}
+						for pipeline, wantRules := range tc.expect {
+							receiver, ok := relayCfg.Receivers[pipeline]
+							if !ok {
+								t.Errorf("receiver %s not found in relay config for %s", pipeline, k8s.Metadata.Name)
+								continue
+							}
+							var got []map[string]interface{}
+							for _, sc := range receiver.Config.ScrapeConfigs {
+								for _, relabel := range sc.RelabelConfigs {
+									if m, ok := relabel.(map[string]interface{}); ok {
+										got = append(got, m)
+									}
+								}
+							}
+							for _, want := range wantRules {
+								if !relabelRulePresent(got, want) {
+									t.Errorf("expected relabel rule not found in %s: action=%s target_label=%s regex=%s", pipeline, want.action, want.targetLabel, want.regex)
+								}
+							}
+						}
+					}
+				}
+				if !found {
+					t.Errorf("ConfigMap not found in rendered output for mode %s", mode)
+				}
+			})
+		}
+	}
+}
+
+func relabelRulePresent(got []map[string]interface{}, want relabelRule) bool {
+	for _, m := range got {
+		if m["action"] == want.action && m["target_label"] == want.targetLabel {
+			if want.regex == "" || m["regex"] == want.regex {
+				return true
+			}
+		}
+	}
+	return false
+}
