@@ -115,8 +115,8 @@ jobs:
     strategy:
       matrix:
         testfile:
-          - tests/filters/relable-filters.yaml
-          - tests/filters/relable-simple.yaml
+          - relable-filters.yaml
+          - relable-simple.yaml
         mode: [daemonset, standalone]
     steps:
       - name: Checkout repository
@@ -148,7 +148,7 @@ jobs:
             --set metrics.enabled=true \
             --set applicationMetrics.enabled=true \
             --set global.logzioMetricsToken=dummy \
-            -f ../../${{ matrix.testfile }}
+            -f ../../tests/filters/${{ matrix.testfile }}
 
       - name: Wait for ConfigMap
         run: |
