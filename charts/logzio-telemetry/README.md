@@ -427,7 +427,6 @@ If you don't want the sub charts to installed add the relevant flag per sub char
 ## Change log
 * 5.3.0
   - Add new `filters` syntax for metrics relabeling (recommended over legacy prometheusFilters)
-  - CI and tests now validate relabel config output for both infrastructure and applications pipelines
 * 5.2.1
   - Fix Pod disruption budget selector label for SPM collector (Contributed by @jod972)
   - Add PriorityClassName for SPM collector (Contributed by @jod972)
