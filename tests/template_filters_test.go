@@ -324,6 +324,10 @@ func TestHelmTelemetryRelabelConfigs(t *testing.T) {
 	for _, mode := range []string{"daemonset", "standalone"} {
 		for _, tc := range cases {
 			t.Run(tc.name+"_"+mode, func(t *testing.T) {
+				cmdDep := exec.Command("helm", "dependency", "build", chartPath)
+				if outDep, err := cmdDep.CombinedOutput(); err != nil {
+					t.Fatalf("helm dependency build failed: %v\n%s", err, outDep)
+				}
 				args := []string{"template", "test", chartPath, "-f", tc.valuesFile, "--set", "collector.mode=" + mode, "--set", "metrics.enabled=true", "--set", "applicationMetrics.enabled=true", "--set", "global.logzioMetricsToken=dummy"}
 				cmd := exec.Command("helm", args...)
 				out, err := cmd.CombinedOutput()
