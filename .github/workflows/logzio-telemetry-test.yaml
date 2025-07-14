@@ -136,7 +136,7 @@ jobs:
 
       - name: Create Kind cluster
         run: |
-          kind create cluster --name kind-${{ github.run_id }}-${{ matrix.testfile }}-${{ matrix.mode }}
+          kind create cluster --name kind-${{ github.run_id }}-${{ matrix.mode }}
           kubectl cluster-info
 
       - name: Deploy Helm Chart with test values
@@ -188,5 +188,5 @@ jobs:
         if: always()
         run: |
           helm uninstall test || true
-          kind delete cluster --name kind-${{ github.run_id }}-${{ matrix.testfile }}-${{ matrix.mode }}
+          kind delete cluster --name kind-${{ github.run_id }}-${{ matrix.mode }}
 
