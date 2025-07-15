@@ -3,6 +3,7 @@ metrics:
 
 applicationMetrics:
   enabled: true
+  
 filters:
   infrastructure:
     exclude:
