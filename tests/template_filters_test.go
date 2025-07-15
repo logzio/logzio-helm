@@ -108,9 +108,19 @@ func TestHelmFilterTemplates(t *testing.T) {
 		t.Fatalf("no filter test cases found in %s", filterDir)
 	}
 
+	// Exclude relable-filters.yaml and relable-simple.yaml from logs/APM tests
+	exclude := map[string]bool{
+		"relable-filters.yaml": true,
+		"relable-simple.yaml":  true,
+	}
+
 	for _, chart := range charts {
 		for _, valuesFile := range files {
-			caseName := fmt.Sprintf("%s_%s", chart.Name, filepath.Base(valuesFile))
+			base := filepath.Base(valuesFile)
+			if exclude[base] {
+				continue
+			}
+			caseName := fmt.Sprintf("%s_%s", chart.Name, base)
 			t.Run(caseName, func(t *testing.T) {
 				args := append([]string{"template", "test", chart.ChartPath, "-f", valuesFile}, chart.ExtraArgs...)
 				cmd := exec.Command("helm", args...)
