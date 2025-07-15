@@ -139,16 +139,11 @@ jobs:
           kind create cluster --name kind-${{ github.run_id }}-${{ matrix.mode }}
           kubectl cluster-info
       
-      - name: Add prometheus-community repo
-        run: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-      - name: build helm dependencies
-        run: |
-          cd charts/logzio-telemetry
-          helm dependency build
 
       - name: Deploy Helm Chart with test values
         run: |
           cd charts/logzio-telemetry
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
           helm dependency build
           helm upgrade --install test . \
             --set collector.mode=${{ matrix.mode }} \
@@ -156,7 +151,9 @@ jobs:
             --set applicationMetrics.enabled=true \
             --set global.logzioMetricsToken=dummy \
             -f ../../tests/filters/${{ matrix.testfile }}
-
+      - name: Print ConfigMaps in default namespace
+        run: |
+          kubectl get configmap -o custom-columns=NAME:.metadata.name
       - name: Wait for ConfigMap
         run: |
           for i in {1..30}; do

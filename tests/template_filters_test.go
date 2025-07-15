@@ -292,7 +292,7 @@ type relabelRule struct {
 
 func TestHelmTelemetryRelabelConfigs(t *testing.T) {
 	chartPath := "../charts/logzio-telemetry"
-	configMapNames := []string{"test-otel-collector-ds", "test-otel-collector-standalone"}
+	configMapNames := []string{"test-otel-collector-ds", "test-otel-collector-standalone", "logzio-k8s-telemetry-otel-collector-ds", "logzio-k8s-telemetry-otel-collector-standalone"}
 
 	// Define expected relabel rules for each test case and pipeline/job
 	cases := []struct {
@@ -334,23 +334,35 @@ func TestHelmTelemetryRelabelConfigs(t *testing.T) {
 	for _, mode := range []string{"daemonset", "standalone"} {
 		for _, tc := range cases {
 			t.Run(tc.name+"_"+mode, func(t *testing.T) {
-				cmdDep := exec.Command("helm", "dependency", "build")
-				cmdDep.Dir = chartPath
-				if outDep, err := cmdDep.CombinedOutput(); err != nil {
-					t.Fatalf("helm dependency build failed: %v\n%s", err, outDep)
-				}
+				exec.Command("helm", "repo", "add", "prometheus-community", "https://prometheus-community.github.io/helm-charts").Run()
+				exec.Command("helm", "repo", "update").Run()
+				exec.Command("helm", "dependency", "build").Run()
 				args := []string{"template", "test", chartPath, "-f", tc.valuesFile, "--set", "collector.mode=" + mode, "--set", "metrics.enabled=true", "--set", "applicationMetrics.enabled=true", "--set", "global.logzioMetricsToken=dummy"}
 				cmd := exec.Command("helm", args...)
 				out, err := cmd.CombinedOutput()
 				if err != nil {
-					t.Fatalf("helm template failed: %v\n%s", err, out)
+					t.Logf("helm template failed: %v\n%s", err, out)
+					manifests := splitYAMLDocs(string(out))
+					var foundNames []string
+					for _, manifest := range manifests {
+						var k8s K8sManifest
+						if err := yaml.Unmarshal([]byte(manifest), &k8s); err == nil && k8s.Kind == "ConfigMap" {
+							foundNames = append(foundNames, k8s.Metadata.Name)
+						}
+					}
+					t.Logf("ConfigMaps found in rendered output: %v", foundNames)
+					t.Fatalf("helm template failed: %v", err)
 				}
 				manifests := splitYAMLDocs(string(out))
 				var found bool
+				var foundNames []string
 				for _, manifest := range manifests {
 					var k8s K8sManifest
 					if err := yaml.Unmarshal([]byte(manifest), &k8s); err != nil {
 						continue
+					}
+					if k8s.Kind == "ConfigMap" {
+						foundNames = append(foundNames, k8s.Metadata.Name)
 					}
 					if k8s.Kind == "ConfigMap" && contains(configMapNames, k8s.Metadata.Name) {
 						found = true
@@ -382,6 +394,7 @@ func TestHelmTelemetryRelabelConfigs(t *testing.T) {
 					}
 				}
 				if !found {
+					t.Logf("ConfigMaps found in rendered output: %v", foundNames)
 					t.Errorf("ConfigMap not found in rendered output for mode %s", mode)
 				}
 			})
