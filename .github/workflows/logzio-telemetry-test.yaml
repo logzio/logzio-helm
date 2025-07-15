@@ -157,7 +157,7 @@ jobs:
       - name: Wait for ConfigMap
         run: |
           for i in {1..30}; do
-            if kubectl get configmap logzio-k8s-telemetry-otel-collector-${{ matrix.mode == 'daemonset' && 'ds' || 'standalone' }}; then
+            if kubectl get configmap test-otel-collector-${{ matrix.mode == 'daemonset' && 'ds' || 'standalone' }}; then
               exit 0
             fi
             echo "Waiting for ConfigMap..."
@@ -186,7 +186,7 @@ jobs:
 
       - name: Describe config map
         run: |
-          kubectl describe cm logzio-k8s-telemetry-otel-collector-${{ matrix.mode == 'daemonset' && 'ds' || 'standalone' }}
+          kubectl describe cm test-otel-collector-${{ matrix.mode == 'daemonset' && 'ds' || 'standalone' }}
 
       - name: Cleanup
         if: always()
