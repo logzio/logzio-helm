@@ -384,6 +384,7 @@ func TestHelmTelemetryRelabelConfigs(t *testing.T) {
 							for _, want := range wantRules {
 								if !relabelRulePresent(got, want) {
 									t.Errorf("expected relabel rule not found in %s: action=%s target_label=%s regex=%s", pipeline, want.action, want.targetLabel, want.regex)
+									t.Logf("Full relay YAML for %s: \n%s", k8s.Metadata.Name, relay)
 								}
 							}
 						}
