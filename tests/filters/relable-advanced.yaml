@@ -3,24 +3,24 @@ metrics:
 
 applicationMetrics:
   enabled: true
-  
+
 filters:
   infrastructure:
     exclude:
       namespace: "kube-system|monitoring"
       attribute:
-        deployment.environment: "dev|test"
-        service.tier: "internal"
+        deployment_environment: "dev|test"
+        service_tier: "internal"
     include:
       attribute:
-        deployment.environment: "prod"
+        deployment_environment: "prod"
   applications:
     exclude:
       name: "go_gc_duration_seconds|http_requests_total"
     include:
       namespace: "prod|staging"
       attribute:
-        http.status_code: "2..|3.."
+        http_status_code: "2..|3.."
 
 # Legacy prometheusFilters (for backward compatibility)
 prometheusFilters:
