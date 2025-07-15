@@ -354,7 +354,7 @@ func TestHelmTelemetryRelabelConfigs(t *testing.T) {
 					{action: "keep", regex: "prod", sourceLabels: []string{"deployment.environment"}},
 				},
 				"prometheus/applications": {
-					{action: "drop", regex: "go_gc_duration_seconds|http_requests_total", sourceLabels: []string{"name"}},
+					{action: "drop", regex: "go_gc_duration_seconds|http_requests_total", sourceLabels: []string{"__name__"}},
 					{action: "keep", regex: "prod|staging", sourceLabels: []string{"namespace"}},
 					{action: "keep", regex: "2..|3..", sourceLabels: []string{"http.status_code"}},
 				},
