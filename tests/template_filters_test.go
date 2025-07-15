@@ -349,14 +349,14 @@ func TestHelmTelemetryRelabelConfigs(t *testing.T) {
 			expect: map[string][]relabelRule{
 				"prometheus/infrastructure": {
 					{action: "drop", regex: "kube-system|monitoring", sourceLabels: []string{"namespace"}},
-					{action: "drop", regex: "dev|test", sourceLabels: []string{"deployment.environment"}},
-					{action: "drop", regex: "internal", sourceLabels: []string{"service.tier"}},
+					{action: "drop", regex: "dev|test", sourceLabels: []string{"deployment_environment"}},
+					{action: "drop", regex: "internal", sourceLabels: []string{"service_tier"}},
 					{action: "keep", regex: "prod", sourceLabels: []string{"deployment.environment"}},
 				},
 				"prometheus/applications": {
 					{action: "drop", regex: "go_gc_duration_seconds|http_requests_total", sourceLabels: []string{"__name__"}},
 					{action: "keep", regex: "prod|staging", sourceLabels: []string{"namespace"}},
-					{action: "keep", regex: "2..|3..", sourceLabels: []string{"http.status_code"}},
+					{action: "keep", regex: "2..|3..", sourceLabels: []string{"http_status_code"}},
 				},
 			},
 		},
