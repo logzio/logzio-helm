@@ -285,15 +285,47 @@ type TelemetryRelayRoot struct {
 type relabelRule struct {
 	action       string
 	sourceLabels []string
-	targetLabel  string
 	regex        string
+}
+
+func relabelRulePresent(got []map[string]interface{}, want relabelRule) bool {
+	for _, m := range got {
+		if m["action"] != want.action {
+			continue
+		}
+		if m["regex"] != want.regex {
+			continue
+		}
+		if want.sourceLabels == nil {
+			return true
+		}
+		if matchStringSlice(m["source_labels"], want.sourceLabels) {
+			return true
+		}
+	}
+	return false
+}
+
+func matchStringSlice(got interface{}, want []string) bool {
+	arr, ok := got.([]interface{})
+	if !ok {
+		return false
+	}
+	if len(arr) != len(want) {
+		return false
+	}
+	for i, v := range arr {
+		if s, ok := v.(string); !ok || s != want[i] {
+			return false
+		}
+	}
+	return true
 }
 
 func TestHelmTelemetryRelabelConfigs(t *testing.T) {
 	chartPath := "../charts/logzio-telemetry"
 	configMapNames := []string{"test-otel-collector-ds", "test-otel-collector-standalone", "logzio-k8s-telemetry-otel-collector-ds", "logzio-k8s-telemetry-otel-collector-standalone"}
 
-	// Define expected relabel rules for each test case and pipeline/job
 	cases := []struct {
 		name       string
 		valuesFile string
@@ -304,10 +336,10 @@ func TestHelmTelemetryRelabelConfigs(t *testing.T) {
 			valuesFile: "../tests/filters/relable-simple.yaml",
 			expect: map[string][]relabelRule{
 				"prometheus/infrastructure": {
-					{action: "drop", targetLabel: "namespace", regex: "kube-system"},
+					{action: "drop", regex: "kube-system", sourceLabels: []string{"namespace"}},
 				},
 				"prometheus/applications": {
-					{action: "keep", targetLabel: "namespace", regex: "prod"},
+					{action: "keep", regex: "prod", sourceLabels: []string{"namespace"}},
 				},
 			},
 		},
@@ -316,20 +348,21 @@ func TestHelmTelemetryRelabelConfigs(t *testing.T) {
 			valuesFile: "../tests/filters/relable-filters.yaml",
 			expect: map[string][]relabelRule{
 				"prometheus/infrastructure": {
-					{action: "drop", targetLabel: "namespace", regex: "kube-system|monitoring"},
-					{action: "drop", targetLabel: "deployment.environment", regex: "dev|test"},
-					{action: "drop", targetLabel: "service.tier", regex: "internal"},
-					{action: "keep", targetLabel: "deployment.environment", regex: "prod"},
+					{action: "drop", regex: "kube-system|monitoring", sourceLabels: []string{"namespace"}},
+					{action: "drop", regex: "dev|test", sourceLabels: []string{"deployment.environment"}},
+					{action: "drop", regex: "internal", sourceLabels: []string{"service.tier"}},
+					{action: "keep", regex: "prod", sourceLabels: []string{"deployment.environment"}},
 				},
 				"prometheus/applications": {
-					{action: "drop", targetLabel: "name", regex: "go_gc_duration_seconds|http_requests_total"},
-					{action: "keep", targetLabel: "namespace", regex: "prod|staging"},
-					{action: "keep", targetLabel: "http.status_code", regex: "2..|3.."},
+					{action: "drop", regex: "go_gc_duration_seconds|http_requests_total", sourceLabels: []string{"name"}},
+					{action: "keep", regex: "prod|staging", sourceLabels: []string{"namespace"}},
+					{action: "keep", regex: "2..|3..", sourceLabels: []string{"http.status_code"}},
 				},
 			},
 		},
 	}
 
+	// Define expected relabel rules for each test case and pipeline/job
 	for _, mode := range []string{"daemonset", "standalone"} {
 		for _, tc := range cases {
 			t.Run(tc.name+"_"+mode, func(t *testing.T) {
@@ -383,7 +416,7 @@ func TestHelmTelemetryRelabelConfigs(t *testing.T) {
 							}
 							for _, want := range wantRules {
 								if !relabelRulePresent(got, want) {
-									t.Errorf("expected relabel rule not found in %s: action=%s target_label=%s regex=%s", pipeline, want.action, want.targetLabel, want.regex)
+									t.Errorf("expected relabel rule not found in %s: action=%s regex=%s source_labels=%v", pipeline, want.action, want.regex, want.sourceLabels)
 									t.Logf("Full relay YAML for %s: \n%s", k8s.Metadata.Name, relay)
 								}
 							}
@@ -397,15 +430,4 @@ func TestHelmTelemetryRelabelConfigs(t *testing.T) {
 			})
 		}
 	}
-}
-
-func relabelRulePresent(got []map[string]interface{}, want relabelRule) bool {
-	for _, m := range got {
-		if m["action"] == want.action && m["target_label"] == want.targetLabel {
-			if want.regex == "" || m["regex"] == want.regex {
-				return true
-			}
-		}
-	}
-	return false
 }
