@@ -173,19 +173,54 @@ jobs:
 
       - name: Wait for all pods to be Ready
         run: |
+          # Wait for all pods to exist
           for i in {1..36}; do
-            NOT_READY=$(kubectl get pods --no-headers | grep -v ' Running ' | wc -l)
-            if [[ "$NOT_READY" -eq 0 ]]; then
-              echo "All pods are Ready."
+            PODS=$(kubectl get pods --no-headers | wc -l)
+            if [[ "$PODS" -gt 0 ]]; then
+              break
+            fi
+            echo "Waiting for pods to be created..."
+            sleep 5
+          done
+          # Now check each pod for true readiness
+          for i in {1..36}; do
+            NOT_READY=0
+            BAD_STATUS=0
+            for POD in $(kubectl get pods --no-headers | awk '{print $1}'); do
+              PHASE=$(kubectl get pod $POD -o jsonpath='{.status.phase}')
+              READY=$(kubectl get pod $POD -o jsonpath='{.status.containerStatuses[*].ready}')
+              RESTARTS=$(kubectl get pod $POD -o jsonpath='{.status.containerStatuses[*].restartCount}')
+              WAITING_REASON=$(kubectl get pod $POD -o jsonpath='{.status.containerStatuses[0].state.waiting.reason}')
+              TERMINATED_REASON=$(kubectl get pod $POD -o jsonpath='{.status.containerStatuses[0].state.terminated.reason}')
+              if [[ "$PHASE" != "Running" ]]; then
+                echo "Pod $POD is not Running: Phase=$PHASE"
+                BAD_STATUS=1
+              fi
+              if [[ "$READY" != "true" ]]; then
+                echo "Pod $POD is not Ready: Ready=$READY"
+                NOT_READY=1
+              fi
+              if [[ "$WAITING_REASON" == "CrashLoopBackOff" || "$WAITING_REASON" == "Error" || "$PHASE" == "Pending" ]]; then
+                echo "Pod $POD is unhealthy: WaitingReason=$WAITING_REASON Phase=$PHASE"
+                BAD_STATUS=1
+              fi
+              if [[ "$TERMINATED_REASON" != "" ]]; then
+                echo "Pod $POD has terminated: TerminatedReason=$TERMINATED_REASON"
+                BAD_STATUS=1
+              fi
+            done
+            if [[ "$NOT_READY" -eq 0 && "$BAD_STATUS" -eq 0 ]]; then
+              echo "All pods are healthy and Ready."
               kubectl get pods
               exit 0
             fi
-            echo "Waiting for all pods to be Ready..."
+            echo "Waiting for all pods to be healthy and Ready..."
             kubectl get pods
             sleep 5
           done
-          echo "ERROR: Not all pods became Ready in time."
+          echo "ERROR: Not all pods became healthy and Ready in time."
           kubectl get pods
+          kubectl describe pods
           exit 1
 
       - name: Cleanup
