@@ -103,19 +103,6 @@ prometheusFilters:
         custom: "service_to_drop"
 ```
 
-### Legacy Filter Flags
-
-Enable specific legacy filter features:
-
-```yaml
-enableMetricsFilter:
-  aks: true      # Enable AKS metrics preset
-  eks: true      # Enable EKS metrics preset
-  gke: true      # Enable GKE metrics preset
-  dropKubeSystem: true  # Enable kube-system namespace exclusion
-
-disableKubeDnsScraping: true  # Enable kube-dns service exclusion
-```
 
 ## Filter Application
 

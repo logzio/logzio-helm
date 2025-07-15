@@ -283,17 +283,17 @@ filters:
     exclude:
       namespace: "kube-system|monitoring"
       attribute:
-        deployment.environment: "dev|test"
+        deployment_environment: "dev|test"
     include:
       attribute:
-        deployment.environment: "prod"
+        deployment_environment: "prod"
   applications:
     exclude:
       name: "go_gc_duration_seconds|http_requests_total"
     include:
       namespace: "prod|staging"
       attribute:
-        http.status_code: "2..|3.."
+        http_status_code: "2..|3.."
 ```
 
 - Use `include` and `exclude` blocks under each pipeline to specify which metrics, namespaces, or attributes to keep or drop.
