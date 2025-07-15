@@ -166,6 +166,10 @@ jobs:
           echo "ConfigMap not found after waiting."
           kubectl get configmap
           exit 1
+          
+      - name: Describe config map
+        run: |
+          kubectl describe cm test-otel-collector-${{ matrix.mode == 'daemonset' && 'ds' || 'standalone' }}
 
       - name: Wait for all pods to be Ready
         run: |
@@ -183,10 +187,6 @@ jobs:
           echo "ERROR: Not all pods became Ready in time."
           kubectl get pods
           exit 1
-
-      - name: Describe config map
-        run: |
-          kubectl describe cm test-otel-collector-${{ matrix.mode == 'daemonset' && 'ds' || 'standalone' }}
 
       - name: Cleanup
         if: always()

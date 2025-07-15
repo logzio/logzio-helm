@@ -108,7 +108,6 @@ func TestHelmFilterTemplates(t *testing.T) {
 		t.Fatalf("no filter test cases found in %s", filterDir)
 	}
 
-	// Exclude relable-filters.yaml and relable-simple.yaml from logs/APM tests
 	exclude := map[string]bool{
 		"relable-filters.yaml": true,
 		"relable-simple.yaml":  true,
@@ -334,9 +333,6 @@ func TestHelmTelemetryRelabelConfigs(t *testing.T) {
 	for _, mode := range []string{"daemonset", "standalone"} {
 		for _, tc := range cases {
 			t.Run(tc.name+"_"+mode, func(t *testing.T) {
-				exec.Command("helm", "repo", "add", "prometheus-community", "https://prometheus-community.github.io/helm-charts").Run()
-				exec.Command("helm", "repo", "update").Run()
-				exec.Command("helm", "dependency", "build").Run()
 				args := []string{"template", "test", chartPath, "-f", tc.valuesFile, "--set", "collector.mode=" + mode, "--set", "metrics.enabled=true", "--set", "applicationMetrics.enabled=true", "--set", "global.logzioMetricsToken=dummy"}
 				cmd := exec.Command("helm", args...)
 				out, err := cmd.CombinedOutput()
