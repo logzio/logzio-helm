@@ -116,7 +116,7 @@ jobs:
     strategy:
       matrix:
         testfile:
-          - relable-filters.yaml
+          - relable-advanced.yaml
           - relable-simple.yaml
         mode: [daemonset, standalone]
     steps:
