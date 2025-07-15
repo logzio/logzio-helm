@@ -1,5 +1,6 @@
 name: Test `logzio-telemetry` chart
-
+permissions:
+  contents: read
 on:
   pull_request:
     branches:
