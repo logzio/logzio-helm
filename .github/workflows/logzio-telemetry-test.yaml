@@ -139,6 +139,8 @@ jobs:
           kind create cluster --name kind-${{ github.run_id }}-${{ matrix.mode }}
           kubectl cluster-info
       
+      - name: Add prometheus-community repo
+        run: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
       - name: build helm dependencies
         run: |
           cd charts/logzio-telemetry
