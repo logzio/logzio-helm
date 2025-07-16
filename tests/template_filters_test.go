@@ -109,8 +109,8 @@ func TestHelmFilterTemplates(t *testing.T) {
 	}
 
 	exclude := map[string]bool{
-		"relable-advanced.yaml": true,
-		"relable-simple.yaml":   true,
+		"relabel-advanced.yaml": true,
+		"relabel-simple.yaml":   true,
 	}
 
 	for _, chart := range charts {
@@ -332,8 +332,8 @@ func TestHelmTelemetryRelabelConfigs(t *testing.T) {
 		expect     map[string][]relabelRule // pipeline -> expected rules
 	}{
 		{
-			name:       "relable-simple",
-			valuesFile: "../tests/filters/relable-simple.yaml",
+			name:       "relabel-simple",
+			valuesFile: "../tests/filters/relabel-simple.yaml",
 			expect: map[string][]relabelRule{
 				"prometheus/infrastructure": {
 					{action: "drop", regex: "kube-system", sourceLabels: []string{"namespace"}},
@@ -344,8 +344,8 @@ func TestHelmTelemetryRelabelConfigs(t *testing.T) {
 			},
 		},
 		{
-			name:       "relable-filters",
-			valuesFile: "../tests/filters/relable-advanced.yaml",
+			name:       "relabel-filters",
+			valuesFile: "../tests/filters/relabel-advanced.yaml",
 			expect: map[string][]relabelRule{
 				"prometheus/infrastructure": {
 					{action: "drop", regex: "kube-system|monitoring", sourceLabels: []string{"namespace"}},

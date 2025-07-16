@@ -116,8 +116,8 @@ jobs:
     strategy:
       matrix:
         testfile:
-          - relable-advanced.yaml
-          - relable-simple.yaml
+          - relabel-advanced.yaml
+          - relabel-simple.yaml
         mode: [daemonset, standalone]
     steps:
       - name: Checkout repository
