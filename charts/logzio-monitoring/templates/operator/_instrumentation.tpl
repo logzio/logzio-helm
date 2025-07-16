@@ -42,6 +42,10 @@ spec:
     {{- end }}
   java:
     env:
+      - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+        value: {{ include "otel-operator.serviceAddr" (dict "serviceName" .Values.instrumentation.tracesServiceName "releaseNamespace" .Release.Namespace) }}:4317
+      - name: OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
+        value: {{ include "otel-operator.serviceAddr" (dict "serviceName" .Values.instrumentation.metricsServiceName "releaseNamespace" .Release.Namespace) }}:4317
       - name: OTEL_METRICS_EXPORTER
         value: {{ include "otel-operator.rsourceExporterType" (dict "enabledResource" .Values.instrumentation.java.metrics.enabled "enabledSubChart" $metricsEnabled) }}
       - name: OTEL_TRACES_EXPORTER
