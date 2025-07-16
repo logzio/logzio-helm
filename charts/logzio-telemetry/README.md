@@ -272,8 +272,36 @@ To enable metrics filtering, set the following flag when deploying the chart, re
 ```
 --set enableMetricsFilter.<<cloud-service>>=true
 ```
+### Using the filters syntax for metrics relabeling
 
-### Adding addiotional filters for metrics scraping
+You can now use the new `filters` syntax in your `values.yaml` to define flexible include/exclude rules for metrics relabeling in both the infrastructure and applications pipelines. This approach is recommended over the legacy `prometheusFilters` syntax and is fully tested in CI.
+
+Example:
+```yaml
+filters:
+  infrastructure:
+    exclude:
+      namespace: "kube-system|monitoring"
+      attribute:
+        deployment_environment: "dev|test"
+    include:
+      attribute:
+        deployment_environment: "prod"
+  applications:
+    exclude:
+      name: "go_gc_duration_seconds|http_requests_total"
+    include:
+      namespace: "prod|staging"
+      attribute:
+        http_status_code: "2..|3.."
+```
+
+- Use `include` and `exclude` blocks under each pipeline to specify which metrics, namespaces, or attributes to keep or drop.
+- For full details and advanced usage, see [FILTERS.md](./FILTERS.md).
+
+
+
+### Adding addiotional legacy prometheusFitlers for metrics scraping
 
 To add flexibility for the metrics filtering, you can add custom filters for the following:
 - metric name (keep & drop)
@@ -397,6 +425,8 @@ If you don't want the sub charts to installed add the relevant flag per sub char
 
 
 ## Change log
+* 5.3.0
+  - Add new `filters` syntax for metrics relabeling (recommended over legacy prometheusFilters)
 * 5.2.1
   - Fix Pod disruption budget selector label for SPM collector (Contributed by @jod972)
   - Add PriorityClassName for SPM collector (Contributed by @jod972)

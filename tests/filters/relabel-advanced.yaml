@@ -1,0 +1,66 @@
+metrics:
+  enabled: true
+
+applicationMetrics:
+  enabled: true
+
+filters:
+  infrastructure:
+    exclude:
+      namespace: "kube-system|monitoring"
+      attribute:
+        deployment_environment: "dev|test"
+        service_tier: "internal"
+    include:
+      attribute:
+        deployment_environment: "prod"
+  applications:
+    exclude:
+      name: "go_gc_duration_seconds|http_requests_total"
+    include:
+      namespace: "prod|staging"
+      attribute:
+        http_status_code: "2..|3.."
+
+# Legacy prometheusFilters (for backward compatibility)
+prometheusFilters:
+  metrics:
+    infrastructure:
+      keep:
+        custom: "container_cpu_usage_seconds_total|container_memory_working_set_bytes|node_cpu_seconds_total"
+      drop:
+        custom: "go_gc_duration_seconds|http_requests_total"
+    applications:
+      keep:
+        custom: "http_requests_total|http_request_duration_seconds"
+      drop:
+        custom: "go_gc_duration_seconds"
+  
+  namespaces:
+    infrastructure:
+      keep:
+        custom: "default|monitoring"
+      drop:
+        kubeSystem: "kube-system"
+    applications:
+      keep:
+        custom: "prod|staging"
+      drop:
+        custom: "dev|test"
+  
+  services:
+    infrastructure:
+      keep:
+        custom: "kubernetes|kube-dns"
+      drop:
+        kubeDns: "kube-dns"
+        custom: "internal-service"
+
+# Enable legacy filter flags
+enableMetricsFilter:
+  aks: true
+  eks: false
+  gke: false
+  dropKubeSystem: true
+
+disableKubeDnsScraping: true 

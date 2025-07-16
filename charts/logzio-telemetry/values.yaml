@@ -58,6 +58,32 @@ secrets:
   SamplingProbability: 10  # Traces Sampling Probability
   SamplingLatency: 500  # Traces Sampling Latency
 
+# ---
+# Filters for Prometheus metrics (infrastructure/applications pipelines)
+# 
+# NEW SYNTAX (Recommended):
+# Use this simpler, more flexible syntax for new deployments:
+# filters:
+#   infrastructure:
+#     exclude:
+#       namespace: "kube-system"
+#       attribute:
+#         deployment.environment: "dev|test"
+#   applications:
+#     exclude:
+#       name: "go_gc_duration_seconds"
+#     include:
+#       namespace: "prod"
+#       attribute:
+#         http.status_code: "5*"
+#
+# LEGACY SYNTAX (Backward Compatibility):
+# The prometheusFilters section below is maintained for existing customers.
+# For new deployments, prefer the new filters syntax above.
+#
+# All filter values are regular expressions.
+# See README.md for full syntax and mapping.
+filters: {}
 
 managedServiceAccount: true 
 
@@ -1337,6 +1363,17 @@ opencost:
           processors:
             - filter/opencost-exporter
 
+# ---
+# PROMETHEUS FILTERS (Backward Compatibility)
+# This section is maintained for existing customers using the prometheusFilters syntax.
+# For new deployments, prefer the new 'filters' syntax above.
+# 
+# The prometheusFilters section provides complex filtering capabilities for:
+# - Metrics filtering (keep/drop) with cloud provider presets (aks/eks/gke)
+# - Namespace filtering with kube-system exclusion
+# - Service filtering with kube-dns exclusion
+# 
+# All values should be listed with | separator, as regex. i.e: metric_1|metric_2|metric_3
 prometheusFilters:
   # Metrics names to be filtered
   # All values should be listed with | seperator, as regex. i.e: metric_1|metric_2|metric_3

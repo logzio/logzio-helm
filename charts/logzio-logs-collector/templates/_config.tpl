@@ -227,5 +227,5 @@ IsMatch(resource.attributes["{{ $sub }}"], "{{ $regex }}")
     {{- end }}
   {{- end }}
   {{- $_ := set $pipeline "processors" $new }}
-{{- end }}
+  {{- end }}
 {{- end }}

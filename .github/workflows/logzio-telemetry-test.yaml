@@ -1,5 +1,6 @@
 name: Test `logzio-telemetry` chart
-
+permissions:
+  contents: read
 on:
   pull_request:
     branches:
@@ -108,4 +109,124 @@ jobs:
       - name: Delete Kind cluster
         if: always()
         run: kind delete cluster --name kind-${{ github.run_id }}-${{ matrix.mode }}
+
+  filter-test:
+    name: Filter Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        testfile:
+          - relabel-advanced.yaml
+          - relabel-simple.yaml
+        mode: [daemonset, standalone]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4.3.0
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Install Kind
+        run: |
+          curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.26.0/kind-Linux-amd64"
+          chmod +x ./kind
+          sudo mv ./kind /usr/local/bin/kind
+
+      - name: Create Kind cluster
+        run: |
+          kind create cluster --name kind-${{ github.run_id }}-${{ matrix.mode }}
+          kubectl cluster-info
+      
+
+      - name: Deploy Helm Chart with test values
+        run: |
+          cd charts/logzio-telemetry
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+          helm dependency build
+          helm upgrade --install test . \
+            --set collector.mode=${{ matrix.mode }} \
+            --set metrics.enabled=true \
+            --set applicationMetrics.enabled=true \
+            --set global.logzioMetricsToken=dummy \
+            -f ../../tests/filters/${{ matrix.testfile }}
+      - name: Print ConfigMaps in default namespace
+        run: |
+          kubectl get configmap -o custom-columns=NAME:.metadata.name
+      - name: Wait for ConfigMap
+        run: |
+          for i in {1..30}; do
+            if kubectl get configmap test-otel-collector-${{ matrix.mode == 'daemonset' && 'ds' || 'standalone' }}; then
+              exit 0
+            fi
+            echo "Waiting for ConfigMap..."
+            sleep 5
+          done
+          echo "ConfigMap not found after waiting."
+          kubectl get configmap
+          exit 1
+          
+      - name: Describe config map
+        run: |
+          kubectl describe cm test-otel-collector-${{ matrix.mode == 'daemonset' && 'ds' || 'standalone' }}
+
+      - name: Wait for all pods to be Ready
+        run: |
+          # Wait for all pods to exist
+          for i in {1..36}; do
+            PODS=$(kubectl get pods --no-headers | wc -l)
+            if [[ "$PODS" -gt 0 ]]; then
+              break
+            fi
+            echo "Waiting for pods to be created..."
+            sleep 5
+          done
+          # Now check each pod for true readiness
+          for i in {1..36}; do
+            NOT_READY=0
+            BAD_STATUS=0
+            for POD in $(kubectl get pods --no-headers | awk '{print $1}'); do
+              PHASE=$(kubectl get pod $POD -o jsonpath='{.status.phase}')
+              READY=$(kubectl get pod $POD -o jsonpath='{.status.containerStatuses[*].ready}')
+              RESTARTS=$(kubectl get pod $POD -o jsonpath='{.status.containerStatuses[*].restartCount}')
+              WAITING_REASON=$(kubectl get pod $POD -o jsonpath='{.status.containerStatuses[0].state.waiting.reason}')
+              TERMINATED_REASON=$(kubectl get pod $POD -o jsonpath='{.status.containerStatuses[0].state.terminated.reason}')
+              if [[ "$PHASE" != "Running" ]]; then
+                echo "Pod $POD is not Running: Phase=$PHASE"
+                BAD_STATUS=1
+              fi
+              if [[ "$READY" != "true" ]]; then
+                echo "Pod $POD is not Ready: Ready=$READY"
+                NOT_READY=1
+              fi
+              if [[ "$WAITING_REASON" == "CrashLoopBackOff" || "$WAITING_REASON" == "Error" || "$PHASE" == "Pending" ]]; then
+                echo "Pod $POD is unhealthy: WaitingReason=$WAITING_REASON Phase=$PHASE"
+                BAD_STATUS=1
+              fi
+              if [[ "$TERMINATED_REASON" != "" ]]; then
+                echo "Pod $POD has terminated: TerminatedReason=$TERMINATED_REASON"
+                BAD_STATUS=1
+              fi
+            done
+            if [[ "$NOT_READY" -eq 0 && "$BAD_STATUS" -eq 0 ]]; then
+              echo "All pods are healthy and Ready."
+              kubectl get pods
+              exit 0
+            fi
+            echo "Waiting for all pods to be healthy and Ready..."
+            kubectl get pods
+            sleep 5
+          done
+          echo "ERROR: Not all pods became healthy and Ready in time."
+          kubectl get pods
+          kubectl describe pods
+          exit 1
+
+      - name: Cleanup
+        if: always()
+        run: |
+          helm uninstall test || true
+          kind delete cluster --name kind-${{ github.run_id }}-${{ matrix.mode }}
 
