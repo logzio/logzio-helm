@@ -127,6 +127,32 @@ func TestSpmMetrics(t *testing.T) {
 	testMetrics(t, requiredMetrics, query)
 }
 
+func TestMetricsFilterExcludeUpAndGoGcDurationSeconds(t *testing.T) {
+	metricsApiKey := os.Getenv("LOGZIO_METRICS_API_KEY")
+	if metricsApiKey == "" {
+		t.Fatalf("LOGZIO_METRICS_API_KEY environment variable not set")
+	}
+	envId := os.Getenv("ENV_ID")
+
+	query := fmt.Sprintf(`up{env_id="%s"}`, envId)
+	metricResponse, err := fetchMetrics(metricsApiKey, url.QueryEscape(query))
+	if err != nil {
+		t.Fatalf("Failed to fetch metrics: %v", err)
+	}
+	if len(metricResponse.Data.Result) > 0 {
+		t.Errorf("Expected up to be filtered out, but found %d results", len(metricResponse.Data.Result))
+	}
+
+	query = fmt.Sprintf(`go_gc_duration_seconds{env_id="%s"}`, envId)
+	metricResponse, err = fetchMetrics(metricsApiKey, url.QueryEscape(query))
+	if err != nil {
+		t.Fatalf("Failed to fetch metrics: %v", err)
+	}
+	if len(metricResponse.Data.Result) > 0 {
+		t.Errorf("Expected go_gc_duration_seconds to be filtered out, but found %d results", len(metricResponse.Data.Result))
+	}
+}
+
 func testMetrics(t *testing.T, requiredMetrics map[string][]string, query string) {
 	metricsApiKey := os.Getenv("LOGZIO_METRICS_API_KEY")
 	if metricsApiKey == "" {

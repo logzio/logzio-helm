@@ -4,11 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"go.uber.org/zap"
 	"io"
 	"net/http"
 	"os"
 	"testing"
+
+	"go.uber.org/zap"
 )
 
 type LogResponse struct {
@@ -91,4 +92,26 @@ func fetchLogs(logsApiKey string) (*LogResponse, error) {
 	}
 
 	return &logResponse, nil
+}
+
+func TestLogsFilterExcludeKubeSystemNamespace(t *testing.T) {
+	logsApiKey := os.Getenv("LOGZIO_LOGS_API_KEY")
+	if logsApiKey == "" {
+		t.Fatalf("LOGZIO_LOGS_API_KEY environment variable not set")
+	}
+
+	logResponse, err := fetchLogs(logsApiKey)
+	if err != nil {
+		t.Fatalf("Failed to fetch logs: %v", err)
+	}
+
+	count := 0
+	for _, hit := range logResponse.Hits.Hits {
+		if hit.Source.NamespaceName == "kube-system" {
+			count++
+		}
+	}
+	if count > 0 {
+		t.Errorf("Expected no logs from kube-system namespace, but found %d", count)
+	}
 }
