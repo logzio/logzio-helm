@@ -128,7 +128,7 @@ func TestSpmMetrics(t *testing.T) {
 }
 
 func TestMetricsFilterExcludeUpAndGoGcDurationSeconds(t *testing.T) {
-	if os.Getenv("KUBERNETES_ENV") != "eks-fargate" {
+	if os.Getenv("KUBERNETES_ENV") == "eks-fargate" {
 		t.Skip("Skipping Fargate metrics test")
 	}
 	metricsApiKey := os.Getenv("LOGZIO_METRICS_API_KEY")
