@@ -408,7 +408,7 @@ func TestHelmTelemetryRelabelConfigs(t *testing.T) {
 							}
 							var got []map[string]interface{}
 							for _, sc := range receiver.Config.ScrapeConfigs {
-								for _, relabel := range sc.RelabelConfigs {
+								for _, relabel := range sc.MetricRelabelConfigs {
 									if m, ok := relabel.(map[string]interface{}); ok {
 										got = append(got, m)
 									}
