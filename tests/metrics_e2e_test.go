@@ -127,7 +127,7 @@ func TestSpmMetrics(t *testing.T) {
 	testMetrics(t, requiredMetrics, query)
 }
 
-func TestMetricsFilterExcludeUpAndGoGcDurationSeconds(t *testing.T) {
+func TestMetricsFilterExcludeKubeSystemNamespace(t *testing.T) {
 	if os.Getenv("KUBERNETES_ENV") == "eks-fargate" {
 		t.Skip("Skipping Fargate metrics test")
 	}
@@ -137,13 +137,13 @@ func TestMetricsFilterExcludeUpAndGoGcDurationSeconds(t *testing.T) {
 	}
 	envId := os.Getenv("ENV_ID")
 
-	query := fmt.Sprintf(`up{env_id="%s"}`, envId)
+	query := fmt.Sprintf(`container_memory_working_set_bytes{env_id="%s", namespace="kube-system"}`, envId)
 	metricResponse, err := fetchMetrics(metricsApiKey, url.QueryEscape(query))
 	if err != nil {
 		t.Fatalf("Failed to fetch metrics: %v", err)
 	}
 	if len(metricResponse.Data.Result) > 0 {
-		t.Errorf("Expected up to be filtered out, but found %d results", len(metricResponse.Data.Result))
+		t.Errorf("Expected Kube system namespace to be filtered out, but found %d results", len(metricResponse.Data.Result))
 	}
 
 }
