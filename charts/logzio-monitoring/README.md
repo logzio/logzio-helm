@@ -31,6 +31,7 @@ This project packages the following Helm Charts:
 - [Migrating to logzio-monitoring v7.0.0](#migrating-to-logzio-monitoring-700)
 - [Enabled Auto-Instrumentation](#enable-auto-instrumentation)
 - [Enable resource detection](#enable-resource-detection)
+- [Filtering Telemetry Data (Metrics, Logs, Traces)](#filtering-telemetry-data-metrics-logs-traces)
 
 ## Instructions for standard deployment:
 
