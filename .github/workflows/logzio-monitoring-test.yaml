@@ -99,7 +99,7 @@ jobs:
           --set logzio-logs-collector.tolerations[0].effect='NoSchedule' \
           --set logzio-apm-collector.spmConfig.connectors.spanmetrics.histogram.disable=true \
           --set logzio-k8s-telemetry.enableMetricsFilter.eks=true \
-          --set logzio-k8s-telemetry.filters.infrastructure.exclude.name='up|go_gc_duration_seconds' \
+          --set logzio-k8s-telemetry.filters.infrastructure.exclude.name='up' \
           --set logzio-logs-collector.filters.exclude.namespace='kube-system' \
           --set logzio-apm-collector.filters.exclude.namespace='kube-system'"
         
