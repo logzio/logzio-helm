@@ -127,6 +127,27 @@ func TestSpmMetrics(t *testing.T) {
 	testMetrics(t, requiredMetrics, query)
 }
 
+func TestMetricsFilterExcludeKubeSystemNamespace(t *testing.T) {
+	if os.Getenv("KUBERNETES_ENV") == "eks-fargate" {
+		t.Skip("Skipping Fargate metrics test")
+	}
+	metricsApiKey := os.Getenv("LOGZIO_METRICS_API_KEY")
+	if metricsApiKey == "" {
+		t.Fatalf("LOGZIO_METRICS_API_KEY environment variable not set")
+	}
+	envId := os.Getenv("ENV_ID")
+
+	query := fmt.Sprintf(`container_memory_working_set_bytes{env_id="%s", namespace="kube-system"}`, envId)
+	metricResponse, err := fetchMetrics(metricsApiKey, url.QueryEscape(query))
+	if err != nil {
+		t.Fatalf("Failed to fetch metrics: %v", err)
+	}
+	if len(metricResponse.Data.Result) > 0 {
+		t.Errorf("Expected Kube system namespace to be filtered out, but found %d results", len(metricResponse.Data.Result))
+	}
+
+}
+
 func testMetrics(t *testing.T, requiredMetrics map[string][]string, query string) {
 	metricsApiKey := os.Getenv("LOGZIO_METRICS_API_KEY")
 	if metricsApiKey == "" {
