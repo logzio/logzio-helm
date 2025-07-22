@@ -274,29 +274,26 @@ To enable metrics filtering, set the following flag when deploying the chart, re
 ```
 ### Using the filters syntax for metrics relabeling
 
+**⚠️ WARNING**: Be extremely careful when filtering infrastructure metrics names as this can break Logz.io K8s 360 dashboard functionality. Always review [FILTERS.md](./FILTERS.md) before implementing custom filters.
+
 You can now use the new `filters` syntax in your `values.yaml` to define flexible include/exclude rules for metrics relabeling in both the infrastructure and applications pipelines. This approach is recommended over the legacy `prometheusFilters` syntax and is fully tested in CI.
 
-Example:
+**Safe Example** (filtering only application-level metrics):
 ```yaml
 filters:
-  infrastructure:
-    exclude:
-      namespace: "kube-system|monitoring"
-      attribute:
-        deployment_environment: "dev|test"
-    include:
-      attribute:
-        deployment_environment: "prod"
   applications:
     exclude:
       name: "go_gc_duration_seconds|http_requests_total"
     include:
       namespace: "prod|staging"
       attribute:
-        http_status_code: "2..|3.."
+        environment: "prod"
 ```
 
+
 - Use `include` and `exclude` blocks under each pipeline to specify which metrics, namespaces, or attributes to keep or drop.
+- **For infrastructure pipeline filtering**: Please review the essential metrics list in [FILTERS.md](./FILTERS.md) to avoid breaking K8s 360 functionality.
+- **For applications pipeline filtering**: Generally safer as it doesn't affect core Kubernetes monitoring.
 - For full details and advanced usage, see [FILTERS.md](./FILTERS.md).
 
 
