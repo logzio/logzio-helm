@@ -422,6 +422,9 @@ If you don't want the sub charts to installed add the relevant flag per sub char
 
 
 ## Change log
+* 5.3.1
+  - Add filters to `metrics_relabel_configs` instead of `relabel_configs`
+  - Add comprehensive documentation warnings for new `filters` syntax regarding K8s 360 metrics compatibility
 * 5.3.0
   - Add new `filters` syntax for metrics relabeling (recommended over legacy prometheusFilters)
 * 5.2.1
