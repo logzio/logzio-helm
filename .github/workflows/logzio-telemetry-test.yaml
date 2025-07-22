@@ -69,6 +69,7 @@ jobs:
           --set collector.mode=${{ matrix.mode }} \
           --set spanMetricsAgregator.config.connectors.spanmetrics.histogram.disable=true \
           --set enableMetricsFilter.eks=true \
+          --set filters.infrastructure.exclude.namespace="kube-system" \
           logzio-k8s-telemetry .
       
       - name: Verify deployment Status
