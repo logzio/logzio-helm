@@ -4,11 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"go.uber.org/zap"
 	"io"
 	"net/http"
 	"os"
 	"testing"
+
+	"go.uber.org/zap"
 )
 
 // TraceResponse represents the structure of the traces API response
@@ -121,4 +122,27 @@ func fetchTraces(tracesApiKey string) (*TraceResponse, error) {
 	}
 
 	return &traceResponse, nil
+}
+
+func TestTracesFilterExcludeKubeSystemNamespace(t *testing.T) {
+	tracesApiKey := os.Getenv("LOGZIO_TRACES_API_KEY")
+	if tracesApiKey == "" {
+		t.Fatalf("LOGZIO_TRACES_API_KEY environment variable not set")
+	}
+
+	traceResponse, err := fetchTraces(tracesApiKey)
+	if err != nil {
+		t.Fatalf("Failed to fetch traces: %v", err)
+	}
+
+	count := 0
+	for _, hit := range traceResponse.Hits.Hits {
+		tag := hit.Source.Process.Tag
+		if tag.KubernetesNamespace == "kube-system" {
+			count++
+		}
+	}
+	if count > 0 {
+		t.Errorf("Expected no traces from kube-system namespace, but found %d", count)
+	}
 }

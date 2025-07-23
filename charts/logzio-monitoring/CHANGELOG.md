@@ -1,6 +1,13 @@
 # Changes by Version
 
 <!-- next version -->
+## 7.4.0
+- Upgrade `logzio-k8s-telemetry` chart to `5.3.1`
+- Upgrade `logzio-logs-collector` chart to `2.2.0`
+- Upgrade `logzio-apm-telemetry` chart to `1.3.0`
+- Add support for filter syntax (include/exclude) for metrics, logs, and traces in subcharts (logzio-k8s-telemetry, logzio-logs-collector, logzio-apm-collector).
+  - Allows advanced filtering using `filters` key in values.yaml or via --set flags.
+
 ## 7.3.2
 - Upgrade `opentelemetry-operator` chart to `~0.90.4`
 - Change Java instrumentation default endpoint to `otlp/grpc` instead of `otlp/http` for compatibility with the Java instrumentation version used by the Operator

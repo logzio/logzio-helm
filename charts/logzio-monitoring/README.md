@@ -31,6 +31,7 @@ This project packages the following Helm Charts:
 - [Migrating to logzio-monitoring v7.0.0](#migrating-to-logzio-monitoring-700)
 - [Enabled Auto-Instrumentation](#enable-auto-instrumentation)
 - [Enable resource detection](#enable-resource-detection)
+- [Filtering Telemetry Data (Metrics, Logs, Traces)](#filtering-telemetry-data-metrics-logs-traces)
 
 ## Instructions for standard deployment:
 
@@ -606,3 +607,37 @@ For all
 
 ### Custom resource detection
 To customize resource detection settings, add the [OpenTelemetry `resourcedetection` processor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/resourcedetectionprocessor) to the sub-chart configuration within your `values.yaml` file.
+
+## Filtering Telemetry Data (Metrics, Logs, Traces)
+
+You can now use a flexible `filters` syntax to include or exclude metrics, logs, and traces before they are shipped to Logz.io. This mechanism is consistent across all subcharts (logzio-k8s-telemetry, logzio-logs-collector, logzio-apm-collector) and can be set in `values.yaml` or via `--set` flags.
+
+**Example in values.yaml:**
+```yaml
+logzio-k8s-telemetry:
+  filters:
+    infrastructure:
+      exclude:
+        name: "up|go_gc_duration_seconds"
+logzio-logs-collector:
+  filters:
+    exclude:
+      namespace: "kube-system"
+logzio-apm-collector:
+  filters:
+    exclude:
+      namespace: "kube-system"
+```
+
+**Example with --set flags:**
+```shell
+helm upgrade --install logzio-monitoring . \
+  --set logzio-k8s-telemetry.filters.infrastructure.exclude.name="up|go_gc_duration_seconds" \
+  --set logzio-logs-collector.filters.exclude.namespace="kube-system" \
+  --set logzio-apm-collector.filters.exclude.namespace="kube-system"
+```
+
+- For full syntax and advanced usage, see the subchart documentation:
+  - [logzio-k8s-telemetry Filters](../logzio-telemetry/README.md#using-the-filters-syntax-for-metrics-relabeling)
+  - [logzio-logs-collector Filters](../logzio-logs-collector/README.md#filtering-logs-since-220)
+  - [logzio-apm-collector Filters](../logzio-apm-collector/README.md#filtering-traces-since-130)
