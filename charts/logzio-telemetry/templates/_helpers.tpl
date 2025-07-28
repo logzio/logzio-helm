@@ -237,3 +237,34 @@ Returns a YAML array of key=regex strings.
 {{- end }}
 {{- toYaml $out }}
 {{- end }}
+
+{{/*
+Builds the full logzio logs listener address
+*/}}
+{{- define "logs-collector.listenerAddressAddress" }}
+{{- if ne .Values.global.customLogsEndpoint "" -}}
+{{- printf "%s" .Values.global.customLogsEndpoint -}}
+{{- else }}
+{{- $region := .Values.global.logzioRegion -}}
+{{- if or (eq $region "us") (not $region) -}}
+https://listener.logz.io:8071
+{{- else }}
+{{- printf "https://listener-%s.logz.io:8071" $region }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{/*
+Builds the full logzio traces listener address
+*/}}
+{{- define "traces-collector.listenerAddress" }}
+{{- if ne .Values.global.customTracesEndpoint "" -}}
+{{- printf "%s" .Values.global.customTracesEndpoint -}}
+{{- else }}
+{{- $region := .Values.global.logzioRegion -}}
+{{- if or (eq $region "us") (not $region) -}}
+https://listener.logz.io:8071
+{{- else }}
+{{- printf "https://listener-%s.logz.io:8071" $region }}
+{{- end }}
+{{- end }}
