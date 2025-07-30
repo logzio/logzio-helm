@@ -268,3 +268,4 @@ https://listener.logz.io:8071
 {{- printf "https://listener-%s.logz.io:8071" $region }}
 {{- end }}
 {{- end }}
+{{- end }}

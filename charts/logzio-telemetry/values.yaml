@@ -731,23 +731,12 @@ signalFx:
         external_labels:
           p8s_logzio_name: ${ENV_ID}
 
-      # Logz.io exporter for logs
-      logzio/signalfx:
-        account_token: "${SIGNALFX_LOGS_TOKEN}"
-        region: "${LOGZIO_LISTENER_REGION}"
-        endpoint: "${CUSTOM_LOGS_ENDPOINT}"
-        headers:
-          user-agent: "{{ .Chart.Name }}-{{ .Chart.Version }}-helm"
     service:
       pipelines:
         metrics/signalfx:
           receivers: [signalfx]
           processors: [batch]
           exporters: [prometheusremotewrite/signalfx]
-        logs/signalfx:
-          receivers: [signalfx]
-          processors: [batch]
-          exporters: [logzio/signalfx]
 
 # Kubernetes Object logs
 k8sObjectsConfig:
