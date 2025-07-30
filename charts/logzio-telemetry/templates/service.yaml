@@ -17,7 +17,11 @@ spec:
   # Check ports of otel-traces
   ports:
     {{- range $key, $port := .Values.ports }}
-    {{- if $port.enabled }}
+    {{- $shouldEnable := $port.enabled }}
+    {{- if eq $key "signalfx" }}
+      {{- $shouldEnable = and $.Values.metrics.enabled (eq (include "opentelemetry-collector.signalFxEnabled" $) "true") }}
+    {{- end }}
+    {{- if $shouldEnable }}
     - name: {{ $key }}
       port: {{ $port.servicePort }}
       targetPort: {{ $key }}

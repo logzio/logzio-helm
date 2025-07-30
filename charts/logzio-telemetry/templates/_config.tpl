@@ -41,6 +41,12 @@ Build config file for standalone OpenTelemetry Collector
 {{- $metricsConfig = deepCopy $k8sObjectsConfig | merge $metricsConfig | mustMergeOverwrite -}}
 {{- end -}}
 
+{{/* Handle SignalFx config */}}
+{{- if and .Values.metrics.enabled (eq (include "opentelemetry-collector.signalFxEnabled" .) "true") -}}
+{{- $signalFxConfig := deepCopy .Values.signalFx.config | mustMergeOverwrite -}}
+{{- $metricsConfig = deepCopy $signalFxConfig | merge $metricsConfig | mustMergeOverwrite -}}
+{{- end -}}
+
 {{- if (eq (include "opentelemetry-collector.resourceDetectionEnabled" .) "true") }}
 {{- $resDetectionConfig := (include "opentelemetry-collector.resourceDetectionConfig" .Values.global.distribution | fromYaml) }}
   {{- if $resDetectionConfig }}
@@ -283,6 +289,12 @@ Build config file for standalone OpenTelemetry Collector daemonset
 {{- if .Values.k8sObjectsConfig.enabled }}
 {{- $k8sObjectsConfig := deepCopy .Values.k8sObjectsConfig.config | mustMergeOverwrite }}
 {{- $metricsConfig = deepCopy $k8sObjectsConfig | merge $metricsConfig | mustMergeOverwrite }}
+{{- end }}
+
+{{/* Handle SignalFx config */}}
+{{- if and .Values.metrics.enabled (eq (include "opentelemetry-collector.signalFxEnabled" .) "true") }}
+{{- $signalFxConfig := deepCopy .Values.signalFx.config | mustMergeOverwrite }}
+{{- $metricsConfig = deepCopy $signalFxConfig | merge $metricsConfig | mustMergeOverwrite }}
 {{- end }}
 
 {{- $values := deepCopy .Values.daemonsetCollector | mustMergeOverwrite (deepCopy .Values) }}

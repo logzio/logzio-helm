@@ -18,10 +18,14 @@ containers:
       {{- toYaml .Values.containerSecurityContext | nindent 6 }}
     image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
     imagePullPolicy: {{ .Values.image.pullPolicy }}
-{{- if (or .Values.traces.enabled .Values.metrics.enabled) }}
+{{- if (or .Values.traces.enabled .Values.metrics.enabled .Values.signalFx.enabled) }}
     ports:
       {{- range $key, $port := .Values.ports }}
-      {{- if $port.enabled }}
+      {{- $shouldEnable := $port.enabled }}
+      {{- if eq $key "signalfx" }}
+        {{- $shouldEnable = $.Values.signalFx.enabled }}
+      {{- end }}
+      {{- if $shouldEnable }}
       - name: {{ $key }}
         containerPort: {{ $port.containerPort }}
         protocol: {{ $port.protocol }}
@@ -67,6 +71,13 @@ containers:
       {{ end }} 
          
 {{- end }}
+{{- if .Values.signalFx.enabled }}
+      - name: SIGNALFX_LOGS_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: {{ .Values.secrets.name }}
+            key: signalfx-logs-token
+{{- end }}
 {{- if or (eq .Values.k8sObjectsConfig.enabled true) (eq .Values.traces.enabled true) }}  
       - name: LOGZIO_LISTENER_REGION
         valueFrom:
@@ -93,6 +104,13 @@ containers:
           secretKeyRef:
             name: {{ .Values.secrets.name }}
             key: custom-tracing-endpoint
+      {{ end }}
+      {{ if .Values.global.customLogsEndpoint }}
+      - name: CUSTOM_LOGS_ENDPOINT
+        valueFrom:
+          secretKeyRef:
+            name: {{ .Values.secrets.name }}
+            key: custom-logs-endpoint
       {{ end }}
       - name: SAMPLING_PROBABILITY
         valueFrom:
