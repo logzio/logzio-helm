@@ -71,13 +71,6 @@ containers:
       {{ end }} 
          
 {{- end }}
-{{- if .Values.signalFx.enabled }}
-      - name: SIGNALFX_LOGS_TOKEN
-        valueFrom:
-          secretKeyRef:
-            name: {{ .Values.secrets.name }}
-            key: signalfx-logs-token
-{{- end }}
 {{- if or (eq .Values.k8sObjectsConfig.enabled true) (eq .Values.traces.enabled true) }}  
       - name: LOGZIO_LISTENER_REGION
         valueFrom:

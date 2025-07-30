@@ -66,20 +66,13 @@ containers:
             name: {{ .Values.secrets.name }}
             key: logzio-listener-region            
       {{ end }}
-      {{ if .Values.signalFx.enabled }}
-      - name: SIGNALFX_LOGS_TOKEN
-        valueFrom:
-          secretKeyRef:
-            name: {{ .Values.secrets.name }}
-            key: signalfx-logs-token
       {{ if .Values.global.customLogsEndpoint }}
       - name: CUSTOM_LOGS_ENDPOINT
         valueFrom:
           secretKeyRef:
             name: {{ .Values.secrets.name }}
             key: custom-logs-endpoint
-      {{ end }}
-      {{ end }}            
+      {{ end }}        
       - name: LISTENER_URL
         valueFrom:
           secretKeyRef:
