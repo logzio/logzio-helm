@@ -1,4 +1,4 @@
-{{- if or .Values.traces.enabled .Values.metrics.enabled .Values.signalFx.enabled }}
+{{- if or .Values.traces.enabled .Values.metrics.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -19,7 +19,7 @@ spec:
     {{- range $key, $port := .Values.ports }}
     {{- $shouldEnable := $port.enabled }}
     {{- if eq $key "signalfx" }}
-      {{- $shouldEnable = $.Values.signalFx.enabled }}
+      {{- $shouldEnable = and $.Values.metrics.enabled (include "opentelemetry-collector.signalFxEnabled" $ | toBool) }}
     {{- end }}
     {{- if $shouldEnable }}
     - name: {{ $key }}

@@ -51,6 +51,9 @@ global:
   # Optional - Control enabling of the OpenTelemetry Collector's resource detection feature. Dependent on `distribution` value.
   resourceDetection:
     enabled: false
+  # Optional - Control enabling of the SignalFx receiver.
+  signalFx:
+    enabled: false
 
 secrets:
   name: logzio-secret  # Secret name
