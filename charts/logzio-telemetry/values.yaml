@@ -731,6 +731,7 @@ signalFx:
         endpoint: "${LISTENER_URL}"
         headers:
           Authorization: "Bearer ${METRICS_TOKEN}"
+          user-agent: '{{ .Chart.Name }}-{{ .Chart.Version }}-helm'          
         external_labels:
           p8s_logzio_name: ${ENV_ID}
 

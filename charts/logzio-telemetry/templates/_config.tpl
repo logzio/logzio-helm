@@ -42,7 +42,7 @@ Build config file for standalone OpenTelemetry Collector
 {{- end -}}
 
 {{/* Handle SignalFx config */}}
-{{- if and .Values.metrics.enabled (include "opentelemetry-collector.signalFxEnabled" . | toBool) -}}
+{{- if and .Values.metrics.enabled (eq (include "opentelemetry-collector.signalFxEnabled" .) "true") -}}
 {{- $signalFxConfig := deepCopy .Values.signalFx.config | mustMergeOverwrite -}}
 {{- $metricsConfig = deepCopy $signalFxConfig | merge $metricsConfig | mustMergeOverwrite -}}
 {{- end -}}
@@ -278,7 +278,7 @@ Build config file for standalone OpenTelemetry Collector daemonset
 {{- $applicationsFilters := include "opentelemetry-collector.getPipelineFilters" $ctxParams -}}
 
 {{/* Handle opencost config */}}
-{{- if and .Values.metrics.enabled (include "opentelemetry-collector.signalFxEnabled" . | toBool) }}
+{{- if .Values.opencost.enabled }}
 {{- $opencostConfig := deepCopy .Values.opencost.config | mustMergeOverwrite }}
 {{- $metricsConfig = deepCopy $opencostConfig | merge $metricsConfig | mustMergeOverwrite }}
 {{/* merge processor list for opencost*/}}
@@ -292,7 +292,7 @@ Build config file for standalone OpenTelemetry Collector daemonset
 {{- end }}
 
 {{/* Handle SignalFx config */}}
-{{- if and .Values.metrics.enabled (include "opentelemetry-collector.signalFxEnabled" . | toBool) }}
+{{- if and .Values.metrics.enabled (eq (include "opentelemetry-collector.signalFxEnabled" .) "true") }}
 {{- $signalFxConfig := deepCopy .Values.signalFx.config | mustMergeOverwrite }}
 {{- $metricsConfig = deepCopy $signalFxConfig | merge $metricsConfig | mustMergeOverwrite }}
 {{- end }}

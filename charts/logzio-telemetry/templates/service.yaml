@@ -19,7 +19,7 @@ spec:
     {{- range $key, $port := .Values.ports }}
     {{- $shouldEnable := $port.enabled }}
     {{- if eq $key "signalfx" }}
-      {{- $shouldEnable = and $.Values.metrics.enabled (include "opentelemetry-collector.signalFxEnabled" $ | toBool) }}
+      {{- $shouldEnable = and $.Values.metrics.enabled (eq (include "opentelemetry-collector.signalFxEnabled" $) "true") }}
     {{- end }}
     {{- if $shouldEnable }}
     - name: {{ $key }}
