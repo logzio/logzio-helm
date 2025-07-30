@@ -205,18 +205,29 @@ Returns the value of resource detection enablement state
 Returns the effective value of the SignalFx enable flag.
 
 Precedence:
-1. Chart-level .Values.signalFx.enabled (if present)
+1. Chart-level .Values.signalFx.enabled (if explicitly set to true)
 2. global.signalFx.enabled
 */}}
 {{- define "opentelemetry-collector.signalFxEnabled" -}}
-{{- if (hasKey .Values "signalFx") -}}
-  {{- if (hasKey .Values.signalFx "enabled") -}}
-    {{- .Values.signalFx.enabled -}}
-  {{- else -}}
-    {{- .Values.global.signalFx.enabled -}}
-  {{- end -}}
+{{- if and (hasKey .Values "signalFx") (hasKey .Values.signalFx "enabled") .Values.signalFx.enabled -}}
+  {{- .Values.signalFx.enabled -}}
 {{- else -}}
   {{- .Values.global.signalFx.enabled -}}
+{{- end -}}
+{{- end }}
+
+{{/*
+Returns the effective value of the Carbon enable flag.
+
+Precedence:
+1. Chart-level .Values.carbon.enabled (if explicitly set to true)
+2. global.carbon.enabled
+*/}}
+{{- define "opentelemetry-collector.carbonEnabled" -}}
+{{- if and (hasKey .Values "carbon") (hasKey .Values.carbon "enabled") .Values.carbon.enabled -}}
+  {{- .Values.carbon.enabled -}}
+{{- else -}}
+  {{- .Values.global.carbon.enabled -}}
 {{- end -}}
 {{- end }}
 
