@@ -47,6 +47,12 @@ Build config file for standalone OpenTelemetry Collector
 {{- $metricsConfig = deepCopy $signalFxConfig | merge $metricsConfig | mustMergeOverwrite -}}
 {{- end -}}
 
+{{/* Handle Carbon config */}}
+{{- if and .Values.metrics.enabled (eq (include "opentelemetry-collector.carbonEnabled" .) "true") -}}
+{{- $carbonConfig := deepCopy .Values.carbon.config | mustMergeOverwrite -}}
+{{- $metricsConfig = deepCopy $carbonConfig | merge $metricsConfig | mustMergeOverwrite -}}
+{{- end -}}
+
 {{- if (eq (include "opentelemetry-collector.resourceDetectionEnabled" .) "true") }}
 {{- $resDetectionConfig := (include "opentelemetry-collector.resourceDetectionConfig" .Values.global.distribution | fromYaml) }}
   {{- if $resDetectionConfig }}
@@ -295,6 +301,12 @@ Build config file for standalone OpenTelemetry Collector daemonset
 {{- if and .Values.metrics.enabled (eq (include "opentelemetry-collector.signalFxEnabled" .) "true") }}
 {{- $signalFxConfig := deepCopy .Values.signalFx.config | mustMergeOverwrite }}
 {{- $metricsConfig = deepCopy $signalFxConfig | merge $metricsConfig | mustMergeOverwrite }}
+{{- end }}
+
+{{/* Handle Carbon config */}}
+{{- if and .Values.metrics.enabled (eq (include "opentelemetry-collector.carbonEnabled" .) "true") }}
+{{- $carbonConfig := deepCopy .Values.carbon.config | mustMergeOverwrite }}
+{{- $metricsConfig = deepCopy $carbonConfig | merge $metricsConfig | mustMergeOverwrite }}
 {{- end }}
 
 {{- $values := deepCopy .Values.daemonsetCollector | mustMergeOverwrite (deepCopy .Values) }}
