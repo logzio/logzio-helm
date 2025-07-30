@@ -44,10 +44,15 @@ global:
   customTracesEndpoint: ""
   # Custom Metrics endpoint, overrides global.LogzioRegion listener address
   customMetricsEndpoint: ""
+  # Custom Logs endpoint, overrides global.LogzioRegion listener address
+  customLogsEndpoint: ""
   # Optional - Identifier for the Kubernetes distribution used. One of "eks", "aks" or "gke".
   distribution: ""
   # Optional - Control enabling of the OpenTelemetry Collector's resource detection feature. Dependent on `distribution` value.
   resourceDetection:
+    enabled: false
+  # Optional - Control enabling of the SignalFx receiver.
+  signalFx:
     enabled: false
 
 secrets:
@@ -701,6 +706,41 @@ ports:
     servicePort: 8888
     hostPort: 8888
     protocol: TCP
+  signalfx:
+    enabled: false
+    containerPort: 9943
+    servicePort: 9943
+    hostPort: 9943
+    protocol: TCP
+
+# SignalFx config
+signalFx:
+  enabled: false
+  config:
+    receivers:
+      # SignalFx receiver to accept metrics from SignalFx client libraries # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/receiver/signalfxreceiver/README.md
+      signalfx:
+        endpoint: "0.0.0.0:9943"
+        access_token_passthrough: true
+    processors:
+      # Batch processor to improve performance by grouping metrics
+      batch: {}
+    exporters:
+      # Prometheus Remote Write exporter for Logz.io
+      prometheusremotewrite/signalfx:
+        endpoint: "${LISTENER_URL}"
+        headers:
+          Authorization: "Bearer ${METRICS_TOKEN}"
+          user-agent: '{{ .Chart.Name }}-{{ .Chart.Version }}-helm'          
+        external_labels:
+          p8s_logzio_name: ${ENV_ID}
+
+    service:
+      pipelines:
+        metrics/signalfx:
+          receivers: [signalfx]
+          processors: [batch]
+          exporters: [prometheusremotewrite/signalfx]
 
 # Kubernetes Object logs
 k8sObjectsConfig:
@@ -784,6 +824,7 @@ k8sObjectsConfig:
       logzio/object_logs:
         account_token: "${OBJECTS_LOGS_TOKEN}"
         region: "${LOGZIO_LISTENER_REGION}"
+        endpoint: "${CUSTOM_LOGS_ENDPOINT}"
         headers:
           user-agent: "{{ .Chart.Name }}-{{ .Chart.Version }}-helm"
     service:
@@ -1039,6 +1080,7 @@ daemonsetCollector:
 
 service:
   type: ClusterIP
+  clusterIP: ""
   annotations: {}
 
 # autoscaling is used only if standaloneCollector enabled

@@ -202,6 +202,25 @@ Returns the value of resource detection enablement state
 {{- end }}
 
 {{/*
+Returns the effective value of the SignalFx enable flag.
+
+Precedence:
+1. Chart-level .Values.signalFx.enabled (if present)
+2. global.signalFx.enabled
+*/}}
+{{- define "opentelemetry-collector.signalFxEnabled" -}}
+{{- if (hasKey .Values "signalFx") -}}
+  {{- if (hasKey .Values.signalFx "enabled") -}}
+    {{- .Values.signalFx.enabled -}}
+  {{- else -}}
+    {{- .Values.global.signalFx.enabled -}}
+  {{- end -}}
+{{- else -}}
+  {{- .Values.global.signalFx.enabled -}}
+{{- end -}}
+{{- end }}
+
+{{/*
 Get component name
 */}}
 {{- define "opentelemetry-collector.component" -}}
@@ -236,4 +255,36 @@ Returns a YAML array of key=regex strings.
   {{- end }}
 {{- end }}
 {{- toYaml $out }}
+{{- end }}
+
+{{/*
+Builds the full logzio logs listener address
+*/}}
+{{- define "logs-collector.listenerAddressAddress" }}
+{{- if ne .Values.global.customLogsEndpoint "" -}}
+{{- printf "%s" .Values.global.customLogsEndpoint -}}
+{{- else }}
+{{- $region := .Values.global.logzioRegion -}}
+{{- if or (eq $region "us") (not $region) -}}
+https://listener.logz.io:8071
+{{- else }}
+{{- printf "https://listener-%s.logz.io:8071" $region }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{/*
+Builds the full logzio traces listener address
+*/}}
+{{- define "traces-collector.listenerAddress" }}
+{{- if ne .Values.global.customTracesEndpoint "" -}}
+{{- printf "%s" .Values.global.customTracesEndpoint -}}
+{{- else }}
+{{- $region := .Values.global.logzioRegion -}}
+{{- if or (eq $region "us") (not $region) -}}
+https://listener.logz.io:8071
+{{- else }}
+{{- printf "https://listener-%s.logz.io:8071" $region }}
+{{- end }}
+{{- end }}
 {{- end }}
