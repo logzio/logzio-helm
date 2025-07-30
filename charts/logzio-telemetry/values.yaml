@@ -54,6 +54,9 @@ global:
   # Optional - Control enabling of the SignalFx receiver.
   signalFx:
     enabled: false
+  # Optional - Control enabling of the Carbon receiver.
+  carbon:
+    enabled: false
 
 secrets:
   name: logzio-secret  # Secret name
@@ -712,6 +715,12 @@ ports:
     servicePort: 9943
     hostPort: 9943
     protocol: TCP
+  carbon:
+    enabled: false
+    containerPort: 2003
+    servicePort: 2003
+    hostPort: 2003
+    protocol: TCP
 
 # SignalFx config
 signalFx:
@@ -741,6 +750,35 @@ signalFx:
           receivers: [signalfx]
           processors: [batch]
           exporters: [prometheusremotewrite/signalfx]
+
+# Carbon config
+carbon:
+  enabled: false
+  config:
+    receivers:
+      # Carbon receiver to accept metrics from Carbon/Graphite client libraries # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/receiver/carbonreceiver/README.md
+      carbon:
+        endpoint: "0.0.0.0:2003"
+        transport: tcp
+    processors:
+      # Batch processor to improve performance by grouping metrics
+      batch: {}
+    exporters:
+      # Prometheus Remote Write exporter for Logz.io
+      prometheusremotewrite/carbon:
+        endpoint: "${LISTENER_URL}"
+        headers:
+          Authorization: "Bearer ${METRICS_TOKEN}"
+          user-agent: '{{ .Chart.Name }}-{{ .Chart.Version }}-helm'          
+        external_labels:
+          p8s_logzio_name: ${ENV_ID}
+
+    service:
+      pipelines:
+        metrics/carbon:
+          receivers: [carbon]
+          processors: [batch]
+          exporters: [prometheusremotewrite/carbon]
 
 # Kubernetes Object logs
 k8sObjectsConfig:

@@ -21,6 +21,9 @@ spec:
     {{- if eq $key "signalfx" }}
       {{- $shouldEnable = and $.Values.metrics.enabled (eq (include "opentelemetry-collector.signalFxEnabled" $) "true") }}
     {{- end }}
+    {{- if eq $key "carbon" }}
+      {{- $shouldEnable = and $.Values.metrics.enabled (eq (include "opentelemetry-collector.carbonEnabled" $) "true") }}
+    {{- end }}
     {{- if $shouldEnable }}
     - name: {{ $key }}
       port: {{ $port.servicePort }}
