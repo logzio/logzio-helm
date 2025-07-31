@@ -191,6 +191,15 @@ jobs:
           echo "=== Pod Details ==="
           kubectl describe pods -l app.kubernetes.io/name=otel-collector
           echo ""
+          echo "=== DaemonSets ==="
+          kubectl get daemonsets -o wide
+          echo ""
+          echo "=== DaemonSet Details ==="
+          kubectl describe daemonset logzio-k8s-telemetry-otel-collector-ds || echo "DaemonSet not found"
+          echo ""
+          echo "=== All Collector Resources ==="
+          kubectl get all -l app.kubernetes.io/name=otel-collector
+          echo ""
           echo "=== ConfigMap Content ==="
           if [[ "${{ matrix.mode }}" == "standalone" ]]; then
             kubectl get configmap logzio-k8s-telemetry-otel-collector-standalone -o yaml
