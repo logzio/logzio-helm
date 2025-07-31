@@ -200,6 +200,12 @@ jobs:
           echo "=== All Collector Resources ==="
           kubectl get all -l app.kubernetes.io/name=otel-collector
           echo ""
+          echo "=== Node Details ==="
+          kubectl get nodes -o wide
+          echo ""
+          echo "=== Node Taints and Labels ==="
+          kubectl describe nodes | grep -A 10 -B 5 "Taints\|Labels"
+          echo ""
           echo "=== ConfigMap Content ==="
           if [[ "${{ matrix.mode }}" == "standalone" ]]; then
             kubectl get configmap logzio-k8s-telemetry-otel-collector-standalone -o yaml
