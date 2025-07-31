@@ -111,6 +111,111 @@ jobs:
         if: always()
         run: kind delete cluster --name kind-${{ github.run_id }}-${{ matrix.mode }}
 
+  test-protocol-receivers:
+    name: Test Protocol Receivers
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        mode: ['daemonset', 'standalone']
+        protocol: ['signalfx', 'carbon']
+    steps:
+      - name: Generate random id
+        id: random_id
+        run: echo "::set-output name=rand::$(echo $RANDOM)"
+
+      - name: Set ENV_ID
+        run: echo "ENV_ID=telemetry-test-run-${{ steps.random_id.outputs.rand }}-${{ matrix.mode }}-${{ matrix.protocol }}" >> $GITHUB_ENV
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.20'
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4.3.0
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Install Kind
+        run: |
+          curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.26.0/kind-Linux-amd64"
+          chmod +x ./kind
+          mv ./kind /usr/local/bin/kind
+
+      - name: Create Kind cluster
+        run: |
+          kind create cluster --name kind-${{ github.run_id }}-${{ matrix.mode }}-${{ matrix.protocol }}
+          kubectl cluster-info
+
+      - name: Deploy Helm Chart with Protocol Receiver
+        run: |
+          cd charts/logzio-telemetry
+          helm dependency build
+          PROTOCOL_FLAG=""
+          if [[ "${{ matrix.protocol }}" == "signalfx" ]]; then
+            PROTOCOL_FLAG="--set global.signalFx.enabled=true"
+          elif [[ "${{ matrix.protocol }}" == "carbon" ]]; then
+            PROTOCOL_FLAG="--set carbon.enabled=true"
+          fi
+          helm upgrade --install \
+          --set metrics.enabled=true \
+          --set global.tolerations[0].key="global-key" \
+          --set global.tolerations[0].operator="Equal" \
+          --set global.tolerations[0].value="global-value" \
+          --set global.tolerations[0].effect="NoSchedule" \
+          --set global.logzioMetricsToken=${{ secrets.LOGZIO_METRICS_TOKEN }} \
+          --set global.logzioRegion=us \
+          --set global.env_id=${{ env.ENV_ID }} \
+          --set collector.mode=${{ matrix.mode }} \
+          $PROTOCOL_FLAG \
+          logzio-k8s-telemetry .
+
+      - name: Verify deployment Status
+        run: |
+          kubectl rollout status deployment/logzio-k8s-telemetry-otel-collector-standalone --timeout=300s
+          kubectl get deployment/logzio-k8s-telemetry-otel-collector-standalone -o jsonpath='{.spec.template.spec.tolerations}' | jq -r '.[] | select(.key=="global-key")'
+
+      - name: Run metric generator
+        run: |
+          # Substitute ENV_ID in the YAML and apply
+          if [[ "${{ matrix.protocol }}" == "signalfx" ]]; then
+            envsubst < tests/resources/signalfx-gen.yaml | kubectl apply -f -
+          elif [[ "${{ matrix.protocol }}" == "carbon" ]]; then
+            envsubst < tests/resources/carbon-gen.yaml | kubectl apply -f -
+          fi
+
+      - name: Wait for generator job completion
+        run: |
+          JOB_NAME="${{ matrix.protocol }}-gen"
+          kubectl wait --for=condition=complete job/$JOB_NAME --timeout=120s
+          kubectl logs job/$JOB_NAME
+
+      - name: Sleep for metrics to be processed
+        run: sleep 120
+
+      - name: Run Protocol Specific Tests
+        env:
+          LOGZIO_METRICS_API_KEY: ${{ secrets.LOGZIO_METRICS_API_KEY }}
+        run: |
+          go get go.uber.org/zap
+          if [[ "${{ matrix.protocol }}" == "signalfx" ]]; then
+            go test -v ./tests/signalfx_metrics_e2e_test.go ./tests/common.go
+          elif [[ "${{ matrix.protocol }}" == "carbon" ]]; then
+            go test -v ./tests/carbon_metrics_e2e_test.go ./tests/common.go
+          fi
+
+      - name: Cleanup Environment
+        run: |
+          helm uninstall logzio-k8s-telemetry
+
+      - name: Delete Kind cluster
+        if: always()
+        run: kind delete cluster --name kind-${{ github.run_id }}-${{ matrix.mode }}-${{ matrix.protocol }}
+
   filter-test:
     name: Filter Test
     runs-on: ubuntu-latest

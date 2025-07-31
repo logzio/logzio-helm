@@ -54,9 +54,6 @@ global:
   # Optional - Control enabling of the SignalFx receiver.
   signalFx:
     enabled: false
-  # Optional - Control enabling of the Carbon receiver.
-  carbon:
-    enabled: false
 
 secrets:
   name: logzio-secret  # Secret name

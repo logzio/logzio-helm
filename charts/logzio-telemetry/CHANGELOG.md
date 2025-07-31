@@ -4,6 +4,7 @@
 ## 5.4.0
   - Add SignalFx metrics receiver
   - Add Carbon metrics receiver
+  - Add custom logs endpoint
 ## 5.3.1
   - Add filters to `metrics_relabel_configs` instead of `relabel_configs`
   - Add comprehensive documentation warnings for new `filters` syntax regarding K8s 360 metrics compatibility

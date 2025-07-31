@@ -155,11 +155,11 @@ The SignalFx receiver will listen on port 9943 for incoming metrics. You can cus
 #### Deploy the metrics chart with Carbon receiver:
 The Carbon receiver allows the chart to accept metrics from Carbon/Graphite client libraries and forward them to Logz.io. This is useful when migrating from Graphite or when you have applications sending metrics in Carbon format.
 
-**Note** `global.carbon.enabled=true` will have no effect unless `metrics.enabled` is also set to `true`
+**Note** `carbon.enabled=true` will have no effect unless `metrics.enabled` is also set to `true`
 ```
 helm install  \
 --set metrics.enabled=true \
---set global.carbon.enabled=true \
+--set carbon.enabled=true \
 --set global.logzioMetricsToken=<<PROMETHEUS-METRICS-SHIPPING-TOKEN>> \
 --set global.logzioRegion=<<LOGZIO-REGION>> \
 --set global.env_id=<<ENV-ID>> \
