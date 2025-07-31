@@ -256,7 +256,7 @@ jobs:
           kubectl logs job/$JOB_NAME
 
       - name: Sleep for metrics to be processed
-        run: sleep 120
+        run: sleep 180
 
       - name: Run Protocol Specific Tests
         env:
