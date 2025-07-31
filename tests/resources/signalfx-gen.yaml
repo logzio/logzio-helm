@@ -21,7 +21,7 @@ spec:
               curl -X POST \
                 -H 'Content-Type: application/json' \
                 -d '[{"metric":"test_signalfx_metric","value":1,"type":"gauge","dimensions":{"env_id":"'"$ENV_ID"'","source":"e2e-test"}}]' \
-                http://logzio-k8s-telemetry-otel-collector:9943/v2/datapoint
+                http://logzio-k8s-telemetry.default.svc.cluster.local:9943/v2/datapoint
               echo "SignalFx metric sent successfully"
           env:
             - name: ENV_ID
@@ -34,7 +34,7 @@ spec:
             - -c
             - |
               echo "Waiting for collector to be ready..."
-              until curl -f http://logzio-k8s-telemetry-otel-collector:9943/health > /dev/null 2>&1; do
+              until curl -f http://logzio-k8s-telemetry.default.svc.cluster.local:9943/health > /dev/null 2>&1; do
                 echo "Collector not ready, waiting 5 seconds..."
                 sleep 5
               done
