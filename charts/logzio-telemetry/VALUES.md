@@ -56,7 +56,6 @@ logzio-k8s-telemetry allows you to ship metrics and traces from your Kubernetes 
 | global.logzioTracesToken | string | `""` | Logzio traces token. |
 | global.env_id | string | `"my_environment"` | Env id to be used with k8s 360. |
 | global.signalFx.enabled | bool | `false` | Enable SignalFx receiver to accept metrics from SignalFx client libraries. |
-| global.carbon.enabled | bool | `false` | Enable Carbon receiver to accept metrics from Carbon/Graphite client libraries. |
 | secrets.windowsNodePassword | string | `""` | Windows node password - will be used to install node-exporter for windows nodes. |
 | secrets.windowsNodeUsername | string | `""` | Windows username - will be used to install node-exporter for windows nodes. |
 | standaloneCollector.resources.limits.cpu | string | `"200m"` | Cpu limit for the opentelemetry collector pod. |
@@ -70,7 +69,7 @@ logzio-k8s-telemetry allows you to ship metrics and traces from your Kubernetes 
 | windowsExporterInstallerJob.interval | string | `"*/10 * * * *"` | Cronjob expression for the windows exporter installer job. |
 | signalFx.enabled | bool | `false` | Local override for enabling SignalFx receiver (takes precedence over global.signalFx.enabled). |
 | signalFx.config | object | `{}` | Custom configuration for the SignalFx receiver pipeline, including receiver settings, processors, and exporters. |
-| carbon.enabled | bool | `false` | Local override for enabling Carbon receiver (takes precedence over global.carbon.enabled). |
+| carbon.enabled | bool | `false` | Enable Carbon receiver to accept metrics from Carbon/Graphite client libraries. |
 | carbon.config | object | `{}` | Custom configuration for the Carbon receiver pipeline, including receiver settings, processors, and exporters. |
 
 ----------------------------------------------

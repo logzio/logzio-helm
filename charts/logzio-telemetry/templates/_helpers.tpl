@@ -216,20 +216,7 @@ Precedence:
 {{- end -}}
 {{- end }}
 
-{{/*
-Returns the effective value of the Carbon enable flag.
 
-Precedence:
-1. Chart-level .Values.carbon.enabled (if explicitly set to true)
-2. global.carbon.enabled
-*/}}
-{{- define "opentelemetry-collector.carbonEnabled" -}}
-{{- if and (hasKey .Values "carbon") (hasKey .Values.carbon "enabled") .Values.carbon.enabled -}}
-  {{- .Values.carbon.enabled -}}
-{{- else -}}
-  {{- .Values.global.carbon.enabled -}}
-{{- end -}}
-{{- end }}
 
 {{/*
 Get component name

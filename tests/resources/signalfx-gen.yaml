@@ -1,0 +1,41 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: signalfx-gen
+spec:
+  template:
+    metadata:
+      labels:
+        app: signalfx-gen
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: signalfx-gen
+          image: curlimages/curl:8.6.0
+          command: ["/bin/sh"]
+          args:
+            - -c
+            - |
+              ENV_ID=${ENV_ID:-default-env}
+              echo "Sending SignalFx metric with env_id: $ENV_ID"
+              curl -X POST \
+                -H 'Content-Type: application/json' \
+                -d '[{"metric":"test_signalfx_metric","value":1,"type":"gauge","dimensions":{"env_id":"'"$ENV_ID"'","source":"e2e-test"}}]' \
+                http://logzio-k8s-telemetry-otel-collector-standalone:9943/v2/datapoint
+              echo "SignalFx metric sent successfully"
+          env:
+            - name: ENV_ID
+              value: "${ENV_ID}"
+      initContainers:
+        - name: wait-for-collector
+          image: curlimages/curl:8.6.0
+          command: ["/bin/sh"]
+          args:
+            - -c
+            - |
+              echo "Waiting for collector to be ready..."
+              until curl -f http://logzio-k8s-telemetry-otel-collector-standalone:9943/health > /dev/null 2>&1; do
+                echo "Collector not ready, waiting 5 seconds..."
+                sleep 5
+              done
+              echo "Collector is ready!" 

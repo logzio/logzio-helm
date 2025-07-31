@@ -48,7 +48,7 @@ Build config file for standalone OpenTelemetry Collector
 {{- end -}}
 
 {{/* Handle Carbon config */}}
-{{- if and .Values.metrics.enabled (eq (include "opentelemetry-collector.carbonEnabled" .) "true") -}}
+{{- if and .Values.metrics.enabled .Values.carbon.enabled -}}
 {{- $carbonConfig := deepCopy .Values.carbon.config | mustMergeOverwrite -}}
 {{- $metricsConfig = deepCopy $carbonConfig | merge $metricsConfig | mustMergeOverwrite -}}
 {{- end -}}
@@ -304,7 +304,7 @@ Build config file for standalone OpenTelemetry Collector daemonset
 {{- end }}
 
 {{/* Handle Carbon config */}}
-{{- if and .Values.metrics.enabled (eq (include "opentelemetry-collector.carbonEnabled" .) "true") }}
+{{- if and .Values.metrics.enabled .Values.carbon.enabled }}
 {{- $carbonConfig := deepCopy .Values.carbon.config | mustMergeOverwrite }}
 {{- $metricsConfig = deepCopy $carbonConfig | merge $metricsConfig | mustMergeOverwrite }}
 {{- end }}

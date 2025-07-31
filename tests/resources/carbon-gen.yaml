@@ -1,0 +1,39 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: carbon-gen
+spec:
+  template:
+    metadata:
+      labels:
+        app: carbon-gen
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: carbon-gen
+          image: busybox:1.36
+          command: ["/bin/sh"]
+          args:
+            - -c
+            - |
+              ENV_ID=${ENV_ID:-default-env}
+              echo "Sending Carbon metric with env_id: $ENV_ID"
+              TIMESTAMP=$(date +%s)
+              echo "test.carbon.metric;env_id=$ENV_ID;source=e2e-test 1 $TIMESTAMP" | nc -w 1 logzio-k8s-telemetry-otel-collector-standalone 2003
+              echo "Carbon metric sent successfully"
+          env:
+            - name: ENV_ID
+              value: "${ENV_ID}"
+      initContainers:
+        - name: wait-for-collector
+          image: busybox:1.36
+          command: ["/bin/sh"]
+          args:
+            - -c
+            - |
+              echo "Waiting for collector to be ready..."
+              until nc -z logzio-k8s-telemetry-otel-collector-standalone 2003; do
+                echo "Collector not ready, waiting 5 seconds..."
+                sleep 5
+              done
+              echo "Collector is ready!" 
