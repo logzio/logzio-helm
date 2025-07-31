@@ -70,6 +70,8 @@ jobs:
           --set spanMetricsAgregator.config.connectors.spanmetrics.histogram.disable=true \
           --set enableMetricsFilter.eks=true \
           --set filters.infrastructure.exclude.namespace="kube-system" \
+          --set global.signalFx.enabled=true \
+          --set carbon.enabled=true \
           logzio-k8s-telemetry .
       
       - name: Verify deployment Status
@@ -115,13 +117,14 @@ jobs:
     name: Test Protocol Receivers
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         mode: ['daemonset', 'standalone']
         protocol: ['signalfx', 'carbon']
     steps:
       - name: Generate random id
         id: random_id
-        run: echo "::set-output name=rand::$(echo $RANDOM)"
+        run: echo "rand=$(echo $RANDOM)" >> $GITHUB_OUTPUT
 
       - name: Set ENV_ID
         run: echo "ENV_ID=telemetry-test-run-${{ steps.random_id.outputs.rand }}-${{ matrix.mode }}-${{ matrix.protocol }}" >> $GITHUB_ENV
@@ -176,8 +179,13 @@ jobs:
 
       - name: Verify deployment Status
         run: |
-          kubectl rollout status deployment/logzio-k8s-telemetry-otel-collector-standalone --timeout=300s
-          kubectl get deployment/logzio-k8s-telemetry-otel-collector-standalone -o jsonpath='{.spec.template.spec.tolerations}' | jq -r '.[] | select(.key=="global-key")'
+          if [[ "${{ matrix.mode }}" == "standalone" ]]; then
+            kubectl rollout status deployment/logzio-k8s-telemetry-otel-collector-standalone --timeout=300s
+            kubectl get deployment/logzio-k8s-telemetry-otel-collector-standalone -o jsonpath='{.spec.template.spec.tolerations}' | jq -r '.[] | select(.key=="global-key")'
+          else
+            kubectl rollout status daemonset/logzio-k8s-telemetry-otel-collector-ds --timeout=300s
+            kubectl get daemonset/logzio-k8s-telemetry-otel-collector-ds -o jsonpath='{.spec.template.spec.tolerations}' | jq -r '.[] | select(.key=="global-key")'
+          fi
 
       - name: Run metric generator
         run: |
