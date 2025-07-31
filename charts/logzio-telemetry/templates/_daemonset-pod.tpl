@@ -21,7 +21,14 @@ containers:
 {{- if .Values.metrics.enabled }}
     ports:
       {{- range $key, $port := .Values.ports }}
-      {{- if $port.enabled }}
+      {{- $shouldEnable := $port.enabled }}
+      {{- if eq $key "signalfx" }}
+        {{- $shouldEnable = (eq (include "opentelemetry-collector.signalFxEnabled" $) "true") }}
+      {{- end }}
+      {{- if eq $key "carbon" }}
+        {{- $shouldEnable = $.Values.carbon.enabled }}
+      {{- end }}
+      {{- if $shouldEnable }}
       - name: {{ $key }}
         containerPort: {{ $port.containerPort }}
         protocol: {{ $port.protocol }}
