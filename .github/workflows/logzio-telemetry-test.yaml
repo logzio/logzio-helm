@@ -186,49 +186,6 @@ jobs:
           $PROTOCOL_FLAG \
           $RELEASE_NAME .
 
-      - name: Debug Service and Pod Status
-        run: |
-          echo "=== Services ==="
-          kubectl get services -o wide
-          echo ""
-          echo "=== Service Details ==="
-          kubectl describe service logzio-k8s-telemetry-otel-collector
-          echo ""
-          echo "=== Pods ==="
-          kubectl get pods -o wide
-          echo ""
-          echo "=== Pod Details ==="
-          kubectl describe pods -l app.kubernetes.io/name=otel-collector
-          echo ""
-          echo "=== DaemonSets ==="
-          kubectl get daemonsets -o wide
-          echo ""
-          echo "=== DaemonSet Details ==="
-          kubectl describe daemonset logzio-k8s-telemetry-otel-collector-ds || echo "DaemonSet not found"
-          echo ""
-          echo "=== All Collector Resources ==="
-          kubectl get all -l app.kubernetes.io/name=otel-collector
-          echo ""
-          echo "=== Node Details ==="
-          kubectl get nodes -o wide
-          echo ""
-          echo "=== Node Taints and Labels ==="
-          kubectl describe nodes | grep -A 10 -B 5 "Taints\|Labels"
-          echo ""
-          echo "=== ConfigMap Content ==="
-          if [[ "${{ matrix.mode }}" == "standalone" ]]; then
-            kubectl get configmap logzio-k8s-telemetry-otel-collector-standalone -o yaml
-          else
-            kubectl get configmap logzio-k8s-telemetry-otel-collector-ds -o yaml
-          fi
-          echo ""
-          echo "=== Pod Logs ==="
-          for pod in $(kubectl get pods -l app.kubernetes.io/name=otel-collector -o jsonpath='{.items[*].metadata.name}'); do
-            echo "--- Logs for $pod ---"
-            kubectl logs $pod --tail=50 || echo "Could not get logs for $pod"
-            echo ""
-          done
-
       - name: Verify deployment Status
         run: |
           echo "=== Checking deployment/daemonset status ==="
@@ -254,9 +211,9 @@ jobs:
           
           # Substitute ENV_ID in the YAML and apply
           if [[ "${{ matrix.protocol }}" == "signalfx" ]]; then
-            envsubst < tests/resources/signalfx-gen.yaml | kubectl apply -f -
+            envsubst < tests/resources/signalfx-metrics-gen.yaml | kubectl apply -f -
           elif [[ "${{ matrix.protocol }}" == "carbon" ]]; then
-            envsubst < tests/resources/carbon-gen.yaml | kubectl apply -f -
+            envsubst < tests/resources/carbon-metrics-gen.yaml | kubectl apply -f -
           fi
 
       - name: Wait for generator deployment
