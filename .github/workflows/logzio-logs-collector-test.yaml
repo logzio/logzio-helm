@@ -97,6 +97,7 @@ jobs:
     name: Test SignalFx Logs on Kind
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         mode: ['daemonset', 'standalone']
     steps:
@@ -326,11 +327,7 @@ jobs:
 
       - name: Describe config map
         run: |
-          if [[ "${{ matrix.mode }}" == "daemonset" ]]; then
-            kubectl describe cm logzio-logs-collector-daemonset
-          else
-            kubectl describe cm logzio-logs-collector-standalone
-          fi
+          kubectl describe cm logzio-logs-collector-daemonset
 
       - name: Cleanup
         if: always()
