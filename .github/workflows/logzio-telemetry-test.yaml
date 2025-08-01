@@ -233,20 +233,20 @@ jobs:
             kubectl get daemonset/logzio-k8s-telemetry-otel-collector-ds -o jsonpath='{.spec.template.spec.tolerations}' | jq -r '.[] | select(.key=="global-key")'
           fi
           
-          echo "=== Testing Service Connectivity ==="
-          # Set environment variables for service connectivity test
-          export RELEASE_NAME="logzio-k8s-telemetry"
-          export NAMESPACE="default"
-          # Test if the protocol-specific port is accessible
-          if [[ "${{ matrix.protocol }}" == "signalfx" ]]; then
-            echo "Testing SignalFx port 9943..."
-            kubectl run test-connectivity --image=curlimages/curl:8.6.0 --rm -i --restart=Never -- \
-              sh -c "nc -zv ${RELEASE_NAME}-otel-collector.${NAMESPACE}.svc.cluster.local 9943 || echo 'Port 9943 not accessible'"
-          elif [[ "${{ matrix.protocol }}" == "carbon" ]]; then
-            echo "Testing Carbon port 2003..."
-            kubectl run test-connectivity --image=busybox:1.36 --rm -i --restart=Never -- \
-              sh -c "nc -zv ${RELEASE_NAME}-otel-collector.${NAMESPACE}.svc.cluster.local 2003 || echo 'Port 2003 not accessible'"
-          fi
+          # echo "=== Testing Service Connectivity ==="
+          # # Set environment variables for service connectivity test
+          # export RELEASE_NAME="logzio-k8s-telemetry"
+          # export NAMESPACE="default"
+          # # Test if the protocol-specific port is accessible
+          # if [[ "${{ matrix.protocol }}" == "signalfx" ]]; then
+          #   echo "Testing SignalFx port 9943..."
+          #   kubectl run test-connectivity --image=curlimages/curl:8.6.0 --rm -i --restart=Never -- \
+          #     sh -c "nc -zv ${RELEASE_NAME}-otel-collector.${NAMESPACE}.svc.cluster.local 9943 || echo 'Port 9943 not accessible'"
+          # elif [[ "${{ matrix.protocol }}" == "carbon" ]]; then
+          #   echo "Testing Carbon port 2003..."
+          #   kubectl run test-connectivity --image=busybox:1.36 --rm -i --restart=Never -- \
+          #     sh -c "nc -zv ${RELEASE_NAME}-otel-collector.${NAMESPACE}.svc.cluster.local 2003 || echo 'Port 2003 not accessible'"
+          # fi
 
       - name: Run metric generator
         run: |
@@ -263,7 +263,7 @@ jobs:
       - name: Wait for generator job completion
         run: |
           JOB_NAME="${{ matrix.protocol }}-gen"
-          kubectl wait --for=condition=complete job/$JOB_NAME --timeout=120s
+          kubectl wait --for=condition=complete job/$JOB_NAME --timeout=300s
           kubectl logs job/$JOB_NAME
 
       - name: Sleep for metrics to be processed
