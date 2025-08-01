@@ -155,7 +155,7 @@ jobs:
           helm upgrade --install -n $NAMESPACE --create-namespace \
           --set global.logzioLogsToken=${{ secrets.LOGZIO_LOGS_TOKEN }} \
           --set global.logzioRegion=us \
-          --set global.logType=${{ env.ENV_ID }} \          
+          --set global.logType=${{ env.ENV_ID }} \
           --set global.env_id=${{ env.ENV_ID }} \
           --set mode=${{ matrix.mode }} \
           --set global.signalFx.enabled=true \
