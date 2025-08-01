@@ -145,7 +145,7 @@ jobs:
 
       - name: Install Kind
         run: |
-          curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.11.1/kind-Linux-amd64"
+          curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.26.0/kind-Linux-amd64"
           chmod +x ./kind
           mv ./kind /usr/local/bin/kind
 
@@ -153,6 +153,26 @@ jobs:
         run: |
           kind create cluster --name kind-${{ github.run_id }}-${{ matrix.mode }}-${{ matrix.protocol }}
           kubectl cluster-info
+          
+      - name: Wait for node to be ready
+        run: |
+          echo "Waiting for nodes to be ready..."
+          kubectl wait --for=condition=Ready nodes --all --timeout=300s
+          echo "Node status:"
+          kubectl get nodes -o wide
+          echo "Node details:"
+          kubectl describe nodes
+          echo "Checking for taints:"
+          kubectl get nodes -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.spec.taints}{"\n"}{end}'
+          
+      - name: Ensure cluster is ready
+        run: |
+          echo "Checking cluster components..."
+          kubectl get componentstatuses
+          echo "Checking system pods..."
+          kubectl get pods -n kube-system
+          echo "Waiting for system pods to be ready..."
+          kubectl wait --for=condition=Ready pods --all -n kube-system --timeout=300s
 
 
       - name: Deploy Helm Chart with Protocol Receiver
