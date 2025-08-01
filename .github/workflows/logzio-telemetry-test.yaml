@@ -172,6 +172,10 @@ jobs:
           --set global.logzioRegion=us \
           --set global.env_id=${{ env.ENV_ID }} \
           --set collector.mode=${{ matrix.mode }} \
+          --set global.tolerations[0].key="global-key" \
+          --set global.tolerations[0].operator="Equal" \
+          --set global.tolerations[0].value="global-value" \
+          --set global.tolerations[0].effect="NoSchedule" \
           $PROTOCOL_FLAG \
           $RELEASE_NAME .
 
@@ -230,6 +234,9 @@ jobs:
           fi
           
           echo "=== Testing Service Connectivity ==="
+          # Set environment variables for service connectivity test
+          export RELEASE_NAME="logzio-k8s-telemetry"
+          export NAMESPACE="default"
           # Test if the protocol-specific port is accessible
           if [[ "${{ matrix.protocol }}" == "signalfx" ]]; then
             echo "Testing SignalFx port 9943..."
