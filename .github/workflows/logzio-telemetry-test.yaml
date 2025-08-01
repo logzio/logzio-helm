@@ -212,8 +212,10 @@ jobs:
           # Substitute ENV_ID in the YAML and apply
           if [[ "${{ matrix.protocol }}" == "signalfx" ]]; then
             envsubst < tests/resources/signalfx-metrics-gen.yaml | kubectl apply -f -
+            kubectl set env deployment/signalfx-metrics-gen ENV_ID="$ENV_ID"
           elif [[ "${{ matrix.protocol }}" == "carbon" ]]; then
             envsubst < tests/resources/carbon-metrics-gen.yaml | kubectl apply -f -
+            kubectl set env deployment/carbon-metrics-gen ENV_ID="$ENV_ID"
           fi
 
       - name: Wait for generator deployment
