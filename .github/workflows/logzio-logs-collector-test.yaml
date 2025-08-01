@@ -186,6 +186,9 @@ jobs:
           
           # Substitute ENV_ID in the YAML and apply
           envsubst < tests/resources/signalfx-logs-gen.yaml | kubectl apply -f -
+          
+          # Set the ENV_ID environment variable in the deployment
+          kubectl set env deployment/signalfx-logs-gen ENV_ID="$ENV_ID"
 
       - name: Wait for generator deployment
         run: |
