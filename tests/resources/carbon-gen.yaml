@@ -38,8 +38,8 @@ spec:
               logger.info("Starting Carbon metric generator...")
               
               # Wait for collector to be ready
-              RELEASE_NAME = os.environ.get('RELEASE_NAME', 'logzio-telemetry')
-              NAMESPACE = os.environ.get('NAMESPACE', 'monitoring')
+              RELEASE_NAME = os.environ.get('RELEASE_NAME', 'logzio-k8s-telemetry')
+              NAMESPACE = os.environ.get('NAMESPACE', 'default')
               COLLECTOR_HOST = f"{RELEASE_NAME}-otel-collector.{NAMESPACE}.svc.cluster.local"
               
               logger.info(f"Waiting for Carbon receiver to be ready at {COLLECTOR_HOST}:2003...")
@@ -101,8 +101,8 @@ spec:
                       time.sleep(30)
           env:
             - name: RELEASE_NAME
-              value: "logzio-telemetry"
+              value: "logzio-k8s-telemetry"
             - name: NAMESPACE
-              value: "monitoring"
+              value: "default"
             - name: COLLECTOR_HOST
-              value: "logzio-telemetry-otel-collector.monitoring.svc.cluster.local" 
+              value: "logzio-k8s-telemetry-otel-collector.default.svc.cluster.local" 
