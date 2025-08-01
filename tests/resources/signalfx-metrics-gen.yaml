@@ -1,0 +1,133 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: signalfx-gen
+  labels:
+    app: signalfx-gen
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: signalfx-gen
+  template:
+    metadata:
+      labels:
+        app: signalfx-gen
+    spec:
+      containers:
+        - name: signalfx-gen
+          image: python:3.9-alpine
+          command: ["python3"]
+          args:
+            - -c
+            - |
+              import subprocess
+              import sys
+              import logging
+              import time
+              import os
+              
+              # Configure logging
+              logging.basicConfig(
+                  level=logging.INFO,
+                  format='%(asctime)s - %(levelname)s - %(message)s',
+                  handlers=[logging.StreamHandler(sys.stdout)]
+              )
+              logger = logging.getLogger(__name__)
+              
+              logger.info("Starting SignalFx metric generator...")
+              
+              # Wait for collector to be ready
+              RELEASE_NAME = os.environ.get('RELEASE_NAME', 'logzio-k8s-telemetry')
+              NAMESPACE = os.environ.get('NAMESPACE', 'default')
+              COLLECTOR_HOST = f"{RELEASE_NAME}-otel-collector.{NAMESPACE}.svc.cluster.local"
+              
+              logger.info(f"Waiting for SignalFx receiver to be ready at {COLLECTOR_HOST}:9943...")
+              
+              # Install netcat for connectivity check
+              try:
+                  subprocess.check_call(["apk", "add", "--no-cache", "netcat-openbsd"])
+                  logger.info("Installed netcat for connectivity check")
+              except Exception as e:
+                  logger.warning(f"Could not install netcat: {e}")
+              
+              # Wait for collector to be ready
+              while True:
+                  try:
+                      result = subprocess.run(["nc", "-z", COLLECTOR_HOST, "9943"], 
+                                           capture_output=True, timeout=10)
+                      if result.returncode == 0:
+                          logger.info("SignalFx receiver is ready!")
+                          break
+                      else:
+                          logger.info("Collector not ready, waiting 5 seconds...")
+                          time.sleep(5)
+                  except Exception as e:
+                      logger.info(f"Error checking collector connectivity: {e}, waiting 5 seconds...")
+                      time.sleep(5)
+              
+              # Install signalfx package
+              logger.info("Installing signalfx package...")
+              try:
+                  subprocess.check_call([sys.executable, "-m", "pip", "install", "signalfx"])
+                  logger.info("Successfully installed signalfx package")
+              except Exception as e:
+                  logger.error(f"Error installing signalfx: {e}")
+                  sys.exit(1)
+              
+              logger.info("Importing signalfx...")
+              try:
+                  import signalfx
+                  logger.info("Successfully imported signalfx")
+              except Exception as e:
+                  logger.error(f"Error importing signalfx: {e}")
+                  sys.exit(1)
+              
+              logger.info("Configuring SignalFx client...")
+              # Configure SignalFx client
+              collector_host = os.environ.get('COLLECTOR_HOST', 'logzio-telemetry-otel-collector.monitoring.svc.cluster.local')
+              default_env_id = 'signalfx-env'
+              env_id = os.environ.get('ENV_ID', default_env_id)
+              
+              logger.info(f"Using collector host: {collector_host}")
+              logger.info(f"Using env_id: {env_id}")
+              
+              try:
+                  client = signalfx.SignalFx(ingest_endpoint=f'http://{collector_host}:9943')
+                  sfx = client.ingest('dummy_token')
+                  logger.info("Successfully created SignalFx client")
+              except Exception as e:
+                  logger.error(f"Error creating SignalFx client: {e}")
+                  sys.exit(1)
+              
+              logger.info(f"SignalFx metric generator started. Sending metrics to: http://{collector_host}:9943")
+              
+              # Send metrics continuously
+              while True:
+                  try:
+                      timestamp_ms = int(time.time() * 1000)
+                      
+                      # Send the metric
+                      sfx.send(gauges=[{
+                          'metric': 'test_signalfx_metric',
+                          'value': 1.0,
+                          'timestamp': timestamp_ms,
+                          'dimensions': {
+                              'env_id': env_id,
+                              'source': 'signalfx-gen'
+                          }
+                      }])
+                      
+                      logger.info(f"Sent SignalFx metric with timestamp: {timestamp_ms}")
+                      time.sleep(30)  # Wait 30 seconds before sending the next metric
+                      
+                  except Exception as e:
+                      logger.error(f"Error sending metric: {e}")
+                      time.sleep(30)
+          env:
+            - name: RELEASE_NAME
+              value: "logzio-k8s-telemetry"
+            - name: NAMESPACE
+              value: "default"
+            - name: COLLECTOR_HOST
+              value: "logzio-k8s-telemetry-otel-collector.default.svc.cluster.local" 
