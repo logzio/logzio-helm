@@ -27,10 +27,10 @@ type MetricResponse struct {
 
 func TestSignalFxMetrics(t *testing.T) {
 	requiredMetrics := map[string][]string{
-		"test_signalfx_metric": {"env_id", "source"},
+		"test_signalfx_metric": {"p8s_logzio_name", "source"},
 	}
 	envId := os.Getenv("ENV_ID")
-	queryTemplate := `test_signalfx_metric{env_id="%s"}`
+	queryTemplate := `test_signalfx_metric{p8s_logzio_name="%s"}`
 	query := fmt.Sprintf(queryTemplate, envId)
 	escapedQuery := url.QueryEscape(query)
 	testMetrics(t, requiredMetrics, escapedQuery)
