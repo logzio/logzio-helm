@@ -137,12 +137,12 @@ spec:
                                   'category': 'USER_DEFINED',
                                   'timestamp': timestamp_ms,
                                   'dimensions': {
-                                      'env_id': env_id,
-                                      'source': 'signalfx-logs-gen'
+                                      'env_id': env_id
                                   },
                                   'properties': {
                                       'message': f'Test SignalFx log message at {timestamp_ms}',
-                                      'log_level': 'INFO'
+                                      'log_level': 'INFO',
+                                      'source': 'signalfx-logs-gen'
                                   }
                               }])
                               logger.info(f"Sent SignalFx log with alternative method at timestamp: {timestamp_ms}")
