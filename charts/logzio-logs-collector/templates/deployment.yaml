@@ -18,6 +18,7 @@ spec:
   selector:
     matchLabels:
       {{- include "logs-collector.selectorLabels" . | nindent 6 }}
+      {{- include "logs-collector.component" . | nindent 6 }}
   template:
     metadata:
       annotations:
@@ -25,6 +26,7 @@ spec:
         {{- include "logs-collector.podAnnotations" . | nindent 8 }}
       labels:
         {{- include "logs-collector.selectorLabels" . | nindent 8 }}
+        {{- include "logs-collector.component" . | nindent 8 }}
         {{- include "logs-collector.podLabels" . | nindent 8 }}
     spec:
       {{- $podValues := deepCopy .Values }}
