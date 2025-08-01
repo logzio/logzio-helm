@@ -1,11 +1,18 @@
-apiVersion: batch/v1
-kind: Job
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: signalfx-gen
   labels:
     app: signalfx-gen
 spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: signalfx-gen
   template:
+    metadata:
+      labels:
+        app: signalfx-gen
     spec:
       initContainers:
         - name: wait-for-collector
@@ -43,27 +50,33 @@ spec:
               NAMESPACE=${NAMESPACE:-default}
               COLLECTOR_HOST="${RELEASE_NAME}-otel-collector.${NAMESPACE}.svc.cluster.local"
               
-              # Decode the pre-built protobuf payload
-              echo "$B64_PAYLOAD" | base64 -d > /tmp/payload.pb
-              
-              # Send the protobuf request
-              http_code=$(curl -s -o /dev/null -w "%{http_code}" \
-                -H "Content-Type: application/x-protobuf" \
-                --data-binary @/tmp/payload.pb \
-                "http://$COLLECTOR_HOST:9943/v2/datapoint")
-              
-              # Treat 200 or 202 as success, anything else as failure
-              [ "$http_code" = "200" ] || [ "$http_code" = "202" ]
+              # Send SignalFx metrics continuously
+              while true; do
+                # Decode the pre-built protobuf payload
+                echo "$B64_PAYLOAD" | base64 -d > /tmp/payload.pb
+                
+                # Send the protobuf request
+                http_code=$(curl -s -o /dev/null -w "%{http_code}" \
+                  -H "Content-Type: application/x-protobuf" \
+                  --data-binary @/tmp/payload.pb \
+                  "http://$COLLECTOR_HOST:9943/v2/datapoint")
+                
+                # Log the result
+                if [ "$http_code" = "200" ] || [ "$http_code" = "202" ]; then
+                  echo "SignalFx metric sent successfully (HTTP $http_code)"
+                else
+                  echo "SignalFx metric failed (HTTP $http_code)"
+                fi
+                
+                # Wait 30 seconds before sending the next metric
+                sleep 30
+              done
           env:
             - name: ENV_ID
               value: "${ENV_ID}"
             - name: RELEASE_NAME
-              value: "logzio-telemetry"
+              value: "logzio-k8s-telemetry"
             - name: NAMESPACE
-              value: "monitoring"
-            - name: COLLECTOR_HOST
-              value: "logzio-telemetry-otel-collector.monitoring.svc.cluster.local"
+              value: "default"
             - name: B64_PAYLOAD
-              value: "CjASGnRlc3Quc2lnbmFsZnguY29ubmVjdGl2aXR5GNumiaSGMyIJEQAAAAAAAPA/KAA="
-      restartPolicy: Never
-  backoffLimit: 3 
+              value: "CjASGnRlc3Quc2lnbmFsZnguY29ubmVjdGl2aXR5GNumiaSGMyIJEQAAAAAAAPA/KAA=" 

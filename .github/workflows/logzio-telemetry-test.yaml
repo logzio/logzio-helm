@@ -40,7 +40,7 @@ jobs:
 
       - name: Install Kind
         run: |
-          curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.11.1/kind-Linux-amd64"
+          curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.26.0/kind-Linux-amd64"
           chmod +x ./kind
           mv ./kind /usr/local/bin/kind
 
@@ -176,6 +176,12 @@ jobs:
           --set global.tolerations[0].operator="Equal" \
           --set global.tolerations[0].value="global-value" \
           --set global.tolerations[0].effect="NoSchedule" \
+          # --set global.tolerations[1].key="node.kubernetes.io/not-ready" \
+          # --set global.tolerations[1].operator="Exists" \
+          # --set global.tolerations[1].effect="NoSchedule" \
+          # --set global.tolerations[2].key="node-role.kubernetes.io/control-plane" \
+          # --set global.tolerations[2].operator="Exists" \
+          # --set global.tolerations[2].effect="NoSchedule" \
           $PROTOCOL_FLAG \
           $RELEASE_NAME .
 
@@ -260,11 +266,11 @@ jobs:
             envsubst < tests/resources/carbon-gen.yaml | kubectl apply -f -
           fi
 
-      - name: Wait for generator job completion
+      - name: Wait for generator deployment
         run: |
-          JOB_NAME="${{ matrix.protocol }}-gen"
-          kubectl wait --for=condition=complete job/$JOB_NAME --timeout=300s
-          kubectl logs job/$JOB_NAME
+          DEPLOYMENT_NAME="${{ matrix.protocol }}-gen"
+          kubectl rollout status deployment/$DEPLOYMENT_NAME --timeout=300s
+          kubectl logs deployment/$DEPLOYMENT_NAME --tail=10
 
       - name: Sleep for metrics to be processed
         run: sleep 180
