@@ -61,12 +61,6 @@ jobs:
           --set global.tolerations[0].operator="Equal" \
           --set global.tolerations[0].value="global-value" \
           --set global.tolerations[0].effect="NoSchedule" \
-          --set global.tolerations[1].key="node.kubernetes.io/not-ready" \
-          --set global.tolerations[1].operator="Exists" \
-          --set global.tolerations[1].effect="NoSchedule" \
-          --set global.tolerations[2].key="node-role.kubernetes.io/control-plane" \
-          --set global.tolerations[2].operator="Exists" \
-          --set global.tolerations[2].effect="NoSchedule" \
           --set global.logzioTracesToken=${{ secrets.LOGZIO_TRACES_TOKEN }} \
           --set global.logzioSpmToken=${{ secrets.LOGZIO_METRICS_TOKEN }} \
           --set global.logzioMetricsToken=${{ secrets.LOGZIO_METRICS_TOKEN }} \
@@ -151,7 +145,7 @@ jobs:
 
       - name: Install Kind
         run: |
-          curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.26.0/kind-Linux-amd64"
+          curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.11.1/kind-Linux-amd64"
           chmod +x ./kind
           mv ./kind /usr/local/bin/kind
 
@@ -182,12 +176,7 @@ jobs:
           --set global.tolerations[0].operator="Equal" \
           --set global.tolerations[0].value="global-value" \
           --set global.tolerations[0].effect="NoSchedule" \
-          --set global.tolerations[1].key="node.kubernetes.io/not-ready" \
-          --set global.tolerations[1].operator="Exists" \
-          --set global.tolerations[1].effect="NoSchedule" \
-          --set global.tolerations[2].key="node-role.kubernetes.io/control-plane" \
-          --set global.tolerations[2].operator="Exists" \
-          --set global.tolerations[2].effect="NoSchedule" \
+ 
           $PROTOCOL_FLAG \
           $RELEASE_NAME .
 
