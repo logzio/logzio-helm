@@ -51,6 +51,9 @@ func TestLogzioLogsCollectorSignalFxLogs(t *testing.T) {
 	for _, hit := range logResponse.Hits.Hits {
 		source := hit.Source
 		
+		// Debug: Log the entire log structure to understand what we're getting
+		logger.Info("Processing SignalFx log", zap.Any("log", hit))
+		
 		// Check required SignalFx event fields
 		if source.EventType == "" {
 			logger.Error("Missing event_type field", zap.Any("log", hit))
