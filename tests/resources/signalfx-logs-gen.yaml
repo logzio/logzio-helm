@@ -163,4 +163,4 @@ spec:
             - name: COLLECTOR_HOST
               value: "logzio-logs-collector.default.svc.cluster.local"
             - name: ENV_ID
-              value: "signalfx-logs-env" 
+              value: "${ENV_ID}" 
