@@ -158,20 +158,22 @@ jobs:
         run: |
           cd charts/logzio-telemetry
           helm dependency build
+          export RELEASE_NAME="logzio-k8s-telemetry"
+          export NAMESPACE="default"
           PROTOCOL_FLAG=""
           if [[ "${{ matrix.protocol }}" == "signalfx" ]]; then
             PROTOCOL_FLAG="--set global.signalFx.enabled=true"
           elif [[ "${{ matrix.protocol }}" == "carbon" ]]; then
             PROTOCOL_FLAG="--set carbon.enabled=true"
           fi
-          helm upgrade --install \
+          helm upgrade --install -n $NAMESPACE --create-namespace \
           --set metrics.enabled=true \
           --set global.logzioMetricsToken=${{ secrets.LOGZIO_METRICS_TOKEN }} \
           --set global.logzioRegion=us \
           --set global.env_id=${{ env.ENV_ID }} \
           --set collector.mode=${{ matrix.mode }} \
           $PROTOCOL_FLAG \
-          logzio-k8s-telemetry .
+          $RELEASE_NAME .
 
       - name: Debug Service and Pod Status
         run: |
@@ -232,16 +234,18 @@ jobs:
           if [[ "${{ matrix.protocol }}" == "signalfx" ]]; then
             echo "Testing SignalFx port 9943..."
             kubectl run test-connectivity --image=curlimages/curl:8.6.0 --rm -i --restart=Never -- \
-              sh -c "curl -f http://logzio-k8s-telemetry.default.svc.cluster.local:9943/health || echo 'Health endpoint failed'; \
-                     nc -zv logzio-k8s-telemetry.default.svc.cluster.local 9943 || echo 'Port 9943 not accessible'"
+              sh -c "nc -zv ${RELEASE_NAME}-otel-collector.${NAMESPACE}.svc.cluster.local 9943 || echo 'Port 9943 not accessible'"
           elif [[ "${{ matrix.protocol }}" == "carbon" ]]; then
             echo "Testing Carbon port 2003..."
             kubectl run test-connectivity --image=busybox:1.36 --rm -i --restart=Never -- \
-              sh -c "nc -zv logzio-k8s-telemetry.default.svc.cluster.local 2003 || echo 'Port 2003 not accessible'"
+              sh -c "nc -zv ${RELEASE_NAME}-otel-collector.${NAMESPACE}.svc.cluster.local 2003 || echo 'Port 2003 not accessible'"
           fi
 
       - name: Run metric generator
         run: |
+          # Set environment variables for envsubst
+          export RELEASE_NAME="logzio-k8s-telemetry"
+          export NAMESPACE="default"
           # Substitute ENV_ID in the YAML and apply
           if [[ "${{ matrix.protocol }}" == "signalfx" ]]; then
             envsubst < tests/resources/signalfx-gen.yaml | kubectl apply -f -

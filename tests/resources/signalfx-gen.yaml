@@ -2,13 +2,35 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: signalfx-gen
+  labels:
+    app: signalfx-gen
 spec:
   template:
-    metadata:
-      labels:
-        app: signalfx-gen
     spec:
-      restartPolicy: Never
+      initContainers:
+        - name: wait-for-collector
+          image: busybox:1.36
+          command: ["/bin/sh"]
+          args:
+            - -c
+            - |
+              ENV_ID=${ENV_ID:-default-env}
+              RELEASE_NAME=${RELEASE_NAME:-logzio-k8s-telemetry}
+              NAMESPACE=${NAMESPACE:-default}
+              COLLECTOR_HOST="${RELEASE_NAME}-otel-collector.${NAMESPACE}.svc.cluster.local"
+              echo "Waiting for SignalFx receiver to be ready at $COLLECTOR_HOST:9943..."
+              until nc -z $COLLECTOR_HOST 9943; do
+                echo "Collector not ready, waiting 5 seconds..."
+                sleep 5
+              done
+              echo "SignalFx receiver is ready!"
+          env:
+            - name: ENV_ID
+              value: "${ENV_ID}"
+            - name: RELEASE_NAME
+              value: "logzio-k8s-telemetry"
+            - name: NAMESPACE
+              value: "default"
       containers:
         - name: signalfx-gen
           image: curlimages/curl:8.6.0
@@ -17,25 +39,31 @@ spec:
             - -c
             - |
               ENV_ID=${ENV_ID:-default-env}
-              echo "Sending SignalFx metric with env_id: $ENV_ID"
-              curl -X POST \
-                -H 'Content-Type: application/json' \
-                -d '[{"metric":"test_signalfx_metric","value":1,"type":"gauge","dimensions":{"env_id":"'"$ENV_ID"'","source":"e2e-test"}}]' \
-                http://logzio-k8s-telemetry.default.svc.cluster.local:9943/v2/datapoint
-              echo "SignalFx metric sent successfully"
+              RELEASE_NAME=${RELEASE_NAME:-logzio-k8s-telemetry}
+              NAMESPACE=${NAMESPACE:-default}
+              COLLECTOR_HOST="${RELEASE_NAME}-otel-collector.${NAMESPACE}.svc.cluster.local"
+              
+              # Decode the pre-built protobuf payload
+              echo "$B64_PAYLOAD" | base64 -d > /tmp/payload.pb
+              
+              # Send the protobuf request
+              http_code=$(curl -s -o /dev/null -w "%{http_code}" \
+                -H "Content-Type: application/x-protobuf" \
+                --data-binary @/tmp/payload.pb \
+                "http://$COLLECTOR_HOST:9943/v2/datapoint")
+              
+              # Treat 200 or 202 as success, anything else as failure
+              [ "$http_code" = "200" ] || [ "$http_code" = "202" ]
           env:
             - name: ENV_ID
               value: "${ENV_ID}"
-      initContainers:
-        - name: wait-for-collector
-          image: curlimages/curl:8.6.0
-          command: ["/bin/sh"]
-          args:
-            - -c
-            - |
-              echo "Waiting for collector to be ready..."
-              until curl -f http://logzio-k8s-telemetry.default.svc.cluster.local:9943/health > /dev/null 2>&1; do
-                echo "Collector not ready, waiting 5 seconds..."
-                sleep 5
-              done
-              echo "Collector is ready!" 
+            - name: RELEASE_NAME
+              value: "logzio-telemetry"
+            - name: NAMESPACE
+              value: "monitoring"
+            - name: COLLECTOR_HOST
+              value: "logzio-telemetry-otel-collector.monitoring.svc.cluster.local"
+            - name: B64_PAYLOAD
+              value: "CjASGnRlc3Quc2lnbmFsZnguY29ubmVjdGl2aXR5GNumiaSGMyIJEQAAAAAAAPA/KAA="
+      restartPolicy: Never
+  backoffLimit: 3 

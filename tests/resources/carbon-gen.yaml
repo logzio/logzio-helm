@@ -17,9 +17,12 @@ spec:
             - -c
             - |
               ENV_ID=${ENV_ID:-default-env}
-              echo "Sending Carbon metric with env_id: $ENV_ID"
+              RELEASE_NAME=${RELEASE_NAME:-logzio-k8s-telemetry}
+              NAMESPACE=${NAMESPACE:-default}
+              COLLECTOR_HOST="${RELEASE_NAME}-otel-collector.${NAMESPACE}.svc.cluster.local"
+              echo "Sending Carbon metric with env_id: $ENV_ID to $COLLECTOR_HOST"
               TIMESTAMP=$(date +%s)
-              echo "test.carbon.metric;env_id=$ENV_ID;source=e2e-test 1 $TIMESTAMP" | nc -w 1 logzio-k8s-telemetry-otel-collector 2003
+              echo "test.carbon.metric;env_id=$ENV_ID;source=e2e-test 1 $TIMESTAMP" | nc -w 1 $COLLECTOR_HOST 2003
               echo "Carbon metric sent successfully"
           env:
             - name: ENV_ID
@@ -31,8 +34,11 @@ spec:
           args:
             - -c
             - |
+              RELEASE_NAME=${RELEASE_NAME:-logzio-k8s-telemetry}
+              NAMESPACE=${NAMESPACE:-default}
+              COLLECTOR_HOST="${RELEASE_NAME}-otel-collector.${NAMESPACE}.svc.cluster.local"
               echo "Waiting for collector to be ready..."
-              until nc -z logzio-k8s-telemetry-otel-collector 2003; do
+              until nc -z $COLLECTOR_HOST 2003; do
                 echo "Collector not ready, waiting 5 seconds..."
                 sleep 5
               done
