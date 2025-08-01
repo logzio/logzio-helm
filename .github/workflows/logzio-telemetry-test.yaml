@@ -199,6 +199,7 @@ jobs:
 
       - name: Run metric generator
         run: |
+          DEPLOYMENT_NAME="${{ matrix.protocol }}-gen"
           # Set environment variables for envsubst
           export RELEASE_NAME="logzio-k8s-telemetry"
           export NAMESPACE="default"
@@ -209,14 +210,14 @@ jobs:
           echo "RELEASE_NAME: $RELEASE_NAME"
           echo "NAMESPACE: $NAMESPACE"
           
+          
           # Substitute ENV_ID in the YAML and apply
           if [[ "${{ matrix.protocol }}" == "signalfx" ]]; then
             envsubst < tests/resources/signalfx-metrics-gen.yaml | kubectl apply -f -
-            kubectl set env deployment/signalfx-metrics-gen ENV_ID="$ENV_ID"
           elif [[ "${{ matrix.protocol }}" == "carbon" ]]; then
-            envsubst < tests/resources/carbon-metrics-gen.yaml | kubectl apply -f -
-            kubectl set env deployment/carbon-metrics-gen ENV_ID="$ENV_ID"
+            envsubst < tests/resources/carbon-metrics-gen.yaml | kubectl apply -f -            
           fi
+          kubectl set env deployment/$DEPLOYMENT_NAME ENV_ID="$ENV_ID"
 
       - name: Wait for generator deployment
         run: |
