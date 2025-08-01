@@ -40,7 +40,7 @@ jobs:
 
       - name: Install Kind
         run: |
-          curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.26.0/kind-Linux-amd64"
+          curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.11.1/kind-Linux-amd64"
           chmod +x ./kind
           mv ./kind /usr/local/bin/kind
 
