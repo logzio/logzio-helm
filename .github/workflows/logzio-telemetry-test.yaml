@@ -258,7 +258,7 @@ jobs:
           DEPLOYMENT_NAME="${{ matrix.protocol }}-gen"
           
           # Wait for deployment to be available
-          kubectl rollout status deployment/$DEPLOYMENT_NAME --timeout=600s
+          kubectl rollout status deployment/$DEPLOYMENT_NAME --timeout=300s
           
           # Check if pods are running
           kubectl get pods -l app=$DEPLOYMENT_NAME

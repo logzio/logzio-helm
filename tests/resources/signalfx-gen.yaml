@@ -21,7 +21,6 @@ spec:
           args:
             - -c
             - |
-              ENV_ID=${ENV_ID:-default-env}
               RELEASE_NAME=${RELEASE_NAME:-logzio-k8s-telemetry}
               NAMESPACE=${NAMESPACE:-default}
               COLLECTOR_HOST="${RELEASE_NAME}-otel-collector.${NAMESPACE}.svc.cluster.local"
@@ -32,51 +31,96 @@ spec:
               done
               echo "SignalFx receiver is ready!"
           env:
-            - name: ENV_ID
-              value: "${ENV_ID}"
             - name: RELEASE_NAME
               value: "logzio-k8s-telemetry"
             - name: NAMESPACE
               value: "default"
       containers:
         - name: signalfx-gen
-          image: curlimages/curl:8.6.0
-          command: ["/bin/sh"]
+          image: python:3.9-alpine
+          command: ["python3"]
           args:
             - -c
             - |
-              ENV_ID=${ENV_ID:-default-env}
-              RELEASE_NAME=${RELEASE_NAME:-logzio-k8s-telemetry}
-              NAMESPACE=${NAMESPACE:-default}
-              COLLECTOR_HOST="${RELEASE_NAME}-otel-collector.${NAMESPACE}.svc.cluster.local"
+              import subprocess
+              import sys
+              import logging
               
-              # Send SignalFx metrics continuously
-              while true; do
-                # Decode the pre-built protobuf payload
-                echo "$B64_PAYLOAD" | base64 -d > /tmp/payload.pb
-                
-                # Send the protobuf request
-                http_code=$(curl -s -o /dev/null -w "%{http_code}" \
-                  -H "Content-Type: application/x-protobuf" \
-                  --data-binary @/tmp/payload.pb \
-                  "http://$COLLECTOR_HOST:9943/v2/datapoint")
-                
-                # Log the result
-                if [ "$http_code" = "200" ] || [ "$http_code" = "202" ]; then
-                  echo "SignalFx metric sent successfully (HTTP $http_code)"
-                else
-                  echo "SignalFx metric failed (HTTP $http_code)"
-                fi
-                
-                # Wait 30 seconds before sending the next metric
-                sleep 30
-              done
+              # Configure logging
+              logging.basicConfig(
+                  level=logging.INFO,
+                  format='%(asctime)s - %(levelname)s - %(message)s',
+                  handlers=[logging.StreamHandler(sys.stdout)]
+              )
+              logger = logging.getLogger(__name__)
+              
+              logger.info("Starting SignalFx metric generator...")
+              
+              # Install signalfx package
+              logger.info("Installing signalfx package...")
+              try:
+                  subprocess.check_call([sys.executable, "-m", "pip", "install", "signalfx"])
+                  logger.info("Successfully installed signalfx package")
+              except Exception as e:
+                  logger.error(f"Error installing signalfx: {e}")
+                  sys.exit(1)
+              
+              logger.info("Importing signalfx...")
+              try:
+                  import signalfx
+                  logger.info("Successfully imported signalfx")
+              except Exception as e:
+                  logger.error(f"Error importing signalfx: {e}")
+                  sys.exit(1)
+              
+              import time
+              import os
+              
+              logger.info("Configuring SignalFx client...")
+              # Configure SignalFx client
+              collector_host = os.environ.get('COLLECTOR_HOST', 'logzio-telemetry-otel-collector.monitoring.svc.cluster.local')
+              default_env_id = 'signalfx-env'
+              env_id = os.environ.get('ENV_ID', default_env_id)
+              
+              logger.info(f"Using collector host: {collector_host}")
+              logger.info(f"Using env_id: {env_id}")
+              
+              try:
+                  client = signalfx.SignalFx(ingest_endpoint=f'http://{collector_host}:9943')
+                  sfx = client.ingest('dummy_token')
+                  logger.info("Successfully created SignalFx client")
+              except Exception as e:
+                  logger.error(f"Error creating SignalFx client: {e}")
+                  sys.exit(1)
+              
+              logger.info(f"SignalFx metric generator started. Sending metrics to: http://{collector_host}:9943")
+              
+              # Send metrics continuously
+              while True:
+                  try:
+                      timestamp_ms = int(time.time() * 1000)
+                      
+                      # Send the metric
+                      sfx.send(gauges=[{
+                          'metric': 'test_signalfx_metric',
+                          'value': 1.0,
+                          'timestamp': timestamp_ms,
+                          'dimensions': {
+                              'env_id': env_id,
+                              'source': 'signalfx-gen'
+                          }
+                      }])
+                      
+                      logger.info(f"Sent SignalFx metric with timestamp: {timestamp_ms}")
+                      time.sleep(30)  # Wait 30 seconds before sending the next metric
+                      
+                  except Exception as e:
+                      logger.error(f"Error sending metric: {e}")
+                      time.sleep(30)
           env:
-            - name: ENV_ID
-              value: "${ENV_ID}"
             - name: RELEASE_NAME
               value: "logzio-k8s-telemetry"
             - name: NAMESPACE
               value: "default"
-            - name: B64_PAYLOAD
-              value: "CjASGnRlc3Quc2lnbmFsZnguY29ubmVjdGl2aXR5GNumiaSGMyIJEQAAAAAAAPA/KAA=" 
+            - name: COLLECTOR_HOST
+              value: "logzio-k8s-telemetry-otel-collector.default.svc.cluster.local" 
