@@ -150,9 +150,12 @@ jobs:
           helm dependency build
           export RELEASE_NAME="logzio-logs-collector"
           export NAMESPACE="default"
+          export ENV_ID="${{ env.ENV_ID }}"
+          
           helm upgrade --install -n $NAMESPACE --create-namespace \
           --set global.logzioLogsToken=${{ secrets.LOGZIO_LOGS_TOKEN }} \
           --set global.logzioRegion=us \
+          --set global.logType=test-${{ matrix.mode }} \          
           --set global.env_id=${{ env.ENV_ID }} \
           --set mode=${{ matrix.mode }} \
           --set global.signalFx.enabled=true \
