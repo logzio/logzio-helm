@@ -1,6 +1,8 @@
 # Changes by Version
 
 <!-- next version -->
+## 2.2.1
+- Add SignalFx logs support
 ## 2.2.0
 - Introduce advanced **log filtering** support via the new `filters` values key.
   - Users can now `exclude` (drop) or `include` (keep) logs based on `namespace`, `service`, or any `resource.*` / `attribute.*` fields using regular expressions.
