@@ -161,11 +161,11 @@ jobs:
         run: |
           echo "=== Checking deployment/daemonset status ==="
           if [[ "${{ matrix.mode }}" == "standalone" ]]; then
-            kubectl rollout status deployment/logzio-logs-collector-otel-collector-standalone --timeout=300s
-            kubectl get deployment/logzio-logs-collector-otel-collector-standalone -o jsonpath='{.spec.template.spec.tolerations}' | jq -r '.[] | select(.key=="global-key")'
+            kubectl rollout status deployment/logzio-logs-collector --timeout=300s
+            kubectl get deployment/logzio-logs-collector -o jsonpath='{.spec.template.spec.tolerations}' | jq -r '.[] | select(.key=="global-key")'
           else
-            kubectl rollout status daemonset/logzio-logs-collector-otel-collector-ds --timeout=300s
-            kubectl get daemonset/logzio-logs-collector-otel-collector-ds -o jsonpath='{.spec.template.spec.tolerations}' | jq -r '.[] | select(.key=="global-key")'
+            kubectl rollout status daemonset/logzio-logs-collector --timeout=300s
+            kubectl get daemonset/logzio-logs-collector -o jsonpath='{.spec.template.spec.tolerations}' | jq -r '.[] | select(.key=="global-key")'
           fi
 
       - name: Run SignalFx logs generator
@@ -206,9 +206,9 @@ jobs:
       - name: Show collector logs
         run: |
           if [[ "${{ matrix.mode }}" == "standalone" ]]; then
-            kubectl logs deployment/logzio-logs-collector-otel-collector-standalone --tail=10
+            kubectl logs deployment/logzio-logs-collector --tail=10
           else
-            kubectl logs daemonset/logzio-logs-collector-otel-collector-ds --tail=10
+            kubectl logs daemonset/logzio-logs-collector --tail=10
           fi
       - name: Sleep for logs to be processed
         run: sleep 120
@@ -326,7 +326,11 @@ jobs:
 
       - name: Describe config map
         run: |
-          kubectl describe cm logzio-logs-collector-daemonset
+          if [[ "${{ matrix.mode }}" == "daemonset" ]]; then
+            kubectl describe cm logzio-logs-collector-daemonset
+          else
+            kubectl describe cm logzio-logs-collector-standalone
+          fi
 
       - name: Cleanup
         if: always()
