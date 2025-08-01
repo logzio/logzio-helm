@@ -27,10 +27,10 @@ type MetricResponse struct {
 
 func TestCarbonMetrics(t *testing.T) {
 	requiredMetrics := map[string][]string{
-		"test_carbon_metric": {"env_id", "source"},
+		"test_carbon_metric": {"p8s_logzio_name", "source"},
 	}
 	envId := os.Getenv("ENV_ID")
-	queryTemplate := `test_carbon_metric{env_id="%s"}`
+	queryTemplate := `test_carbon_metric{p8s_logzio_name="%s"}`
 	query := fmt.Sprintf(queryTemplate, envId)
 	escapedQuery := url.QueryEscape(query)
 	testMetrics(t, requiredMetrics, escapedQuery)
