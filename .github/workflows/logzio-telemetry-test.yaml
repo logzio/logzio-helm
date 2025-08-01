@@ -265,9 +265,16 @@ jobs:
           DEPLOYMENT_NAME="${{ matrix.protocol }}-gen"
           kubectl rollout status deployment/$DEPLOYMENT_NAME --timeout=300s
           kubectl logs deployment/$DEPLOYMENT_NAME --tail=10
-
+ 
+      - name: Show collector logs
+        run: |
+          if [[ "${{ matrix.mode }}" == "standalone" ]]; then
+            kubectl logs deployment/logzio-k8s-telemetry-otel-collector-standalone --tail=10
+          else
+            kubectl logs daemonset/logzio-k8s-telemetry-otel-collector-ds --tail=10
+          fi
       - name: Sleep for metrics to be processed
-        run: sleep 180
+        run: sleep 120
 
       - name: Run Protocol Specific Tests
         env:
