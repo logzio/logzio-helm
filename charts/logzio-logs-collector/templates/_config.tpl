@@ -14,6 +14,12 @@
   {{- include "logs-collector.addResourceDetectionProcessors" (dict "config" $config "distribution" .Values.global.distribution) }}
 {{- end }}
 
+{{- /* Handle SignalFx config */}}
+{{- if (eq (include "logs-collector.signalFxEnabled" .) "true") }}
+{{- $signalFxConfig := deepCopy .Values.signalFx.config | mustMergeOverwrite }}
+{{- $config = deepCopy $signalFxConfig | merge $config | mustMergeOverwrite }}
+{{- end }}
+
 {{- /* Inject dynamic filters */}}
 {{- include "logs-collector.addFilterProcessors" (dict "config" $config "filters" .Values.filters) }}
 
@@ -30,6 +36,12 @@
   {{- include "logs-collector.addResourceDetectionProcessors" (dict "config" $config "distribution" .Values.global.distribution) }}
 {{- end }}
 
+{{- /* Handle SignalFx config */}}
+{{- if (eq (include "logs-collector.signalFxEnabled" .) "true") }}
+{{- $signalFxConfig := deepCopy .Values.signalFx.config | mustMergeOverwrite }}
+{{- $config = deepCopy $signalFxConfig | merge $config | mustMergeOverwrite }}
+{{- end }}
+
 {{- include "logs-collector.addFilterProcessors" (dict "config" $config "filters" .Values.filters) }}
 
 {{- tpl ($config | toYaml) . -}}
@@ -39,7 +51,11 @@
 {{- define "logs-collector.servicePortsConfig" -}}
 {{- $ports := deepCopy .Values.ports }}
 {{- range $key, $port := $ports }}
-{{- if $port.enabled }}
+{{- $shouldEnable := $port.enabled }}
+{{- if eq $key "signalfx" }}
+  {{- $shouldEnable = (eq (include "logs-collector.signalFxEnabled" $) "true") }}
+{{- end }}
+{{- if $shouldEnable }}
 - name: {{ $key }}
   port: {{ $port.servicePort }}
   targetPort: {{ $port.containerPort }}
@@ -58,7 +74,11 @@
 {{- define "logs-collector.podPortsConfig" -}}
 {{- $ports := deepCopy .Values.ports }}
 {{- range $key, $port := $ports }}
-{{- if $port.enabled }}
+{{- $shouldEnable := $port.enabled }}
+{{- if eq $key "signalfx" }}
+  {{- $shouldEnable = (eq (include "logs-collector.signalFxEnabled" $) "true") }}
+{{- end }}
+{{- if $shouldEnable }}
 - name: {{ $key }}
   containerPort: {{ $port.containerPort }}
   protocol: {{ $port.protocol }}

@@ -37,6 +37,9 @@ global:
   # Optional - Control enabling of the OpenTelemetry Collector's resource detection feature. Dependent on `distribution` value.
   resourceDetection:
     enabled: false
+  # Optional - Control enabling of the SignalFx receiver.
+  signalFx:
+    enabled: false
 
 standaloneCollector:
   # Number of replicas in standalone collector mode
@@ -225,7 +228,33 @@ config:
         address: ${env:MY_POD_IP}:8888
       logs:
         level: info
+# SignalFx config
+signalFx:
+  enabled: false
+  config:
+    receivers:
+      # SignalFx receiver to accept logs from SignalFx client libraries # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/receiver/signalfxreceiver/README.md
+      signalfx:
+        endpoint: "0.0.0.0:9943"
+        access_token_passthrough: true
+    processors:
+      # Batch processor to improve performance by grouping logs
+      batch: {}
+    exporters:
+      # Logz.io logs exporter
+      logzio/logs:
+        account_token: ${env:LOGZIO_LOGS_TOKEN}
+        region: ${env:LOGZIO_REGION}
+        endpoint: ${env:CUSTOM_ENDPOINT}
+        headers:
+          user-agent: '{{ .Chart.Name }}-{{ .Chart.Version }}-helm'
 
+    service:
+      pipelines:
+        logs/signalfx:
+          receivers: [signalfx]
+          processors: [batch]
+          exporters: [logzio/logs]
 #######################################################################################################################
 # OpenTelemetry Collector Image Settings
 #######################################################################################################################
@@ -369,6 +398,12 @@ ports:
     enabled: true
     containerPort: 8888
     servicePort: 8888
+    protocol: TCP
+  signalfx:
+    enabled: true
+    containerPort: 9943
+    servicePort: 9943
+    hostPort: 9943
     protocol: TCP
 
 resources:
