@@ -110,74 +110,28 @@ spec:
               # Send logs continuously
 
               while True:
-                  try:
-                      timestamp_ms = int(time.time() * 1000)
-                      
-                      # Send the log event using the correct SignalFx API
-                      try:
-                          # Try sending as a single event object
-                          event_obj = {
-                              'eventType': 'test_signalfx_log',
-                              'category': 'USER_DEFINED',
-                              'timestamp': timestamp_ms,
-                              'dimensions': {
-                                  'env_id': env_id,
-                                  'source': 'signalfx-logs-gen'
-                              },
-                              'properties': {
-                                  'message': f'Test SignalFx log message at {timestamp_ms}',
-                                  'log_level': 'INFO'
-                              }
-                          }
-                          logger.info(f"Sending SignalFx event: {event_obj}")
-                          sfx.send(event_obj)
-                          logger.info(f"Sent SignalFx log with timestamp: {timestamp_ms}")
-                      except Exception as e:
-                          logger.error(f"Error sending event: {e}")
-                          # Try alternative method with send_events
-                          try:
-                              logger.info("Trying send_events method...")
-                              sfx.send_events([{
-                                  'eventType': 'test_signalfx_log',
-                                  'category': 'USER_DEFINED',
-                                  'timestamp': timestamp_ms,
-                                  'dimensions': {
-                                      'env_id': env_id,
-                                      'source': 'signalfx-logs-gen'
-                                  },
-                                  'properties': {
-                                      'message': f'Test SignalFx log message at {timestamp_ms}',
-                                      'log_level': 'INFO'
-                                  }
-                              }])
-                              logger.info(f"Sent SignalFx log with send_events method at timestamp: {timestamp_ms}")
-                          except Exception as e2:
-                              logger.error(f"Error sending event with send_events method: {e2}")
-                              # Try send_event method as last resort
-                              try:
-                                  logger.info("Trying send_event method...")
-                                  sfx.send_event(
-                                      event_type='test_signalfx_log',
-                                      category='USER_DEFINED',
-                                      timestamp=timestamp_ms,
-                                      dimensions={
-                                          'env_id': env_id,
-                                          'source': 'signalfx-logs-gen'
-                                      },
-                                      properties={
-                                          'message': f'Test SignalFx log message at {timestamp_ms}',
-                                          'log_level': 'INFO'
-                                      }
-                                  )
-                                  logger.info(f"Sent SignalFx log with send_event method at timestamp: {timestamp_ms}")
-                              except Exception as e3:
-                                  logger.error(f"Error sending event with send_event method: {e3}")
-                                  time.sleep(30)
-                      time.sleep(30)  # Wait 30 seconds before sending the next log
-                      
-                  except Exception as e:
-                      logger.error(f"Error sending log: {e}")
-                      time.sleep(30)
+                try:
+                    timestamp_ms = int(time.time() * 1000)
+                    logger.info("Trying send_event method...")
+                    sfx.send_event(
+                        event_type='test_signalfx_log',
+                        category='USER_DEFINED',
+                        timestamp=timestamp_ms,
+                        dimensions={
+                            'env_id': env_id,
+                            'source': 'signalfx-logs-gen'
+                        },
+                        properties={
+                            'message': f'Test SignalFx log message at {timestamp_ms}',
+                            'log_level': 'INFO'
+                        }
+                    )
+                    logger.info(f"Sent SignalFx log with send_event method at timestamp: {timestamp_ms}")
+                except Exception as e1:
+                    logger.error(f"Error sending event with send_event method: {e1}")
+   
+
+                time.sleep(30)  # Wait 30 seconds before sending the next log
           env:
             - name: RELEASE_NAME
               value: "logzio-logs-collector"
@@ -186,4 +140,4 @@ spec:
             - name: COLLECTOR_HOST
               value: "logzio-logs-collector.default.svc.cluster.local"
             - name: ENV_ID
-              value: "${ENV_ID}" 
+              value: ${ENV_ID}

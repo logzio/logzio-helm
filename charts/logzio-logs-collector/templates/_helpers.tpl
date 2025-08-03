@@ -238,17 +238,3 @@ Returns a YAML array of key=regex strings.
 {{- toYaml $out }}
 {{- end }}
 
-{{/*
-  Returns the effective value of the SignalFx enable flag.
-  
-  Precedence:
-  1. Chart-level .Values.signalFx.enabled (if explicitly set to true)
-  2. global.signalFx.enabled
-  */}}
-  {{- define "logs-collector.signalFxEnabled" -}}
-  {{- if and (hasKey .Values "signalFx") (hasKey .Values.signalFx "enabled") .Values.signalFx.enabled -}}
-    {{- .Values.signalFx.enabled -}}
-  {{- else -}}
-    {{- .Values.global.signalFx.enabled -}}
-  {{- end -}}
-  {{- end }}

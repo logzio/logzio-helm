@@ -37,9 +37,7 @@ global:
   # Optional - Control enabling of the OpenTelemetry Collector's resource detection feature. Dependent on `distribution` value.
   resourceDetection:
     enabled: false
-  # Optional - Control enabling of the SignalFx receiver.
-  signalFx:
-    enabled: false
+
 
 standaloneCollector:
   # Number of replicas in standalone collector mode
@@ -233,15 +231,10 @@ signalFx:
   enabled: false
   config:
     receivers:
-      # SignalFx receiver to accept logs from SignalFx client libraries # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/receiver/signalfxreceiver/README.md
       signalfx:
         endpoint: "0.0.0.0:9943"
 
-    processors:
-      # Batch processor to improve performance by grouping logs
-      batch: {}
     exporters:
-      # Logz.io logs exporter
       logzio/logs:
         account_token: ${env:LOGZIO_LOGS_TOKEN}
         region: ${env:LOGZIO_REGION}
@@ -253,7 +246,7 @@ signalFx:
       pipelines:
         logs/signalfx:
           receivers: [signalfx]
-          processors: [batch]
+          processors: [k8sattributes,transform/log_level,transform/log_type,transform/dedot,batch]
           exporters: [logzio/logs]
 #######################################################################################################################
 # OpenTelemetry Collector Image Settings

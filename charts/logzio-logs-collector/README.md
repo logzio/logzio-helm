@@ -76,7 +76,7 @@ helm install logzio-logs-collector -n monitoring \
 --set global.logzioRegion=<<region>> \
 --set global.env_id=<<env_id>> \
 --set global.logType=<<logType>> \
---set global.signalFx.enabled=true \
+--set signalFx.enabled=true \
 logzio-helm/logzio-logs-collector
 ```
 
@@ -111,11 +111,10 @@ The table below lists the configurable parameters of the `logzio-logs-collector`
 | global.logzioLogsToken  | Secret with your Logz.io logs shipping token.                                    | `"token"`                                |
 | global.LogzioRegion     | Secret with your Logz.io region.                                                 | `"us"`                                   |
 | global.customLogsEndpoint   | Secret with your custom endpoint, overrides Logz.io region listener address.     | `""`                                     |
-| global.signalFx.enabled | Enable SignalFx receiver for accepting logs from SignalFx client libraries.      | `false`                                  |
 | configMap.create         | Specifies whether a configMap should be created.                                 | `true`                                   |
 | config                   | Base collector configuration, supports templating.                               | Complex structure (see `values.yaml`)    |
-| signalFx.enabled | bool | `false` | Local override for enabling SignalFx receiver (takes precedence over global.signalFx.enabled). |
-| signalFx.config | object | `{}` | Custom configuration for the SignalFx receiver pipeline, including receiver settings, processors, and exporters. |
+| signalFx.enabled | Enable SignalFx receiver for accepting logs from SignalFx client libraries.      | `false`                                  |
+| signalFx.config | Custom configuration for the SignalFx receiver pipeline, including receiver settings, processors, and exporters. | Complex structure (see `values.yaml`) |
 | image.repository         | Docker image repository.                                                         | `"otel/opentelemetry-collector-contrib"` |
 | image.pullPolicy         | Image pull policy.                                                               | `"IfNotPresent"`                         |
 | image.tag                | Overrides the image tag.                                                         | `""`                                     |

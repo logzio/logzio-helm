@@ -15,7 +15,7 @@
 {{- end }}
 
 {{- /* Handle SignalFx config */}}
-{{- if (eq (include "logs-collector.signalFxEnabled" .) "true") }}
+{{- if .Values.signalFx.enabled }}
 {{- $signalFxConfig := deepCopy .Values.signalFx.config | mustMergeOverwrite }}
 {{- $config = deepCopy $signalFxConfig | merge $config | mustMergeOverwrite }}
 {{- end }}
@@ -37,7 +37,7 @@
 {{- end }}
 
 {{- /* Handle SignalFx config */}}
-{{- if (eq (include "logs-collector.signalFxEnabled" .) "true") }}
+{{- if .Values.signalFx.enabled }}
 {{- $signalFxConfig := deepCopy .Values.signalFx.config | mustMergeOverwrite }}
 {{- $config = deepCopy $signalFxConfig | merge $config | mustMergeOverwrite }}
 {{- end }}
@@ -53,7 +53,7 @@
 {{- range $key, $port := $ports }}
 {{- $shouldEnable := $port.enabled }}
 {{- if eq $key "signalfx" }}
-  {{- $shouldEnable = (eq (include "logs-collector.signalFxEnabled" $) "true") }}
+  {{- $shouldEnable = $.Values.signalFx.enabled }}
 {{- end }}
 {{- if $shouldEnable }}
 - name: {{ $key }}
@@ -76,7 +76,7 @@
 {{- range $key, $port := $ports }}
 {{- $shouldEnable := $port.enabled }}
 {{- if eq $key "signalfx" }}
-  {{- $shouldEnable = (eq (include "logs-collector.signalFxEnabled" $) "true") }}
+  {{- $shouldEnable = $.Values.signalFx.enabled }}
 {{- end }}
 {{- if $shouldEnable }}
 - name: {{ $key }}
