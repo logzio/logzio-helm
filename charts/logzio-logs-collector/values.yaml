@@ -236,7 +236,7 @@ signalFx:
       # SignalFx receiver to accept logs from SignalFx client libraries # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/receiver/signalfxreceiver/README.md
       signalfx:
         endpoint: "0.0.0.0:9943"
-        access_token_passthrough: true
+
     processors:
       # Batch processor to improve performance by grouping logs
       batch: {}
