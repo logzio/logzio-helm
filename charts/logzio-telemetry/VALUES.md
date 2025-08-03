@@ -55,7 +55,6 @@ logzio-k8s-telemetry allows you to ship metrics and traces from your Kubernetes 
 | global.logzioSpmToken | string | `""` | Logzio spm metrics token. |
 | global.logzioTracesToken | string | `""` | Logzio traces token. |
 | global.env_id | string | `"my_environment"` | Env id to be used with k8s 360. |
-
 | secrets.windowsNodePassword | string | `""` | Windows node password - will be used to install node-exporter for windows nodes. |
 | secrets.windowsNodeUsername | string | `""` | Windows username - will be used to install node-exporter for windows nodes. |
 | standaloneCollector.resources.limits.cpu | string | `"200m"` | Cpu limit for the opentelemetry collector pod. |
