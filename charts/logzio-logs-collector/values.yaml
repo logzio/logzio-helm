@@ -38,6 +38,7 @@ global:
   resourceDetection:
     enabled: false
 
+
 standaloneCollector:
   # Number of replicas in standalone collector mode
   replicaCount: 1
@@ -225,7 +226,28 @@ config:
         address: ${env:MY_POD_IP}:8888
       logs:
         level: info
+# SignalFx config
+signalFx:
+  enabled: false
+  config:
+    receivers:
+      signalfx:
+        endpoint: "0.0.0.0:9943"
 
+    exporters:
+      logzio/logs:
+        account_token: ${env:LOGZIO_LOGS_TOKEN}
+        region: ${env:LOGZIO_REGION}
+        endpoint: ${env:CUSTOM_ENDPOINT}
+        headers:
+          user-agent: '{{ .Chart.Name }}-{{ .Chart.Version }}-helm'
+
+    service:
+      pipelines:
+        logs/signalfx:
+          receivers: [signalfx]
+          processors: [k8sattributes,transform/log_level,transform/log_type,transform/dedot,batch]
+          exporters: [logzio/logs]
 #######################################################################################################################
 # OpenTelemetry Collector Image Settings
 #######################################################################################################################
@@ -369,6 +391,12 @@ ports:
     enabled: true
     containerPort: 8888
     servicePort: 8888
+    protocol: TCP
+  signalfx:
+    enabled: true
+    containerPort: 9943
+    servicePort: 9943
+    hostPort: 9943
     protocol: TCP
 
 resources:

@@ -60,6 +60,7 @@ jobs:
           --set filters.exclude.service="synthetic-.*" \
           --set filters.exclude.attribute.log.level="debug" \
           --set filters.exclude.resource.k8s.pod.name="debug-.*" \
+          --set signalFx.enabled=true \
           logzio-logs-collector .
 
       - name: Verify deployment Status
@@ -92,6 +93,148 @@ jobs:
       - name: Delete Kind cluster
         if: always()
         run: kind delete cluster --name kind-${{ github.run_id }}
+
+  test-signalfx-logs:
+    name: Test SignalFx Logs on Kind
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        mode: ['daemonset', 'standalone']
+    steps:
+      - name: Generate random id
+        id: random_id
+        run: echo "rand=$(echo $RANDOM)" >> $GITHUB_OUTPUT
+
+      - name: Set ENV_ID
+        run: echo "ENV_ID=logs-signalfx-test-run-${{ steps.random_id.outputs.rand }}-${{ matrix.mode }}" >> $GITHUB_ENV
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.20'
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4.3.0
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Install Kind
+        run: |
+          curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.26.0/kind-Linux-amd64"
+          chmod +x ./kind
+          mv ./kind /usr/local/bin/kind
+
+      - name: Create Kind cluster
+        run: |
+          kind create cluster --name kind-${{ github.run_id }}-${{ matrix.mode }}
+          kubectl cluster-info
+          
+      - name: Wait for node to be ready
+        run: |
+          echo "Waiting for nodes to be ready..."
+          kubectl wait --for=condition=Ready nodes --all --timeout=300s
+          echo "Node status:"
+          kubectl get nodes -o wide
+          echo "Node details:"
+          kubectl describe nodes
+          echo "Checking for taints:"
+          kubectl get nodes -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.spec.taints}{"\n"}{end}'
+          
+      - name: Deploy Helm Chart with SignalFx
+        run: |
+          cd charts/logzio-logs-collector
+          helm dependency build
+          export RELEASE_NAME="logzio-logs-collector"
+          export NAMESPACE="default"
+          export ENV_ID="${{ env.ENV_ID }}"
+
+          helm upgrade --install -n $NAMESPACE --create-namespace \
+          --set global.logzioLogsToken=${{ secrets.LOGZIO_LOGS_TOKEN }} \
+          --set global.logzioRegion=us \
+          --set global.logType=${{ env.ENV_ID }} \
+          --set global.env_id=${{ env.ENV_ID }} \
+          --set mode=${{ matrix.mode }} \
+          --set signalFx.enabled=true \
+          $RELEASE_NAME .
+
+      - name: Verify deployment Status
+        run: |
+          echo "=== Checking deployment/daemonset status ==="
+          if [[ "${{ matrix.mode }}" == "standalone" ]]; then
+            kubectl rollout status deployment/logzio-logs-collector --timeout=300s
+            kubectl get deployment/logzio-logs-collector -o jsonpath='{.spec.template.spec.tolerations}' | jq -r '.[] | select(.key=="global-key")'
+          else
+            kubectl rollout status daemonset/logzio-logs-collector --timeout=300s
+            kubectl get daemonset/logzio-logs-collector -o jsonpath='{.spec.template.spec.tolerations}' | jq -r '.[] | select(.key=="global-key")'
+          fi
+
+      - name: Run SignalFx logs generator
+        run: |
+          # Set environment variables for envsubst
+          export RELEASE_NAME="logzio-logs-collector"
+          export NAMESPACE="default"
+          export ENV_ID="${{ env.ENV_ID }}"
+          
+          # Debug: Show environment variables
+          echo "ENV_ID: $ENV_ID"
+          echo "RELEASE_NAME: $RELEASE_NAME"
+          echo "NAMESPACE: $NAMESPACE"
+          
+          # Substitute ENV_ID in the YAML and apply
+          envsubst < tests/resources/signalfx-logs-gen.yaml | kubectl apply -f -
+          
+          # Set the ENV_ID environment variable in the deployment
+          kubectl set env deployment/signalfx-logs-gen ENV_ID="$ENV_ID"
+
+      - name: Wait for generator deployment
+        run: |
+          DEPLOYMENT_NAME="signalfx-logs-gen"
+          
+          # Wait for deployment to be available
+          kubectl rollout status deployment/$DEPLOYMENT_NAME --timeout=300s
+          
+          # Check if pods are running
+          kubectl get pods -l app=$DEPLOYMENT_NAME
+          
+          # Show logs
+          kubectl logs deployment/$DEPLOYMENT_NAME --tail=10
+          
+          # If daemonset mode, also check collector status
+          if [[ "${{ matrix.mode }}" == "daemonset" ]]; then
+            echo "=== Checking collector daemonset status ==="
+            kubectl get daemonset -l app.kubernetes.io/name=otel-collector
+            kubectl describe daemonset -l app.kubernetes.io/name=otel-collector || echo "No daemonset found"
+          fi
+  
+      - name: Show collector logs
+        run: |
+          if [[ "${{ matrix.mode }}" == "standalone" ]]; then
+            kubectl logs deployment/logzio-logs-collector --tail=10
+          else
+            kubectl logs daemonset/logzio-logs-collector --tail=10
+          fi
+      - name: Sleep for logs to be processed
+        run: sleep 120
+
+      - name: Run SignalFx Logs Tests
+        env:
+          LOGZIO_LOGS_API_KEY: ${{ secrets.LOGZIO_LOGS_API_KEY }}
+        run: |
+          go get go.uber.org/zap
+          go test -v ./tests/signalfx_logs_e2e_test.go ./tests/common.go
+
+      - name: Cleanup Environment
+        run: |
+          helm uninstall logzio-logs-collector
+
+      - name: Delete Kind cluster
+        if: always()
+        run: kind delete cluster --name kind-${{ github.run_id }}-${{ matrix.mode }} 
 
   filter-test:
     name: Filter Test

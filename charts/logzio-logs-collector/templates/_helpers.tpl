@@ -237,3 +237,4 @@ Returns a YAML array of key=regex strings.
 {{- end }}
 {{- toYaml $out }}
 {{- end }}
+

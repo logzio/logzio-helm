@@ -24,6 +24,7 @@ Features
 
 *   **Easy Integration with Logz.io**: Pre-configured to send logs to Logz.io, simplifying setup and integration.
 *   **Secure Secret Management**: Option to automatically manage secrets for seamless and secure authentication with Logz.io.
+*   **SignalFx Receiver Support**: Accept logs from SignalFx client libraries and forward them to Logz.io.
 
 Getting Started
 ---------------
@@ -64,6 +65,23 @@ helm repo update
     * `<<env_id>>` with a unique name assigned to your environment's identifier, to differentiate telemetry data across various environments
     * `<<logType>>` with a log type for your logs
 
+### SignalFx Support
+
+The logs collector supports receiving logs from SignalFx client libraries. To enable SignalFx receiver:
+
+```
+helm install logzio-logs-collector -n monitoring \
+--set enabled=true \
+--set global.logzioLogsToken=<<token>> \
+--set global.logzioRegion=<<region>> \
+--set global.env_id=<<env_id>> \
+--set global.logType=<<logType>> \
+--set signalFx.enabled=true \
+logzio-helm/logzio-logs-collector
+```
+
+The SignalFx receiver will be available on port 9943 and will accept logs from SignalFx client libraries, forwarding them to Logz.io.
+
     
 ### Uninstalling the Chart
 
@@ -95,6 +113,8 @@ The table below lists the configurable parameters of the `logzio-logs-collector`
 | global.customLogsEndpoint   | Secret with your custom endpoint, overrides Logz.io region listener address.     | `""`                                     |
 | configMap.create         | Specifies whether a configMap should be created.                                 | `true`                                   |
 | config                   | Base collector configuration, supports templating.                               | Complex structure (see `values.yaml`)    |
+| signalFx.enabled | Enable SignalFx receiver for accepting logs from SignalFx client libraries.      | `false`                                  |
+| signalFx.config | Custom configuration for the SignalFx receiver pipeline, including receiver settings, processors, and exporters. | Complex structure (see `values.yaml`) |
 | image.repository         | Docker image repository.                                                         | `"otel/opentelemetry-collector-contrib"` |
 | image.pullPolicy         | Image pull policy.                                                               | `"IfNotPresent"`                         |
 | image.tag                | Overrides the image tag.                                                         | `""`                                     |

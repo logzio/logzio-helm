@@ -1,0 +1,143 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: signalfx-logs-gen
+  labels:
+    app: signalfx-logs-gen
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: signalfx-logs-gen
+  template:
+    metadata:
+      labels:
+        app: signalfx-logs-gen
+    spec:
+      containers:
+        - name: signalfx-logs-gen
+          image: python:3.9-alpine
+          command: ["python3"]
+          args:
+            - -c
+            - |
+              import subprocess
+              import sys
+              import logging
+              import time
+              import os
+              import json
+              
+              # Configure logging
+              logging.basicConfig(
+                  level=logging.INFO,
+                  format='%(asctime)s - %(levelname)s - %(message)s',
+                  handlers=[logging.StreamHandler(sys.stdout)]
+              )
+              logger = logging.getLogger(__name__)
+              
+              logger.info("Starting SignalFx logs generator...")
+              
+              # Wait for collector to be ready
+              RELEASE_NAME = os.environ.get('RELEASE_NAME', 'logzio-logs-collector')
+              NAMESPACE = os.environ.get('NAMESPACE', 'default')
+              COLLECTOR_HOST = f"{RELEASE_NAME}.{NAMESPACE}.svc.cluster.local"
+              
+              logger.info(f"Waiting for SignalFx receiver to be ready at {COLLECTOR_HOST}:9943...")
+              
+              # Install netcat for connectivity check
+              try:
+                  subprocess.check_call(["apk", "add", "--no-cache", "netcat-openbsd"])
+                  logger.info("Installed netcat for connectivity check")
+              except Exception as e:
+                  logger.warning(f"Could not install netcat: {e}")
+              
+              # Wait for collector to be ready
+              while True:
+                  try:
+                      result = subprocess.run(["nc", "-z", COLLECTOR_HOST, "9943"], 
+                                           capture_output=True, timeout=10)
+                      if result.returncode == 0:
+                          logger.info("SignalFx receiver is ready!")
+                          break
+                      else:
+                          logger.info("Collector not ready, waiting 5 seconds...")
+                          time.sleep(5)
+                  except Exception as e:
+                      logger.info(f"Error checking collector connectivity: {e}, waiting 5 seconds...")
+                      time.sleep(5)
+              
+              # Install required packages
+              logger.info("Installing required packages...")
+              try:
+                  subprocess.check_call([sys.executable, "-m", "pip", "install", "signalfx", "requests"])
+                  logger.info("Successfully installed required packages")
+              except Exception as e:
+                  logger.error(f"Error installing packages: {e}")
+                  sys.exit(1)
+              
+              logger.info("Importing required modules...")
+              try:
+                  import requests
+                  import signalfx
+                  logger.info("Successfully imported required modules")
+              except Exception as e:
+                  logger.error(f"Error importing modules: {e}")
+                  sys.exit(1)
+              
+              logger.info("Configuring SignalFx client...")
+              # Configure SignalFx client
+              collector_host = os.environ.get('COLLECTOR_HOST', 'logzio-logs-collector.default.svc.cluster.local')
+              env_id = os.environ.get('ENV_ID', 'signalfx-logs-env')
+              
+              logger.info(f"Using collector host: {collector_host}")
+              logger.info(f"Using env_id: {env_id}")
+              
+              try:
+                  client = signalfx.SignalFx(ingest_endpoint=f'http://{collector_host}:9943')
+                  sfx = client.ingest('dummy_token')
+                  logger.info("Successfully created SignalFx client")
+                  
+                  # Debug: Check available methods
+                  logger.info(f"Available methods on sfx object: {[method for method in dir(sfx) if not method.startswith('_')]}")
+                  
+              except Exception as e:
+                  logger.error(f"Error creating SignalFx client: {e}")
+                  sys.exit(1)
+              
+              logger.info(f"SignalFx logs generator started. Sending logs to: http://{collector_host}:9943")
+              
+              # Send logs continuously
+
+              while True:
+                try:
+                    timestamp_ms = int(time.time() * 1000)
+                    logger.info("Trying send_event method...")
+                    sfx.send_event(
+                        event_type='test_signalfx_log',
+                        category='USER_DEFINED',
+                        timestamp=timestamp_ms,
+                        dimensions={
+                            'env_id': env_id,
+                            'source': 'signalfx-logs-gen'
+                        },
+                        properties={
+                            'message': f'Test SignalFx log message at {timestamp_ms}',
+                            'log_level': 'INFO'
+                        }
+                    )
+                    logger.info(f"Sent SignalFx log with send_event method at timestamp: {timestamp_ms}")
+                except Exception as e1:
+                    logger.error(f"Error sending event with send_event method: {e1}")
+   
+
+                time.sleep(30)  # Wait 30 seconds before sending the next log
+          env:
+            - name: RELEASE_NAME
+              value: "logzio-logs-collector"
+            - name: NAMESPACE
+              value: "default"
+            - name: COLLECTOR_HOST
+              value: "logzio-logs-collector.default.svc.cluster.local"
+            - name: ENV_ID
+              value: ${ENV_ID}
