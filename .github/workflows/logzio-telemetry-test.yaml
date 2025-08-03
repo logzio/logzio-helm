@@ -70,6 +70,8 @@ jobs:
           --set spanMetricsAgregator.config.connectors.spanmetrics.histogram.disable=true \
           --set enableMetricsFilter.eks=true \
           --set filters.infrastructure.exclude.namespace="kube-system" \
+          --set signalFx.enabled=true \
+          --set carbon.enabled=true \
           logzio-k8s-telemetry .
       
       - name: Verify deployment Status
@@ -110,6 +112,189 @@ jobs:
       - name: Delete Kind cluster
         if: always()
         run: kind delete cluster --name kind-${{ github.run_id }}-${{ matrix.mode }}
+
+  test-protocol-receivers:
+    name: Test Protocol Receivers
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        mode: ['daemonset', 'standalone']
+        protocol: ['signalfx', 'carbon']
+    steps:
+      - name: Generate random id
+        id: random_id
+        run: echo "rand=$(echo $RANDOM)" >> $GITHUB_OUTPUT
+
+      - name: Set ENV_ID
+        run: echo "ENV_ID=telemetry-test-run-${{ steps.random_id.outputs.rand }}-${{ matrix.mode }}-${{ matrix.protocol }}" >> $GITHUB_ENV
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.20'
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4.3.0
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Install Kind
+        run: |
+          curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.26.0/kind-Linux-amd64"
+          chmod +x ./kind
+          mv ./kind /usr/local/bin/kind
+
+      - name: Create Kind cluster
+        run: |
+          kind create cluster --name kind-${{ github.run_id }}-${{ matrix.mode }}-${{ matrix.protocol }}
+          kubectl cluster-info
+          
+      - name: Wait for node to be ready
+        run: |
+          echo "Waiting for nodes to be ready..."
+          kubectl wait --for=condition=Ready nodes --all --timeout=300s
+          echo "Node status:"
+          kubectl get nodes -o wide
+          echo "Node details:"
+          kubectl describe nodes
+          echo "Checking for taints:"
+          kubectl get nodes -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.spec.taints}{"\n"}{end}'
+          
+      - name: Deploy Helm Chart with Protocol Receiver
+        run: |
+          cd charts/logzio-telemetry
+          helm dependency build
+          export RELEASE_NAME="logzio-k8s-telemetry"
+          export NAMESPACE="default"
+          if [[ "${{ matrix.protocol }}" == "signalfx" ]]; then
+            helm upgrade --install -n $NAMESPACE --create-namespace \
+            --set metrics.enabled=true \
+            --set global.logzioMetricsToken=${{ secrets.LOGZIO_METRICS_TOKEN }} \
+            --set global.logzioRegion=us \
+            --set global.env_id=${{ env.ENV_ID }} \
+            --set collector.mode=${{ matrix.mode }} \
+            --set signalFx.enabled=true \
+            $RELEASE_NAME .
+          elif [[ "${{ matrix.protocol }}" == "carbon" ]]; then
+            helm upgrade --install -n $NAMESPACE --create-namespace \
+            --set metrics.enabled=true \
+            --set global.logzioMetricsToken=${{ secrets.LOGZIO_METRICS_TOKEN }} \
+            --set global.logzioRegion=us \
+            --set global.env_id=${{ env.ENV_ID }} \
+            --set collector.mode=${{ matrix.mode }} \
+            --set carbon.enabled=true \
+            $RELEASE_NAME .
+          fi
+
+      - name: Debug deployment before verification
+        run: |
+          echo "=== Debugging deployment state ==="
+          kubectl get pods -A
+          kubectl get nodes -o wide
+          echo "=== Checking daemonsets ==="
+          kubectl get daemonsets -A
+          echo "=== Checking deployments ==="
+          kubectl get deployments -A
+          if [[ "${{ matrix.mode }}" == "daemonset" ]]; then
+            echo "=== Describing daemonset ==="
+            kubectl describe daemonset/logzio-k8s-telemetry-otel-collector-ds || echo "Daemonset not found"
+            echo "=== Checking for pods with otel-collector labels ==="
+            kubectl get pods -l app.kubernetes.io/name=otel-collector
+          fi
+
+      - name: Verify deployment Status
+        run: |
+          echo "=== Checking deployment/daemonset status ==="
+          if [[ "${{ matrix.mode }}" == "standalone" ]]; then
+            kubectl rollout status deployment/logzio-k8s-telemetry-otel-collector-standalone --timeout=300s
+            kubectl get deployment/logzio-k8s-telemetry-otel-collector-standalone -o jsonpath='{.spec.template.spec.tolerations}' | jq -r '.[] | select(.key=="global-key")'
+          else
+            kubectl rollout status daemonset/logzio-k8s-telemetry-otel-collector-ds --timeout=300s || {
+              echo "=== Rollout failed, gathering debug info ==="
+              kubectl describe daemonset/logzio-k8s-telemetry-otel-collector-ds
+              kubectl get pods -l app.kubernetes.io/name=otel-collector
+              kubectl describe pods -l app.kubernetes.io/name=otel-collector
+              kubectl logs -l app.kubernetes.io/name=otel-collector --tail=50
+              exit 1
+            }
+            kubectl get daemonset/logzio-k8s-telemetry-otel-collector-ds -o jsonpath='{.spec.template.spec.tolerations}' | jq -r '.[] | select(.key=="global-key")'
+          fi
+
+      - name: Run metric generator
+        run: |
+          DEPLOYMENT_NAME="${{ matrix.protocol }}-gen"
+          # Set environment variables for envsubst
+          export RELEASE_NAME="logzio-k8s-telemetry"
+          export NAMESPACE="default"
+          export ENV_ID="${{ env.ENV_ID }}"
+          
+          # Debug: Show environment variables
+          echo "ENV_ID: $ENV_ID"
+          echo "RELEASE_NAME: $RELEASE_NAME"
+          echo "NAMESPACE: $NAMESPACE"
+          
+          
+          # Substitute ENV_ID in the YAML and apply
+          if [[ "${{ matrix.protocol }}" == "signalfx" ]]; then
+            envsubst < tests/resources/signalfx-metrics-gen.yaml | kubectl apply -f -
+          elif [[ "${{ matrix.protocol }}" == "carbon" ]]; then
+            envsubst < tests/resources/carbon-metrics-gen.yaml | kubectl apply -f -            
+          fi
+          kubectl set env deployment/$DEPLOYMENT_NAME ENV_ID="$ENV_ID"
+
+      - name: Wait for generator deployment
+        run: |
+          DEPLOYMENT_NAME="${{ matrix.protocol }}-gen"
+          
+          # Wait for deployment to be available
+          kubectl rollout status deployment/$DEPLOYMENT_NAME --timeout=300s
+          
+          # Check if pods are running
+          kubectl get pods -l app=$DEPLOYMENT_NAME
+          
+          # Show logs
+          kubectl logs deployment/$DEPLOYMENT_NAME --tail=10
+          
+          # If daemonset mode, also check collector status
+          if [[ "${{ matrix.mode }}" == "daemonset" ]]; then
+            echo "=== Checking collector daemonset status ==="
+            kubectl get daemonset -l app.kubernetes.io/name=otel-collector
+            kubectl describe daemonset -l app.kubernetes.io/name=otel-collector || echo "No daemonset found"
+          fi
+ 
+      - name: Show collector logs
+        run: |
+          if [[ "${{ matrix.mode }}" == "standalone" ]]; then
+            kubectl logs deployment/logzio-k8s-telemetry-otel-collector-standalone --tail=10
+          else
+            kubectl logs daemonset/logzio-k8s-telemetry-otel-collector-ds --tail=10
+          fi
+      - name: Sleep for metrics to be processed
+        run: sleep 120
+
+      - name: Run Protocol Specific Tests
+        env:
+          LOGZIO_METRICS_API_KEY: ${{ secrets.LOGZIO_METRICS_API_KEY }}
+        run: |
+          go get go.uber.org/zap
+          if [[ "${{ matrix.protocol }}" == "signalfx" ]]; then
+            go test -v ./tests/signalfx_metrics_e2e_test.go ./tests/common.go
+          elif [[ "${{ matrix.protocol }}" == "carbon" ]]; then
+            go test -v ./tests/carbon_metrics_e2e_test.go ./tests/common.go
+          fi
+
+      - name: Cleanup Environment
+        run: |
+          helm uninstall logzio-k8s-telemetry
+
+      - name: Delete Kind cluster
+        if: always()
+        run: kind delete cluster --name kind-${{ github.run_id }}-${{ matrix.mode }}-${{ matrix.protocol }}
 
   filter-test:
     name: Filter Test

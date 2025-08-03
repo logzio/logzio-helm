@@ -1,0 +1,120 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: carbon-gen
+  labels:
+    app: carbon-gen
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: carbon-gen
+  template:
+    metadata:
+      labels:
+        app: carbon-gen
+    spec:
+      containers:
+        - name: carbon-gen
+          image: python:3.9-alpine
+          command: ["python3"]
+          args:
+            - -c
+            - |
+              import subprocess
+              import sys
+              import logging
+              import time
+              import os
+              
+              # Configure logging
+              logging.basicConfig(
+                  level=logging.INFO,
+                  format='%(asctime)s - %(levelname)s - %(message)s',
+                  handlers=[logging.StreamHandler(sys.stdout)]
+              )
+              logger = logging.getLogger(__name__)
+              
+              logger.info("Starting Carbon metric generator...")
+              
+              # Wait for collector to be ready
+              RELEASE_NAME = os.environ.get('RELEASE_NAME', 'logzio-k8s-telemetry')
+              NAMESPACE = os.environ.get('NAMESPACE', 'default')
+              COLLECTOR_HOST = f"{RELEASE_NAME}-otel-collector.{NAMESPACE}.svc.cluster.local"
+              
+              logger.info(f"Waiting for Carbon receiver to be ready at {COLLECTOR_HOST}:2003...")
+              
+              # Install netcat for connectivity check
+              try:
+                  subprocess.check_call(["apk", "add", "--no-cache", "netcat-openbsd"])
+                  logger.info("Installed netcat for connectivity check")
+              except Exception as e:
+                  logger.warning(f"Could not install netcat: {e}")
+              
+              # Wait for collector to be ready
+              while True:
+                  try:
+                      result = subprocess.run(["nc", "-z", COLLECTOR_HOST, "2003"], 
+                                           capture_output=True, timeout=10)
+                      if result.returncode == 0:
+                          logger.info("Carbon receiver is ready!")
+                          break
+                      else:
+                          logger.info("Collector not ready, waiting 5 seconds...")
+                          time.sleep(5)
+                  except Exception as e:
+                      logger.info(f"Error checking collector connectivity: {e}, waiting 5 seconds...")
+                      time.sleep(5)
+              
+              logger.info("Configuring Carbon metric generator...")
+              # Configure Carbon client
+              collector_host = os.environ.get('COLLECTOR_HOST', 'logzio-telemetry-otel-collector.monitoring.svc.cluster.local')
+              default_env_id = 'carbon-env'
+              env_id = os.environ.get('ENV_ID', default_env_id)
+              
+              logger.info(f"Using collector host: {collector_host}")
+              logger.info(f"Using env_id: {env_id}")
+              
+              logger.info(f"Carbon metric generator started. Sending metrics to: {collector_host}:2003")
+              
+              # Send metrics continuously
+              while True:
+                  try:
+                      timestamp = int(time.time())
+                      
+                      # Send the Carbon metric with tags format (existing)
+                      metric_data_tags = f"test.carbon.metric;env_id={env_id};source=carbon-gen 1 {timestamp}"
+                      result_tags = subprocess.run(["nc", "-w", "1", collector_host, "2003"], 
+                                           input=metric_data_tags.encode(), 
+                                           capture_output=True, 
+                                           timeout=10)
+                      
+                      if result_tags.returncode == 0:
+                          logger.info(f"Sent Carbon metric (tags format) with timestamp: {timestamp}")
+                      else:
+                          logger.warning(f"Failed to send tags metric, return code: {result_tags.returncode}")
+                      
+                      # Send the Carbon metric with dot notation format (new)
+                      metric_data_dot = f"test.carbon.metric.env_id.{env_id}.source.carbon-gen 1 {timestamp}"
+                      result_dot = subprocess.run(["nc", "-w", "1", collector_host, "2003"], 
+                                           input=metric_data_dot.encode(), 
+                                           capture_output=True, 
+                                           timeout=10)
+                      
+                      if result_dot.returncode == 0:
+                          logger.info(f"Sent Carbon metric (dot notation format) with timestamp: {timestamp}")
+                      else:
+                          logger.warning(f"Failed to send dot notation metric, return code: {result_dot.returncode}")
+                          
+                      time.sleep(30)  # Wait 30 seconds before sending the next metric
+                      
+                  except Exception as e:
+                      logger.error(f"Error sending metric: {e}")
+                      time.sleep(30)
+          env:
+            - name: RELEASE_NAME
+              value: "logzio-k8s-telemetry"
+            - name: NAMESPACE
+              value: "default"
+            - name: COLLECTOR_HOST
+              value: "logzio-k8s-telemetry-otel-collector.default.svc.cluster.local" 

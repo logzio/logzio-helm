@@ -18,10 +18,17 @@ containers:
       {{- toYaml .Values.containerSecurityContext | nindent 6 }}
     image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
     imagePullPolicy: {{ .Values.image.pullPolicy }}
-{{- if (or .Values.traces.enabled .Values.metrics.enabled) }}
+{{- if (or .Values.traces.enabled .Values.metrics.enabled .Values.signalFx.enabled) }}
     ports:
       {{- range $key, $port := .Values.ports }}
-      {{- if $port.enabled }}
+      {{- $shouldEnable := $port.enabled }}
+      {{- if eq $key "signalfx" }}
+        {{- $shouldEnable = $.Values.signalFx.enabled }}
+      {{- end }}
+      {{- if eq $key "carbon" }}
+        {{- $shouldEnable = $.Values.carbon.enabled }}
+      {{- end }}
+      {{- if $shouldEnable }}
       - name: {{ $key }}
         containerPort: {{ $port.containerPort }}
         protocol: {{ $port.protocol }}
@@ -93,6 +100,13 @@ containers:
           secretKeyRef:
             name: {{ .Values.secrets.name }}
             key: custom-tracing-endpoint
+      {{ end }}
+      {{ if .Values.global.customLogsEndpoint }}
+      - name: CUSTOM_LOGS_ENDPOINT
+        valueFrom:
+          secretKeyRef:
+            name: {{ .Values.secrets.name }}
+            key: custom-logs-endpoint
       {{ end }}
       - name: SAMPLING_PROBABILITY
         valueFrom:

@@ -21,7 +21,14 @@ containers:
 {{- if .Values.metrics.enabled }}
     ports:
       {{- range $key, $port := .Values.ports }}
-      {{- if $port.enabled }}
+      {{- $shouldEnable := $port.enabled }}
+      {{- if eq $key "signalfx" }}
+        {{- $shouldEnable = $.Values.signalFx.enabled }}
+      {{- end }}
+      {{- if eq $key "carbon" }}
+        {{- $shouldEnable = $.Values.carbon.enabled }}
+      {{- end }}
+      {{- if $shouldEnable }}
       - name: {{ $key }}
         containerPort: {{ $port.containerPort }}
         protocol: {{ $port.protocol }}
@@ -65,7 +72,14 @@ containers:
           secretKeyRef:
             name: {{ .Values.secrets.name }}
             key: logzio-listener-region            
-      {{ end }}            
+      {{ end }}
+      {{ if .Values.global.customLogsEndpoint }}
+      - name: CUSTOM_LOGS_ENDPOINT
+        valueFrom:
+          secretKeyRef:
+            name: {{ .Values.secrets.name }}
+            key: custom-logs-endpoint
+      {{ end }}        
       - name: LISTENER_URL
         valueFrom:
           secretKeyRef:
