@@ -13,8 +13,8 @@ import (
 	"go.uber.org/zap"
 )
 
-// MetricResponse represents the structure of the API response
-type MetricResponse struct {
+// CarbonMetricResponse represents the structure of the API response for carbon metrics
+type CarbonMetricResponse struct {
 	Status string `json:"status"`
 	Data   struct {
 		ResultType string `json:"resultType"`
@@ -25,7 +25,7 @@ type MetricResponse struct {
 	} `json:"data"`
 }
 
-func TestCarbonMetrics(t *testing.T) {
+func TestCarbonMetricsTags(t *testing.T) {
 	requiredMetrics := map[string][]string{
 		"test_carbon_metric": {"p8s_logzio_name", "source"},
 	}
@@ -33,16 +33,27 @@ func TestCarbonMetrics(t *testing.T) {
 	queryTemplate := `test_carbon_metric{p8s_logzio_name="%s"}`
 	query := fmt.Sprintf(queryTemplate, envId)
 	escapedQuery := url.QueryEscape(query)
-	testMetrics(t, requiredMetrics, escapedQuery)
+	testCarbonMetrics(t, requiredMetrics, escapedQuery)
 }
 
-func testMetrics(t *testing.T, requiredMetrics map[string][]string, query string) {
+func TestCarbonMetricsDot(t *testing.T) {
+	requiredMetrics := map[string][]string{
+		"test_carbon_metric": {"p8s_logzio_name", "env_id", "source"},
+	}
+	envId := os.Getenv("ENV_ID")
+	queryTemplate := `test_carbon_metric{p8s_logzio_name="%s",env_id="%s"}`
+	query := fmt.Sprintf(queryTemplate, envId, envId)
+	escapedQuery := url.QueryEscape(query)
+	testCarbonMetrics(t, requiredMetrics, escapedQuery)
+}
+
+func testCarbonMetrics(t *testing.T, requiredMetrics map[string][]string, query string) {
 	metricsApiKey := os.Getenv("LOGZIO_METRICS_API_KEY")
 	if metricsApiKey == "" {
 		t.Fatalf("LOGZIO_METRICS_API_KEY environment variable not set")
 	}
 
-	metricResponse, err := fetchMetrics(metricsApiKey, query)
+	metricResponse, err := fetchCarbonMetrics(metricsApiKey, query)
 	if err != nil {
 		t.Fatalf("Failed to fetch metrics: %v", err)
 	}
@@ -52,7 +63,7 @@ func testMetrics(t *testing.T, requiredMetrics map[string][]string, query string
 	}
 	logger.Info("Found metrics", zap.Int("metrics_count", len(metricResponse.Data.Result)))
 	// Verify required metrics
-	missingMetrics := verifyMetrics(metricResponse, requiredMetrics)
+	missingMetrics := verifyCarbonMetrics(metricResponse, requiredMetrics)
 	if len(missingMetrics) > 0 {
 		var sb strings.Builder
 		for _, metric := range missingMetrics {
@@ -62,8 +73,8 @@ func testMetrics(t *testing.T, requiredMetrics map[string][]string, query string
 	}
 }
 
-// fetchMetrics fetches the metrics from the logz.io API
-func fetchMetrics(metricsApiKey string, query string) (*MetricResponse, error) {
+// fetchCarbonMetrics fetches the metrics from the logz.io API
+func fetchCarbonMetrics(metricsApiKey string, query string) (*CarbonMetricResponse, error) {
 	url := fmt.Sprintf("%s/metrics/prometheus/api/v1/query?query=%s", BaseLogzioApiUrl, query)
 	client := &http.Client{}
 	logger.Info("sending api request", zap.String("url", url))
@@ -89,7 +100,7 @@ func fetchMetrics(metricsApiKey string, query string) (*MetricResponse, error) {
 		return nil, err
 	}
 
-	var metricResponse MetricResponse
+	var metricResponse CarbonMetricResponse
 	err = json.Unmarshal(body, &metricResponse)
 	if err != nil {
 		return nil, err
@@ -98,8 +109,8 @@ func fetchMetrics(metricsApiKey string, query string) (*MetricResponse, error) {
 	return &metricResponse, nil
 }
 
-// verifyMetrics checks if the required metrics and their labels are present in the response
-func verifyMetrics(metricResponse *MetricResponse, requiredMetrics map[string][]string) []string {
+// verifyCarbonMetrics checks if the required metrics and their labels are present in the response
+func verifyCarbonMetrics(metricResponse *CarbonMetricResponse, requiredMetrics map[string][]string) []string {
 	missingMetrics := []string{}
 
 	for metricName, requiredLabels := range requiredMetrics {
@@ -118,11 +129,11 @@ func verifyMetrics(metricResponse *MetricResponse, requiredMetrics map[string][]
 			missingMetrics = append(missingMetrics, metricName+" (not found)")
 		}
 	}
-	return deduplicate(missingMetrics)
+	return deduplicateCarbon(missingMetrics)
 }
 
-// deduplicate removes duplicate strings from the input array.
-func deduplicate(data []string) []string {
+// deduplicateCarbon removes duplicate strings from the input array.
+func deduplicateCarbon(data []string) []string {
 	uniqueMap := make(map[string]bool)
 	var uniqueList []string
 
@@ -135,4 +146,6 @@ func deduplicate(data []string) []string {
 	}
 
 	return uniqueList
-} 
+}
+
+ 

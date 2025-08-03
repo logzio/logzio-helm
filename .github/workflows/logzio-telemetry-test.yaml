@@ -70,7 +70,7 @@ jobs:
           --set spanMetricsAgregator.config.connectors.spanmetrics.histogram.disable=true \
           --set enableMetricsFilter.eks=true \
           --set filters.infrastructure.exclude.namespace="kube-system" \
-          --set global.signalFx.enabled=true \
+          --set signalFx.enabled=true \
           --set carbon.enabled=true \
           logzio-k8s-telemetry .
       
@@ -173,9 +173,9 @@ jobs:
           export NAMESPACE="default"
           PROTOCOL_FLAG=""
           if [[ "${{ matrix.protocol }}" == "signalfx" ]]; then
-            PROTOCOL_FLAG="--set global.signalFx.enabled=true"
+            PROTOCOL_FLAG="--set signalFx.enabled=true"
           elif [[ "${{ matrix.protocol }}" == "carbon" ]]; then
-            PROTOCOL_FLAG="--set carbon.enabled=true"
+            PROTOCOL_FLAG="--set carbon.enabled=true --set carbon.config.receivers.carbon.parser.type=graphite --set carbon.config.receivers.carbon.parser.config.templates[0]=\"test.carbon.metric.env_id.*.source.* test_carbon_metric env_id source\""
           fi
           helm upgrade --install -n $NAMESPACE --create-namespace \
           --set metrics.enabled=true \
