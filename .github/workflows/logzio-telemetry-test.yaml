@@ -171,20 +171,27 @@ jobs:
           helm dependency build
           export RELEASE_NAME="logzio-k8s-telemetry"
           export NAMESPACE="default"
-          PROTOCOL_FLAG=""
           if [[ "${{ matrix.protocol }}" == "signalfx" ]]; then
-            PROTOCOL_FLAG="--set signalFx.enabled=true"
+            helm upgrade --install -n $NAMESPACE --create-namespace \
+            --set metrics.enabled=true \
+            --set global.logzioMetricsToken=${{ secrets.LOGZIO_METRICS_TOKEN }} \
+            --set global.logzioRegion=us \
+            --set global.env_id=${{ env.ENV_ID }} \
+            --set collector.mode=${{ matrix.mode }} \
+            --set signalFx.enabled=true \
+            $RELEASE_NAME .
           elif [[ "${{ matrix.protocol }}" == "carbon" ]]; then
-            PROTOCOL_FLAG="--set carbon.enabled=true --set carbon.config.receivers.carbon.parser.type=graphite --set carbon.config.receivers.carbon.parser.config.templates[0]=\"test.carbon.metric.env_id.*.source.* test_carbon_metric env_id source\""
+            helm upgrade --install -n $NAMESPACE --create-namespace \
+            --set metrics.enabled=true \
+            --set global.logzioMetricsToken=${{ secrets.LOGZIO_METRICS_TOKEN }} \
+            --set global.logzioRegion=us \
+            --set global.env_id=${{ env.ENV_ID }} \
+            --set collector.mode=${{ matrix.mode }} \
+            --set carbon.enabled=true \
+            --set carbon.config.receivers.carbon.parser.type=graphite \
+            --set 'carbon.config.receivers.carbon.parser.config.templates[0]=test.carbon.metric.env_id.*.source.* test_carbon_metric env_id source' \
+            $RELEASE_NAME .
           fi
-          helm upgrade --install -n $NAMESPACE --create-namespace \
-          --set metrics.enabled=true \
-          --set global.logzioMetricsToken=${{ secrets.LOGZIO_METRICS_TOKEN }} \
-          --set global.logzioRegion=us \
-          --set global.env_id=${{ env.ENV_ID }} \
-          --set collector.mode=${{ matrix.mode }} \
-          $PROTOCOL_FLAG \
-          $RELEASE_NAME .
 
       - name: Verify deployment Status
         run: |
