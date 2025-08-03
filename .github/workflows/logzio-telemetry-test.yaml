@@ -193,6 +193,22 @@ jobs:
             $RELEASE_NAME .
           fi
 
+      - name: Debug deployment before verification
+        run: |
+          echo "=== Debugging deployment state ==="
+          kubectl get pods -A
+          kubectl get nodes -o wide
+          echo "=== Checking daemonsets ==="
+          kubectl get daemonsets -A
+          echo "=== Checking deployments ==="
+          kubectl get deployments -A
+          if [[ "${{ matrix.mode }}" == "daemonset" ]]; then
+            echo "=== Describing daemonset ==="
+            kubectl describe daemonset/logzio-k8s-telemetry-otel-collector-ds || echo "Daemonset not found"
+            echo "=== Checking for pods with otel-collector labels ==="
+            kubectl get pods -l app.kubernetes.io/name=otel-collector
+          fi
+
       - name: Verify deployment Status
         run: |
           echo "=== Checking deployment/daemonset status ==="
@@ -200,7 +216,14 @@ jobs:
             kubectl rollout status deployment/logzio-k8s-telemetry-otel-collector-standalone --timeout=300s
             kubectl get deployment/logzio-k8s-telemetry-otel-collector-standalone -o jsonpath='{.spec.template.spec.tolerations}' | jq -r '.[] | select(.key=="global-key")'
           else
-            kubectl rollout status daemonset/logzio-k8s-telemetry-otel-collector-ds --timeout=300s
+            kubectl rollout status daemonset/logzio-k8s-telemetry-otel-collector-ds --timeout=300s || {
+              echo "=== Rollout failed, gathering debug info ==="
+              kubectl describe daemonset/logzio-k8s-telemetry-otel-collector-ds
+              kubectl get pods -l app.kubernetes.io/name=otel-collector
+              kubectl describe pods -l app.kubernetes.io/name=otel-collector
+              kubectl logs -l app.kubernetes.io/name=otel-collector --tail=50
+              exit 1
+            }
             kubectl get daemonset/logzio-k8s-telemetry-otel-collector-ds -o jsonpath='{.spec.template.spec.tolerations}' | jq -r '.[] | select(.key=="global-key")'
           fi
 
