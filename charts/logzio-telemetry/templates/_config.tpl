@@ -42,7 +42,7 @@ Build config file for standalone OpenTelemetry Collector
 {{- end -}}
 
 {{/* Handle SignalFx config */}}
-{{- if and .Values.metrics.enabled (eq (include "opentelemetry-collector.signalFxEnabled" .) "true") -}}
+{{- if and .Values.metrics.enabled .Values.signalFx.enabled -}}
 {{- $signalFxConfig := deepCopy .Values.signalFx.config | mustMergeOverwrite -}}
 {{- $metricsConfig = deepCopy $signalFxConfig | merge $metricsConfig | mustMergeOverwrite -}}
 {{- end -}}
@@ -298,7 +298,7 @@ Build config file for standalone OpenTelemetry Collector daemonset
 {{- end }}
 
 {{/* Handle SignalFx config */}}
-{{- if and .Values.metrics.enabled (eq (include "opentelemetry-collector.signalFxEnabled" .) "true") }}
+{{- if and .Values.metrics.enabled .Values.signalFx.enabled }}
 {{- $signalFxConfig := deepCopy .Values.signalFx.config | mustMergeOverwrite }}
 {{- $metricsConfig = deepCopy $signalFxConfig | merge $metricsConfig | mustMergeOverwrite }}
 {{- end }}

@@ -139,11 +139,11 @@ logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry
 #### Deploy the metrics chart with SignalFx receiver:
 The SignalFx receiver allows the chart to accept metrics from SignalFx client libraries and forward them to Logz.io. This is useful when migrating from SignalFx or when you have applications already instrumented with SignalFx libraries.
 
-**Note** `global.signalFx.enabled=true` will have no effect unless `metrics.enabled` is also set to `true`
+**Note** `signalFx.enabled=true` will have no effect unless `metrics.enabled` is also set to `true`
 ```
 helm install  \
 --set metrics.enabled=true \
---set global.signalFx.enabled=true \
+--set signalFx.enabled=true \
 --set global.logzioMetricsToken=<<PROMETHEUS-METRICS-SHIPPING-TOKEN>> \
 --set global.logzioRegion=<<LOGZIO-REGION>> \
 --set global.env_id=<<ENV-ID>> \

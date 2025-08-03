@@ -23,7 +23,7 @@ containers:
       {{- range $key, $port := .Values.ports }}
       {{- $shouldEnable := $port.enabled }}
       {{- if eq $key "signalfx" }}
-        {{- $shouldEnable = (eq (include "opentelemetry-collector.signalFxEnabled" $) "true") }}
+        {{- $shouldEnable = $.Values.signalFx.enabled }}
       {{- end }}
       {{- if eq $key "carbon" }}
         {{- $shouldEnable = $.Values.carbon.enabled }}

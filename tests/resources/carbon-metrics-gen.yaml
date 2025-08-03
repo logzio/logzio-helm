@@ -82,17 +82,29 @@ spec:
                   try:
                       timestamp = int(time.time())
                       
-                      # Send the Carbon metric
-                      metric_data = f"test.carbon.metric;env_id={env_id};source=carbon-gen 1 {timestamp}"
-                      result = subprocess.run(["nc", "-w", "1", collector_host, "2003"], 
-                                           input=metric_data.encode(), 
+                      # Send the Carbon metric with tags format (existing)
+                      metric_data_tags = f"test.carbon.metric;env_id={env_id};source=carbon-gen 1 {timestamp}"
+                      result_tags = subprocess.run(["nc", "-w", "1", collector_host, "2003"], 
+                                           input=metric_data_tags.encode(), 
                                            capture_output=True, 
                                            timeout=10)
                       
-                      if result.returncode == 0:
-                          logger.info(f"Sent Carbon metric with timestamp: {timestamp}")
+                      if result_tags.returncode == 0:
+                          logger.info(f"Sent Carbon metric (tags format) with timestamp: {timestamp}")
                       else:
-                          logger.warning(f"Failed to send metric, return code: {result.returncode}")
+                          logger.warning(f"Failed to send tags metric, return code: {result_tags.returncode}")
+                      
+                      # Send the Carbon metric with dot notation format (new)
+                      metric_data_dot = f"test.carbon.metric.env_id.{env_id}.source.carbon-gen 1 {timestamp}"
+                      result_dot = subprocess.run(["nc", "-w", "1", collector_host, "2003"], 
+                                           input=metric_data_dot.encode(), 
+                                           capture_output=True, 
+                                           timeout=10)
+                      
+                      if result_dot.returncode == 0:
+                          logger.info(f"Sent Carbon metric (dot notation format) with timestamp: {timestamp}")
+                      else:
+                          logger.warning(f"Failed to send dot notation metric, return code: {result_dot.returncode}")
                           
                       time.sleep(30)  # Wait 30 seconds before sending the next metric
                       
