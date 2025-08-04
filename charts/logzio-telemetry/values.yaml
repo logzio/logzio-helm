@@ -727,7 +727,7 @@ signalFx:
         access_token_passthrough: true
     processors:
       # Batch processor to improve performance by grouping metrics
-      batch: {}
+      batch/signalfx: {}
     exporters:
       # Prometheus Remote Write exporter for Logz.io
       prometheusremotewrite/signalfx:
@@ -742,7 +742,7 @@ signalFx:
       pipelines:
         metrics/signalfx:
           receivers: [signalfx]
-          processors: [batch]
+          processors: [batch/signalfx]
           exporters: [prometheusremotewrite/signalfx]
 
 # Carbon config
@@ -756,7 +756,7 @@ carbon:
         transport: tcp
     processors:
       # Batch processor to improve performance by grouping metrics
-      batch: {}
+      batch/carbon: {}
     exporters:
       # Prometheus Remote Write exporter for Logz.io
       prometheusremotewrite/carbon:
@@ -771,7 +771,7 @@ carbon:
       pipelines:
         metrics/carbon:
           receivers: [carbon]
-          processors: [batch]
+          processors: [batch/carbon]
           exporters: [prometheusremotewrite/carbon]
 
 # Kubernetes Object logs
@@ -851,7 +851,7 @@ k8sObjectsConfig:
           - context: log
             statements:
               - delete_key(body["object"]["metadata"], "managedFields")
-      batch: {}
+      batch/k8sobjects: {}
     exporters:
       logzio/object_logs:
         account_token: "${OBJECTS_LOGS_TOKEN}"
@@ -863,7 +863,7 @@ k8sObjectsConfig:
       pipelines:
         logs/k8sobjects:
           receivers: [k8sobjects/pull,k8sobjects/watch]
-          processors: [transform/pulled_object,transform/remove_managedfields,transform/log_type, resource/env_id, batch]
+          processors: [transform/pulled_object,transform/remove_managedfields,transform/log_type, resource/env_id, batch/k8sobjects]
           exporters: [logzio/object_logs]
 # Service graph metrics configuration
 serviceGraph:
@@ -913,7 +913,7 @@ spanMetricsAgregator:
           - action: update_label
             label: span.name
             new_label: operation  
-      batch: {}
+      batch/spanmetrics: {}
     connectors:
       spanmetrics:
         aggregation_temporality: AGGREGATION_TEMPORALITY_CUMULATIVE
@@ -994,7 +994,7 @@ spanMetricsAgregator:
           processors:
           - metricstransform/metrics-rename
           - metricstransform/labels-rename
-          - batch
+          - batch/spanmetrics
           receivers:
           - spanmetrics
         traces:
