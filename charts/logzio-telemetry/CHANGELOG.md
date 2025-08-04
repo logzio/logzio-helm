@@ -1,6 +1,8 @@
 # Changes by Version
 
 <!-- next version -->
+## 5.4.1
+  - Modify batch processor to be based on specific pipeline instead of base collector config
 ## 5.4.0
   - Add SignalFx metrics receiver
   - Add Carbon metrics receiver
