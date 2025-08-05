@@ -5,6 +5,7 @@ imagePullSecrets:
 {{- end }}
 securityContext:
 {{- toYaml .Values.podSecurityContext | nindent 2 }}
+enableServiceLinks: {{- .Values.enableServiceLinks }}
 containers:
   - name: {{ .Chart.Name }}
     command:
