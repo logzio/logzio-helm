@@ -1,6 +1,8 @@
 # Changes by Version
 
 <!-- next version -->
+## 5.4.3
+ - Add `enableServiceLinks` flag to control loading of service environment variables.
 ## 5.4.2
   - Disable k8s 360 environment variables if no filters are used.
 ## 5.4.1
