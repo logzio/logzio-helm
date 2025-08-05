@@ -1,6 +1,8 @@
 # Changes by Version
 
 <!-- next version -->
+## 5.4.2
+  - Disable k8s 360 environment variables if no filters are used.
 ## 5.4.1
   - Modify batch processor to be based on specific pipeline instead of base collector config
 ## 5.4.0

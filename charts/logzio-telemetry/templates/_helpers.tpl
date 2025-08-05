@@ -160,8 +160,10 @@ If any OOB filters is being used the function return the OOB filter concatenated
     {{- $metrics = .Values.prometheusFilters.metrics.infrastructure.keep.aks }}
 {{- else if .Values.enableMetricsFilter.gke}}
     {{- $metrics = .Values.prometheusFilters.metrics.infrastructure.keep.gke }}
-{{- else }}
+{{- else if .Values.enableMetricsFilter.eks }}
     {{- $metrics = .Values.prometheusFilters.metrics.infrastructure.keep.eks }}
+{{- else }}
+    {{- $metrics = "nil" }}
 {{- end -}}
 
 {{- if .Values.prometheusFilters.metrics.infrastructure.keep.custom }}
