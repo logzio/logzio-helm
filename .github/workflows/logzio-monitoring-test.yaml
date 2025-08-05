@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        kubernetes_version: ['1.27', '1.30', '1.32']
+        kubernetes_version: ['1.28', '1.30', '1.32']
         environment: [eks-linux, eks-fargate]
     steps:
       - name: Generate random id

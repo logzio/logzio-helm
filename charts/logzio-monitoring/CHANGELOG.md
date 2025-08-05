@@ -1,7 +1,17 @@
 # Changes by Version
 
 <!-- next version -->
+## 7.5.1
+- Upgrade `logzio-k8s-telemetry` chart to `5.4.2`
+  - Disable k8s 360 environment variables if no filters are used.
+  - Modify batch processor to be based on specific pipeline instead of base collector config
 ## 7.5.0
+- Upgrade `logzio-k8s-telemetry` chart to `5.4.0`
+  - Add SignalFx metrics support
+  - Add Carbon metrics support
+  - Add 'customLogsEndpoint' support
+- Upgrade `logzio-logs-collector` chart to `2.2.1`
+  - Add SignalFx logs support
 - Upgrade `logzio-k8s-telemetry` chart to `5.4.0`
   - Add SignalFx metrics support
   - Add Carbon metrics support
