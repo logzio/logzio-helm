@@ -1,6 +1,9 @@
 # Changes by Version
 
 <!-- next version -->
+## 7.5.2
+- Upgrade `logzio-k8s-telemetry` chart to `5.4.3`
+  - Add `enableServiceLinks` flag to control loading of service environment variables.
 ## 7.5.1
 - Upgrade `logzio-k8s-telemetry` chart to `5.4.2`
   - Disable k8s 360 environment variables if no filters are used.
