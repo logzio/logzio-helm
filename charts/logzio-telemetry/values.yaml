@@ -87,6 +87,8 @@ secrets:
 # See README.md for full syntax and mapping.
 filters: {}
 
+enableServiceLinks: true
+
 managedServiceAccount: true 
 
 clusterRole:
