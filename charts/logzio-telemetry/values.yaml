@@ -1062,10 +1062,8 @@ spanMetricsAgregator:
       servicePort: 9411
       hostPort: 9411
       protocol: TCP
-  resources:
-    requests:
-      cpu: 256m
-      memory: 512Mi
+  # Example: resources: { requests: { cpu: "256m", memory: "512Mi" }, limits: { cpu: "512m", memory: "1Gi" } }
+  resources: {}
 
 
 # Configuration for standalone OpenTelemetry Collector deployment, enabled by default
@@ -1075,10 +1073,8 @@ standaloneCollector:
   containerLogs:
     enabled: false
 
-  resources:
-    requests: {}
-    limits: {}
-      
+  # Example: resources: { requests: { cpu: "100m", memory: "256Mi" }, limits: { cpu: "200m", memory: "512Mi" } }
+  resources: {}
   podLabels:  {}
 
   podAnnotations: {}
@@ -1103,9 +1099,8 @@ daemonsetCollector:
               - key: eks.amazonaws.com/compute-type
                 operator: DoesNotExist
 
-  resources:
-    requests: {}
-    limits: {}
+  # Example: resources: { requests: { cpu: "50m", memory: "128Mi" }, limits: { cpu: "100m", memory: "256Mi" } }
+  resources: {}
 
   podLabels:  {}
 

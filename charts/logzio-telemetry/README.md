@@ -274,6 +274,8 @@ By default, the OpenTelemetry collector pods do not have resource requests or li
 For standalone collector:
 ```yaml
 standaloneCollector:
+  # Default: resources: {} (no resource constraints)
+  # Example with resource constraints:
   resources:
     requests:
       memory: "512Mi"
@@ -286,6 +288,8 @@ standaloneCollector:
 For daemonset collector:
 ```yaml
 daemonsetCollector:
+  # Default: resources: {} (no resource constraints)
+  # Example with resource constraints:
   resources:
     requests:
       memory: "250Mi"
@@ -293,6 +297,20 @@ daemonsetCollector:
     limits:
       memory: "512Mi"
       cpu: "300m"
+```
+
+For span metrics collector:
+```yaml
+spanMetricsAgregator:
+  # Default: resources: {} (no resource constraints)
+  # Example with resource constraints:
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "256m"
+    limits:
+      memory: "1Gi"
+      cpu: "512m"
 ```
 
 When the `requests` and `limits` objects are empty (`{}`), no resource constraints are applied to the pods.

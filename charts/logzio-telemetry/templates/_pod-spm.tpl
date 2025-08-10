@@ -53,8 +53,13 @@ containers:
           secretKeyRef:
             name: {{ .Values.secrets.name }}
             key: env_id
+    {{- if .Values.spanMetricsAgregator.resources }}
+    {{- $resources := .Values.spanMetricsAgregator.resources }}
+    {{- if or (and $resources.requests (keys $resources.requests)) (and $resources.limits (keys $resources.limits)) }}
     resources:
-    {{- toYaml .Values.spanMetricsAgregator.resources | nindent 6 }}
+      {{- toYaml $resources | nindent 6 }}
+    {{- end }}
+    {{- end }}
     volumeMounts:
       - mountPath: /conf
         name: {{ .Chart.Name }}-configmap-spm    
