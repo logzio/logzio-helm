@@ -313,9 +313,10 @@ spanMetricsAgregator:
       cpu: "512m"
 ```
 
-When the `requests` and `limits` objects are empty (`{}`), no resource constraints are applied to the pods.
-
-**⚠️ WARNING**: Running pods without resource limits in production environments can lead to resource contention and cluster instability if the collector consumes excessive memory or CPU.
+> [!WARNING]
+> When the `requests` and `limits` objects are empty (`{}`), no resource constraints are applied to the pods.
+> 
+> Running pods without resource limits in production environments can lead to resource contention and cluster instability if the collector consumes excessive memory or CPU.
 
 ### Adding application metrics
 
