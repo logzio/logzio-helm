@@ -110,8 +110,13 @@ containers:
       httpGet:
         path: /
         port: 13133
+    {{- if .Values.daemonsetCollector.resources }}
+    {{- $resources := .Values.daemonsetCollector.resources }}
+    {{- if or (and $resources.requests (keys $resources.requests)) (and $resources.limits (keys $resources.limits)) }}
     resources:
-      {{- toYaml .Values.resources | nindent 6 }}
+      {{- toYaml $resources | nindent 6 }}
+    {{- end }}
+    {{- end }}
     volumeMounts:
       - mountPath: /conf
         name: {{ .Chart.Name }}-configmap

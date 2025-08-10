@@ -267,6 +267,38 @@ The default configuration uses the Prometheus receiver with the following scrape
 
 To customize your configuration, edit the `config` section in the `values.yaml` file.
 
+#### Configuring resource requests and limits
+
+By default, the OpenTelemetry collector pods do not have resource requests or limits set, allowing for flexibility in different cluster environments. You can configure resource requirements by setting the following values:
+
+For standalone collector:
+```yaml
+standaloneCollector:
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "200m"
+    limits:
+      memory: "1Gi"
+      cpu: "500m"
+```
+
+For daemonset collector:
+```yaml
+daemonsetCollector:
+  resources:
+    requests:
+      memory: "250Mi"
+      cpu: "150m"
+    limits:
+      memory: "512Mi"
+      cpu: "300m"
+```
+
+When the `requests` and `limits` objects are empty (`{}`), no resource constraints are applied to the pods.
+
+**⚠️ WARNING**: Running pods without resource limits in production environments can lead to resource contention and cluster instability if the collector consumes excessive memory or CPU.
+
 ### Adding application metrics
 
 To enable applications metrics scraping set the `applicationMetrics.enabled` value to `true`

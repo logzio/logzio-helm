@@ -651,8 +651,12 @@ podDisruptionBudget:
 # If both defined only maxUnavailable will be used
 
 extraEnvs: []
+extraConfigMapMounts: []
 extraHostPathMounts: []
 secretMounts: []
+
+# PriorityClass name for the collector pods
+priorityClassName: ""
 
 # Configuration for ports, shared between daemonsetCollector, standaloneCollector and service.
 # Can be overridden here or for daemonsetCollector and standaloneCollector independently.
@@ -1072,9 +1076,8 @@ standaloneCollector:
     enabled: false
 
   resources:
-    requests:
-      memory: 512Mi
-      cpu: 200m
+    requests: {}
+    limits: {}
       
   podLabels:  {}
 
@@ -1101,9 +1104,8 @@ daemonsetCollector:
                 operator: DoesNotExist
 
   resources:
-    requests:
-      cpu: 150m
-      memory: 250Mi
+    requests: {}
+    limits: {}
 
   podLabels:  {}
 

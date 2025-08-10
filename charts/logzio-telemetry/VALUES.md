@@ -57,12 +57,12 @@ logzio-k8s-telemetry allows you to ship metrics and traces from your Kubernetes 
 | global.env_id | string | `"my_environment"` | Env id to be used with k8s 360. |
 | secrets.windowsNodePassword | string | `""` | Windows node password - will be used to install node-exporter for windows nodes. |
 | secrets.windowsNodeUsername | string | `""` | Windows username - will be used to install node-exporter for windows nodes. |
-| standaloneCollector.resources.limits.cpu | string | `"200m"` | Cpu limit for the opentelemetry collector pod. |
-| standaloneCollector.resources.limits.memory | string | `"512Mi"` | Memory limit for the opentelemetry colletor pods. |
+| standaloneCollector.resources.requests | object | `{}` | Resource requests for the standalone opentelemetry collector pod. When empty, no resource requests are set. |
+| standaloneCollector.resources.limits | object | `{}` | Resource limits for the standalone opentelemetry collector pod. When empty, no resource limits are set. |
 | standaloneCollector.podLabels | string | `nil` | Selector labels that will be added to the collector pods. |
 | standaloneCollector.podAnnotations | string | `nil` | Selector labels that will be added to the collector pods. |
-| daemonsetCollector.resources.limits.cpu | string | `"150m"` | Cpu limit for the opentelemetry colletor pods. |
-| daemonsetCollector.resources.limits.memory | string | `"250Mi"` | Memory limit for the opentelemetry colletor pods. |
+| daemonsetCollector.resources.requests | object | `{}` | Resource requests for the daemonset opentelemetry collector pods. When empty, no resource requests are set. |
+| daemonsetCollector.resources.limits | object | `{}` | Resource limits for the daemonset opentelemetry collector pods. When empty, no resource limits are set. |
 | daemonsetCollector.podLabels | string | `nil` | Selector labels that will be added to the collector pods. |
 | daemonsetCollector.podAnnotations | string | `nil` | Selector annotations that will be added to the collector pods. |
 | windowsExporterInstallerJob.interval | string | `"*/10 * * * *"` | Cronjob expression for the windows exporter installer job. |
