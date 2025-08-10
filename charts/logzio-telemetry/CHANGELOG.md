@@ -1,6 +1,11 @@
 # Changes by Version
 
 <!-- next version -->
+## 5.5.0
+ - **Breaking change:** 
+  - Default resource requests and limits for `standaloneCollector`,  `daemonsetCollector` &  `spanMetricsAgregator` are now empty by default and are configurable, only applies when explicitly set.
+ - Add `priorityClassName`
+ - Add `extraConfigMapMounts`
 ## 5.4.3
  - Add `enableServiceLinks` flag to control loading of service environment variables.
 ## 5.4.2

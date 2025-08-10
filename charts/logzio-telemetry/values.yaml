@@ -651,8 +651,12 @@ podDisruptionBudget:
 # If both defined only maxUnavailable will be used
 
 extraEnvs: []
+extraConfigMapMounts: []
 extraHostPathMounts: []
 secretMounts: []
+
+# PriorityClass name for the collector pods
+priorityClassName: ""
 
 # Configuration for ports, shared between daemonsetCollector, standaloneCollector and service.
 # Can be overridden here or for daemonsetCollector and standaloneCollector independently.
@@ -1058,11 +1062,17 @@ spanMetricsAgregator:
       servicePort: 9411
       hostPort: 9411
       protocol: TCP
-  resources:
-    requests:
-      cpu: 256m
-      memory: 512Mi
 
+
+  resources: {}
+   ## Resources are not specified by default, to ensure the chart runs on environments with little resources.
+   ## If you want to specify resources, uncomment the following  lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 256m
+    #   memory: 512Mi
+    # requests:
+    #   cpu: 512m
+    #   memory: 1024Mi
 
 # Configuration for standalone OpenTelemetry Collector deployment, enabled by default
 standaloneCollector:
@@ -1071,11 +1081,15 @@ standaloneCollector:
   containerLogs:
     enabled: false
 
-  resources:
-    requests:
-      memory: 512Mi
-      cpu: 200m
-      
+  resources: {}
+   ## Resources are not specified by default, to ensure the chart runs on environments with little resources.
+   ## If you want to specify resources, uncomment the following  lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 200m
+    #   memory: 512Mi
+    # requests:
+    #   cpu: 500m
+    #   memory: 1024Mi
   podLabels:  {}
 
   podAnnotations: {}
@@ -1100,11 +1114,16 @@ daemonsetCollector:
               - key: eks.amazonaws.com/compute-type
                 operator: DoesNotExist
 
-  resources:
-    requests:
-      cpu: 150m
-      memory: 250Mi
 
+  resources: {}
+   ## Resources are not specified by default, to ensure the chart runs on environments with little resources.
+   ## If you want to specify resources, uncomment the following  lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 150m
+    #   memory: 256Mi
+    # requests:
+    #   cpu: 300m
+    #   memory: 512Mi
   podLabels:  {}
 
   podAnnotations: {}

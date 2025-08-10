@@ -110,8 +110,7 @@ containers:
       httpGet:
         path: /
         port: 13133
-    resources:
-      {{- toYaml .Values.resources | nindent 6 }}
+    {{- include "opentelemetry-collector.resources" .Values.daemonsetCollector.resources | nindent 4 }}
     volumeMounts:
       - mountPath: /conf
         name: {{ .Chart.Name }}-configmap

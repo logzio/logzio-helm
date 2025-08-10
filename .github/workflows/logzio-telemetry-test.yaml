@@ -10,6 +10,8 @@ on:
       - 'charts/logzio-telemetry/Chart.yaml'
       - 'charts/logzio-telemetry/values.yaml'
       - 'charts/logzio-telemetry/windows_exporter_installer/**'
+      - '!**.md'
+      - '!**/**/**.md'
 jobs:
   test-helm-chart:
     name: Test Helm Chart on Kind
@@ -52,6 +54,18 @@ jobs:
         run: |
           cd charts/logzio-telemetry
           helm dependency build
+          
+          # Set collector-specific resource configuration for testing
+          RESOURCE_CONFIG=""
+          if [[ "${{ matrix.mode }}" == "standalone" ]]; then
+            RESOURCE_CONFIG="--set standaloneCollector.resources.requests.cpu=200m --set standaloneCollector.resources.requests.memory=512Mi --set standaloneCollector.resources.limits.cpu=500m --set standaloneCollector.resources.limits.memory=1Gi"
+          else
+            RESOURCE_CONFIG="--set daemonsetCollector.resources.requests.cpu=150m --set daemonsetCollector.resources.requests.memory=250Mi --set daemonsetCollector.resources.limits.cpu=300m --set daemonsetCollector.resources.limits.memory=512Mi"
+          fi
+          
+          # Add span metrics resource configuration for testing
+          SPM_RESOURCE_CONFIG="--set spanMetricsAgregator.resources.requests.cpu=256m --set spanMetricsAgregator.resources.requests.memory=512Mi --set spanMetricsAgregator.resources.limits.cpu=512m --set spanMetricsAgregator.resources.limits.memory=1Gi"
+          
           helm upgrade --install \
           --set traces.enabled=true \
           --set spm.enabled=true \
@@ -72,6 +86,8 @@ jobs:
           --set filters.infrastructure.exclude.namespace="kube-system" \
           --set signalFx.enabled=true \
           --set carbon.enabled=true \
+          $RESOURCE_CONFIG \
+          $SPM_RESOURCE_CONFIG \
           logzio-k8s-telemetry .
       
       - name: Verify deployment Status
@@ -82,6 +98,41 @@ jobs:
           kubectl describe deployment/logzio-k8s-telemetry-otel-collector-standalone
           kubectl get deployment/logzio-k8s-telemetry-otel-collector-spm -o jsonpath='{.spec.template.spec.tolerations}' | jq -r '.[] | select(.key=="global-key")'
           kubectl get deployment/logzio-k8s-telemetry-otel-collector-standalone -o jsonpath='{.spec.template.spec.tolerations}' | jq -r '.[] | select(.key=="global-key")'
+      
+      - name: Verify Resource Configuration
+        run: |
+          echo "=== Verifying collector resource configuration ==="
+          if [[ "${{ matrix.mode }}" == "standalone" ]]; then
+            echo "Checking standalone collector resources..."
+            CONTAINER_RESOURCES=$(kubectl get deployment/logzio-k8s-telemetry-otel-collector-standalone -o jsonpath='{.spec.template.spec.containers[0].resources}')
+            echo "Container resources: $CONTAINER_RESOURCES"
+            # Verify requests and limits are set
+            kubectl get deployment/logzio-k8s-telemetry-otel-collector-standalone -o jsonpath='{.spec.template.spec.containers[0].resources.requests.cpu}' | grep -q "200m" || (echo "❌ Expected CPU request 200m not found" && exit 1)
+            kubectl get deployment/logzio-k8s-telemetry-otel-collector-standalone -o jsonpath='{.spec.template.spec.containers[0].resources.requests.memory}' | grep -q "512Mi" || (echo "❌ Expected memory request 512Mi not found" && exit 1)
+            kubectl get deployment/logzio-k8s-telemetry-otel-collector-standalone -o jsonpath='{.spec.template.spec.containers[0].resources.limits.cpu}' | grep -q "500m" || (echo "❌ Expected CPU limit 500m not found" && exit 1)
+            kubectl get deployment/logzio-k8s-telemetry-otel-collector-standalone -o jsonpath='{.spec.template.spec.containers[0].resources.limits.memory}' | grep -q "1Gi" || (echo "❌ Expected memory limit 1Gi not found" && exit 1)
+            echo "✅ Standalone collector resources verified successfully"
+          else
+            echo "Checking daemonset collector resources..."
+            CONTAINER_RESOURCES=$(kubectl get daemonset/logzio-k8s-telemetry-otel-collector-ds -o jsonpath='{.spec.template.spec.containers[0].resources}')
+            echo "Container resources: $CONTAINER_RESOURCES"
+            # Verify requests and limits are set
+            kubectl get daemonset/logzio-k8s-telemetry-otel-collector-ds -o jsonpath='{.spec.template.spec.containers[0].resources.requests.cpu}' | grep -q "150m" || (echo "❌ Expected CPU request 150m not found" && exit 1)
+            kubectl get daemonset/logzio-k8s-telemetry-otel-collector-ds -o jsonpath='{.spec.template.spec.containers[0].resources.requests.memory}' | grep -q "250Mi" || (echo "❌ Expected memory request 250Mi not found" && exit 1)
+            kubectl get daemonset/logzio-k8s-telemetry-otel-collector-ds -o jsonpath='{.spec.template.spec.containers[0].resources.limits.cpu}' | grep -q "300m" || (echo "❌ Expected CPU limit 300m not found" && exit 1)
+            kubectl get daemonset/logzio-k8s-telemetry-otel-collector-ds -o jsonpath='{.spec.template.spec.containers[0].resources.limits.memory}' | grep -q "512Mi" || (echo "❌ Expected memory limit 512Mi not found" && exit 1)
+            echo "✅ Daemonset collector resources verified successfully"
+          fi
+          
+          # Verify span metrics aggregator resources
+          echo "Checking span metrics aggregator resources..."
+          SPM_CONTAINER_RESOURCES=$(kubectl get deployment/logzio-k8s-telemetry-otel-collector-spm -o jsonpath='{.spec.template.spec.containers[0].resources}')
+          echo "SPM Container resources: $SPM_CONTAINER_RESOURCES"
+          kubectl get deployment/logzio-k8s-telemetry-otel-collector-spm -o jsonpath='{.spec.template.spec.containers[0].resources.requests.cpu}' | grep -q "256m" || (echo "❌ Expected SPM CPU request 256m not found" && exit 1)
+          kubectl get deployment/logzio-k8s-telemetry-otel-collector-spm -o jsonpath='{.spec.template.spec.containers[0].resources.requests.memory}' | grep -q "512Mi" || (echo "❌ Expected SPM memory request 512Mi not found" && exit 1)
+          kubectl get deployment/logzio-k8s-telemetry-otel-collector-spm -o jsonpath='{.spec.template.spec.containers[0].resources.limits.cpu}' | grep -q "512m" || (echo "❌ Expected SPM CPU limit 512m not found" && exit 1)
+          kubectl get deployment/logzio-k8s-telemetry-otel-collector-spm -o jsonpath='{.spec.template.spec.containers[0].resources.limits.memory}' | grep -q "1Gi" || (echo "❌ Expected SPM memory limit 1Gi not found" && exit 1)
+          echo "✅ Span metrics aggregator resources verified successfully"
       
       - name: Run trace generator
         run: |
@@ -223,6 +274,33 @@ jobs:
               exit 1
             }
             kubectl get daemonset/logzio-k8s-telemetry-otel-collector-ds -o jsonpath='{.spec.template.spec.tolerations}' | jq -r '.[] | select(.key=="global-key")'
+          fi
+
+      - name: Verify Default Resource Configuration (Empty)
+        run: |
+          echo "=== Verifying default (empty) resource configuration ==="
+          if [[ "${{ matrix.mode }}" == "standalone" ]]; then
+            echo "Checking standalone collector for no resource constraints..."
+            CONTAINER_RESOURCES=$(kubectl get deployment/logzio-k8s-telemetry-otel-collector-standalone -o jsonpath='{.spec.template.spec.containers[0].resources}')
+            echo "Container resources: $CONTAINER_RESOURCES"
+            # Verify that resources is empty or null (default behavior)
+            if [[ "$CONTAINER_RESOURCES" == "{}" || "$CONTAINER_RESOURCES" == "" || "$CONTAINER_RESOURCES" == "null" ]]; then
+              echo "✅ Standalone collector has no resource constraints (default behavior verified)"
+            else
+              echo "❌ Expected no resource constraints but found: $CONTAINER_RESOURCES"
+              exit 1
+            fi
+          else
+            echo "Checking daemonset collector for no resource constraints..."
+            CONTAINER_RESOURCES=$(kubectl get daemonset/logzio-k8s-telemetry-otel-collector-ds -o jsonpath='{.spec.template.spec.containers[0].resources}')
+            echo "Container resources: $CONTAINER_RESOURCES"
+            # Verify that resources is empty or null (default behavior)
+            if [[ "$CONTAINER_RESOURCES" == "{}" || "$CONTAINER_RESOURCES" == "" || "$CONTAINER_RESOURCES" == "null" ]]; then
+              echo "✅ Daemonset collector has no resource constraints (default behavior verified)"
+            else
+              echo "❌ Expected no resource constraints but found: $CONTAINER_RESOURCES"
+              exit 1
+            fi
           fi
 
       - name: Run metric generator

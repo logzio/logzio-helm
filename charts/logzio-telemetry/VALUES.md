@@ -57,13 +57,12 @@ logzio-k8s-telemetry allows you to ship metrics and traces from your Kubernetes 
 | global.env_id | string | `"my_environment"` | Env id to be used with k8s 360. |
 | secrets.windowsNodePassword | string | `""` | Windows node password - will be used to install node-exporter for windows nodes. |
 | secrets.windowsNodeUsername | string | `""` | Windows username - will be used to install node-exporter for windows nodes. |
-| standaloneCollector.resources.limits.cpu | string | `"200m"` | Cpu limit for the opentelemetry collector pod. |
-| standaloneCollector.resources.limits.memory | string | `"512Mi"` | Memory limit for the opentelemetry colletor pods. |
+| standaloneCollector.resources | object | `{}` | Resource constraints for the standalone opentelemetry collector pod. When empty, no resource constraints are applied. [Example](README.md#configuring-resource-requests-and-limits). |
 | standaloneCollector.podLabels | string | `nil` | Selector labels that will be added to the collector pods. |
 | standaloneCollector.podAnnotations | string | `nil` | Selector labels that will be added to the collector pods. |
-| daemonsetCollector.resources.limits.cpu | string | `"150m"` | Cpu limit for the opentelemetry colletor pods. |
-| daemonsetCollector.resources.limits.memory | string | `"250Mi"` | Memory limit for the opentelemetry colletor pods. |
+| daemonsetCollector.resources | object | `{}` | Resource constraints for the daemonset opentelemetry collector pods. When empty, no resource constraints are applied. [Example](README.md#configuring-resource-requests-and-limits). |
 | daemonsetCollector.podLabels | string | `nil` | Selector labels that will be added to the collector pods. |
+| spanMetricsAgregator.resources | object | `{}` | Resource constraints for the span metrics aggregator pod. When empty, no resource constraints are applied. [Example](README.md#configuring-resource-requests-and-limits). |
 | daemonsetCollector.podAnnotations | string | `nil` | Selector annotations that will be added to the collector pods. |
 | windowsExporterInstallerJob.interval | string | `"*/10 * * * *"` | Cronjob expression for the windows exporter installer job. |
 | signalFx.enabled | bool | `false` | Enable SignalFx receiver to accept metrics from SignalFx client libraries. |
