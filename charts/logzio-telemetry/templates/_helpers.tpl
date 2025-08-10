@@ -275,3 +275,20 @@ https://listener.logz.io:8071
 {{- end }}
 {{- end }}
 {{- end }}
+
+{{/*
+Common resources template that handles conditional rendering of resources section.
+Only renders the resources section if there are actual requests or limits defined.
+Usage: {{ include "opentelemetry-collector.resources" .Values.standaloneCollector.resources }}
+       {{ include "opentelemetry-collector.resources" .Values.daemonsetCollector.resources }}
+       {{ include "opentelemetry-collector.resources" .Values.spanMetricsAgregator.resources }}
+*/}}
+{{- define "opentelemetry-collector.resources" -}}
+{{- if . }}
+{{- $resources := . }}
+{{- if or (and $resources.requests (keys $resources.requests)) (and $resources.limits (keys $resources.limits)) }}
+resources:
+  {{- toYaml $resources | nindent 2 }}
+{{- end }}
+{{- end }}
+{{- end }}

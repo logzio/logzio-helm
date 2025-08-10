@@ -1062,7 +1062,16 @@ spanMetricsAgregator:
       servicePort: 9411
       hostPort: 9411
       protocol: TCP
-  # Example: resources: { requests: { cpu: "256m", memory: "512Mi" }, limits: { cpu: "512m", memory: "1Gi" } }
+
+  # Set container requests and limits for different resources like CPU or memory (essential for production workloads)
+  ## Example:
+  ## resources:
+  ##   requests:
+  ##     cpu: 256m
+  ##     memory: 512Mi
+  ##   limits:
+  ##     cpu: 512m
+  ##     memory: 1024Mi
   resources: {}
 
 
@@ -1073,7 +1082,15 @@ standaloneCollector:
   containerLogs:
     enabled: false
 
-  # Example: resources: { requests: { cpu: "100m", memory: "256Mi" }, limits: { cpu: "200m", memory: "512Mi" } }
+  # Set container requests and limits for different resources like CPU or memory (essential for production workloads)
+  ## Example:
+  ## resources:
+  ##   requests:
+  ##     cpu: 200m
+  ##     memory: 512Mi
+  ##   limits:
+  ##     cpu: 500m
+  ##     memory: 1024Mi  
   resources: {}
   podLabels:  {}
 
@@ -1099,7 +1116,15 @@ daemonsetCollector:
               - key: eks.amazonaws.com/compute-type
                 operator: DoesNotExist
 
-  # Example: resources: { requests: { cpu: "50m", memory: "128Mi" }, limits: { cpu: "100m", memory: "256Mi" } }
+  # Set container requests and limits for different resources like CPU or memory (essential for production workloads)
+  ## Example:
+  ## resources:
+  ##   requests:
+  ##     cpu: 150m
+  ##     memory: 256Mi
+  ##   limits:
+  ##     cpu: 300m
+  ##     memory: 512Mi  
   resources: {}
 
   podLabels:  {}

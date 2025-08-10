@@ -53,13 +53,7 @@ containers:
           secretKeyRef:
             name: {{ .Values.secrets.name }}
             key: env_id
-    {{- if .Values.spanMetricsAgregator.resources }}
-    {{- $resources := .Values.spanMetricsAgregator.resources }}
-    {{- if or (and $resources.requests (keys $resources.requests)) (and $resources.limits (keys $resources.limits)) }}
-    resources:
-      {{- toYaml $resources | nindent 6 }}
-    {{- end }}
-    {{- end }}
+    {{- include "opentelemetry-collector.resources" .Values.spanMetricsAgregator.resources | nindent 4 }}
     volumeMounts:
       - mountPath: /conf
         name: {{ .Chart.Name }}-configmap-spm    

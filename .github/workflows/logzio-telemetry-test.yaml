@@ -10,6 +10,8 @@ on:
       - 'charts/logzio-telemetry/Chart.yaml'
       - 'charts/logzio-telemetry/values.yaml'
       - 'charts/logzio-telemetry/windows_exporter_installer/**'
+      - '!**.md'
+      - '!**/**/**.md'
 jobs:
   test-helm-chart:
     name: Test Helm Chart on Kind

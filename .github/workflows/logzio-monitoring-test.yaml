@@ -8,6 +8,8 @@ on:
       - 'charts/logzio-monitoring/templates/**'
       - 'charts/logzio-monitoring/Chart.yaml'
       - 'charts/logzio-monitoring/values.yaml'
+      - '!**.md'
+      - '!**/**/**.md'
 jobs:
   eks-e2e-test:
     name: EKS e2e Test
