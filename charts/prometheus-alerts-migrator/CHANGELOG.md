@@ -1,6 +1,9 @@
 # Changes by Version
 
 <!-- next version -->
+## v3.0.2
+- Upgrade `logzio/prometheus-alerts-migrator` image `v1.3.1`->`v1.3.2`:
+  - Fix folder name to not get truncated when name is longer than 40 characters.
 ## v3.0.1
 - Upgrade `logzio/prometheus-alerts-migrator` image `v1.3.0`->`v1.3.1`:
   - Enforce a 40-character limit on the auto-generated Grafana folder UIDs to prevent runtime exceptions when the generated UID is too long.
