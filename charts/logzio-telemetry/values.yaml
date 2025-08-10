@@ -1063,17 +1063,16 @@ spanMetricsAgregator:
       hostPort: 9411
       protocol: TCP
 
-  # Set container requests and limits for different resources like CPU or memory (essential for production workloads)
-  ## Example:
-  ## resources:
-  ##   requests:
-  ##     cpu: 256m
-  ##     memory: 512Mi
-  ##   limits:
-  ##     cpu: 512m
-  ##     memory: 1024Mi
-  resources: {}
 
+  resources: {}
+   ## Resources are not specified by default, to ensure the chart runs on environments with little resources.
+   ## If you want to specify resources, uncomment the following  lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 256m
+    #   memory: 512Mi
+    # requests:
+    #   cpu: 512m
+    #   memory: 1024Mi
 
 # Configuration for standalone OpenTelemetry Collector deployment, enabled by default
 standaloneCollector:
@@ -1082,16 +1081,15 @@ standaloneCollector:
   containerLogs:
     enabled: false
 
-  # Set container requests and limits for different resources like CPU or memory (essential for production workloads)
-  ## Example:
-  ## resources:
-  ##   requests:
-  ##     cpu: 200m
-  ##     memory: 512Mi
-  ##   limits:
-  ##     cpu: 500m
-  ##     memory: 1024Mi  
   resources: {}
+   ## Resources are not specified by default, to ensure the chart runs on environments with little resources.
+   ## If you want to specify resources, uncomment the following  lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 200m
+    #   memory: 512Mi
+    # requests:
+    #   cpu: 500m
+    #   memory: 1024Mi
   podLabels:  {}
 
   podAnnotations: {}
@@ -1116,17 +1114,16 @@ daemonsetCollector:
               - key: eks.amazonaws.com/compute-type
                 operator: DoesNotExist
 
-  # Set container requests and limits for different resources like CPU or memory (essential for production workloads)
-  ## Example:
-  ## resources:
-  ##   requests:
-  ##     cpu: 150m
-  ##     memory: 256Mi
-  ##   limits:
-  ##     cpu: 300m
-  ##     memory: 512Mi  
-  resources: {}
 
+  resources: {}
+   ## Resources are not specified by default, to ensure the chart runs on environments with little resources.
+   ## If you want to specify resources, uncomment the following  lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 150m
+    #   memory: 256Mi
+    # requests:
+    #   cpu: 300m
+    #   memory: 512Mi
   podLabels:  {}
 
   podAnnotations: {}
