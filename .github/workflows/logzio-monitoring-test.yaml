@@ -104,7 +104,9 @@ jobs:
           --set logzio-apm-collector.filters.exclude.namespace='kube-system'"
         
           if [ "${{ matrix.environment }}" == "eks-fargate" ]; then
-            HELM_CMD="$HELM_CMD --set logzio-logs-collector.fargateLogRouter.enabled='true' --set logzio-k8s-telemetry.collector.mode=standalone --set logzio-apm-collector.livenessProbe.initialDelaySeconds=15 --set logzio-apm-collector.readinessProbe.initialDelaySeconds=15"
+            HELM_CMD="$HELM_CMD --set logzio-logs-collector.fargateLogRouter.enabled='true' --set logzio-k8s-telemetry.collector.mode=standalone --set logzio-apm-collector.livenessProbe.initialDelaySeconds=15 --set logzio-apm-collector.readinessProbe.initialDelaySeconds=15 --set logzio-k8s-telemetry.standaloneCollector.resources.requests.cpu=200m --set logzio-k8s-telemetry.standaloneCollector.resources.requests.memory=512Mi"
+          else
+            HELM_CMD="$HELM_CMD --set logzio-k8s-telemetry.daemonsetCollector.resources.requests.cpu=150m --set logzio-k8s-telemetry.daemonsetCollector.resources.requests.memory=250Mi"
           fi
           
           HELM_CMD="$HELM_CMD logzio-monitoring ."
@@ -147,6 +149,27 @@ jobs:
             kubectl get ds logzio-monitoring-otel-collector-ds -o jsonpath='{.spec.template.spec.tolerations}' | grep -q $GLOBAL_TOLERATION_KEY || (echo "Missing global toleration in logzio-monitoring-otel-collector-ds" && exit 1)
           fi
           echo "✅ All expected tolerations are present."
+
+      - name: Verify Telemetry Resource Configuration in Monitoring Chart
+        run: |
+          echo "=== Verifying telemetry collector resource configuration within monitoring chart ==="
+          if [ "${{ matrix.environment }}" == "eks-fargate" ]; then
+            echo "Checking standalone collector resources..."
+            CONTAINER_RESOURCES=$(kubectl get deployment/logzio-monitoring-otel-collector-standalone -o jsonpath='{.spec.template.spec.containers[0].resources}')
+            echo "Container resources: $CONTAINER_RESOURCES"
+            # Verify requests are set for fargate (standalone mode)
+            kubectl get deployment/logzio-monitoring-otel-collector-standalone -o jsonpath='{.spec.template.spec.containers[0].resources.requests.cpu}' | grep -q "200m" || (echo "❌ Expected CPU request 200m not found" && exit 1)
+            kubectl get deployment/logzio-monitoring-otel-collector-standalone -o jsonpath='{.spec.template.spec.containers[0].resources.requests.memory}' | grep -q "512Mi" || (echo "❌ Expected memory request 512Mi not found" && exit 1)
+            echo "✅ Standalone collector resources verified successfully in monitoring chart"
+          else
+            echo "Checking daemonset collector resources..."
+            CONTAINER_RESOURCES=$(kubectl get daemonset/logzio-monitoring-otel-collector-ds -o jsonpath='{.spec.template.spec.containers[0].resources}')
+            echo "Container resources: $CONTAINER_RESOURCES"
+            # Verify requests are set for linux (daemonset mode)
+            kubectl get daemonset/logzio-monitoring-otel-collector-ds -o jsonpath='{.spec.template.spec.containers[0].resources.requests.cpu}' | grep -q "150m" || (echo "❌ Expected CPU request 150m not found" && exit 1)
+            kubectl get daemonset/logzio-monitoring-otel-collector-ds -o jsonpath='{.spec.template.spec.containers[0].resources.requests.memory}' | grep -q "250Mi" || (echo "❌ Expected memory request 250Mi not found" && exit 1)
+            echo "✅ Daemonset collector resources verified successfully in monitoring chart"
+          fi
 
       - name: Check `aws-observability` namespace and configmap (fargate)
         if: matrix.environment == 'eks-fargate'
