@@ -1,6 +1,12 @@
 # Changes by Version
 
 <!-- next version -->
+## 7.6.0
+- Upgrade `logzio-k8s-telemetry` chart to `5.5.0`
+  - **Breaking change:** 
+    - Default resource requests and limits for `standaloneCollector`,  `daemonsetCollector` &  `spanMetricsAgregator` are now empty by default and are configurable, only applies when explicitly set.
+  - Add `priorityClassName` value.
+  - Add `extraConfigMapMounts` value.
 ## 7.5.2
 - Upgrade `logzio-k8s-telemetry` chart to `5.4.3`
   - Add `enableServiceLinks` flag to control loading of service environment variables.
