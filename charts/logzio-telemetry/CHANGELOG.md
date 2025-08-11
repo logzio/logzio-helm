@@ -2,7 +2,7 @@
 
 <!-- next version -->
 ## 5.5.1
- - Upgrade OpenTelemetry collector to v0.108.0
+ - Upgrade OpenTelemetry collector to v0.131.0
 ## 5.5.0
  - **Breaking change:** 
   - Default resource requests and limits for `standaloneCollector`,  `daemonsetCollector` &  `spanMetricsAgregator` are now empty by default and are configurable, only applies when explicitly set.
