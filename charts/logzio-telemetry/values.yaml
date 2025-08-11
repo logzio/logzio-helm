@@ -1127,6 +1127,46 @@ daemonsetCollector:
   # Configuration override that will be merged into the daemonset default config
   configOverride: {}
 
+# liveness probe configuration
+# Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+##
+livenessProbe:
+  # Number of seconds after the container has started before startup, liveness or readiness probes are initiated.
+  # initialDelaySeconds: 1
+  # How often in seconds to perform the probe.
+  # periodSeconds: 10
+  # Number of seconds after which the probe times out.
+  # timeoutSeconds: 1
+  # Minimum consecutive failures for the probe to be considered failed after having succeeded.
+  # failureThreshold: 1
+  # Duration in seconds the pod needs to terminate gracefully upon probe failure.
+  # terminationGracePeriodSeconds: 10
+  httpGet:
+    port: 13133
+    path: /
+    # Set host for health check probes (e.g., "localhost" for GKE environments)
+    # host: localhost
+
+# readiness probe configuration
+# Ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+##
+readinessProbe:
+  # Number of seconds after the container has started before startup, liveness or readiness probes are initiated.
+  # initialDelaySeconds: 1
+  # How often (in seconds) to perform the probe.
+  # periodSeconds: 10
+  # Number of seconds after which the probe times out.
+  # timeoutSeconds: 1
+  # Minimum consecutive successes for the probe to be considered successful after having failed.
+  # successThreshold: 1
+  # Minimum consecutive failures for the probe to be considered failed after having succeeded.
+  # failureThreshold: 1
+  httpGet:
+    port: 13133
+    path: /
+    # Set host for health check probes (e.g., "localhost" for GKE environments)
+    # host: localhost
+
 service:
   type: ClusterIP
   clusterIP: ""
