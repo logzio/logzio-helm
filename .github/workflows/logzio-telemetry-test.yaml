@@ -22,7 +22,7 @@ jobs:
     steps:
       - name: Generate random id
         id: random_id
-        run: echo "::set-output name=rand::$(echo $RANDOM)"
+        run: echo "rand=$(echo $RANDOM)" >> $GITHUB_OUTPUT
 
       - name: Set ENV_ID
         run: echo "ENV_ID=telemetry-test-run-${{ steps.random_id.outputs.rand }}-${{ matrix.mode }}" >> $GITHUB_ENV
@@ -44,7 +44,7 @@ jobs:
         run: |
           curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.26.0/kind-Linux-amd64"
           chmod +x ./kind
-          mv ./kind /usr/local/bin/kind
+          sudo mv ./kind /usr/local/bin/kind
 
       - name: Create Kind cluster
         run: |
@@ -54,7 +54,8 @@ jobs:
       - name: Debug cluster setup
         run: |
           echo "=== Cluster Information ==="
-          kubectl version --short
+          kubectl version --client --output=yaml
+          kubectl version --output=yaml || echo "Server version not available yet"
           kubectl get nodes -o wide
           kubectl get namespaces
           echo "=== Node Details ==="
@@ -305,7 +306,7 @@ jobs:
         run: |
           curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.26.0/kind-Linux-amd64"
           chmod +x ./kind
-          mv ./kind /usr/local/bin/kind
+          sudo mv ./kind /usr/local/bin/kind
 
       - name: Create Kind cluster
         run: |
@@ -529,7 +530,12 @@ jobs:
       - name: Wait for ConfigMap
         run: |
           for i in {1..30}; do
-            if kubectl get configmap test-otel-collector-${{ matrix.mode == 'daemonset' && 'ds' || 'standalone' }}; then
+            if [[ "${{ matrix.mode }}" == "daemonset" ]]; then
+              CONFIGMAP_NAME="test-otel-collector-ds"
+            else
+              CONFIGMAP_NAME="test-otel-collector-standalone"
+            fi
+            if kubectl get configmap $CONFIGMAP_NAME; then
               exit 0
             fi
             echo "Waiting for ConfigMap..."
@@ -541,7 +547,12 @@ jobs:
           
       - name: Describe config map
         run: |
-          kubectl describe cm test-otel-collector-${{ matrix.mode == 'daemonset' && 'ds' || 'standalone' }}
+          if [[ "${{ matrix.mode }}" == "daemonset" ]]; then
+            CONFIGMAP_NAME="test-otel-collector-ds"
+          else
+            CONFIGMAP_NAME="test-otel-collector-standalone"
+          fi
+          kubectl describe cm $CONFIGMAP_NAME
 
       - name: Wait for all pods to be Ready
         run: |
