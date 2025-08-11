@@ -51,6 +51,45 @@ jobs:
           kind create cluster --name kind-${{ github.run_id }}-${{ matrix.mode }}
           kubectl cluster-info
 
+      - name: Wait for node to be ready
+        run: |
+          echo "Waiting for nodes to be ready..."
+          kubectl wait --for=condition=Ready nodes --all --timeout=300s
+          echo "Node status:"
+          kubectl get nodes -o wide
+          echo "Node details:"
+          kubectl describe nodes
+          echo "Checking for taints:"
+          kubectl get nodes -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.spec.taints}{"\n"}{end}'
+
+      - name: Wait for API server to be fully ready
+        run: |
+          echo "Waiting for API server to be responsive..."
+          for i in {1..30}; do
+            if kubectl get --raw /readyz; then
+              echo "✅ API server is ready"
+              break
+            fi
+            echo "⏳ API server not ready yet, waiting..."
+            sleep 5
+          done
+          
+          echo "Testing ConfigMap operations..."
+          kubectl create configmap test-cm --from-literal=test=value
+          kubectl get configmap test-cm
+          kubectl delete configmap test-cm
+          echo "✅ ConfigMap operations working"
+
+      - name: Monitor cluster resources
+        run: |
+          echo "=== Cluster Resource Status ==="
+          kubectl top nodes || echo "Metrics server not available"
+          kubectl describe nodes | grep -A 5 "Allocated resources" || echo "Resource info not available"
+          echo "=== System Pods Status ==="
+          kubectl get pods -n kube-system -o wide
+          echo "=== Available Resources ==="
+          kubectl get nodes -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.status.allocatable.cpu}{"\t"}{.status.allocatable.memory}{"\n"}{end}' | column -t
+
       - name: Debug cluster setup
         run: |
           echo "=== Cluster Information ==="
