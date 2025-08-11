@@ -657,6 +657,12 @@ priorityClassName: ""
 # Configuration for ports, shared between daemonsetCollector, standaloneCollector and service.
 # Can be overridden here or for daemonsetCollector and standaloneCollector independently.
 ports:
+  health-check:
+    enabled: true
+    containerPort: 13133
+    servicePort: 13133
+    hostPort: 13133
+    protocol: TCP
   otlp:
     enabled: true
     containerPort: 4317
@@ -1016,6 +1022,12 @@ spanMetricsAgregator:
     type: ClusterIP
     annotations: {}
   ports:
+    health-check:
+      enabled: true
+      containerPort: 13133
+      servicePort: 13133
+      hostPort: 13133
+      protocol: TCP  
     otlp:
       enabled: true
       containerPort: 4317
