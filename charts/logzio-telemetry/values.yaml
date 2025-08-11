@@ -191,7 +191,8 @@ baseCollectorConfig:
     logging:
       loglevel: info
   extensions:
-    health_check: {}
+    health_check:
+      endpoint: ${env:MY_POD_IP}:13133
   processors:
     k8sattributes:
       extract:
@@ -355,7 +356,8 @@ spmForwarderConfig:
 # Metrics standalone collector configuration 
 metricsConfig:
   extensions:
-    health_check: {}
+    health_check:
+      endpoint: ${env:MY_POD_IP}:13133
   processors:
     filter/kubernetes360:
       metrics:
@@ -1195,7 +1197,8 @@ disableKubeDnsScraping: false  # Kube DNS metrics scraping
 # Metrics Daemonset collector configuration
 daemonsetConfig:
   extensions:
-    health_check: {}
+    health_check:
+      endpoint: ${env:MY_POD_IP}:13133
   processors:
     filter/kubernetes360:
       metrics:
