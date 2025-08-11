@@ -206,6 +206,7 @@ baseCollectorConfig:
         - k8s.daemonset.name
         - k8s.cronjob.name
         - k8s.job.name
+        - k8s.pod.ip
     resource/k8s:
       attributes:
       # Rename
@@ -439,10 +440,8 @@ metricsConfig:
           scrape_interval: 30s
           scrape_timeout: 30s
         scrape_configs:
-        - authorization:
-            credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
-            type: Bearer
-          job_name: kubernetes-nodes
+        - job_name: kubernetes-nodes
+          bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
           kubernetes_sd_configs:
           - role: node
           metric_relabel_configs: []
@@ -477,9 +476,7 @@ metricsConfig:
           tls_config:
             ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
             insecure_skip_verify: true
-          authorization:
-            type: Bearer
-            credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+          bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
           kubernetes_sd_configs:
           - role: node
           relabel_configs:
