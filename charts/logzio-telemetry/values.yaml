@@ -187,9 +187,6 @@ prometheus-pushgateway:
 emptyConfig: {}
 # Base configuration of the collector
 baseCollectorConfig:
-  exporters:
-    logging:
-      loglevel: info
   extensions:
     health_check:
       endpoint: ${env:MY_POD_IP}:13133
@@ -285,8 +282,6 @@ tracesConfig:
       account_token: ${TRACES_TOKEN}
       headers:
         user-agent: "{{ .Chart.Name }}-{{ .Chart.Version }}-helm"
-    logging:
-      loglevel: info
   extensions:
     pprof:
       endpoint: :1777
@@ -353,7 +348,7 @@ spmForwarderConfig:
       traces/spm:
         receivers: [jaeger, zipkin, otlp]
         processors: [attributes/env_id, k8sattributes, batch]
-        exporters: [logging, otlp]
+        exporters: [otlp]
 # Metrics standalone collector configuration 
 metricsConfig:
   extensions:
