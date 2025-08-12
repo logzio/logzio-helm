@@ -22,7 +22,7 @@ jobs:
     steps:
       - name: Generate random id
         id: random_id
-        run: echo "::set-output name=rand::$(echo $RANDOM)"
+        run: echo "rand=$(echo $RANDOM)" >> $GITHUB_OUTPUT
 
       - name: Set ENV_ID
         run: echo "ENV_ID=telemetry-test-run-${{ steps.random_id.outputs.rand }}-${{ matrix.mode }}" >> $GITHUB_ENV
@@ -44,12 +44,23 @@ jobs:
         run: |
           curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.26.0/kind-Linux-amd64"
           chmod +x ./kind
-          mv ./kind /usr/local/bin/kind
+          sudo mv ./kind /usr/local/bin/kind
 
       - name: Create Kind cluster
         run: |
           kind create cluster --name kind-${{ github.run_id }}-${{ matrix.mode }}
           kubectl cluster-info
+
+      - name: Debug cluster setup
+        run: |
+          echo "=== Cluster Information ==="
+          kubectl version --client --output=yaml
+          kubectl version --output=yaml || echo "Server version not available yet"
+          kubectl get nodes -o wide
+          kubectl get namespaces
+          echo "=== Node Details ==="
+          kubectl describe nodes
+
       - name: Deploy Helm Chart
         run: |
           cd charts/logzio-telemetry
@@ -89,6 +100,20 @@ jobs:
           $RESOURCE_CONFIG \
           $SPM_RESOURCE_CONFIG \
           logzio-k8s-telemetry .
+
+      - name: Debug post-deployment state
+        run: |
+          echo "=== Helm Release Status ==="
+          helm list -A
+          helm status logzio-k8s-telemetry
+          echo "=== All Resources ==="
+          kubectl get all -A
+          echo "=== ConfigMaps ==="
+          kubectl get configmaps
+          echo "=== Secrets ==="
+          kubectl get secrets
+          echo "=== Events ==="
+          kubectl get events --sort-by=.metadata.creationTimestamp
       
       - name: Verify deployment Status
         run: |
@@ -98,6 +123,24 @@ jobs:
           kubectl describe deployment/logzio-k8s-telemetry-otel-collector-standalone
           kubectl get deployment/logzio-k8s-telemetry-otel-collector-spm -o jsonpath='{.spec.template.spec.tolerations}' | jq -r '.[] | select(.key=="global-key")'
           kubectl get deployment/logzio-k8s-telemetry-otel-collector-standalone -o jsonpath='{.spec.template.spec.tolerations}' | jq -r '.[] | select(.key=="global-key")'
+
+      - name: Debug deployment details
+        run: |
+          echo "=== Pod Status and Details ==="
+          kubectl get pods -o wide
+          kubectl describe pods
+          echo "=== Pod Logs (Recent) ==="
+          for pod in $(kubectl get pods -o jsonpath='{.items[*].metadata.name}'); do
+            echo "--- Logs for pod: $pod ---"
+            kubectl logs $pod --tail=20 || echo "Failed to get logs for $pod"
+          done
+          echo "=== Deployment Specifications ==="
+          kubectl get deployment logzio-k8s-telemetry-otel-collector-standalone -o yaml || echo "Standalone deployment not found"
+          kubectl get deployment logzio-k8s-telemetry-otel-collector-spm -o yaml || echo "SPM deployment not found"
+          if [[ "${{ matrix.mode }}" == "daemonset" ]]; then
+            echo "=== DaemonSet Specification ==="
+            kubectl get daemonset logzio-k8s-telemetry-otel-collector-ds -o yaml || echo "DaemonSet not found"
+          fi
       
       - name: Verify Resource Configuration
         run: |
@@ -138,12 +181,21 @@ jobs:
         run: |
           kubectl apply -f tests/resources/tracegen.yaml
           kubectl rollout status deployment/trace-gen --timeout=300s
+          echo "=== Trace Generator Status ==="
+          kubectl get deployment trace-gen -o wide
+          kubectl describe deployment trace-gen
+          kubectl logs deployment/trace-gen --tail=10
+
       - name: Run otel demo
         run: |
           helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
           helm repo update
           helm install otel-demo -f tests/resources/otel-demo.yaml open-telemetry/opentelemetry-demo --version 0.32.5
           kubectl rollout status deployment/otel-demo-loadgenerator --timeout=300s
+          echo "=== OpenTelemetry Demo Status ==="
+          kubectl get pods -l app.kubernetes.io/instance=otel-demo
+          kubectl describe deployment otel-demo-loadgenerator
+          kubectl logs deployment/otel-demo-loadgenerator --tail=10
 
       - name: sleep for 3 minutes
         run: sleep 180
@@ -156,6 +208,62 @@ jobs:
           go get go.uber.org/zap
           go test -v ./tests/traces_e2e_test.go ./tests/common.go
           go test -v ./tests/metrics_e2e_test.go ./tests/common.go
+
+      - name: Debug test failure (if any)
+        if: failure()
+        run: |
+          echo "=== Test failure detected - gathering diagnostic information ==="
+          echo "=== Final Pod Status ==="
+          kubectl get pods -o wide
+          echo "=== Final Events ==="
+          kubectl get events --sort-by=.metadata.creationTimestamp --no-headers | tail -20
+          echo "=== Pod Logs (Extended) ==="
+          for pod in $(kubectl get pods -o jsonpath='{.items[*].metadata.name}'); do
+            echo "--- Extended logs for pod: $pod ---"
+            kubectl logs $pod --tail=50 || echo "Failed to get logs for $pod"
+            echo "--- Previous logs for pod: $pod (if exists) ---"
+            kubectl logs $pod --previous --tail=20 || echo "No previous logs for $pod"
+          done
+          echo "=== Resource Usage ==="
+          kubectl top nodes || echo "Metrics server not available"
+          kubectl top pods || echo "Metrics server not available"
+          echo "=== Helm Values Used ==="
+          helm get values logzio-k8s-telemetry
+          echo "=== Rendered Templates ==="
+          cd charts/logzio-telemetry
+          # Recreate the same resource configuration used in deployment
+          RESOURCE_CONFIG=""
+          if [[ "${{ matrix.mode }}" == "standalone" ]]; then
+            RESOURCE_CONFIG="--set standaloneCollector.resources.requests.cpu=200m --set standaloneCollector.resources.requests.memory=512Mi --set standaloneCollector.resources.limits.cpu=500m --set standaloneCollector.resources.limits.memory=1Gi"
+          else
+            RESOURCE_CONFIG="--set daemonsetCollector.resources.requests.cpu=150m --set daemonsetCollector.resources.requests.memory=250Mi --set daemonsetCollector.resources.limits.cpu=300m --set daemonsetCollector.resources.limits.memory=512Mi"
+          fi
+          SPM_RESOURCE_CONFIG="--set spanMetricsAgregator.resources.requests.cpu=256m --set spanMetricsAgregator.resources.requests.memory=512Mi --set spanMetricsAgregator.resources.limits.cpu=512m --set spanMetricsAgregator.resources.limits.memory=1Gi"
+          
+          helm template logzio-k8s-telemetry . \
+            --set traces.enabled=true \
+            --set spm.enabled=true \
+            --set serviceGraph.enabled=true \
+            --set metrics.enabled=true \
+            --set global.tolerations[0].key="global-key" \
+            --set global.tolerations[0].operator="Equal" \
+            --set global.tolerations[0].value="global-value" \
+            --set global.tolerations[0].effect="NoSchedule" \
+            --set global.logzioTracesToken=dummy \
+            --set global.logzioSpmToken=dummy \
+            --set global.logzioMetricsToken=dummy \
+            --set global.logzioRegion=us \
+            --set global.env_id=${{ env.ENV_ID }} \
+            --set collector.mode=${{ matrix.mode }} \
+            --set spanMetricsAgregator.config.connectors.spanmetrics.histogram.disable=true \
+            --set enableMetricsFilter.eks=true \
+            --set filters.infrastructure.exclude.namespace="kube-system" \
+            --set signalFx.enabled=true \
+            --set carbon.enabled=true \
+            $RESOURCE_CONFIG \
+            $SPM_RESOURCE_CONFIG || echo "Failed to render templates"
+          cd ../..
+
       - name: Cleanup Environment
         run: |
           helm uninstall logzio-k8s-telemetry
@@ -198,7 +306,7 @@ jobs:
         run: |
           curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.26.0/kind-Linux-amd64"
           chmod +x ./kind
-          mv ./kind /usr/local/bin/kind
+          sudo mv ./kind /usr/local/bin/kind
 
       - name: Create Kind cluster
         run: |
@@ -422,7 +530,12 @@ jobs:
       - name: Wait for ConfigMap
         run: |
           for i in {1..30}; do
-            if kubectl get configmap test-otel-collector-${{ matrix.mode == 'daemonset' && 'ds' || 'standalone' }}; then
+            if [[ "${{ matrix.mode }}" == "daemonset" ]]; then
+              CONFIGMAP_NAME="test-otel-collector-ds"
+            else
+              CONFIGMAP_NAME="test-otel-collector-standalone"
+            fi
+            if kubectl get configmap $CONFIGMAP_NAME; then
               exit 0
             fi
             echo "Waiting for ConfigMap..."
@@ -434,7 +547,12 @@ jobs:
           
       - name: Describe config map
         run: |
-          kubectl describe cm test-otel-collector-${{ matrix.mode == 'daemonset' && 'ds' || 'standalone' }}
+          if [[ "${{ matrix.mode }}" == "daemonset" ]]; then
+            CONFIGMAP_NAME="test-otel-collector-ds"
+          else
+            CONFIGMAP_NAME="test-otel-collector-standalone"
+          fi
+          kubectl describe cm $CONFIGMAP_NAME
 
       - name: Wait for all pods to be Ready
         run: |
