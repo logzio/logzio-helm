@@ -384,8 +384,6 @@ metricsConfig:
         http:
           endpoint: "0.0.0.0:4318"
     prometheus/applications:
-      fallback_scrape_protocol: PrometheusText0_0_4
-      scrape_protocols: [OpenMetricsText1_0_0, PrometheusText0_0_4]
       config:
         global:
           metric_name_validation_scheme: legacy
@@ -1290,8 +1288,6 @@ daemonsetConfig:
         http:
           endpoint: "0.0.0.0:4318"
     prometheus/applications:
-      fallback_scrape_protocol: PrometheusText0_0_4
-      scrape_protocols: [OpenMetricsText1_0_0, PrometheusText0_0_4]
       config:
         global:
           scrape_interval: 30s
