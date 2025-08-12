@@ -267,7 +267,46 @@ The default configuration uses the Prometheus receiver with the following scrape
 
 To customize your configuration, edit the `config` section in the `values.yaml` file.
 
-#### Configuring resource requests and limits
+### Configuring health probes
+
+The chart includes predefined liveness and readiness probes that monitor the health of the OpenTelemetry collector pods:
+
+#### Liveness Probe
+The liveness probe determines if the collector is running properly and should be restarted if it becomes unresponsive:
+
+```yaml
+livenessProbe:
+  initialDelaySeconds: 10     # Wait 10 seconds before starting liveness checks
+  periodSeconds: 15           # Check every 15 seconds
+  timeoutSeconds: 5           # Timeout after 5 seconds
+  failureThreshold: 3         # Restart after 3 consecutive failures
+  httpGet:
+    port: 13133              # Health check endpoint port
+    path: /                  # Health check path
+```
+
+#### Readiness Probe
+The readiness probe determines if the collector is ready to accept and process telemetry data:
+
+```yaml
+readinessProbe:
+  initialDelaySeconds: 5      # Wait 5 seconds before starting readiness checks
+  periodSeconds: 10           # Check every 10 seconds  
+  timeoutSeconds: 3           # Timeout after 3 seconds
+  failureThreshold: 3         # Mark as not ready after 3 consecutive failures
+  httpGet:
+    port: 13133              # Health check endpoint port
+    path: /                  # Health check path
+```
+
+These probes ensure that:
+- Pods are automatically restarted if they become unresponsive (liveness)
+- Traffic is only routed to healthy pods (readiness) 
+- The OpenTelemetry collector's health check extension is properly exposed on port 13133
+
+You can customize these probe settings in your `values.yaml` file to match your specific requirements.
+
+### Configuring resource requests and limits
 
 By default, the OpenTelemetry collector pods do not have resource requests or limits set, allowing for flexibility in different cluster environments. You can configure resource requirements by setting the following values:
 

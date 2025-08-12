@@ -103,13 +103,49 @@ containers:
       {{- . | toYaml | nindent 6 }}
       {{- end }}
     livenessProbe:
+      {{- if .Values.livenessProbe.initialDelaySeconds | empty | not }}
+      initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+      {{- end }}
+      {{- if .Values.livenessProbe.periodSeconds | empty | not }}
+      periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+      {{- end }}
+      {{- if .Values.livenessProbe.timeoutSeconds | empty | not }}
+      timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+      {{- end }}
+      {{- if .Values.livenessProbe.failureThreshold | empty | not }}
+      failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+      {{- end }}
+      {{- if .Values.livenessProbe.terminationGracePeriodSeconds | empty | not }}
+      terminationGracePeriodSeconds: {{ .Values.livenessProbe.terminationGracePeriodSeconds }}
+      {{- end }}
       httpGet:
-        path: /
-        port: 13133
+        {{- if .Values.livenessProbe.httpGet.host }}
+        host: {{ .Values.livenessProbe.httpGet.host }}
+        {{- end }}
+        path: {{ .Values.livenessProbe.httpGet.path }}
+        port: {{ .Values.livenessProbe.httpGet.port }}
     readinessProbe:
+      {{- if .Values.readinessProbe.initialDelaySeconds | empty | not }}
+      initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+      {{- end }}
+      {{- if .Values.readinessProbe.periodSeconds | empty | not }}
+      periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+      {{- end }}
+      {{- if .Values.readinessProbe.timeoutSeconds | empty | not }}
+      timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+      {{- end }}
+      {{- if .Values.readinessProbe.successThreshold | empty | not }}
+      successThreshold: {{ .Values.readinessProbe.successThreshold }}
+      {{- end }}
+      {{- if .Values.readinessProbe.failureThreshold | empty | not }}
+      failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+      {{- end }}
       httpGet:
-        path: /
-        port: 13133
+        {{- if .Values.readinessProbe.httpGet.host }}
+        host: {{ .Values.readinessProbe.httpGet.host }}
+        {{- end }}
+        path: {{ .Values.readinessProbe.httpGet.path }}
+        port: {{ .Values.readinessProbe.httpGet.port }}
     {{- include "opentelemetry-collector.resources" .Values.daemonsetCollector.resources | nindent 4 }}
     volumeMounts:
       - mountPath: /conf

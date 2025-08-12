@@ -247,7 +247,7 @@ Returns a YAML array of key=regex strings.
 {{/*
 Builds the full logzio logs listener address
 */}}
-{{- define "logs-collector.listenerAddressAddress" }}
+{{- define "logs-collector.listenerAddress" }}
 {{- if ne .Values.global.customLogsEndpoint "" -}}
 {{- printf "%s" .Values.global.customLogsEndpoint -}}
 {{- else }}
