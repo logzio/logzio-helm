@@ -97,6 +97,8 @@ jobs:
           --set filters.infrastructure.exclude.namespace="kube-system" \
           --set signalFx.enabled=true \
           --set carbon.enabled=true \
+          --set livenessProbe.initialDelaySeconds=10 \
+          --set readinessProbe.initialDelaySeconds=10 \
           $RESOURCE_CONFIG \
           $SPM_RESOURCE_CONFIG \
           logzio-k8s-telemetry .
