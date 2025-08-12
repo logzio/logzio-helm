@@ -1293,7 +1293,7 @@ daemonsetConfig:
             selectors:
             # only scrape data from pods running on the same node as the collector
             - role: pod
-              field: "spec.nodeName=$KUBE_NODE_NAME"
+              field: "metadata.name=$KUBE_NODE_NAME"
           relabel_configs:
             - action: keep
               regex: true|"true"
@@ -1339,7 +1339,7 @@ daemonsetConfig:
           kubernetes_sd_configs:
           - role: node
             selectors:
-            - field: spec.nodeName=$KUBE_NODE_NAME
+            - field: metadata.name=$KUBE_NODE_NAME
               role: node
           metric_relabel_configs: []
           relabel_configs:
@@ -1416,7 +1416,7 @@ daemonsetConfig:
             selectors:
             # only scrape data from pods running on the same node as collector
             - role: pod
-              field: "spec.nodeName=$KUBE_NODE_NAME"
+              field: "metadata.name=$KUBE_NODE_NAME"
           relabel_configs:
             - source_labels: [__meta_kubernetes_pod_annotation_prometheus_windows_io_scrape]
               action: keep
@@ -1433,7 +1433,7 @@ daemonsetConfig:
             selectors:
             # only scrape data from pods running on the same node as collector
             - role: pod
-              field: "spec.nodeName=$KUBE_NODE_NAME"
+              field: "metadata.name=$KUBE_NODE_NAME"
           relabel_configs:
             # Adding a dummy job label to enable filtering for duplicate metrics using daemonset collector
             # "job" label is only added in the prometheusremotewrite and cannot be added before
