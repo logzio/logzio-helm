@@ -1336,18 +1336,30 @@ daemonsetConfig:
           scrape_interval: 30s
           scrape_timeout: 30s
         scrape_configs:
-        - bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
-          job_name: kubernetes-nodes
+        - job_name: kubernetes-nodes
+          bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+          honor_timestamps: true
+          honor_labels: true          
           kubernetes_sd_configs:
           - role: node
             selectors:
-            - field: metadata.name=$KUBE_NODE_NAME
-              role: node
+            # only scrape data from node with the same name as the node the collector run on
+            - role: node
+              field: "metadata.name=$KUBE_NODE_NAME"
           metric_relabel_configs: []
-          metrics_path: /metrics
           relabel_configs:
+          - replacement: kubernetes.default.svc:443
+            target_label: __address__
           - action: labelmap
             regex: __meta_kubernetes_node_label_(.+)
+          - action: replace
+            replacement: kubernetes360
+            target_label: logzio_app            
+          - regex: (.+)            
+            replacement: /api/v1/nodes/$${1}/proxy/metrics
+            source_labels:
+            - __meta_kubernetes_node_name
+            target_label: __metrics_path__
           - action: replace
             replacement: kubernetes360
             target_label: logzio_app
@@ -1363,7 +1375,6 @@ daemonsetConfig:
         scrape_configs:
         - job_name: 'kubernetes-cadvisor'
           scheme: https
-          metrics_path: /metrics/cadvisor
           tls_config:
             ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
             insecure_skip_verify: true
@@ -1375,11 +1386,20 @@ daemonsetConfig:
             - role: node
               field: "metadata.name=$KUBE_NODE_NAME"
           relabel_configs:
+          - replacement: kubernetes.default.svc:443
+            target_label: __address__        
           - action: labelmap
-            regex: __meta_kubernetes_node_label_(.+) 
+            regex: __meta_kubernetes_node_label_(.+)
           - action: replace
             replacement: kubernetes360
-            target_label: logzio_app            
+            target_label: logzio_app
+          - source_labels: [__meta_kubernetes_node_name]
+            regex: (.+)
+            target_label: __metrics_path__
+            replacement: /api/v1/nodes/$${1}/proxy/metrics/cadvisor
+          - action: replace
+            replacement: kubernetes360
+            target_label: logzio_app
           metric_relabel_configs: []
     prometheus/collector:
       config:
