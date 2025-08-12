@@ -732,7 +732,6 @@ signalFx:
       # SignalFx receiver to accept metrics from SignalFx client libraries # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/receiver/signalfxreceiver/README.md
       signalfx:
         endpoint: "0.0.0.0:9943"
-        access_token_passthrough: true
     processors:
       # Batch processor to improve performance by grouping metrics
       batch/signalfx: {}
@@ -1075,10 +1074,10 @@ spanMetricsAgregator:
   resources: {}
    ## Resources are not specified by default, to ensure the chart runs on environments with little resources.
    ## If you want to specify resources, uncomment the following  lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-    # limits:
+    # requests:
     #   cpu: 256m
     #   memory: 512Mi
-    # requests:
+    # limits:
     #   cpu: 512m
     #   memory: 1024Mi
 
@@ -1092,10 +1091,10 @@ standaloneCollector:
   resources: {}
    ## Resources are not specified by default, to ensure the chart runs on environments with little resources.
    ## If you want to specify resources, uncomment the following  lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-    # limits:
+    # requests:
     #   cpu: 200m
     #   memory: 512Mi
-    # requests:
+    # limits:
     #   cpu: 500m
     #   memory: 1024Mi
   podLabels:  {}
@@ -1126,10 +1125,10 @@ daemonsetCollector:
   resources: {}
    ## Resources are not specified by default, to ensure the chart runs on environments with little resources.
    ## If you want to specify resources, uncomment the following  lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-    # limits:
+    # requests:
     #   cpu: 150m
     #   memory: 256Mi
-    # requests:
+    # limits:
     #   cpu: 300m
     #   memory: 512Mi
   podLabels:  {}

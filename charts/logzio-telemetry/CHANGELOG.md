@@ -1,8 +1,14 @@
 # Changes by Version
 
 <!-- next version -->
-## 5.5.1
+## 5.6.0
  - Upgrade OpenTelemetry collector to v0.131.0
+ - Add health check port
+ - Fix custom logs endpoint
+ - Add liveness and readiness probe configuration
+ - Remove deprecated `logging` exporter
+ - Add generation metrics to K8S filter list
+
 ## 5.5.0
  - **Breaking change:** 
   - Default resource requests and limits for `standaloneCollector`,  `daemonsetCollector` &  `spanMetricsAgregator` are now empty by default and are configurable, only applies when explicitly set.
