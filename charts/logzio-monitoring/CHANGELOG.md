@@ -1,6 +1,13 @@
 # Changes by Version
 
 <!-- next version -->
+## 7.6.1
+- Upgrade `logzio-k8s-telemetry` chart to `5.5.1`
+  - Add health check port
+  - Fix custom logs endpoint
+  - Add liveness and readiness probe configuration
+  - Remove deprecated `logging` exporter
+  - Add generation metrics to K8S filter list
 ## 7.6.0
 - Upgrade `logzio-k8s-telemetry` chart to `5.5.0`
   - **Breaking change:** 
