@@ -267,7 +267,7 @@ The default configuration uses the Prometheus receiver with the following scrape
 
 To customize your configuration, edit the `config` section in the `values.yaml` file.
 
-#### Configuring health probes
+### Configuring health probes
 
 The chart includes predefined liveness and readiness probes that monitor the health of the OpenTelemetry collector pods:
 
