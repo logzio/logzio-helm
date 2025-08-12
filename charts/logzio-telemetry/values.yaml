@@ -188,7 +188,8 @@ emptyConfig: {}
 # Base configuration of the collector
 baseCollectorConfig:
   extensions:
-    health_check: {}
+    health_check:
+      endpoint: :13133
   processors:
     k8sattributes:
       extract:
@@ -350,7 +351,8 @@ spmForwarderConfig:
 # Metrics standalone collector configuration 
 metricsConfig:
   extensions:
-    health_check: {}
+    health_check:
+      endpoint: :13133
   processors:
     filter/kubernetes360:
       metrics:
@@ -382,8 +384,11 @@ metricsConfig:
         http:
           endpoint: "0.0.0.0:4318"
     prometheus/applications:
+      fallback_scrape_protocol: PrometheusText0_0_4
+      scrape_protocols: [OpenMetricsText1_0_0, PrometheusText0_0_4]
       config:
         global:
+          metric_name_validation_scheme: legacy
           scrape_interval: 60s
           scrape_timeout: 60s
         scrape_configs:
@@ -429,6 +434,7 @@ metricsConfig:
     prometheus/kubelet:
       config:
         global:
+          metric_name_validation_scheme: legacy
           scrape_interval: 30s
           scrape_timeout: 30s
         scrape_configs:
@@ -462,6 +468,7 @@ metricsConfig:
     prometheus/cadvisor:
       config:
         global:
+          metric_name_validation_scheme: legacy
           scrape_interval: 30s
           scrape_timeout: 30s
         scrape_configs:
@@ -494,6 +501,7 @@ metricsConfig:
     prometheus/collector:
       config:
         global:
+          metric_name_validation_scheme: legacy
           scrape_interval: 30s
           scrape_timeout: 30s
         scrape_configs:
@@ -505,6 +513,7 @@ metricsConfig:
     prometheus/infrastructure:
       config:
         global:
+          metric_name_validation_scheme: legacy
           scrape_interval: 30s
           scrape_timeout: 30s
         scrape_configs:
@@ -1241,7 +1250,8 @@ disableKubeDnsScraping: false  # Kube DNS metrics scraping
 # Metrics Daemonset collector configuration
 daemonsetConfig:
   extensions:
-    health_check: {}
+    health_check:
+      endpoint: :13133
   processors:
     filter/kubernetes360:
       metrics:
@@ -1280,10 +1290,13 @@ daemonsetConfig:
         http:
           endpoint: "0.0.0.0:4318"
     prometheus/applications:
+      fallback_scrape_protocol: PrometheusText0_0_4
+      scrape_protocols: [OpenMetricsText1_0_0, PrometheusText0_0_4]
       config:
         global:
           scrape_interval: 30s
           scrape_timeout: 30s
+          metric_name_validation_scheme: legacy
         scrape_configs:
         - job_name: applications
           honor_timestamps: true
@@ -1331,6 +1344,7 @@ daemonsetConfig:
     prometheus/kubelet:
       config:
         global:
+          metric_name_validation_scheme: legacy
           scrape_interval: 30s
           scrape_timeout: 30s
         scrape_configs:
@@ -1356,6 +1370,7 @@ daemonsetConfig:
     prometheus/cadvisor:
       config:
         global:
+          metric_name_validation_scheme: legacy
           scrape_interval: 30s
           scrape_timeout: 30s
         scrape_configs:
@@ -1384,6 +1399,7 @@ daemonsetConfig:
         global:
           scrape_interval: 30s
           scrape_timeout: 30s
+          metric_name_validation_scheme: legacy
         scrape_configs:
         # Job to collect opentelemetry collector metrics
         - job_name: 'collector-metrics'
@@ -1394,6 +1410,7 @@ daemonsetConfig:
     prometheus/infrastructure:
       config:
         global:
+          metric_name_validation_scheme: legacy
           scrape_interval: 30s
           scrape_timeout: 30s
         scrape_configs:
