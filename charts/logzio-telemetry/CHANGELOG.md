@@ -1,6 +1,11 @@
 # Changes by Version
 
 <!-- next version -->
+## 5.6.0
+- **Breaking change:** 
+  - Upgrade OpenTelemetry collector image to v0.131.0
+    - Update `kubernetes-nodes`, `cadvisor` & `kubelet` prometheus scrapes to use new metrics path.
+      - Add `nodes/proxy` to cluster role rules.
 ## 5.5.1
  - Add health check port
  - Fix custom logs endpoint

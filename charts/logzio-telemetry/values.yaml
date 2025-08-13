@@ -126,6 +126,7 @@ clusterRoleRules:
   - namespaces/status
   - nodes
   - nodes/spec
+  - nodes/proxy
   - pods
   - pods/metrics
   - nodes/metrics
@@ -188,7 +189,8 @@ emptyConfig: {}
 # Base configuration of the collector
 baseCollectorConfig:
   extensions:
-    health_check: {}
+    health_check:
+      endpoint: :13133
   processors:
     k8sattributes:
       extract:
@@ -350,7 +352,8 @@ spmForwarderConfig:
 # Metrics standalone collector configuration 
 metricsConfig:
   extensions:
-    health_check: {}
+    health_check:
+      endpoint: :13133
   processors:
     filter/kubernetes360:
       metrics:
@@ -443,10 +446,7 @@ metricsConfig:
           - replacement: kubernetes.default.svc:443
             target_label: __address__
           - action: labelmap
-            regex: __meta_kubernetes_node_label_(.+)
-          - action: replace
-            replacement: kubernetes360
-            target_label: logzio_app            
+            regex: __meta_kubernetes_node_label_(.+)        
           - regex: (.+)            
             replacement: /api/v1/nodes/$${1}/proxy/metrics
             source_labels:
@@ -480,9 +480,6 @@ metricsConfig:
             target_label: __address__        
           - action: labelmap
             regex: __meta_kubernetes_node_label_(.+)
-          - action: replace
-            replacement: kubernetes360
-            target_label: logzio_app
           - source_labels: [__meta_kubernetes_node_name]
             regex: (.+)
             target_label: __metrics_path__
@@ -588,7 +585,7 @@ image:
   repository: otel/opentelemetry-collector-contrib
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.103.0"
+  tag: ""
 nginxWindowsImage:
   # Reverse proxy image to enable metrics scraping from windows nodes
   repository: logzio/logzio-windows-node-reverse-proxy
@@ -1241,7 +1238,8 @@ disableKubeDnsScraping: false  # Kube DNS metrics scraping
 # Metrics Daemonset collector configuration
 daemonsetConfig:
   extensions:
-    health_check: {}
+    health_check:
+      endpoint: :13133
   processors:
     filter/kubernetes360:
       metrics:
@@ -1292,11 +1290,10 @@ daemonsetConfig:
           scheme: http
           kubernetes_sd_configs:
           - role: pod
-            selectors:
-            # only scrape data from pods running on the same node as the collector
-            - role: pod
-              field: "spec.nodeName=$KUBE_NODE_NAME"
           relabel_configs:
+            - source_labels: [__meta_kubernetes_pod_node_name]
+              regex: '${KUBE_NODE_NAME}'
+              action: keep
             - action: keep
               regex: true|"true"
               source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
@@ -1334,7 +1331,9 @@ daemonsetConfig:
           scrape_interval: 30s
           scrape_timeout: 30s
         scrape_configs:
-        - bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+        - authorization:
+            credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+            type: Bearer
           job_name: kubernetes-nodes
           kubernetes_sd_configs:
           - role: node
@@ -1342,10 +1341,16 @@ daemonsetConfig:
             - field: metadata.name=$KUBE_NODE_NAME
               role: node
           metric_relabel_configs: []
-          metrics_path: /metrics
           relabel_configs:
+          - replacement: kubernetes.default.svc:443
+            target_label: __address__
           - action: labelmap
-            regex: __meta_kubernetes_node_label_(.+)
+            regex: __meta_kubernetes_node_label_(.+)         
+          - regex: (.+)            
+            replacement: /api/v1/nodes/$${1}/proxy/metrics
+            source_labels:
+            - __meta_kubernetes_node_name
+            target_label: __metrics_path__
           - action: replace
             replacement: kubernetes360
             target_label: logzio_app
@@ -1361,23 +1366,26 @@ daemonsetConfig:
         scrape_configs:
         - job_name: 'kubernetes-cadvisor'
           scheme: https
-          metrics_path: /metrics/cadvisor
           tls_config:
             ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
             insecure_skip_verify: true
-          bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+          authorization:
+            type: Bearer
+            credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
           kubernetes_sd_configs:
           - role: node
-            selectors:
-            # only scrape data from node with the same name as the node the collector run on
-            - role: node
-              field: "metadata.name=$KUBE_NODE_NAME"
           relabel_configs:
+          - replacement: kubernetes.default.svc:443
+            target_label: __address__        
           - action: labelmap
-            regex: __meta_kubernetes_node_label_(.+) 
+            regex: __meta_kubernetes_node_label_(.+)
+          - source_labels: [__meta_kubernetes_node_name]
+            regex: (.+)
+            target_label: __metrics_path__
+            replacement: /api/v1/nodes/$${1}/proxy/metrics/cadvisor
           - action: replace
             replacement: kubernetes360
-            target_label: logzio_app            
+            target_label: logzio_app
           metric_relabel_configs: []
     prometheus/collector:
       config:
@@ -1404,11 +1412,10 @@ daemonsetConfig:
           scheme: http
           kubernetes_sd_configs:
           - role: pod
-            selectors:
-            # only scrape data from pods running on the same node as collector
-            - role: pod
-              field: "spec.nodeName=$KUBE_NODE_NAME"
           relabel_configs:
+            - source_labels: [__meta_kubernetes_pod_node_name]
+              regex: '${KUBE_NODE_NAME}'
+              action: keep                     
             - source_labels: [__meta_kubernetes_pod_annotation_prometheus_windows_io_scrape]
               action: keep
               regex: true|"true"
@@ -1421,11 +1428,10 @@ daemonsetConfig:
           scheme: http
           kubernetes_sd_configs:
           - role: endpoints
-            selectors:
-            # only scrape data from pods running on the same node as collector
-            - role: pod
-              field: "spec.nodeName=$KUBE_NODE_NAME"
           relabel_configs:
+            - source_labels: [__meta_kubernetes_pod_node_name]
+              regex: '${KUBE_NODE_NAME}'
+              action: keep
             # Adding a dummy job label to enable filtering for duplicate metrics using daemonset collector
             # "job" label is only added in the prometheusremotewrite and cannot be added before
             - action: replace
