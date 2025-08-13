@@ -1,6 +1,12 @@
 # Changes by Version
 
 <!-- next version -->
+## 7.7.0
+- Upgrade `logzio-k8s-telemetry` chart to `5.5.1`
+  - **Breaking change:** 
+    - Upgrade OpenTelemetry collector image to v0.131.0
+      - Update `kubernetes-nodes`, `cadvisor` & `kubelet` prometheus scrapes to use new metrics path.
+        - Add `nodes/proxy` to cluster role rules.
 ## 7.6.1
 - Upgrade `logzio-k8s-telemetry` chart to `5.5.1`
   - Add health check port
