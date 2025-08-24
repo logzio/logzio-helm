@@ -1337,11 +1337,11 @@ daemonsetConfig:
           job_name: kubernetes-nodes
           kubernetes_sd_configs:
           - role: node
-            selectors:
-            - field: metadata.name=$KUBE_NODE_NAME
-              role: node
           metric_relabel_configs: []
           relabel_configs:
+          - source_labels: [__meta_kubernetes_node_name]
+            regex: '${KUBE_NODE_NAME}'
+            action: keep
           - replacement: kubernetes.default.svc:443
             target_label: __address__
           - action: labelmap
@@ -1375,6 +1375,9 @@ daemonsetConfig:
           kubernetes_sd_configs:
           - role: node
           relabel_configs:
+          - source_labels: [__meta_kubernetes_node_name]
+            regex: '${KUBE_NODE_NAME}'
+            action: keep
           - replacement: kubernetes.default.svc:443
             target_label: __address__        
           - action: labelmap
