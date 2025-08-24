@@ -1,6 +1,8 @@
 # Changes by Version
 
 <!-- next version -->
+## 5.6.1
+- Add node filter for cadvisor job in `daemonsetConfig`
 ## 5.6.0
 - **Breaking change:** 
   - Upgrade OpenTelemetry collector image to v0.131.0
