@@ -90,6 +90,10 @@ kubectl get nodes -o json | jq ".items[]|{name:.metadata.name, taints:.spec.tain
 
 
 ## Change log
+* 0.0.8 
+  - Upgrade 'fluent-bit-output' image to 0.6.3
+    - Fix potential stack overflow: Reduced default bulk size to 2MB, added logzio_bulk_size_mb config (1-9 MB).
+  - Add required `id` to Logz.io output configuration
 * 0.0.7 
   - Upgrade 'fluent-bit-output' image to 0.6.2
     - Resolve bug with exit code handling to ensure all buffered logs are flushed before termination.
