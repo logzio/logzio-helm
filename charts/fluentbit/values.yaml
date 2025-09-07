@@ -215,6 +215,7 @@ config:
   outputs: |
     [OUTPUT]
         Name  logzio
+        id logzio_output_1
         Match *
         logzio_token {{ .Values.logzio.token }}
         logzio_url   https://{{ .Values.logzio.listenerHost }}:8071
@@ -237,6 +238,7 @@ config:
 #     example.conf: |
 #       [OUTPUT]
 #           Name example
+#           id example_output_1
 #           Match foo.*
 #           Host bar
 
