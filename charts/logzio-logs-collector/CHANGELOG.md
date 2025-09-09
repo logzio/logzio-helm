@@ -1,6 +1,10 @@
 # Changes by Version
 
 <!-- next version -->
+## 2.3.0
+- Support global setting for `nodeSelector` and `affinity`.
+  - Upgrade `otel/opentelemetry-collector-contrib` image to version `0.133.0`.
+
 ## 2.2.1
 - Add SignalFx logs support
 ## 2.2.0
