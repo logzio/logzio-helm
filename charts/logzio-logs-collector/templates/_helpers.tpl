@@ -264,7 +264,7 @@ Merges local and global nodeSelector settings.
   {{- $nodeSelector = mergeOverwrite $nodeSelector .Values.nodeSelector -}}
 {{- end -}}
 {{- if .Values.global.nodeSelector -}}
-  {{- $nodeSelector = merge $nodeSelector .Values.global.nodeSelector -}}
+  {{- $nodeSelector = mergeOverwrite $nodeSelector .Values.global.nodeSelector -}}
 {{- end -}}
 {{- if $nodeSelector -}}
 nodeSelector:
