@@ -140,14 +140,8 @@ volumes:
   {{- if .Values.extraVolumes }}
   {{- toYaml .Values.extraVolumes | nindent 2 }}
   {{- end }}
-{{- with .Values.nodeSelector }}
-nodeSelector:
-  {{- toYaml . | nindent 2 }}
-{{- end }}
-{{- with .Values.affinity }}
-affinity:
-  {{- toYaml . | nindent 2 }}
-{{- end }}
+{{ with (include "apm-collector.nodeSelector" .) }}{{ . }}{{ end }}
+{{ with (include "apm-collector.affinity" .) }}{{ . }}{{ end }}
 {{- if or .Values.tolerations .Values.global.tolerations }}
   {{- $allTolerations := concat (.Values.tolerations | default list) (.Values.global.tolerations | default list) }}
 tolerations:

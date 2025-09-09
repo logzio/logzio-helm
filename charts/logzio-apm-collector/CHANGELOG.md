@@ -1,6 +1,11 @@
 # Changes by Version
 
 <!-- next version -->
+
+## 1.4.0
+- Upgrade OpenTelemetry Collector from `0.129.0` to `0.133.0`.
+- Support global setting for `nodeSelector` and `affinity`.
+
 ## 1.3.0
 - Add **trace filtering** capability via the new `filters` values key.
   - Supports `exclude` (drop) and `include` (keep) rules on `namespace`, `service`, any `attribute.*` or `resource.*` fields using regular expressions.
