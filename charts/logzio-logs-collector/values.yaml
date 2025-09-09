@@ -223,7 +223,13 @@ config:
         - filelog
     telemetry:
       metrics:
-        address: ${env:MY_POD_IP}:8888
+        readers:
+          - pull:
+              exporter:
+                prometheus:
+                  host: ${env:MY_POD_IP}
+                  port: 8888
+                  without_units: true
       logs:
         level: info
 # SignalFx config
