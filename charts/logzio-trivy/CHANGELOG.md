@@ -1,6 +1,10 @@
 # Changes by Version
 
 <!-- next version -->
+## 1.1.0
+- Support global setting for `nodeSelector` and `affinity`.
+- Upgrade Trivy-Operator version to `0.28.0`.
+
 ## 1.0.2
 - Add support for global tolerations
 
