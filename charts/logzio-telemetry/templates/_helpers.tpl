@@ -226,6 +226,61 @@ component: standalone-collector-spm
 {{- end }}
 
 {{/*
+Merges local and global affinity settings for the standalone collector.
+*/}}
+{{- define "opentelemetry-collector.affinity" -}}
+{{- $affinity := dict -}}
+{{- if .Values.affinity -}}
+  {{- $affinity = mergeOverwrite $affinity .Values.affinity -}}
+{{- end -}}
+{{- if .Values.global.affinity -}}
+  {{- $affinity = mergeOverwrite $affinity .Values.global.affinity -}}
+{{- end -}}
+{{- if $affinity -}}
+affinity:
+  {{- toYaml $affinity | nindent 2 }}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Merges local daemonsetCollector affinity with global affinity settings.
+*/}}
+{{- define "opentelemetry-collector.daemonsetAffinity" -}}
+{{- $affinity := dict -}}
+{{- if .Values.daemonsetCollector.affinity -}}
+  {{- $affinity = mergeOverwrite $affinity .Values.daemonsetCollector.affinity -}}
+{{- end -}}
+{{- if .Values.global.affinity -}}
+  {{- $affinity = mergeOverwrite $affinity .Values.global.affinity -}}
+{{- end -}}
+{{- if $affinity -}}
+affinity:
+  {{- toYaml $affinity | nindent 2 }}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Merges linuxNodeSelector, local nodeSelector and global nodeSelector settings.
+Global keys override local ones if duplicated.
+*/}}
+{{- define "opentelemetry-collector.nodeSelector" -}}
+{{- $nodeSelector := dict -}}
+{{- if .Values.nodeSelector -}}
+  {{- $nodeSelector = mergeOverwrite $nodeSelector .Values.nodeSelector -}}
+{{- end -}}
+{{- if .Values.linuxNodeSelector -}}
+  {{- $nodeSelector = mergeOverwrite $nodeSelector .Values.linuxNodeSelector -}}
+{{- end -}}
+{{- if .Values.global.nodeSelector -}}
+  {{- $nodeSelector = merge $nodeSelector .Values.global.nodeSelector -}}
+{{- end -}}
+{{- if $nodeSelector -}}
+nodeSelector:
+  {{- toYaml $nodeSelector | nindent 2 }}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Recursively flattens a map into dot-separated keys for filters.
 Usage: include "opentelemetry-collector.flattenFilters" (dict "m" . "prefix" "")
 Returns a YAML array of key=regex strings.
