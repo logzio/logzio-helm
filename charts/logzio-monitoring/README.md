@@ -22,16 +22,20 @@ This project packages the following Helm Charts:
 ### Table of content
 - [Installation instructions](#instructions-for-standard-deployment)
   - [EKS on fargate](#sending-telemetry-data-from-eks-on-fargate)
-  - [Custom config](#further-configuration)
-    - [Custom endpoint for logs](#send-logs-to-a-custom-endpoint)
-    - [Custom endpoint for metrics](#send-metrics-to-a-custom-endpoint)
-    - [Custom endpoint for traces](#send-traces-to-a-custom-endpoint)
-  - [Image pull rate limit issue](#handling-image-pull-rate-limit)
-  - [Add tolerations for tainted nodes](#adding-tolerations-for-tainted-nodes)
-- [Migrating to logzio-monitoring v7.0.0](#migrating-to-logzio-monitoring-700)
+- [Custom config](#further-configuration)
+  - [Custom endpoint for logs](#send-logs-to-a-custom-endpoint)
+  - [Custom endpoint for metrics](#send-metrics-to-a-custom-endpoint)
+  - [Custom endpoint for traces](#send-traces-to-a-custom-endpoint)
+  - Custom Tolerations
+    - [Add global tolerations](#adding-global-tolerations)
+    - [Add tolerations for tainted nodes](#adding-tolerations-for-tainted-nodes)
+  - [Global `affinity` and `nodeSelector`](#adding-global-affinity-and-nodeselector-settings)
 - [Enabled Auto-Instrumentation](#enable-auto-instrumentation)
+  - [Customize Auto-Instrumentation](#customize-auto-instrumentation)
 - [Enable resource detection](#enable-resource-detection)
 - [Filtering Telemetry Data (Metrics, Logs, Traces)](#filtering-telemetry-data-metrics-logs-traces)
+- [Image pull rate limit issue](#handling-image-pull-rate-limit)
+- [Migrating to logzio-monitoring v7.0.0](./MIGRATE_TO_7.x.x.md)
 
 ## Instructions for standard deployment:
 
@@ -87,7 +91,7 @@ logzio-monitoring logzio-helm/logzio-monitoring
 | `<<LOGZIO-REGION>>` | Your Logz.io region code, e.g `us`, `eu`... |
 
 
-### Further configuration
+## Further configuration
 
 The `helm install` command described above deploys a standard configuration of the chart for sending logs, metrics, and traces.
 
@@ -99,7 +103,7 @@ However, you can customize the chart by using the `--set` flag in your `helm ins
 | `securityReport.enabled` | Enable to send Kubernetes security logs | `false` |
 | `deployEvents.enabled` | Enable to send Kubernetes deploy events logs | `false` |
 
-#### Modifying Chart Configurations
+### Modifying Chart Configurations
 
 For each chart, you can customize configuration values using the `--set` flag during the `helm install` or `helm upgrade` commands. The prefix for the values depends on the chart you're modifying.
 
@@ -143,24 +147,6 @@ helm install -n monitoring \
 --set logzio-apm-collector.enabled=true \
 --set global.logzioTracesToken="<<TRACES-SHIPPING-TOKEN>>" \
 logzio-monitoring logzio-helm/logzio-monitoring
-```
-
-### Handling image pull rate limit
-
-In scenarios (e.g., spot clusters) where pods/nodes are frequently replaced, you may encounter Dockerhub's pull rate limits. In these cases, use the following `--set` commands to use alternative image repositories:
-
-```
-You have reached your pull rate limit. You may increase the limit by authenticating and upgrading: https://www.docker.com/increase-rate-limits.
-```
-
-
-In these cases we can use the following `--set` commands to use an alternative image repository:
-
-```shell
---set logzio-k8s-telemetry.image.repository=ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-contrib
---set logzio-k8s-telemetry.prometheus-pushgateway.image.repository=public.ecr.aws/logzio/prom-pushgateway
---set logzio-fluentd.image=public.ecr.aws/logzio/logzio-fluentd
---set logzio-trivy.image=public.ecr.aws/logzio/trivy-to-logzio
 ```
 
 ### Send logs to a custom endpoint
@@ -262,208 +248,51 @@ helm upgrade -n monitoring \
 
 By following these steps, you can ensure that your pods are scheduled on nodes with taints by adding the necessary tolerations to the Helm chart configuration.
 
-## Migrating to `logzio-monitoring` 7.0.0
-
-### Step 1: Update helm repositories
-
-Run the following command to ensure you have the latest chart versions:
-
-```shell
-helm repo update
-```
-
-### Step 2: Build the upgrade command
-
-Choose the appropriate upgrade command for your current setup. If you're unsure of your configuration, use the following command to retrieve the current values
-
-```shell
-helm get values logzio-monitoring -n monitoring
-```
-
-> [!IMPORTANT]
-> If you have enabled any of the following
-> - `logzio-k8s-events` (`deployEvents`)
-> - `logzio-trivy` (`securityReport`)
-> - `logzio-k8s-telemetry.k8sObjectsConfig`
-> You must use one of the Logs command options as part of the upgrade process.
-
-<details>
-  <summary>Logs, Metrics and Traces:</summary>
-
-```shell
-helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring \
---set global.logzioRegion="<<LOGZIO-REGION>>" \
---set global.env_id="<<ENV-ID>>" \
---set global.logzioLogsToken="<<LOG-SHIPPING-TOKEN>>" \
---set global.logzioMetricsToken="<<PROMETHEUS-METRICS-SHIPPING-TOKEN>>" \
---set logzio-k8s-telemetry.traces.enabled=false \
---set logzio-apm-collector.enabled=true \
---set global.logzioTracesToken="<<TRACES-SHIPPING-TOKEN>>" \
-
-# If you also send SPM or ServiceGraph, add the relevant enable flag for them and the token
---set logzio-apm-collector.spm.enabled=true \
---set logzio-apm-collector.serviceGraph.enabled=true \
---set global.logzioSpmToken="<<SPM-SHIPPING-TOKEN>>" \
-
---reuse-values
-```
+### Adding Global `affinity` and `nodeSelector` Settings
 
 > [!NOTE]
-> If you were using `logzio-logs-collector.secrets.logType`, add to your command `--set global.logType=<<LOG-TYPE>> \`
+> Supported **strating from version `7.8.0`**
 
-> [!IMPORTANT]
-> Make sure to update your Instrumentation service endpoint from `logzio-monitoring-otel-collector.monitoring.svc.cluster.local` to `logzio-apm-collector.monitoring.svc.cluster.local`.
-
-</details>
-
-<details>
-  <summary>Logs and Metrics:</summary>
-
-```shell
-helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring \
---set global.logzioRegion="<<LOGZIO-REGION>>" \
---set global.env_id="<<ENV-ID>>" \
---set global.logzioLogsToken="<<LOG-SHIPPING-TOKEN>>" \
---set global.logzioMetricsToken="<<PROMETHEUS-METRICS-SHIPPING-TOKEN>>" \
---reuse-values
-```
-
-> [!NOTE]
-> If you were using `logzio-logs-collector.secrets.logType`, add to your command `--set global.logType=<<LOG-TYPE>> \`
-
-</details>
-
-<details>
-  <summary>Metrics and Traces:</summary>
-
-```shell
-helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring \
---set global.logzioRegion="<<LOGZIO-REGION>>" \
---set global.env_id="<<ENV-ID>>" \
---set global.logzioMetricsToken="<<PROMETHEUS-METRICS-SHIPPING-TOKEN>>" \
---set logzio-k8s-telemetry.traces.enabled=false \
---set logzio-apm-collector.enabled=true \
---set global.logzioTracesToken="<<TRACES-SHIPPING-TOKEN>>" \
-
-# If you also send SPM or ServiceGraph, add the relevant enable flag for them and the token
---set logzio-apm-collector.spm.enabled=true \
---set logzio-apm-collector.serviceGraph.enabled=true \
---set global.logzioSpmToken="<<SPM-SHIPPING-TOKEN>>" \
-
---reuse-values
+You can apply `affinity` and `nodeSelector` settings across all enabled `logzio-monitoring` subcharts, by using the `global` configuration. Example:
+```yaml
+global:
+  nodeSelector:
+    mylabel: "my value"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: topology.kubernetes.io/zone
+            operator: In
+            values:
+            - my-random-val
+            - my-other-val
 ```
 
 > [!IMPORTANT]
-> Make sure to update your Instrumentation service endpoint from `logzio-monitoring-otel-collector.monitoring.svc.cluster.local` to `logzio-apm-collector.monitoring.svc.cluster.local`.
-
-</details>
-
-<details>
-  <summary>Logs and Traces:</summary>
-
-```shell
-helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring \
---set global.logzioRegion="<<LOGZIO-REGION>>" \
---set global.env_id="<<ENV-ID>>" \
---set global.logzioLogsToken="<<LOG-SHIPPING-TOKEN>>" \
---set logzio-k8s-telemetry.traces.enabled=false \
---set logzio-apm-collector.enabled=true \
---set global.logzioTracesToken="<<TRACES-SHIPPING-TOKEN>>" \
-
-# If you also send SPM or ServiceGraph, add the relevant enable flag for them and the token
---set logzio-apm-collector.spm.enabled=true \
---set logzio-apm-collector.serviceGraph.enabled=true \
---set global.logzioSpmToken="<<SPM-SHIPPING-TOKEN>>" \
-
---reuse-values
-```
-
-> [!NOTE]
-> If you were using `logzio-logs-collector.secrets.logType`, add to your command `--set global.logType=<<LOG-TYPE>> \`
+> Please note that specific chart settings will **override** the global setting.
+> For example `sub-chart-name.affinity` will take precedence over the `global.affinity`.
 
 > [!IMPORTANT]
-> Make sure to update your Instrumentation service endpoint from `logzio-monitoring-otel-collector.monitoring.svc.cluster.local` to `logzio-apm-collector.monitoring.svc.cluster.local`.
+> The global settings **do not apply** to the following sub charts: `otel-operator`, `trivy-operator` (subchart of `logzio-trivy`), `prometheus-node-exporter`, `prometheus-pushgateway` and `kube-state-metrics` (subcharts of `logzio-telemetry`).
 
-</details>
+## Handling image pull rate limit
+
+In scenarios (e.g., spot clusters) where pods/nodes are frequently replaced, you may encounter Dockerhub's pull rate limits. In these cases, use the following `--set` commands to use alternative image repositories:
+
+```
+You have reached your pull rate limit. You may increase the limit by authenticating and upgrading: https://www.docker.com/increase-rate-limits.
+```
 
 
-<details>
-  <summary>Only Logs:</summary>
+In these cases we can use the following `--set` commands to use an alternative image repository:
 
 ```shell
-helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring \
---set global.logzioRegion="<<LOGZIO-REGION>>" \
---set global.env_id="<<ENV-ID>>" \
---set global.logzioLogsToken="<<LOG-SHIPPING-TOKEN>>" \
---reuse-values
-```
-
-> [!NOTE]
-> If you were using `logzio-logs-collector.secrets.logType`, add to your command `--set global.logType=<<LOG-TYPE>> \`
-
-</details>
-
-<details>
-  <summary>Only Metrics:</summary>
-
-```shell
-helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring \
---set global.logzioRegion="<<LOGZIO-REGION>>" \
---set global.env_id="<<ENV-ID>>" \
---set global.logzioMetricsToken="<<PROMETHEUS-METRICS-SHIPPING-TOKEN>>" \
---reuse-values
-```
-
-</details>
-
-<details>
-  <summary>Only Traces:</summary>
-
-```shell
-helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring \
---set global.logzioRegion="<<LOGZIO-REGION>>" \
---set global.env_id="<<ENV-ID>>" \
---set logzio-k8s-telemetry.traces.enabled=false \
---set logzio-apm-collector.enabled=true \
---set global.logzioTracesToken="<<TRACES-SHIPPING-TOKEN>>" \
-
-# If you also send SPM or ServiceGraph, add the relevant enable flag for them and the token
---set logzio-apm-collector.spm.enabled=true \
---set logzio-apm-collector.serviceGraph.enabled=true \
---set global.logzioSpmToken="<<SPM-SHIPPING-TOKEN>>" \
-
---reuse-values
-```
-
-> [!IMPORTANT]
-> Make sure to update your Instrumentation service endpoint from `logzio-monitoring-otel-collector.monitoring.svc.cluster.local` to `logzio-apm-collector.monitoring.svc.cluster.local`.
-
-</details>
-
-#### Managing own secret
-If you manage your own secret for the Logz.io charts, please also add to your command:
-
- ```shell
---set sub-chart-name.secret.name="<<NAME-OF-SECRET>>" \
---set sub-chart-name.secret.enabled=false \
-```
-
-> [!IMPORTANT]
-> This change is not relevant for the `logzio-k8s-telemetry` chart.
-
-Replace `sub-chart-name` with the name of the sub chart which you manage the secrets for.
-
-For example, if you manage secret for both `logzio-logs-collector` and for `logzio-trivy`, use:
-
- ```shell
-helm upgrade logzio-monitoring logzio-helm/logzio-monitoring -n monitoring \
---set global.logzioRegion="<<LOGZIO-REGION>>" \
---set global.env_id="<<ENV-ID>>" \
---set logzio-logs-collector.secret.name="<<NAME-OF-SECRET>>" \
---set logzio-logs-collector.secret.enabled=false \
---set logzio-trivy.secret.name="<<NAME-OF-SECRET>>" \
---set logzio-trivy.secret.enabled=false \
---reuse-values
+--set logzio-k8s-telemetry.image.repository=ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-contrib
+--set logzio-k8s-telemetry.prometheus-pushgateway.image.repository=public.ecr.aws/logzio/prom-pushgateway
+--set logzio-fluentd.image=public.ecr.aws/logzio/logzio-fluentd
+--set logzio-trivy.image=public.ecr.aws/logzio/trivy-to-logzio
 ```
 
 ## Enable Auto-instrumentation
