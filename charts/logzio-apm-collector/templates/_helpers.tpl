@@ -186,11 +186,11 @@ Merges local and global affinity settings.
 */}}
 {{- define "apm-collector.affinity" -}}
 {{- $affinity := dict -}}
-{{- if .Values.affinity -}}
-  {{- $affinity = mergeOverwrite $affinity .Values.affinity -}}
-{{- end -}}
 {{- if .Values.global.affinity -}}
   {{- $affinity = mergeOverwrite $affinity .Values.global.affinity -}}
+{{- end -}}
+{{- if .Values.affinity -}}
+  {{- $affinity = mergeOverwrite $affinity .Values.affinity -}}
 {{- end -}}
 {{- if $affinity -}}
 affinity:
@@ -203,11 +203,11 @@ Merges local and global nodeSelector settings.
 */}}
 {{- define "apm-collector.nodeSelector" -}}
 {{- $nodeSelector := dict -}}
-{{- if .Values.nodeSelector -}}
-  {{- $nodeSelector = merge $nodeSelector .Values.nodeSelector -}}
-{{- end -}}
 {{- if .Values.global.nodeSelector -}}
   {{- $nodeSelector = merge $nodeSelector .Values.global.nodeSelector -}}
+{{- end -}}
+{{- if .Values.nodeSelector -}}
+  {{- $nodeSelector = merge $nodeSelector .Values.nodeSelector -}}
 {{- end -}}
 {{- if $nodeSelector -}}
 nodeSelector:

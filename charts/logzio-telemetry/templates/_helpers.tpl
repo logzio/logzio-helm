@@ -230,11 +230,11 @@ Merges local and global affinity settings for the standalone collector.
 */}}
 {{- define "opentelemetry-collector.affinity" -}}
 {{- $affinity := dict -}}
-{{- if .Values.affinity -}}
-  {{- $affinity = mergeOverwrite $affinity .Values.affinity -}}
-{{- end -}}
 {{- if .Values.global.affinity -}}
   {{- $affinity = mergeOverwrite $affinity .Values.global.affinity -}}
+{{- end -}}
+{{- if .Values.affinity -}}
+  {{- $affinity = mergeOverwrite $affinity .Values.affinity -}}
 {{- end -}}
 {{- if $affinity -}}
 affinity:
@@ -247,11 +247,11 @@ Merges local daemonsetCollector affinity with global affinity settings.
 */}}
 {{- define "opentelemetry-collector.daemonsetAffinity" -}}
 {{- $affinity := dict -}}
-{{- if .Values.daemonsetCollector.affinity -}}
-  {{- $affinity = mergeOverwrite $affinity .Values.daemonsetCollector.affinity -}}
-{{- end -}}
 {{- if .Values.global.affinity -}}
   {{- $affinity = mergeOverwrite $affinity .Values.global.affinity -}}
+{{- end -}}
+{{- if .Values.daemonsetCollector.affinity -}}
+  {{- $affinity = mergeOverwrite $affinity .Values.daemonsetCollector.affinity -}}
 {{- end -}}
 {{- if $affinity -}}
 affinity:
@@ -265,14 +265,14 @@ Global keys override local ones if duplicated.
 */}}
 {{- define "opentelemetry-collector.nodeSelector" -}}
 {{- $nodeSelector := dict -}}
+{{- if .Values.global.nodeSelector -}}
+  {{- $nodeSelector = mergeOverwrite $nodeSelector .Values.global.nodeSelector -}}
+{{- end -}}
 {{- if .Values.nodeSelector -}}
   {{- $nodeSelector = mergeOverwrite $nodeSelector .Values.nodeSelector -}}
 {{- end -}}
 {{- if .Values.linuxNodeSelector -}}
   {{- $nodeSelector = mergeOverwrite $nodeSelector .Values.linuxNodeSelector -}}
-{{- end -}}
-{{- if .Values.global.nodeSelector -}}
-  {{- $nodeSelector = mergeOverwrite $nodeSelector .Values.global.nodeSelector -}}
 {{- end -}}
 {{- if $nodeSelector -}}
 nodeSelector:

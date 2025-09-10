@@ -62,11 +62,11 @@ Merges local and global nodeSelector settings.
 */}}
 {{- define "trivy-to-logzio.nodeSelector" -}}
 {{- $nodeSelector := dict -}}
-{{- if .Values.nodeSelector -}}
-  {{- $nodeSelector = mergeOverwrite $nodeSelector .Values.nodeSelector -}}
-{{- end -}}
 {{- if .Values.global.nodeSelector -}}
   {{- $nodeSelector = mergeOverwrite $nodeSelector .Values.global.nodeSelector -}}
+{{- end -}}
+{{- if .Values.nodeSelector -}}
+  {{- $nodeSelector = mergeOverwrite $nodeSelector .Values.nodeSelector -}}
 {{- end -}}
 {{- if $nodeSelector -}}
 nodeSelector:
