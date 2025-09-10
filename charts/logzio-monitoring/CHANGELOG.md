@@ -5,7 +5,7 @@
 - Upgrade `logzio-logs-collector` chart to `2.3.0`
   - Support global setting for `nodeSelector` and `affinity`.
   - Upgrade `otel/opentelemetry-collector-contrib` image to version `0.133.0`.
-- Upgrade `logzio-apm-collector` chart to `1.3.0`
+- Upgrade `logzio-apm-collector` chart to `1.4.0`
   - Support global setting for `nodeSelector` and `affinity`.
   - Upgrade OpenTelemetry Collector from `0.129.0` to `0.133.0`.
 - Upgrade `logzio-k8s-events` chart to `2.0.0`

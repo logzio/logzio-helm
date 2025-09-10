@@ -251,7 +251,7 @@ By following these steps, you can ensure that your pods are scheduled on nodes w
 ### Adding Global `affinity` and `nodeSelector` Settings
 
 > [!NOTE]
-> Supported **strating from version `7.8.0`**
+> Supported **starting from version `7.8.0`**
 
 You can apply `affinity` and `nodeSelector` settings across all enabled `logzio-monitoring` subcharts, by using the `global` configuration. Example:
 ```yaml
