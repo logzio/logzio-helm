@@ -23,17 +23,8 @@ spec:
       tolerations:
 {{ toYaml $allTolerations | nindent 8 }}
       {{- end }}
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - key: kubernetes.io/arch
-                operator: In
-                values: 
-                {{- range .Values.nodeArchitectures }}
-                  - {{ . }}
-                {{- end }}
+      {{ with (include "logzio-k8s-events.nodeSelector" .) }}{{ . | nindent 6 }}{{ end }}
+      {{ with (include "logzio-k8s-events.affinity" .) }}{{ . | nindent 6 }}{{ end }}
       {{- if .Values.isRBAC }}
       serviceAccountName: {{ template "logzio-k8s-events.serviceAccountName" . }}
       {{- end }}

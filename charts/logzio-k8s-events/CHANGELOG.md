@@ -1,6 +1,11 @@
 # Changes by Version
 
 <!-- next version -->
+## 2.0.0
+- Support global setting for `nodeSelector` and `affinity`.
+- **Breaking changes:**
+  - Deprecate `nodeArchitectures` setting (can be configured directly under `affinity`).
+
 ## 1.0.1
 - Add support for configuring tolerations
 ## 1.0.0
