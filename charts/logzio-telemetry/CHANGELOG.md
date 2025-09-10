@@ -1,6 +1,8 @@
 # Changes by Version
 
 <!-- next version -->
+## 5.7.0
+- Support global setting for `nodeSelector` and `affinity`.
 ## 5.6.0
 - **Breaking change:** 
   - Upgrade OpenTelemetry collector image to v0.131.0

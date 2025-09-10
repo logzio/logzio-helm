@@ -180,3 +180,37 @@ Returns a YAML array of key=regex strings.
 {{- end }}
 {{- toYaml $out }}
 {{- end }}
+
+{{/*
+Merges local and global affinity settings.
+*/}}
+{{- define "apm-collector.affinity" -}}
+{{- $affinity := dict -}}
+{{- if .Values.global.affinity -}}
+  {{- $affinity = mergeOverwrite $affinity .Values.global.affinity -}}
+{{- end -}}
+{{- if .Values.affinity -}}
+  {{- $affinity = mergeOverwrite $affinity .Values.affinity -}}
+{{- end -}}
+{{- if $affinity -}}
+affinity:
+  {{- toYaml $affinity | nindent 2 }}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Merges local and global nodeSelector settings.
+*/}}
+{{- define "apm-collector.nodeSelector" -}}
+{{- $nodeSelector := dict -}}
+{{- if .Values.global.nodeSelector -}}
+  {{- $nodeSelector = merge $nodeSelector .Values.global.nodeSelector -}}
+{{- end -}}
+{{- if .Values.nodeSelector -}}
+  {{- $nodeSelector = merge $nodeSelector .Values.nodeSelector -}}
+{{- end -}}
+{{- if $nodeSelector -}}
+nodeSelector:
+  {{- toYaml $nodeSelector | nindent 2 }}
+{{- end -}}
+{{- end -}}

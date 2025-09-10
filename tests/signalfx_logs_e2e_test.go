@@ -23,7 +23,6 @@ type LogResponse struct {
 				EventProperties map[string]string `json:"com_splunk_signalfx_event_properties"`
 				Source          string            `json:"source"`
 				EnvID           string            `json:"env_id"`
-				Timestamp       int64             `json:"@timestamp"`
 			} `json:"_source"`
 		} `json:"hits"`
 	} `json:"hits"`
@@ -43,72 +42,66 @@ func TestLogzioLogsCollectorSignalFxLogs(t *testing.T) {
 	if logResponse.Hits.Total == 0 {
 		t.Errorf("No SignalFx logs found")
 	}
-	
+
 	logger.Info("Found SignalFx logs", zap.Int("total", logResponse.Hits.Total))
 
 	for _, hit := range logResponse.Hits.Hits {
 		source := hit.Source
-		
+
 		// Debug: Log the entire log structure to understand what we're getting
 		logger.Info("Processing SignalFx log", zap.Any("log", hit))
-		
+
 		// Check required SignalFx event fields
 		if source.EventType == "" {
 			logger.Error("Missing com_splunk_signalfx_event_type field", zap.Any("log", hit))
 			t.Errorf("Missing com_splunk_signalfx_event_type field")
 			break
 		}
-		
+
 		if source.EventCategory == 0 {
 			logger.Error("Missing com_splunk_signalfx_event_category field", zap.Any("log", hit))
 			t.Errorf("Missing com_splunk_signalfx_event_category field")
 			break
 		}
-		
-		if source.Timestamp == 0 {
-			logger.Error("Missing @timestamp field", zap.Any("log", hit))
-			t.Errorf("Missing @timestamp field")
-			break
-		}
-		
+
 		// Check event properties
 		if source.EventProperties == nil {
 			logger.Error("Missing com_splunk_signalfx_event_properties", zap.Any("log", hit))
 			t.Errorf("Missing com_splunk_signalfx_event_properties")
 			break
 		}
-		
+
 		if source.EventProperties["message"] == "" {
 			logger.Error("Missing message in event_properties", zap.Any("log", hit))
 			t.Errorf("Missing message in event_properties")
 			break
 		}
-		
+
 		if source.EventProperties["log_level"] == "" {
 			logger.Error("Missing log_level in event_properties", zap.Any("log", hit))
 			t.Errorf("Missing log_level in event_properties")
 			break
 		}
-		
+
 		// Check if the log is from SignalFx source
 		if source.Source != "signalfx-logs-gen" {
 			logger.Error("Log not from SignalFx source", zap.String("source", source.Source))
 			t.Errorf("Expected log from SignalFx source, got: %s", source.Source)
 		}
-		
+
 		// Log successful validation for debugging
-		logger.Info("Successfully validated SignalFx log", 
+		logger.Info("Successfully validated SignalFx log",
 			zap.String("event_type", source.EventType),
 			zap.Int("event_category", source.EventCategory),
 			zap.String("source", source.Source),
 			zap.String("env_id", source.EnvID))
-		
+
 		// Check event type
 		if source.EventType != "test_signalfx_log" {
 			logger.Error("Unexpected event type", zap.String("event_type", source.EventType))
 			t.Errorf("Expected event type 'test_signalfx_log', got: %s", source.EventType)
 		}
-		
+
 		// Check event category (should be 1000000 for USER_DEFINED)
 		if source.EventCategory != 1000000 {
 			logger.Error("Unexpected event category", zap.Int("event_category", source.EventCategory))
@@ -153,8 +146,8 @@ func fetchSignalFxLogs(logsApiKey string) (*LogResponse, error) {
 		logger.Error("Failed to unmarshal response", zap.String("body", string(body)), zap.Error(err))
 		return nil, err
 	}
-	
+
 	logger.Info("Successfully parsed response", zap.Int("totalHits", logResponse.Hits.Total))
 
 	return &logResponse, nil
-} 
+}

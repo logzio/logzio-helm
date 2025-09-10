@@ -39,3 +39,37 @@ https://listener.logz.io:8071
 {{- printf "https://listener-%s.logz.io:8071" $region }}
 {{- end }}
 {{- end }}
+
+{{/*
+Merges local and global affinity settings.
+*/}}
+{{- define "trivy-to-logzio.affinity" -}}
+{{- $affinity := dict -}}
+{{- if .Values.affinity -}}
+  {{- $affinity = mergeOverwrite $affinity .Values.affinity -}}
+{{- end -}}
+{{- if .Values.global.affinity -}}
+  {{- $affinity = mergeOverwrite $affinity .Values.global.affinity -}}
+{{- end -}}
+{{- if $affinity -}}
+affinity:
+  {{- toYaml $affinity | nindent 2 }}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Merges local and global nodeSelector settings.
+*/}}
+{{- define "trivy-to-logzio.nodeSelector" -}}
+{{- $nodeSelector := dict -}}
+{{- if .Values.global.nodeSelector -}}
+  {{- $nodeSelector = mergeOverwrite $nodeSelector .Values.global.nodeSelector -}}
+{{- end -}}
+{{- if .Values.nodeSelector -}}
+  {{- $nodeSelector = mergeOverwrite $nodeSelector .Values.nodeSelector -}}
+{{- end -}}
+{{- if $nodeSelector -}}
+nodeSelector:
+  {{- toYaml $nodeSelector | nindent 2 }}
+{{- end -}}
+{{- end -}}

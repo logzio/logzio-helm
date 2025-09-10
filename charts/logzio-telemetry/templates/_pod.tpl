@@ -239,14 +239,8 @@ volumes:
     secret:
       secretName: {{ .secretName }}
   {{- end }}
-{{- with .Values.linuxNodeSelector }}
-nodeSelector:
-  {{- toYaml . | nindent 2 }}
-{{- end }}
-{{- with .Values.affinity }}
-affinity:
-  {{- toYaml . | nindent 2 }}
-{{- end }}
+{{ with (include "opentelemetry-collector.nodeSelector" .) }}{{ . }}{{ end }}
+{{ with (include "opentelemetry-collector.affinity" .) }}{{ . }}{{ end }}
 {{- if or .Values.tolerations .Values.global.tolerations }}
   {{- $allTolerations := concat (.Values.tolerations | default list) (.Values.global.tolerations | default list) }}
 tolerations:
