@@ -185,7 +185,10 @@ Returns a YAML array of key=regex strings.
 Merges local and global affinity settings.
 */}}
 {{- define "apm-collector.affinity" -}}
-{{- $affinity := deepCopy .Values.affinity -}}
+{{- $affinity := dict -}}
+{{- if .Values.affinity -}}
+  {{- $affinity = mergeOverwrite $affinity .Values.affinity -}}
+{{- end -}}
 {{- if .Values.global.affinity -}}
   {{- $affinity = mergeOverwrite $affinity .Values.global.affinity -}}
 {{- end -}}
@@ -199,7 +202,10 @@ affinity:
 Merges local and global nodeSelector settings.
 */}}
 {{- define "apm-collector.nodeSelector" -}}
-{{- $nodeSelector := deepCopy .Values.nodeSelector -}}
+{{- $nodeSelector := dict -}}
+{{- if .Values.nodeSelector -}}
+  {{- $nodeSelector = merge $nodeSelector .Values.nodeSelector -}}
+{{- end -}}
 {{- if .Values.global.nodeSelector -}}
   {{- $nodeSelector = merge $nodeSelector .Values.global.nodeSelector -}}
 {{- end -}}

@@ -272,7 +272,7 @@ Global keys override local ones if duplicated.
   {{- $nodeSelector = mergeOverwrite $nodeSelector .Values.linuxNodeSelector -}}
 {{- end -}}
 {{- if .Values.global.nodeSelector -}}
-  {{- $nodeSelector = merge $nodeSelector .Values.global.nodeSelector -}}
+  {{- $nodeSelector = mergeOverwrite $nodeSelector .Values.global.nodeSelector -}}
 {{- end -}}
 {{- if $nodeSelector -}}
 nodeSelector:
