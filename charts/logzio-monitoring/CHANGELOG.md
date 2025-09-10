@@ -1,6 +1,23 @@
 # Changes by Version
 
 <!-- next version -->
+## 7.8.0
+- Upgrade `logzio-logs-collector` chart to `2.3.0`
+  - Support global setting for `nodeSelector` and `affinity`.
+  - Upgrade `otel/opentelemetry-collector-contrib` image to version `0.133.0`.
+- Upgrade `logzio-apm-collector` chart to `1.4.0`
+  - Support global setting for `nodeSelector` and `affinity`.
+  - Upgrade OpenTelemetry Collector from `0.129.0` to `0.133.0`.
+- Upgrade `logzio-k8s-events` chart to `2.0.0`
+  - Support global setting for `nodeSelector` and `affinity`.
+  - **Breaking changes:**
+    - Deprecate `nodeArchitectures` setting (can be configured directly under `affinity`).
+- Upgrade `logzio-k8s-telemetry` chart to `5.7.0`
+  - Support global setting for `nodeSelector` and `affinity`.
+- Upgrade `logzio-trivy` chart to `1.1.0`
+  - Support global setting for `nodeSelector` and `affinity`.
+  - Upgrade Trivy-Operator version to `0.28.0`.
+- Upgrade `opentelemetry-operator` chart to `~0.93.1`
 ## 7.7.0
 - Upgrade `logzio-k8s-telemetry` chart to `5.5.1`
   - **Breaking change:** 
@@ -43,7 +60,7 @@
 ## 7.4.0
 - Upgrade `logzio-k8s-telemetry` chart to `5.3.1`
 - Upgrade `logzio-logs-collector` chart to `2.2.0`
-- Upgrade `logzio-apm-telemetry` chart to `1.3.0`
+- Upgrade `logzio-apm-collector` chart to `1.3.0`
 - Add support for filter syntax (include/exclude) for metrics, logs, and traces in subcharts (logzio-k8s-telemetry, logzio-logs-collector, logzio-apm-collector).
   - Allows advanced filtering using `filters` key in values.yaml or via --set flags.
 
