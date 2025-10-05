@@ -2,7 +2,7 @@ apiVersion: v2
 name: logzio-monitoring
 description: logzio-monitoring allows you to ship logs, metrics, traces and security reports from your Kubernetes cluster using the OpenTelemetry collector for metrics and traces, Fluentd for logs, and Trivy for security reports.
 type: application
-version: 7.8.0
+version: 7.8.1
 
 
 sources:
@@ -13,7 +13,7 @@ dependencies:
     repository: "https://logzio.github.io/logzio-helm/"
     condition: logs.enabled
   - name: logzio-k8s-telemetry
-    version: "5.7.0"
+    version: "5.8.0"
     repository: "https://logzio.github.io/logzio-helm/"
     condition: logzio-k8s-telemetry.metrics.enabled
   - name: logzio-trivy
