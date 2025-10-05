@@ -7,7 +7,7 @@ sources:
   - https://github.com/kubernetes/kube-state-metrics
 dependencies:
   - name: kube-state-metrics
-    version: "4.24.0"
+    version: "6.4.0"
     repository: "https://prometheus-community.github.io/helm-charts"
     condition: kubeStateMetrics.enabled
 
