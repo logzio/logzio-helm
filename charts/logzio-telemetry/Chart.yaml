@@ -7,7 +7,7 @@ sources:
   - https://github.com/kubernetes/kube-state-metrics
 dependencies:
   - name: kube-state-metrics
-    version: "4.24.0"
+    version: "6.3.0"
     repository: "https://prometheus-community.github.io/helm-charts"
     condition: kubeStateMetrics.enabled
 
@@ -25,7 +25,7 @@ dependencies:
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
 
-version: 5.7.0
+version: 5.8.0
 
 
 # This is the version number of the application being deployed. This version number should be
