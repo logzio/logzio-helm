@@ -1,0 +1,141 @@
+# Default values for obi.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# Control the deployment of this chart by a parent chart
+enabled: false
+
+# Traces configuration
+# ref: https://opentelemetry.io/docs/zero-code/obi/configure/export-data/
+traces:
+  # OTLP endpoint for traces
+  endpoint: ""
+  # Optional: Authentication token (if provided, will be sent as "Authorization: Bearer <token>")
+  # A secret will be created and the token will be passed via environment variable
+  # ref: https://opentelemetry.io/docs/zero-code/obi/setup/kubernetes/#providing-secret-configuration
+  token: ""
+
+# Metrics configuration
+# ref: https://opentelemetry.io/docs/zero-code/obi/configure/export-data/
+metrics:
+  # OTLP endpoint for metrics
+  endpoint: ""
+  # Optional: Authentication token (if provided, will be sent as "Authorization: Bearer <token>")
+  # A secret will be created and the token will be passed via environment variable
+  token: ""
+
+image:
+  repository: otel/ebpf-instrument
+  tag: "main"
+  pullPolicy: IfNotPresent
+
+# Network flow metrics configuration (requires CAP_NET_ADMIN capability)
+# Uncomment to enable network observability features
+# ref: https://opentelemetry.io/docs/zero-code/obi/network/
+network:
+  enabled: false
+
+resources:
+  limits:
+    cpu: 400m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+rbac:
+  create: true
+
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
+  automount: true
+
+securityContext:
+  privileged: true
+  runAsUser: 0
+  runAsGroup: 0
+  readOnlyRootFilesystem: true
+  capabilities:
+    add:
+      - BPF
+      - PERFMON
+      - SYS_PTRACE
+      - DAC_READ_SEARCH
+      - CHECKPOINT_RESTORE
+    drop:
+      - ALL
+
+nodeSelector:
+  kubernetes.io/os: linux
+tolerations: []
+affinity: {}
+
+# Optional: Kubernetes Service for OBI internal metrics endpoint
+# Only created if config.internal_metrics.exporter is set to "prometheus"
+internalMetricsService:
+  enabled: true
+  type: ClusterIP
+  annotations: {}
+
+# Optional: ServiceMonitor for Prometheus Operator
+# Only created if config.internal_metrics.exporter is set to "prometheus"
+serviceMonitor:
+  enabled: false
+  namespace: ""
+  interval: 30s
+  scrapeTimeout: 10s
+  labels: {}
+  relabelings: []
+  metricRelabelings: []
+
+#######################################################################################################################
+# OBI Configuration
+# ref: https://opentelemetry.io/docs/zero-code/obi/configure/options/
+#######################################################################################################################
+config:
+  # Global configuration properties
+  # ref: https://opentelemetry.io/docs/zero-code/obi/configure/options/
+  log_level: INFO
+  shutdown_timeout: 10s
+  trace_printer: disabled
+
+  ebpf:
+    context_propagation: 'all'
+  
+  # Export configuration - separate endpoints for traces and metrics
+  # ref: https://opentelemetry.io/docs/zero-code/obi/configure/export-data/
+  otel_traces_export:
+    protocol: http/protobuf
+    endpoint: "{{ include \"obi.tracesEndpoint\" . }}"
+    insecure_skip_verify: false
+  
+  otel_metrics_export:
+    protocol: http/protobuf
+    endpoint: "{{ include \"obi.metricsEndpoint\" . }}"
+    insecure_skip_verify: false
+  
+  # Internal metrics reporter configuration
+  # ref: https://opentelemetry.io/docs/zero-code/obi/configure/internal-metrics-reporter/
+  internal_metrics:
+    exporter: prometheus
+    prometheus:
+      port: 8999
+      path: /internal/metrics
+  
+  # Service discovery configuration
+  # ref: https://opentelemetry.io/docs/zero-code/obi/configure/service-discovery/
+  discovery:
+    instrument:
+      - k8s_namespace: "*"
+    exclude_instrument: []
+    exclude_otel_instrumented_services: true
+    skip_go_specific_tracers: false
+  
+  # Enable Kubernetes attributes for metrics and traces
+  # ref: https://opentelemetry.io/docs/zero-code/obi/setup/kubernetes/#configuring-kubernetes-metadata-decoration
+  attributes:
+    kubernetes:
+      enable: true
+

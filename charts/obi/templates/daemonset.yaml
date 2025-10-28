@@ -1,0 +1,116 @@
+{{- if .Values.enabled }}
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ include "obi.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "obi.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "obi.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "obi.selectorLabels" . | nindent 8 }}
+      annotations:
+        checksum/config: {{ include "obi.config" . | sha256sum }}
+    spec:
+      serviceAccountName: {{ include "obi.serviceAccountName" . }}
+      hostPID: true
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: obi
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            - "--config=/config/config.yml"
+          env:
+            - name: OTEL_EBPF_CONFIG_PATH
+              value: /config/config.yml
+            - name: KUBE_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: OTEL_EBPF_HOSTNAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            {{- if .Values.traces.token }}
+            - name: OTEL_EXPORTER_OTLP_TRACES_HEADERS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "obi.fullname" . }}-auth
+                  key: traces-headers
+            {{- end }}
+            {{- if .Values.metrics.token }}
+            - name: OTEL_EXPORTER_OTLP_METRICS_HEADERS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "obi.fullname" . }}-auth
+                  key: metrics-headers
+            {{- end }}
+          securityContext:
+            {{- if .Values.network.enabled }}
+            {{- $securityContext := deepCopy .Values.securityContext }}
+            {{- $_ := set $securityContext.capabilities "add" (concat ($securityContext.capabilities.add | default list) (list "NET_ADMIN")) }}
+            {{- toYaml $securityContext | nindent 12 }}
+            {{- else }}
+            {{- toYaml .Values.securityContext | nindent 12 }}
+            {{- end }}
+          volumeMounts:
+            - name: config
+              mountPath: /config
+              readOnly: true
+            - name: bpffs
+              mountPath: /sys/fs/bpf
+            - name: kernel-debug
+              mountPath: /sys/kernel/debug
+              readOnly: true
+            - name: modules
+              mountPath: /lib/modules
+              readOnly: true
+            - name: var-run-obi
+              mountPath: /var/run/obi
+          {{- if and .Values.config.internal_metrics (eq .Values.config.internal_metrics.exporter "prometheus") }}
+          ports:
+            - name: metrics
+              containerPort: {{ .Values.config.internal_metrics.prometheus.port }}
+              protocol: TCP
+          {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "obi.fullname" . }}
+        - name: bpffs
+          hostPath:
+            path: /sys/fs/bpf
+            type: DirectoryOrCreate
+        - name: kernel-debug
+          hostPath:
+            path: /sys/kernel/debug
+            type: Directory
+        - name: modules
+          hostPath:
+            path: /lib/modules
+            type: Directory
+        - name: var-run-obi
+          emptyDir: {}
+{{- end }}
+
