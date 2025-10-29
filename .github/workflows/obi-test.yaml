@@ -79,10 +79,10 @@ jobs:
           --set collector.mode=standalone \
           logzio-k8s-telemetry .
 
-      - name: Verify telemetry collector deployment
+      - name: Verify logzio-telemetry collector daemonset
         run: |
-          kubectl rollout status deployment/logzio-k8s-telemetry-otel-collector-standalone --timeout=300s
-          kubectl get deployment/logzio-k8s-telemetry-otel-collector-standalone
+          kubectl rollout status daemonset/logzio-k8s-telemetry-otel-collector-ds --timeout=300s
+          kubectl get daemonset/logzio-k8s-telemetry-otel-collector-ds
 
       - name: Deploy OBI chart
         run: |
