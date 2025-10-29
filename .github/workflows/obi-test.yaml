@@ -95,7 +95,7 @@ jobs:
           --set config.log_level=DEBUG \
           --set config.trace_printer=text \
           --set traces.endpoint="http://logzio-apm-collector.default.svc:4317" \
-          --set metrics.endpoint="http://logzio-k8s-telemetry-otel-collector-ds.default.svc:4317" \
+          --set metrics.endpoint="http://logzio-k8s-telemetry-otel-collector.default.svc:4317" \
           obi .
 
       - name: Verify OBI deployment
