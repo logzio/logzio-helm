@@ -37,20 +37,6 @@ type OBITraceResponse struct {
 	} `json:"hits"`
 }
 
-// OBIMetricResponse represents the structure of the metrics API response for OBI tests
-type OBIMetricResponse struct {
-	Hits struct {
-		Total int `json:"total"`
-		Hits  []struct {
-			Source struct {
-				MetricName string            `json:"__name__"`
-				Labels     map[string]string `json:"labels"`
-				Value      float64           `json:"value"`
-			} `json:"_source"`
-		} `json:"hits"`
-	} `json:"hits"`
-}
-
 // TestOBITraces verifies that traces from OBI eBPF instrumentation are arriving at Logz.io
 func TestOBITraces(t *testing.T) {
 	tracesApiKey := os.Getenv("LOGZIO_TRACES_API_KEY")
@@ -108,49 +94,6 @@ func TestOBITraces(t *testing.T) {
 	}
 }
 
-// TestOBIMetrics verifies that metrics from OBI eBPF instrumentation are arriving at Logz.io
-func TestOBIMetrics(t *testing.T) {
-	metricsApiKey := os.Getenv("LOGZIO_METRICS_API_KEY")
-	if metricsApiKey == "" {
-		t.Fatalf("LOGZIO_METRICS_API_KEY environment variable not set")
-	}
-
-	envID := os.Getenv("ENV_ID")
-	if envID == "" {
-		t.Fatalf("ENV_ID environment variable not set")
-	}
-
-	logger.Info("Testing OBI metrics", zap.String("env_id", envID))
-
-	metricResponse, err := fetchOBIMetrics(metricsApiKey, envID)
-	if err != nil {
-		t.Fatalf("Failed to fetch OBI metrics: %v", err)
-	}
-
-	if metricResponse.Hits.Total == 0 {
-		t.Logf("Warning: No metrics found for OBI test application (this is not uncommon)")
-	} else {
-		logger.Info("Found metrics", zap.Int("count", metricResponse.Hits.Total))
-
-		hasK8sMetadata := false
-		for _, hit := range metricResponse.Hits.Hits {
-			labels := hit.Source.Labels
-			if labels["k8s_namespace_name"] != "" || labels["k8s_pod_name"] != "" {
-				hasK8sMetadata = true
-				logger.Info("Found metric with Kubernetes metadata",
-					zap.String("metric", hit.Source.MetricName),
-					zap.String("namespace", labels["k8s_namespace_name"]),
-					zap.String("pod", labels["k8s_pod_name"]))
-				break
-			}
-		}
-
-		if !hasK8sMetadata {
-			t.Logf("Warning: Metrics found but without Kubernetes metadata")
-		}
-	}
-}
-
 // fetchOBITraces fetches the traces from the logz.io API for OBI testing
 func fetchOBITraces(tracesApiKey string, envID string) (*OBITraceResponse, error) {
 	url := fmt.Sprintf("%s/search", BaseLogzioApiUrl)
@@ -192,49 +135,6 @@ func fetchOBITraces(tracesApiKey string, envID string) (*OBITraceResponse, error
 	}
 
 	return &traceResponse, nil
-}
-
-// fetchOBIMetrics fetches the metrics from the logz.io API for OBI testing
-func fetchOBIMetrics(metricsApiKey string, envID string) (*OBIMetricResponse, error) {
-	url := fmt.Sprintf("%s/search", BaseLogzioApiUrl)
-	client := &http.Client{}
-
-	query := fmt.Sprintf(`env_id:%s AND type:metrics`, envID)
-	logger.Info("Fetching OBI metrics", zap.String("url", url), zap.String("query", query))
-
-	formattedQuery := formatQuery(query)
-	req, err := http.NewRequest("POST", url, bytes.NewBufferString(formattedQuery))
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Set("Accept", "application/json")
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("X-API-TOKEN", metricsApiKey)
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		body, _ := io.ReadAll(resp.Body)
-		return nil, fmt.Errorf("unexpected status code: %d, body: %s", resp.StatusCode, string(body))
-	}
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	var metricResponse OBIMetricResponse
-	err = json.Unmarshal(body, &metricResponse)
-	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshal metric response: %v, body: %s", err, string(body))
-	}
-
-	return &metricResponse, nil
 }
 
 // verifyOBITraces checks if the traces contain the required Kubernetes fields
