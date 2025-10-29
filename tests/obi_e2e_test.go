@@ -19,19 +19,10 @@ type OBITraceResponse struct {
 		Hits  []struct {
 			Source struct {
 				Process struct {
-					Tag struct {
-						KubernetesNamespace string `json:"k8s@namespace@name"`
-						KubernetesNode      string `json:"k8s@node@name"`
-						Pod                 string `json:"k8s@pod@name"`
-						TelemetrySdkName    string `json:"telemetry@sdk@name"`
-					} `json:"tag"`
+					Tag map[string]interface{} `json:"tag"`
 				} `json:"process"`
-				Tags []struct {
-					Key   string      `json:"key"`
-					Type  string      `json:"type"`
-					Value interface{} `json:"value"`
-				} `json:"tags"`
-				OperationName string `json:"operationName"`
+				JaegerTag     map[string]interface{} `json:"JaegerTag"`
+				OperationName string                 `json:"operationName"`
 			} `json:"_source"`
 		} `json:"hits"`
 	} `json:"hits"`
@@ -73,7 +64,12 @@ func TestOBITraces(t *testing.T) {
 	hasEBPFTraces := false
 	for _, hit := range traceResponse.Hits.Hits {
 		operationName := hit.Source.OperationName
-		telemetrySdkName := hit.Source.Process.Tag.TelemetrySdkName
+
+		// Get telemetry SDK name from process.tag map
+		var telemetrySdkName string
+		if sdkName, ok := hit.Source.Process.Tag["telemetry@sdk@name"]; ok {
+			telemetrySdkName, _ = sdkName.(string)
+		}
 
 		logger.Info("Found trace",
 			zap.String("operation", operationName),
@@ -148,17 +144,22 @@ func verifyOBITraces(traceResponse *OBITraceResponse, requiredFields []string) [
 		missingFieldsMap[field] = false
 	}
 
+	// Map of field names to check
+	fieldMap := map[string]string{
+		"kubernetes_namespace": "k8s@namespace@name",
+		"kubernetes_node":      "k8s@node@name",
+		"pod":                  "k8s@pod@name",
+	}
+
 	for _, hit := range traceResponse.Hits.Hits {
 		tag := hit.Source.Process.Tag
-		if tag.KubernetesNamespace == "" {
-			missingFieldsMap["kubernetes_namespace"] = true
+
+		for fieldName, tagKey := range fieldMap {
+			if value, ok := tag[tagKey]; !ok || value == "" || value == nil {
+				missingFieldsMap[fieldName] = true
+			}
 		}
-		if tag.KubernetesNode == "" {
-			missingFieldsMap["kubernetes_node"] = true
-		}
-		if tag.Pod == "" {
-			missingFieldsMap["pod"] = true
-		}
+
 		// Only check first trace
 		break
 	}
