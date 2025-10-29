@@ -1,0 +1,189 @@
+name: Test `obi` chart
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'charts/obi/Chart.yaml'
+      - 'charts/obi/templates/**'
+      - 'charts/obi/values.yaml'
+jobs:
+  test-helm-chart:
+    name: Test OBI Chart on Kind
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate random id
+        id: random_id
+        run: echo "rand=$(echo $RANDOM)" >> $GITHUB_OUTPUT
+
+      - name: Set ENV_ID
+        run: echo "ENV_ID=obi-test-run-${{ steps.random_id.outputs.rand }}" >> $GITHUB_ENV
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.20'
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4.3.0
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Install Kind
+        run: |
+          curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.26.0/kind-Linux-amd64"
+          chmod +x ./kind
+          sudo mv ./kind /usr/local/bin/kind
+
+      - name: Create Kind cluster
+        run: |
+          kind create cluster --name kind-${{ github.run_id }}
+          kubectl cluster-info
+
+      - name: Wait for node to be ready
+        run: |
+          echo "Waiting for nodes to be ready..."
+          kubectl wait --for=condition=Ready nodes --all --timeout=300s
+          echo "Node status:"
+          kubectl get nodes -o wide
+
+      - name: Deploy logzio-apm-collector
+        run: |
+          cd charts/logzio-apm-collector
+          helm upgrade --install \
+          --set enabled=true \
+          --set global.logzioTracesToken=${{ secrets.LOGZIO_TRACES_TOKEN }} \
+          --set global.logzioRegion=us \
+          --set global.env_id=${{ env.ENV_ID }} \
+          logzio-apm-collector .
+
+      - name: Verify APM collector deployment
+        run: |
+          kubectl rollout status deployment/logzio-apm-collector --timeout=300s
+          kubectl get deployment/logzio-apm-collector
+
+      - name: Deploy logzio-telemetry
+        run: |
+          cd charts/logzio-telemetry
+          helm dependency build
+          helm upgrade --install \
+          --set metrics.enabled=true \
+          --set global.logzioMetricsToken=${{ secrets.LOGZIO_METRICS_TOKEN }} \
+          --set global.logzioRegion=us \
+          --set global.env_id=${{ env.ENV_ID }} \
+          --set collector.mode=standalone \
+          logzio-k8s-telemetry .
+
+      - name: Verify telemetry collector deployment
+        run: |
+          kubectl rollout status deployment/logzio-k8s-telemetry-otel-collector-standalone --timeout=300s
+          kubectl get deployment/logzio-k8s-telemetry-otel-collector-standalone
+
+      - name: Deploy OBI chart
+        run: |
+          cd charts/obi
+          helm upgrade --install \
+          --set enabled=true \
+          --set traces.endpoint="http://logzio-apm-collector.default.svc:4317" \
+          --set metrics.endpoint="http://logzio-k8s-telemetry-otel-collector-standalone.default.svc:4317" \
+          obi .
+
+      - name: Verify OBI deployment
+        run: |
+          kubectl rollout status daemonset/obi --timeout=300s
+          kubectl get daemonset/obi
+          echo "=== OBI DaemonSet Description ==="
+          kubectl describe daemonset/obi
+          echo "=== OBI Pods ==="
+          kubectl get pods -l app.kubernetes.io/name=obi
+
+      - name: Check OBI logs
+        run: |
+          echo "=== OBI Logs (Initial) ==="
+          kubectl logs daemonset/obi --tail=50
+
+      - name: Deploy test application
+        run: |
+          export ENV_ID="${{ env.ENV_ID }}"
+          envsubst < tests/resources/obi-test-app.yaml | kubectl apply -f -
+          kubectl rollout status deployment/obi-test-app --timeout=300s
+
+      - name: Verify test application
+        run: |
+          kubectl get deployment/obi-test-app
+          kubectl get service/obi-test-app
+          kubectl get pods -l app=obi-test-app
+
+      - name: Deploy traffic generator
+        run: |
+          export ENV_ID="${{ env.ENV_ID }}"
+          export RELEASE_NAME="obi"
+          export NAMESPACE="default"
+          envsubst < tests/resources/obi-traffic-gen.yaml | kubectl apply -f -
+          kubectl rollout status deployment/obi-traffic-gen --timeout=300s
+
+      - name: Show traffic generator logs
+        run: |
+          kubectl logs deployment/obi-traffic-gen --tail=20
+
+      - name: Show OBI logs after traffic
+        run: |
+          echo "=== OBI Logs (After Traffic) ==="
+          kubectl logs daemonset/obi --tail=100
+
+      - name: Show APM collector logs
+        run: |
+          echo "=== APM Collector Logs ==="
+          kubectl logs deployment/logzio-apm-collector --tail=50
+
+      - name: Show Telemetry collector logs
+        run: |
+          echo "=== Telemetry Collector Logs ==="
+          kubectl logs deployment/logzio-k8s-telemetry-otel-collector-standalone --tail=50
+
+      - name: Sleep for data ingestion
+        run: sleep 180
+
+      - name: Run Go Tests
+        env:
+          LOGZIO_TRACES_API_KEY: ${{ secrets.LOGZIO_TRACES_API_KEY }}
+          LOGZIO_METRICS_API_KEY: ${{ secrets.LOGZIO_METRICS_API_KEY }}
+        run: |
+          go get go.uber.org/zap
+          go test -v ./tests/obi_e2e_test.go ./tests/common.go
+
+      - name: Debug test failure (if any)
+        if: failure()
+        run: |
+          echo "=== Test failure detected - gathering diagnostic information ==="
+          echo "=== All Pods Status ==="
+          kubectl get pods -o wide
+          echo "=== Events ==="
+          kubectl get events --sort-by=.metadata.creationTimestamp --no-headers | tail -30
+          echo "=== OBI Extended Logs ==="
+          kubectl logs daemonset/obi --tail=200
+          echo "=== APM Collector Extended Logs ==="
+          kubectl logs deployment/logzio-apm-collector --tail=100
+          echo "=== Telemetry Collector Extended Logs ==="
+          kubectl logs deployment/logzio-k8s-telemetry-otel-collector-standalone --tail=100
+          echo "=== Test App Logs ==="
+          kubectl logs deployment/obi-test-app --tail=50
+          echo "=== Traffic Generator Logs ==="
+          kubectl logs deployment/obi-traffic-gen --tail=50
+
+      - name: Cleanup Environment
+        if: always()
+        run: |
+          helm uninstall obi || true
+          helm uninstall logzio-k8s-telemetry || true
+          helm uninstall logzio-apm-collector || true
+
+      - name: Delete Kind cluster
+        if: always()
+        run: kind delete cluster --name kind-${{ github.run_id }}
+
