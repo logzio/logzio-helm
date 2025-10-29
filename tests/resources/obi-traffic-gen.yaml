@@ -43,9 +43,9 @@ spec:
                 http://obi-test-app.${NAMESPACE}.svc.cluster.local/ || echo "Request failed"
               sleep 2
               
-              # Also test /health endpoint if available
+              # Additional request for more traffic variety
               curl -s -o /dev/null -w "HTTP Status: %{http_code}, Time: %{time_total}s\n" \
-                http://obi-test-app.${NAMESPACE}.svc.cluster.local/health || true
+                http://obi-test-app.${NAMESPACE}.svc.cluster.local/ || true
               sleep 3
             done
         env:
