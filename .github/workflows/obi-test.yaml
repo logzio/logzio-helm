@@ -88,6 +88,7 @@ jobs:
           cd charts/obi
           helm upgrade --install \
           --set enabled=true \
+          --set config.traces_printer=text \
           --set traces.endpoint="http://logzio-apm-collector.default.svc:4317" \
           --set metrics.endpoint="http://logzio-k8s-telemetry-otel-collector-ds.default.svc:4317" \
           obi .
@@ -133,7 +134,7 @@ jobs:
       - name: Show OBI logs after traffic
         run: |
           echo "=== OBI Logs (After Traffic) ==="
-          kubectl logs daemonset/obi-obi --tail=100
+          kubectl logs daemonset/obi-obi
 
       - name: Show APM collector logs
         run: |
