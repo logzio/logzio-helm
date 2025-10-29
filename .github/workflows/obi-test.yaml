@@ -143,7 +143,7 @@ jobs:
       - name: Show Telemetry collector logs
         run: |
           echo "=== Telemetry Collector Logs ==="
-          kubectl logs deployment/logzio-k8s-telemetry-otel-collector-standalone --tail=50
+          kubectl logs daemonset/logzio-k8s-telemetry-otel-collector-ds --tail=50
 
       - name: Sleep for data ingestion
         run: sleep 180
@@ -169,7 +169,7 @@ jobs:
           echo "=== APM Collector Extended Logs ==="
           kubectl logs deployment/logzio-apm-collector --tail=100
           echo "=== Telemetry Collector Extended Logs ==="
-          kubectl logs deployment/logzio-k8s-telemetry-otel-collector-standalone --tail=100
+          kubectl logs daemonset/logzio-k8s-telemetry-otel-collector-ds --tail=100
           echo "=== Test App Logs ==="
           kubectl logs deployment/obi-test-app --tail=50
           echo "=== Traffic Generator Logs ==="
