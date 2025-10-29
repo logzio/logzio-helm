@@ -131,10 +131,6 @@ jobs:
         run: |
           kubectl logs deployment/obi-traffic-gen --tail=20
 
-      - name: Show OBI logs after traffic
-        run: |
-          echo "=== OBI Logs (After Traffic) ==="
-          kubectl logs daemonset/obi-obi
 
       - name: Show APM collector logs
         run: |
@@ -148,6 +144,11 @@ jobs:
 
       - name: Sleep for data ingestion
         run: sleep 180
+
+      - name: Show OBI logs after traffic
+        run: |
+          echo "=== OBI Logs (After Traffic) ==="
+          kubectl logs daemonset/obi-obi
 
       - name: Run Go Tests
         env:
