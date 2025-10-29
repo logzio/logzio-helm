@@ -9,7 +9,7 @@ enabled: false
 # ref: https://opentelemetry.io/docs/zero-code/obi/configure/export-data/
 traces:
   # OTLP endpoint for traces
-  endpoint: "http://logzio-apm-collector.monitoring.svc:4317"
+  endpoint: "http://logzio-apm-collector.monitoring.svc:4318"
   # Optional: Authentication token for Direct OTLP Export(if provided, will be sent as "Authorization: Bearer <token>")
   # A secret will be created and the token will be passed via environment variable
   # ref: https://opentelemetry.io/docs/zero-code/obi/setup/kubernetes/#providing-secret-configuration
@@ -19,7 +19,7 @@ traces:
 # ref: https://opentelemetry.io/docs/zero-code/obi/configure/export-data/
 metrics:
   # OTLP endpoint for metrics
-  endpoint: "http://logzio-monitoring-otel-collector.monitoring.svc:4317"
+  endpoint: "http://logzio-monitoring-otel-collector.monitoring.svc:4318"
   # Optional: Authentication token  for Direct OTLP Export(if provided, will be sent as "Authorization: Bearer <token>")
   # A secret will be created and the token will be passed via environment variable
   token: ""
