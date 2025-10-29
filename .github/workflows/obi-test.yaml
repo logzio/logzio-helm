@@ -94,12 +94,12 @@ jobs:
 
       - name: Verify OBI deployment
         run: |
-          kubectl rollout status daemonset/obi --timeout=300s
+          kubectl rollout status daemonset/obi-obi --timeout=300s
           kubectl get daemonset/obi-obi
           echo "=== OBI DaemonSet Description ==="
           kubectl describe daemonset/obi-obi
           echo "=== OBI Pods ==="
-          kubectl get pods -l app.kubernetes.io/name=obi
+          kubectl get pods -l app.kubernetes.io/name=obi-obi
 
       - name: Check OBI logs
         run: |
