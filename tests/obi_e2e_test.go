@@ -144,11 +144,11 @@ func verifyOBITraces(traceResponse *OBITraceResponse, requiredFields []string) [
 		missingFieldsMap[field] = false
 	}
 
-	// Map of field names to check
+	// TODO change to simple implementation
 	fieldMap := map[string]string{
-		"kubernetes_namespace": "k8s@namespace@name",
-		"kubernetes_node":      "k8s@node@name",
-		"pod":                  "k8s@pod@name",
+		"kubernetes_namespace": "kubernetes_namespace",
+		"kubernetes_node":      "kubernetes_node",
+		"pod":                  "pod",
 	}
 
 	for _, hit := range traceResponse.Hits.Hits {
