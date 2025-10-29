@@ -76,7 +76,6 @@ jobs:
           --set global.logzioMetricsToken=${{ secrets.LOGZIO_METRICS_TOKEN }} \
           --set global.logzioRegion=us \
           --set global.env_id=${{ env.ENV_ID }} \
-          --set collector.mode=standalone \
           logzio-k8s-telemetry .
 
       - name: Verify logzio-telemetry collector daemonset
@@ -90,7 +89,7 @@ jobs:
           helm upgrade --install \
           --set enabled=true \
           --set traces.endpoint="http://logzio-apm-collector.default.svc:4317" \
-          --set metrics.endpoint="http://logzio-k8s-telemetry-otel-collector-standalone.default.svc:4317" \
+          --set metrics.endpoint="http://logzio-k8s-telemetry-otel-collector-ds.default.svc:4317" \
           obi .
 
       - name: Verify OBI deployment
