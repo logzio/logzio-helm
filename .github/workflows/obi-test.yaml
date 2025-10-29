@@ -82,13 +82,18 @@ jobs:
         run: |
           kubectl rollout status daemonset/logzio-k8s-telemetry-otel-collector-ds --timeout=300s
           kubectl get daemonset/logzio-k8s-telemetry-otel-collector-ds
+          echo "=== Available Services ==="
+          kubectl get svc
+          echo "=== Telemetry Service Details ==="
+          kubectl describe svc -l app.kubernetes.io/name=otel-collector
 
       - name: Deploy OBI chart
         run: |
           cd charts/obi
           helm upgrade --install \
           --set enabled=true \
-          --set config.traces_printer=text \
+          --set config.log_level=DEBUG \
+          --set config.trace_printer=text \
           --set traces.endpoint="http://logzio-apm-collector.default.svc:4317" \
           --set metrics.endpoint="http://logzio-k8s-telemetry-otel-collector-ds.default.svc:4317" \
           obi .
@@ -100,7 +105,7 @@ jobs:
           echo "=== OBI DaemonSet Description ==="
           kubectl describe daemonset/obi-obi
           echo "=== OBI Pods ==="
-          kubectl get pods -l app.kubernetes.io/name=obi-obi
+          kubectl get pods -l app.kubernetes.io/component=obi
 
       - name: Check OBI logs
         run: |
