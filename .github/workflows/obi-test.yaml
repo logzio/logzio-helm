@@ -95,16 +95,16 @@ jobs:
       - name: Verify OBI deployment
         run: |
           kubectl rollout status daemonset/obi --timeout=300s
-          kubectl get daemonset/obi
+          kubectl get daemonset/obi-obi
           echo "=== OBI DaemonSet Description ==="
-          kubectl describe daemonset/obi
+          kubectl describe daemonset/obi-obi
           echo "=== OBI Pods ==="
           kubectl get pods -l app.kubernetes.io/name=obi
 
       - name: Check OBI logs
         run: |
           echo "=== OBI Logs (Initial) ==="
-          kubectl logs daemonset/obi --tail=50
+          kubectl logs daemonset/obi-obi --tail=50
 
       - name: Deploy test application
         run: |
@@ -133,7 +133,7 @@ jobs:
       - name: Show OBI logs after traffic
         run: |
           echo "=== OBI Logs (After Traffic) ==="
-          kubectl logs daemonset/obi --tail=100
+          kubectl logs daemonset/obi-obi --tail=100
 
       - name: Show APM collector logs
         run: |
@@ -165,7 +165,7 @@ jobs:
           echo "=== Events ==="
           kubectl get events --sort-by=.metadata.creationTimestamp --no-headers | tail -30
           echo "=== OBI Extended Logs ==="
-          kubectl logs daemonset/obi --tail=200
+          kubectl logs daemonset/obi-obi --tail=200
           echo "=== APM Collector Extended Logs ==="
           kubectl logs deployment/logzio-apm-collector --tail=100
           echo "=== Telemetry Collector Extended Logs ==="
