@@ -3,11 +3,7 @@ Create a default fully qualified app name for OBI.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 */}}
 {{- define "obi.fullname" -}}
-{{- if .Values.serviceAccount.name -}}
-{{- .Values.serviceAccount.name | trunc 63 | trimSuffix "-" -}}
-{{- else -}}
 {{- printf "%s-obi" .Release.Name | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
 {{- end -}}
 
 {{/* Common labels for OBI */}}
@@ -50,4 +46,9 @@ app.kubernetes.io/component: obi
 {{- else -}}
   {{- default "default" .Values.serviceAccount.name -}}
 {{- end -}}
+{{- end -}}
+
+{{/* Secret name for OBI authentication */}}
+{{- define "obi.secretName" -}}
+{{- printf "%s-auth" (include "obi.fullname" .) -}}
 {{- end -}}

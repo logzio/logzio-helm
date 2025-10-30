@@ -54,14 +54,14 @@ spec:
             - name: OTEL_EXPORTER_OTLP_TRACES_HEADERS
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "obi.fullname" . }}-auth
+                  name: {{ include "obi.secretName" . }}
                   key: traces-headers
             {{- end }}
             {{- if .Values.metrics.token }}
             - name: OTEL_EXPORTER_OTLP_METRICS_HEADERS
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "obi.fullname" . }}-auth
+                  name: {{ include "obi.secretName" . }}
                   key: metrics-headers
             {{- end }}
           securityContext:
