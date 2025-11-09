@@ -19,8 +19,10 @@ spec:
     spec:
       serviceAccountName: {{ include "obi.serviceAccountName" . }}
       hostPID: true
+      {{- if .Values.hostNetwork }}
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
+      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -84,6 +86,9 @@ spec:
             - name: modules
               mountPath: /lib/modules
               readOnly: true
+            - name: cgroup
+              mountPath: /sys/fs/cgroup
+              readOnly: true
             - name: var-run-obi
               mountPath: /var/run/obi
           {{- if and .Values.config.internal_metrics (eq .Values.config.internal_metrics.exporter "prometheus") }}
@@ -109,6 +114,10 @@ spec:
         - name: modules
           hostPath:
             path: /lib/modules
+            type: Directory
+        - name: cgroup
+          hostPath:
+            path: /sys/fs/cgroup
             type: Directory
         - name: var-run-obi
           emptyDir: {}

@@ -92,6 +92,19 @@ kubectl logs -n <namespace> -l app.kubernetes.io/name=obi
 kubectl get configmap -n <namespace> obi -o yaml
 ```
 
+### Prerequisites Check
+- Verify kernel version: `uname -r` (should be 5.8+)
+- Check BPF filesystem: `mount | grep bpf`
+- Ensure privileged security context is allowed
+
+## Known Limitations
+
+### Context Propagation
+- **gRPC/HTTP/2**: Network-level propagation doesn't support these protocols. Go services can use library-level injection.
+- **Polyglot Services**: Full support for Go; partial support for other languages (HTTP/1.x only).
+- **Encrypted Traffic**: HTTPS packet inspection not possible; use library injection or service mesh.
+
+See [CONTEXT_PROPAGATION.md](./CONTEXT_PROPAGATION.md) for detailed information and workarounds.
 
 ## Uninstalling
 ```bash

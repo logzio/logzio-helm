@@ -29,11 +29,16 @@ image:
   tag: "main"
   pullPolicy: IfNotPresent
 
+# Enable host network for network-level context propagation
+# Required for packet-level trace context injection/extraction
+# ref: https://opentelemetry.io/docs/zero-code/obi/distributed-traces/
+hostNetwork: true 
+
 # Network flow metrics configuration (requires CAP_NET_ADMIN capability)
 # Uncomment to enable network observability features
 # ref: https://opentelemetry.io/docs/zero-code/obi/network/
 network:
-  enabled: false
+  enabled: true
 
 resources:
   limits:
@@ -64,6 +69,7 @@ securityContext:
       - SYS_PTRACE
       - DAC_READ_SEARCH
       - CHECKPOINT_RESTORE
+      # - NET_ADMIN is added conditionally when network.enabled=true
     drop:
       - ALL
 
