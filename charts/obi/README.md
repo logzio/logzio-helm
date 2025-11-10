@@ -27,7 +27,7 @@ helm install -n monitoring --create-namespace \
 obi logzio-helm/obi
 ```
 
-### Install the chart for direct otlp export tp logz.io
+### Install the chart for direct otlp export to logz.io
 ```bash
 helm install -n monitoring --create-namespace \
 --set enabled=true \
