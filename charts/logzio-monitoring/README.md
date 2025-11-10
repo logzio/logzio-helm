@@ -11,6 +11,7 @@ This project packages the following Helm Charts:
 - [logzio-trivy](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-trivy) for security reports via Trivy operator.
 - [logzio-k8s-events](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-k8s-events) for Kubernetes deployment events.
 - [logzio-apm-collector](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-apm-collector) for traces, span metrics and service graph via OpenTelemetry Collector.
+- [obi](https://github.com/logzio/logzio-helm/tree/master/charts/obi) for zero-code auto-instrumentation using eBPF.
 
 ### Kubernetes versions compatibility
 
@@ -114,6 +115,7 @@ Full list of available configuration per sub chart:
 - [logzio-apm-collector Chart](https://github.com/logzio/logzio-helm/blob/master/charts/logzio-apm-collector/VALUES.md)
 - [logzio-trivy Chart](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-trivy#further-configuration)
 - [logzio-k8s-events Chart](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-k8s-events)
+- [obi Chart](https://github.com/logzio/logzio-helm/tree/master/charts/obi#configuration)
 
 
 If you want to modify one of the values, use the `--set` flag, and add the chart name as prefix.
@@ -294,6 +296,39 @@ In these cases we can use the following `--set` commands to use an alternative i
 --set logzio-fluentd.image=public.ecr.aws/logzio/logzio-fluentd
 --set logzio-trivy.image=public.ecr.aws/logzio/trivy-to-logzio
 ```
+
+## Enable eBPF Auto-instrumentation (OBI)
+
+OpenTelemetry eBPF Instrumentation (OBI) provides zero-code auto-instrumentation for Kubernetes applications using eBPF technology. It automatically captures HTTP/S requests, gRPC calls, and database queries without requiring code changes or application restarts.
+
+### Enable OBI
+
+To enable OBI with the logzio-monitoring chart:
+
+```shell
+helm install logzio-monitoring logzio-helm/logzio-monitoring \
+  --set obi.enabled=true \
+  --set logzio-apm-collector.enabled=true \
+  --set global.logzioTracesToken="<<TRACES-SHIPPING-TOKEN>>" \
+  --set global.logzioRegion="<<LOGZIO-REGION>>"
+```
+
+OBI will automatically send traces to the `logzio-apm-collector` service within the cluster.
+
+### Configuration Options
+
+Override OBI settings:
+
+```shell
+--set obi.hostNetwork=true \
+--set obi.network.enabled=true
+```
+
+> [!NOTE]
+> For detailed OBI configuration options and context propagation settings, see the [OBI Chart documentation](https://github.com/logzio/logzio-helm/tree/master/charts/obi).
+
+> [!WARNING]
+> OBI has limitations with gRPC and HTTP/2 protocols. See [Context Propagation Guide](https://github.com/logzio/logzio-helm/blob/master/charts/obi/CONTEXT_PROPAGATION.md) for details.
 
 ## Enable Auto-instrumentation
 
