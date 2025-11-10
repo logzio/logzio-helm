@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: obi-traffic-gen
+  labels:
+    app: obi-traffic-gen
+    env_id: ${ENV_ID}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: obi-traffic-gen
+  template:
+    metadata:
+      labels:
+        app: obi-traffic-gen
+        env_id: ${ENV_ID}
+    spec:
+      containers:
+      - name: traffic-generator
+        image: curlimages/curl:8.5.0
+        command:
+          - /bin/sh
+          - -c
+          - |
+            echo "Starting traffic generator for ENV_ID: ${ENV_ID}"
+            echo "Target: obi-test-app.${NAMESPACE}.svc.cluster.local"
+            
+            # Wait for service to be available
+            for i in $(seq 1 30); do
+              if curl -s -o /dev/null -w "%{http_code}" http://obi-test-app.${NAMESPACE}.svc.cluster.local/ | grep -q "200"; then
+                echo "Service is ready!"
+                break
+              fi
+              echo "Waiting for service to be ready... ($i/30)"
+              sleep 2
+            done
+            
+            # Generate continuous traffic
+            while true; do
+              echo "$(date): Sending request to obi-test-app"
+              curl -s -o /dev/null -w "HTTP Status: %{http_code}, Time: %{time_total}s\n" \
+                http://obi-test-app.${NAMESPACE}.svc.cluster.local/ || echo "Request failed"
+              sleep 2
+              
+              # Additional request for more traffic variety
+              curl -s -o /dev/null -w "HTTP Status: %{http_code}, Time: %{time_total}s\n" \
+                http://obi-test-app.${NAMESPACE}.svc.cluster.local/ || true
+              sleep 3
+            done
+        env:
+        - name: ENV_ID
+          value: "${ENV_ID}"
+        - name: NAMESPACE
+          value: "${NAMESPACE}"
+        resources:
+          requests:
+            memory: "32Mi"
+            cpu: "50m"
+          limits:
+            memory: "64Mi"
+            cpu: "100m"
+

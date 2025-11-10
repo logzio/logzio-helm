@@ -1,0 +1,27 @@
+{{- if .Values.enabled }}
+{{- if and .Values.config.internal_metrics (eq .Values.config.internal_metrics.exporter "prometheus") }}
+{{- if .Values.internalMetricsService.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "obi.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "obi.labels" . | nindent 4 }}
+  {{- with .Values.internalMetricsService.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.internalMetricsService.type }}
+  selector:
+    {{- include "obi.selectorLabels" . | nindent 4 }}
+  ports:
+    - name: metrics
+      port: {{ .Values.config.internal_metrics.prometheus.port }}
+      targetPort: metrics
+      protocol: TCP
+{{- end }}
+{{- end }}
+{{- end }}
+
