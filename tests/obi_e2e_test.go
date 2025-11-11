@@ -95,7 +95,6 @@ func fetchOBITraces(tracesApiKey string, envID string) (*OBITraceResponse, error
 	url := fmt.Sprintf("%s/search", BaseLogzioApiUrl)
 	client := &http.Client{}
 
-	// Query specifically for OBI test app traces to avoid picking up otel-demo traces
 	query := fmt.Sprintf(`JaegerTag.env_id:%s AND type:jaegerSpan AND (JaegerTag.kubernetes@pod:obi-test-app* OR process.serviceName:obi-test-app OR JaegerTag.app:obi-test-app)`, envID)
 	logger.Info("Fetching OBI traces", zap.String("url", url), zap.String("query", query))
 
