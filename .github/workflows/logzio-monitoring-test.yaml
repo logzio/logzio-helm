@@ -239,29 +239,7 @@ jobs:
           kubectl rollout status deployment/obi-traffic-gen --timeout=300s
 
       - name: Sleep
-        run: sleep 180
-
-      - name: Show OBI debugging information
-        if: matrix.environment == 'eks-linux'
-        run: |
-          echo "=== OBI Pods Status ==="
-          kubectl get pods -l app.kubernetes.io/name=obi -o wide
-          
-          echo ""
-          echo "=== OBI DaemonSet Logs ==="
-          kubectl logs daemonset/logzio-monitoring-obi
-          
-          echo ""
-          echo "=== OBI Test App Logs ==="
-          kubectl logs deployment/obi-test-app --tail=50
-          
-          echo ""
-          echo "=== OBI Traffic Generator Logs ==="
-          kubectl logs deployment/obi-traffic-gen --tail=50
-          
-          echo ""
-          echo "=== OBI ConfigMap ==="
-          kubectl get configmap logzio-monitoring-obi -o yaml
+        run: sleep 240
 
       - name: Run logs tests
         id: logs_tests
