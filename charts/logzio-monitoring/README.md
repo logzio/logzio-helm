@@ -103,6 +103,7 @@ However, you can customize the chart by using the `--set` flag in your `helm ins
 | `logs.enabled` | Enable to send Kubernetes logs | `false` |
 | `securityReport.enabled` | Enable to send Kubernetes security logs | `false` |
 | `deployEvents.enabled` | Enable to send Kubernetes deploy events logs | `false` |
+| `obi.enabled`  | Enable opentelemetry epf instrumentation daemonset (obi) |
 
 ### Modifying Chart Configurations
 
