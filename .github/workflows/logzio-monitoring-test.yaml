@@ -94,6 +94,7 @@ jobs:
           --set global.logzioTracesToken='${{ secrets.LOGZIO_TRACES_TOKEN }}' \
           --set global.logzioSpmToken='${{ secrets.LOGZIO_METRICS_TOKEN }}' \
           --set obi.enabled=true \
+          --set obi.config.trace_printer=text \
           --set global.tolerations[0].key='example-global-key' \
           --set global.tolerations[0].operator='Equal' \
           --set global.tolerations[0].value='example-global-value' \
@@ -240,6 +241,28 @@ jobs:
 
       - name: Sleep
         run: sleep 180
+
+      - name: Show OBI debugging information
+        if: matrix.environment == 'eks-linux'
+        run: |
+          echo "=== OBI Pods Status ==="
+          kubectl get pods -l app.kubernetes.io/name=obi -o wide
+          
+          echo ""
+          echo "=== OBI DaemonSet Logs ==="
+          kubectl logs daemonset/logzio-monitoring-obi --tail=200
+          
+          echo ""
+          echo "=== OBI Test App Logs ==="
+          kubectl logs deployment/obi-test-app --tail=50
+          
+          echo ""
+          echo "=== OBI Traffic Generator Logs ==="
+          kubectl logs deployment/obi-traffic-gen --tail=50
+          
+          echo ""
+          echo "=== OBI ConfigMap ==="
+          kubectl get configmap logzio-monitoring-obi -o yaml
 
       - name: Run logs tests
         id: logs_tests
