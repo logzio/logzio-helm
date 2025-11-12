@@ -94,9 +94,6 @@ jobs:
           --set global.logzioTracesToken='${{ secrets.LOGZIO_TRACES_TOKEN }}' \
           --set global.logzioSpmToken='${{ secrets.LOGZIO_METRICS_TOKEN }}' \
           --set obi.enabled=true \
-          --set obi.config.trace_printer=text \
-          --set obi.traces.endpoint="http://logzio-apm-collector.default.svc.cluster.local:4318" \
-          --set obi.metrics.endpoint="http://logzio-monitoring-otel-collector.default.svc.cluster.local:4318" \
           --set global.tolerations[0].key='example-global-key' \
           --set global.tolerations[0].operator='Equal' \
           --set global.tolerations[0].value='example-global-value' \
