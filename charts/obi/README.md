@@ -108,7 +108,7 @@ See [CONTEXT_PROPAGATION.md](./CONTEXT_PROPAGATION.md) for detailed information 
 
 ## Uninstalling
 ```bash
-helm uninstall -n monitoring logizo-obi
+helm uninstall -n monitoring logzio-obi
 ```
 
 ## Documentation
