@@ -1,6 +1,9 @@
 # Changes by Version
 
 <!-- next version -->
+## 7.9.0
+- Add `obi` (OpenTelemetry eBPF Instrumentation) as a subchart for zero-code auto-instrumentation
+
 ## 7.8.1
 - Upgrade `logzio-k8s-telemetry` chart to `5.8.0`
   - Update `kube-state-metrics` chart from `4.24.0` -> `6.3.0`.

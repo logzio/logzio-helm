@@ -30,6 +30,9 @@ logzio-logs-collector:
 logzio-apm-collector:
   enabled: false
 
+obi:
+  enabled: false
+
 # Override values for the opencost sub-chart
 opencost:
   opencost:

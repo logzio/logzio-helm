@@ -27,6 +27,8 @@ Please refer to the documentation in each chart directory for more details:
   A chart for monitoring .NET applications.
 - [Prometheus alerts migrator](./charts/prometheus-alerts-migrator/README.md)  
   A chart for migrating Prometheus alert rules to Logz.io's alert format.
+- [OBI](./charts/obi/README.md) OpenTelemetry eBPF Instrumentation (OBI) for Kubernetes zero-code auto-instrumentation
+
 
 ## Contributing
 
