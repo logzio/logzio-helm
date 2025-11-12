@@ -32,7 +32,7 @@ jobs:
           echo "ENV_ID=monitoring-test-run-${{ env.rand }}-${{ matrix.environment }}" >> $GITHUB_ENV
 
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up credentials
         run: |
