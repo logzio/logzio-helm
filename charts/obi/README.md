@@ -24,7 +24,7 @@ helm install -n monitoring --create-namespace \
 --set enabled=true \
 --set traces.endpoint="http://logzio-apm-collector.monitoring.svc:4317" \
 --set metrics.endpoint="http://logzio-monitoring-otel-collector.monitoring.svc:4317" \
-obi logzio-helm/obi
+logzio-obi logzio-helm/obi
 ```
 
 ### Install the chart for direct otlp export to logz.io
@@ -35,7 +35,7 @@ helm install -n monitoring --create-namespace \
 --set traces.token="token" \
 --set metrics.endpoint="https://otlp-listener.logz.io" \
 --set metrics.token="token" \
-obi logzio-helm/obi
+logzio-obi logzio-helm/obi
 ```
 
 ## Configuration
@@ -88,8 +88,8 @@ network:
 
 ### Check OBI Status
 ```bash
-kubectl logs -n <namespace> -l app.kubernetes.io/name=obi
-kubectl get configmap -n <namespace> obi -o yaml
+kubectl logs -n <namespace> -l app.kubernetes.io/name=logzio-obi
+kubectl get configmap -n <namespace> logzio-obi -o yaml
 ```
 
 ### Prerequisites Check
@@ -108,7 +108,7 @@ See [CONTEXT_PROPAGATION.md](./CONTEXT_PROPAGATION.md) for detailed information 
 
 ## Uninstalling
 ```bash
-helm uninstall -n monitoring obi
+helm uninstall -n monitoring logizo-obi
 ```
 
 ## Documentation
