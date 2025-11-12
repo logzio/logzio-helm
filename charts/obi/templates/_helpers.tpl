@@ -3,7 +3,7 @@ Create a default fully qualified app name for OBI.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 */}}
 {{- define "obi.fullname" -}}
-{{- printf "%s-obi" .Release.Name | trunc 63 | trimSuffix "-" -}}
+{{- .Release.Name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{/* Common labels for OBI */}}
@@ -28,14 +28,14 @@ app.kubernetes.io/component: obi
 {{/* Get the OTLP traces endpoint */}}
 {{- define "obi.tracesEndpoint" -}}
 {{- if .Values.traces.endpoint -}}
-{{- .Values.traces.endpoint -}}
+{{- tpl .Values.traces.endpoint . -}}
 {{- end -}}
 {{- end -}}
 
 {{/* Get the OTLP metrics endpoint */}}
 {{- define "obi.metricsEndpoint" -}}
 {{- if .Values.metrics.endpoint -}}
-{{- .Values.metrics.endpoint -}}
+{{- tpl .Values.metrics.endpoint . -}}
 {{- end -}}
 {{- end -}}
 
