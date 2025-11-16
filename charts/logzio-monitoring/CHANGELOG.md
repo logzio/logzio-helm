@@ -3,7 +3,7 @@
 <!-- next version -->
 ## 7.9.1
 - Upgrade `logzio-k8s-telemetry` chart to `5.8.1`
-  - Fix custom tracing endpoint: `secrets.CustomTracingEndpoint` >> `global.customTracesEndpoint`
+  - Fix custom tracing endpoint: `global.CustomTracingEndpoint` >> `global.customTracesEndpoint`
 ## 7.9.0
 - Add `obi` (OpenTelemetry eBPF Instrumentation) as a subchart for zero-code auto-instrumentation
 
