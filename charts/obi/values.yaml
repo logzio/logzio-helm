@@ -58,18 +58,32 @@ serviceAccount:
   automount: true
 
 securityContext:
-  privileged: true
+  privileged: false
   runAsUser: 0
   runAsGroup: 0
   readOnlyRootFilesystem: true
   capabilities:
+    # Minimal required capabilities for application observability
+    # ref: https://opentelemetry.io/docs/zero-code/obi/security/
     add:
-      - BPF
-      - PERFMON
-      - SYS_PTRACE
-      - DAC_READ_SEARCH
-      - CHECKPOINT_RESTORE
-      # - NET_ADMIN is added conditionally when network.enabled=true
+      - BPF                    # Enables general BPF functionality and socket filter programs
+      - PERFMON                # Required for trace context propagation and eBPF probes (kernel >= 5.11)
+      - SYS_PTRACE             # Access to /proc/pid/exe for executable scanning
+      - DAC_READ_SEARCH        # Access to /proc/self/mem to determine kernel version
+      - CHECKPOINT_RESTORE     # Access to symlinks in /proc filesystem
+      - NET_RAW                # Required for AF_PACKET raw sockets (network monitoring)
+      # - NET_ADMIN is added conditionally when network.enabled=true or for context propagation
+      
+      # SYS_ADMIN is high privilege and optional - only needed for:
+      # 1. Library-level Go trace-context propagation (bpf_probe_write_user)
+      # 2. Systems with kernel.perf_event_paranoid > 2 (e.g., some AKS/EKS, Debian)
+      # For most deployments with kernel.perf_event_paranoid <= 2, PERFMON is sufficient
+      # Uncomment if you need library-level context propagation or face PERFMON restrictions:
+      # - SYS_ADMIN
+      
+      # SYS_RESOURCE is only required for kernels < 5.11 (to increase locked memory)
+      # Uncomment if running on older kernels:
+      # - SYS_RESOURCE
     drop:
       - ALL
 
