@@ -10,8 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed `privileged: true` - now using specific capabilities only
 - Made `CAP_SYS_ADMIN` optional (commented out by default) due to high privileges
 - Made `CAP_SYS_RESOURCE` optional (commented out by default) - only needed for kernels < 5.11
-- Added `CAP_NET_RAW` to default capabilities for network monitoring support
-- Added comprehensive documentation about capability requirements and when high-privilege caps are needed
+- Added `CAP_NET_RAW`
+- Added `CAP_KILL`
+- Added default traces sampler 
 
 ## [1.0.2]
 ### Changed
