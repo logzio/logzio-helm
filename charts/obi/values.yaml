@@ -131,6 +131,9 @@ config:
     protocol: http/protobuf
     endpoint: "{{ include \"obi.tracesEndpoint\" . }}"
     insecure_skip_verify: false
+    sampler:
+      name: 'traceidratio'
+      arg: '0.1'
   
   otel_metrics_export:
     protocol: http/protobuf
