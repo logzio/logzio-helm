@@ -80,7 +80,7 @@ securityContext:
       # 2. Systems with kernel.perf_event_paranoid > 2 (e.g., some AKS/EKS, Debian)
       # For most deployments with kernel.perf_event_paranoid <= 2, PERFMON is sufficient
       # Uncomment if you need library-level context propagation or face PERFMON restrictions:
-      # - SYS_ADMIN
+      - SYS_ADMIN
       
       # SYS_RESOURCE is only required for kernels < 5.11 (to increase locked memory)
       # Uncomment if running on older kernels:
