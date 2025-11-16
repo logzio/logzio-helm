@@ -95,7 +95,7 @@ containers:
           secretKeyRef:
             name: {{ .Values.secrets.name }}
             key: logzio-traces-shipping-token
-      {{ if .Values.global.CustomTracingEndpoint }}
+      {{ if .Values.global.customTracesEndpoint }}
       - name: CUSTOM_TRACING_ENDPOINT
         valueFrom:
           secretKeyRef:
