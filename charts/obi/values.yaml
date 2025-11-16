@@ -66,12 +66,13 @@ securityContext:
     # Minimal required capabilities for application observability
     # ref: https://opentelemetry.io/docs/zero-code/obi/security/
     add:
-      - BPF                    # Enables general BPF functionality and socket filter programs
-      - PERFMON                # Required for trace context propagation and eBPF probes (kernel >= 5.11)
-      - SYS_PTRACE             # Access to /proc/pid/exe for executable scanning
-      - DAC_READ_SEARCH        # Access to /proc/self/mem to determine kernel version
-      - CHECKPOINT_RESTORE     # Access to symlinks in /proc filesystem
-      - NET_RAW                # Required for AF_PACKET raw sockets (network monitoring)
+      - BPF                 
+      - PERFMON               
+      - SYS_PTRACE        
+      - DAC_READ_SEARCH       
+      - CHECKPOINT_RESTORE   
+      - CAP_KILL 
+      - NET_RAW                
       # - NET_ADMIN is added conditionally when network.enabled=true or for context propagation
       
       # SYS_ADMIN is high privilege and optional - only needed for:
