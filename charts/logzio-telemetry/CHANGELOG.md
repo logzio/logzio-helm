@@ -2,7 +2,7 @@
 
 <!-- next version -->
 ## 5.8.1
-- Fix custom tracing endpoint: `secrets.CustomTracingEndpoint` >> `global.customTracesEndpoint`
+- Fix custom tracing endpoint: `global.CustomTracingEndpoint` >> `global.customTracesEndpoint`
 ## 5.8.0
 - Update `kube-state-metrics` chart from `4.24.0` -> `6.3.0`
 ## 5.7.0
