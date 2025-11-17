@@ -1,6 +1,17 @@
 # Changes by Version
 
 <!-- next version -->
+## 7.9.1
+- Update `obi` subchart -> `1.0.3`:
+  - - Removed `privileged: true`
+  - Added `CAP_SYS_ADMIN`
+  - Made `CAP_SYS_RESOURCE` optional (commented out by default) - only needed for kernels < 5.11
+  - Added `CAP_NET_RAW`
+  - Added `CAP_KILL`
+  - Added default traces sampler 
+  - Made ClusterRole rules fully configurable via `clusterRole.rules` in values.yaml
+  - ConfigMaps read permissions to ClusterRole for cluster name detection 
+
 ## 7.9.0
 - Add `obi` (OpenTelemetry eBPF Instrumentation) as a subchart for zero-code auto-instrumentation
 
