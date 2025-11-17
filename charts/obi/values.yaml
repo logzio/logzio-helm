@@ -190,6 +190,26 @@ config:
     exclude_otel_instrumented_services: true
     skip_go_specific_tracers: false
   
+  routes:
+    ignored_patterns:
+      - /health
+      - /healthz
+      - /api/health
+      - /system/health
+      - /ready
+      - /readyz
+      - /live
+      - /livez
+      - /liveness
+      - /readiness
+      - /status
+      - /status/*
+      - /ping
+      - /actuator/health*
+      - /internal/health*
+      - /_health*
+    ignore_mode: traces
+  
   # Enable Kubernetes attributes for metrics and traces
   # ref: https://opentelemetry.io/docs/zero-code/obi/setup/kubernetes/#configuring-kubernetes-metadata-decoration
   attributes:
