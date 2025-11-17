@@ -48,9 +48,21 @@ func TestOBITraces(t *testing.T) {
 	}
 
 	if traceResponse.Hits.Total == 0 {
-		t.Errorf("No traces found for OBI test application")
+		t.Errorf("No eBPF instrumented traces found - expected traces with telemetry.sdk.name='opentelemetry-ebpf-instrumentation'")
 	} else {
-		logger.Info("Found traces", zap.Int("count", traceResponse.Hits.Total))
+		logger.Info("Found eBPF instrumented traces", zap.Int("count", traceResponse.Hits.Total))
+
+		// Log first trace details for debugging
+		if len(traceResponse.Hits.Hits) > 0 {
+			firstHit := traceResponse.Hits.Hits[0]
+			var telemetrySdkName string
+			if sdkName, ok := firstHit.Source.Process.Tag["telemetry@sdk@name"]; ok {
+				telemetrySdkName, _ = sdkName.(string)
+			}
+			logger.Info("Sample trace",
+				zap.String("operation", firstHit.Source.OperationName),
+				zap.String("telemetry_sdk_name", telemetrySdkName))
+		}
 	}
 
 	// Verify required Kubernetes fields are present
@@ -59,35 +71,6 @@ func TestOBITraces(t *testing.T) {
 	if len(missingFields) > 0 {
 		t.Errorf("Missing required Kubernetes fields in traces: %v", missingFields)
 	}
-
-	// Verify eBPF/OBI instrumentation indicators
-	hasEBPFTraces := false
-	for _, hit := range traceResponse.Hits.Hits {
-		operationName := hit.Source.OperationName
-
-		// Get telemetry SDK name from process.tag map
-		var telemetrySdkName string
-		if sdkName, ok := hit.Source.Process.Tag["telemetry@sdk@name"]; ok {
-			telemetrySdkName, _ = sdkName.(string)
-		}
-
-		logger.Info("Found trace",
-			zap.String("operation", operationName),
-			zap.String("telemetry_sdk_name", telemetrySdkName))
-
-		// Check for the specific eBPF instrumentation SDK name
-		if telemetrySdkName == "opentelemetry-ebpf-instrumentation" {
-			hasEBPFTraces = true
-			logger.Info("Found eBPF instrumented trace",
-				zap.String("operation", operationName),
-				zap.String("telemetry_sdk_name", telemetrySdkName))
-			break
-		}
-	}
-
-	if !hasEBPFTraces {
-		t.Errorf("No eBPF instrumented traces found - expected traces with telemetry.sdk.name='opentelemetry-ebpf-instrumentation'")
-	}
 }
 
 // fetchOBITraces fetches the traces from the logz.io API for OBI testing
@@ -95,7 +78,7 @@ func fetchOBITraces(tracesApiKey string, envID string) (*OBITraceResponse, error
 	url := fmt.Sprintf("%s/search", BaseLogzioApiUrl)
 	client := &http.Client{}
 
-	query := fmt.Sprintf(`JaegerTag.env_id:%s AND type:jaegerSpan`, envID)
+	query := fmt.Sprintf(`JaegerTag.env_id:%s AND type:jaegerSpan AND process.tag.telemetry@sdk@name:opentelemetry-ebpf-instrumentation`, envID)
 	logger.Info("Fetching OBI traces", zap.String("url", url), zap.String("query", query))
 
 	formattedQuery := formatQuery(query)

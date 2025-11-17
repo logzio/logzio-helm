@@ -51,6 +51,46 @@ resources:
 rbac:
   create: true
 
+clusterRole:
+  # ClusterRole rules for OBI
+  # These permissions are required for service discovery and K8s metadata enrichment
+  # ref: https://opentelemetry.io/docs/zero-code/obi/setup/kubernetes/
+  rules:
+    - apiGroups: [""]
+      resources:
+        - pods
+        - services
+        - endpoints
+        - namespaces
+        - nodes
+      verbs:
+        - get
+        - list
+        - watch
+    - apiGroups: [""]
+      resources:
+        - configmaps
+      verbs:
+        - get
+        - list
+    - apiGroups: ["discovery.k8s.io"]
+      resources:
+        - endpointslices
+      verbs:
+        - get
+        - list
+        - watch
+    - apiGroups: ["apps"]
+      resources:
+        - replicasets
+        - deployments
+        - daemonsets
+        - statefulsets
+      verbs:
+        - get
+        - list
+        - watch
+
 serviceAccount:
   create: true
   name: ""
@@ -58,18 +98,26 @@ serviceAccount:
   automount: true
 
 securityContext:
-  privileged: true
+  privileged: false
   runAsUser: 0
   runAsGroup: 0
   readOnlyRootFilesystem: true
   capabilities:
+    # Minimal required capabilities for application observability
+    # ref: https://opentelemetry.io/docs/zero-code/obi/security/
     add:
-      - BPF
-      - PERFMON
-      - SYS_PTRACE
-      - DAC_READ_SEARCH
-      - CHECKPOINT_RESTORE
-      # - NET_ADMIN is added conditionally when network.enabled=true
+      - BPF                 
+      - PERFMON               
+      - SYS_PTRACE        
+      - DAC_READ_SEARCH       
+      - CHECKPOINT_RESTORE   
+      - CAP_KILL 
+      - NET_RAW     
+      - SYS_ADMIN           
+      # - NET_ADMIN is added conditionally when network.enabled=true or for context propagation
+      # SYS_RESOURCE is only required for kernels < 5.11 (to increase locked memory)
+      # Uncomment if running on older kernels:
+      # - SYS_RESOURCE
     drop:
       - ALL
 
@@ -116,6 +164,9 @@ config:
     protocol: http/protobuf
     endpoint: "{{ include \"obi.tracesEndpoint\" . }}"
     insecure_skip_verify: false
+    sampler:
+      name: 'traceidratio'
+      arg: '0.1'
   
   otel_metrics_export:
     protocol: http/protobuf
@@ -138,6 +189,26 @@ config:
     exclude_instrument: []
     exclude_otel_instrumented_services: true
     skip_go_specific_tracers: false
+  
+  routes:
+    ignored_patterns:
+      - /health
+      - /healthz
+      - /api/health
+      - /system/health
+      - /ready
+      - /readyz
+      - /live
+      - /livez
+      - /liveness
+      - /readiness
+      - /status
+      - /status/*
+      - /ping
+      - /actuator/health*
+      - /internal/health*
+      - /_health*
+    ignore_mode: traces
   
   # Enable Kubernetes attributes for metrics and traces
   # ref: https://opentelemetry.io/docs/zero-code/obi/setup/kubernetes/#configuring-kubernetes-metadata-decoration
