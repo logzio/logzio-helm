@@ -51,6 +51,46 @@ resources:
 rbac:
   create: true
 
+clusterRole:
+  # ClusterRole rules for OBI
+  # These permissions are required for service discovery and K8s metadata enrichment
+  # ref: https://opentelemetry.io/docs/zero-code/obi/setup/kubernetes/
+  rules:
+    - apiGroups: [""]
+      resources:
+        - pods
+        - services
+        - endpoints
+        - namespaces
+        - nodes
+      verbs:
+        - get
+        - list
+        - watch
+    - apiGroups: [""]
+      resources:
+        - configmaps
+      verbs:
+        - get
+        - list
+    - apiGroups: ["discovery.k8s.io"]
+      resources:
+        - endpointslices
+      verbs:
+        - get
+        - list
+        - watch
+    - apiGroups: ["apps"]
+      resources:
+        - replicasets
+        - deployments
+        - daemonsets
+        - statefulsets
+      verbs:
+        - get
+        - list
+        - watch
+
 serviceAccount:
   create: true
   name: ""
@@ -72,16 +112,9 @@ securityContext:
       - DAC_READ_SEARCH       
       - CHECKPOINT_RESTORE   
       - CAP_KILL 
-      - NET_RAW                
+      - NET_RAW     
+      - SYS_ADMIN           
       # - NET_ADMIN is added conditionally when network.enabled=true or for context propagation
-      
-      # SYS_ADMIN is high privilege and optional - only needed for:
-      # 1. Library-level Go trace-context propagation (bpf_probe_write_user)
-      # 2. Systems with kernel.perf_event_paranoid > 2 (e.g., some AKS/EKS, Debian)
-      # For most deployments with kernel.perf_event_paranoid <= 2, PERFMON is sufficient
-      # Uncomment if you need library-level context propagation or face PERFMON restrictions:
-      - SYS_ADMIN
-      
       # SYS_RESOURCE is only required for kernels < 5.11 (to increase locked memory)
       # Uncomment if running on older kernels:
       # - SYS_RESOURCE

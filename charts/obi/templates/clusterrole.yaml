@@ -7,36 +7,7 @@ metadata:
   labels:
     {{- include "obi.labels" . | nindent 4 }}
 rules:
-  # Required for Kubernetes service discovery
-  - apiGroups: [""]
-    resources:
-      - pods
-      - services
-      - endpoints
-      - namespaces
-      - nodes
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups: ["discovery.k8s.io"]
-    resources:
-      - endpointslices
-    verbs:
-      - get
-      - list
-      - watch
-  # Required for enriching metrics and traces with K8s metadata
-  - apiGroups: ["apps"]
-    resources:
-      - replicasets
-      - deployments
-      - daemonsets
-      - statefulsets
-    verbs:
-      - get
-      - list
-      - watch
+{{- toYaml .Values.clusterRole.rules | nindent 2 }}
 {{- end }}
 {{- end }}
 
