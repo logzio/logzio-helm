@@ -7,12 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.3]
 ### Changed
-- Removed `privileged: true` - now using specific capabilities only
-- Made `CAP_SYS_ADMIN` optional (commented out by default) due to high privileges
+- Removed `privileged: true`
+- Made `CAP_SYS_ADMIN`
 - Made `CAP_SYS_RESOURCE` optional (commented out by default) - only needed for kernels < 5.11
 - Added `CAP_NET_RAW`
 - Added `CAP_KILL`
 - Added default traces sampler 
+- Made ClusterRole rules fully configurable via `clusterRole.rules` in values.yaml
+- ConfigMaps read permissions to ClusterRole for cluster name detection 
 
 ## [1.0.2]
 ### Changed
