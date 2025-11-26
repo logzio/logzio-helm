@@ -6,8 +6,8 @@ keywords:
   - fluent-bit
   - fluentd
 type: application
-version: 0.0.8
-appVersion: 0.6.3
+version: 1.0.0
+appVersion: 0.7.0
 sources:
   - https://github.com/logzio/logzio-helm
   - https://github.com/fluent/fluent-bit/
