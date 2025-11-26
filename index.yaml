@@ -428,6 +428,27 @@ entries:
     version: 0.0.1
   logzio-fluent-bit:
   - apiVersion: v2
+    appVersion: 0.7.0
+    created: "2025-11-26T08:21:45.857818379Z"
+    description: Fast and lightweight log agent based on fluentbit, collect and send
+      your logs to logz.io
+    digest: 673d28018c4739e4c6bdd2a54c2373e6f6b3b26a745cbeb6a7e0ce73bb9b6e1c
+    keywords:
+    - logging
+    - fluent-bit
+    - fluentd
+    maintainers:
+    - email: yotam.loewenbach@logz.io
+      name: yotam.loewenbach
+    name: logzio-fluent-bit
+    sources:
+    - https://github.com/logzio/logzio-helm
+    - https://github.com/fluent/fluent-bit/
+    type: application
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/logzio-fluent-bit-1.0.0/logzio-fluent-bit-1.0.0.tgz
+    version: 1.0.0
+  - apiVersion: v2
     appVersion: 0.6.3
     created: "2025-09-07T07:30:58.863772366Z"
     description: Fast and lightweight log agent based on fluentbit, collect and send
@@ -10665,4 +10686,4 @@ entries:
     urls:
     - https://logzio.github.io/logzio-helm/prometheus-alerts-migrator-1.0.0.tgz
     version: 1.0.0
-generated: "2025-11-18T09:24:56.263854157Z"
+generated: "2025-11-26T08:21:45.858957328Z"
