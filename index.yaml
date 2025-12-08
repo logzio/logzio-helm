@@ -10476,6 +10476,21 @@ entries:
     version: 0.0.1
   obi:
   - apiVersion: v2
+    appVersion: v0.3.0
+    created: "2025-12-08T13:04:03.186281025Z"
+    description: OpenTelemetry eBPF Instrumentation (OBI) for Kubernetes zero-code
+      auto-instrumentation
+    digest: 6cc1a4add58edcaad8097cd2be9518935d201026dee5b55c12fc5e3bac10178c
+    home: https://logz.io/
+    maintainers:
+    - email: yotam.loewenbach@logz.io
+      name: Yotam Loewenbach
+    name: obi
+    type: application
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/obi-1.0.4/obi-1.0.4.tgz
+    version: 1.0.4
+  - apiVersion: v2
     appVersion: main
     created: "2025-11-18T09:24:56.263229134Z"
     description: OpenTelemetry eBPF Instrumentation (OBI) for Kubernetes zero-code
@@ -10686,4 +10701,4 @@ entries:
     urls:
     - https://logzio.github.io/logzio-helm/prometheus-alerts-migrator-1.0.0.tgz
     version: 1.0.0
-generated: "2025-11-26T08:21:45.858957328Z"
+generated: "2025-12-08T13:04:03.18686374Z"
