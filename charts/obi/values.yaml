@@ -18,6 +18,7 @@ traces:
 # Metrics configuration
 # ref: https://opentelemetry.io/docs/zero-code/obi/configure/export-data/
 metrics:
+  enabled: false
   # OTLP endpoint for metrics
   endpoint: "http://logzio-monitoring-otel-collector.{{ .Release.Namespace }}.svc:4318"
   # Optional: Authentication token  for Direct OTLP Export(if provided, will be sent as "Authorization: Bearer <token>")
@@ -26,7 +27,7 @@ metrics:
 
 image:
   repository: otel/ebpf-instrument
-  tag: "main"
+  tag: "v0.3.0"
   pullPolicy: IfNotPresent
 
 # Enable host network for network-level context propagation
@@ -38,7 +39,7 @@ hostNetwork: true
 # Uncomment to enable network observability features
 # ref: https://opentelemetry.io/docs/zero-code/obi/network/
 network:
-  enabled: true
+  enabled: false
 
 resources:
   limits:
@@ -172,6 +173,7 @@ config:
     protocol: http/protobuf
     endpoint: "{{ include \"obi.metricsEndpoint\" . }}"
     insecure_skip_verify: false
+    features: []
   
   # Internal metrics reporter configuration
   # ref: https://opentelemetry.io/docs/zero-code/obi/configure/internal-metrics-reporter/
@@ -180,7 +182,7 @@ config:
     prometheus:
       port: 8999
       path: /internal/metrics
-  
+    
   # Service discovery configuration
   # ref: https://opentelemetry.io/docs/zero-code/obi/configure/service-discovery/
   discovery:
