@@ -1,11 +1,11 @@
 apiVersion: v2
 name: obi
-version: 1.0.3
+version: 1.0.4
 description: OpenTelemetry eBPF Instrumentation (OBI) for Kubernetes zero-code auto-instrumentation
 type: application
 home: https://logz.io/
 maintainers:
   - name: Yotam Loewenbach
     email: yotam.loewenbach@logz.io
-appVersion: main
+appVersion: v0.3.0
 
