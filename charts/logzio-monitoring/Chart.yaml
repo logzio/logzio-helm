@@ -37,7 +37,7 @@ dependencies:
     repository: "https://logzio.github.io/logzio-helm/"
     condition: logzio-apm-collector.enabled
   - name: obi
-    version: "1.0.3"
+    version: "1.0.4"
     repository: "https://logzio.github.io/logzio-helm/"
     condition: obi.enabled
   - name: opentelemetry-operator
