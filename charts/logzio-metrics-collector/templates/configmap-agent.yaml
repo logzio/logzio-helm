@@ -1,0 +1,14 @@
+{{ if .Values.enabled}}
+{{- if and (eq .Values.mode "daemonset") (.Values.configMap.create) -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "metrics-collector.fullname" . }}-daemonset
+  namespace: {{ template "metrics-collector.namespace" . }}
+  labels:
+    {{- include "metrics-collector.labels" . | nindent 4 }}
+data:
+  relay: |
+    {{- include "metrics-collector.daemonsetCollectorConfig" . | nindent 4 -}}
+{{- end }}
+{{ end }}
