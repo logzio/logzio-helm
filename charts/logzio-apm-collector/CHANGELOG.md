@@ -1,6 +1,8 @@
 # Changes by Version
 
 <!-- next version -->
+## 1.4.1
+- Add span metrics attributes `http.method` , `http.status_code`
 
 ## 1.4.0
 - Upgrade OpenTelemetry Collector from `0.129.0` to `0.133.0`.
