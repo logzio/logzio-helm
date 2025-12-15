@@ -266,6 +266,21 @@ entries:
   logzio-apm-collector:
   - apiVersion: v2
     appVersion: 0.133.0
+    created: "2025-12-15T09:36:46.467903908Z"
+    description: Kubernetes APM agent for Logz.io based on OpenTelemetry Collector
+    digest: 01de8cba5e913961ded9783bcf3ddf3e47c315ecb6339c6851f2e1ae4b435e4d
+    home: https://logz.io/
+    icon: https://logzbucket.s3.eu-west-1.amazonaws.com/logz-io-img/logo400x400.png
+    maintainers:
+    - email: naama.bendalak@logz.io
+      name: Naama Bendalak
+    name: logzio-apm-collector
+    type: application
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/logzio-apm-collector-1.4.1/logzio-apm-collector-1.4.1.tgz
+    version: 1.4.1
+  - apiVersion: v2
+    appVersion: 0.133.0
     created: "2025-09-10T08:36:08.05102265Z"
     description: Kubernetes APM agent for Logz.io based on OpenTelemetry Collector
     digest: 1efcc425a99fb7f7b4d481d00f19b5b62acfb6ea688cde8fcda7275133ce7982
@@ -10757,4 +10772,4 @@ entries:
     urls:
     - https://logzio.github.io/logzio-helm/prometheus-alerts-migrator-1.0.0.tgz
     version: 1.0.0
-generated: "2025-12-10T10:08:10.232218184Z"
+generated: "2025-12-15T09:36:46.468480134Z"
