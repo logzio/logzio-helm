@@ -1,6 +1,10 @@
 # Changes by Version
 
 <!-- next version -->
+## 7.9.3
+- Upgrade `logzio-apm-collector` chart to `1.4.1`
+  - Add span metrics attributes `http.method` , `http.status_code`
+
 ## 7.9.2
 - Upgrade `obi` chart to `1.0.4`:
   - Removed `privileged: true`
