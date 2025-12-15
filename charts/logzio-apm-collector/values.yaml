@@ -275,6 +275,8 @@ spmConfig:
         - name: rpc.grpc.status_code
         - name: http.method
         - name: http.status_code
+        - name: http.request.method
+        - name: http.response.status_code
         - name: k8s.pod.name
         - name: k8s.deployment.name
         - name: k8s.namespace.name
