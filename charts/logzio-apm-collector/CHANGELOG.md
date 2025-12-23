@@ -1,6 +1,13 @@
 # Changes by Version
 
 <!-- next version -->
+
+## 1.5.0
+- Add Windows node support via `global.windows.enabled` and `global.windows.version` settings.
+  - When enabled, deploys using Windows container images (e.g., `0.133.0-windows-2022-amd64`).
+  - Automatically sets `nodeSelector` to target Windows or Linux nodes.
+  - Supports Windows Server 2019 and 2022.
+
 ## 1.4.1
 - Add span metrics attributes `http.method` , `http.status_code`
 
