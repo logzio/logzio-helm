@@ -746,7 +746,8 @@ windowsConfig:
   receivers:
     filelog:
       storage: file_storage
-      exclude: []
+      exclude:
+        - 'C:\var\log\pods\{{ .Release.Namespace }}_{{ include "logs-collector.fullname" . }}*_*\{{ include "logs-collector.lowercase_chartname" . }}\*.log'
       include:
         - C:\var\log\pods\*\*\*.log
       include_file_name: false

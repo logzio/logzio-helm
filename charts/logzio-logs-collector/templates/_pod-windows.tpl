@@ -1,6 +1,6 @@
 {{/*
 Windows-specific pod template for logs collector.
-Uses Windows paths for log collection and checkpoint storage.
+Uses ContainerAdministrator for least-privilege access to host log files.
 */}}
 {{- define "logs-collector.windowsPod" -}}
 {{- with .Values.imagePullSecrets }}
@@ -9,7 +9,8 @@ imagePullSecrets:
 {{- end }}
 serviceAccountName: {{ include "logs-collector.serviceAccountName" . }}
 securityContext:
-  {{- toYaml .Values.podSecurityContext | nindent 2 }}
+  windowsOptions:
+    runAsUserName: "ContainerAdministrator"
 {{- with .Values.hostAliases }}
 hostAliases:
   {{- toYaml . | nindent 2 }}
@@ -17,13 +18,14 @@ hostAliases:
 containers:
   - name: {{ include "logs-collector.lowercase_chartname" . }}
     command:
-      - /{{ .Values.command.name }}
-      - --config=/conf/relay.yaml
+      - {{ .Values.command.name }}
+      - --config=C:\conf\relay.yaml
       {{- range .Values.command.extraArgs }}
       - {{ . }}
       {{- end }}
     securityContext:
-      {{- toYaml .Values.securityContext | nindent 6 }}
+      windowsOptions:
+        runAsUserName: "ContainerAdministrator"
     {{- if .Values.image.digest }}
     image: "{{ ternary "" (print (.Values.global).imageRegistry "/") (empty (.Values.global).imageRegistry) }}{{ .Values.image.repository }}@{{ .Values.image.digest }}"
     {{- else }}
@@ -130,9 +132,8 @@ containers:
       {{- toYaml . | nindent 6 }}
     {{- end }}
     volumeMounts:
-      - mountPath: /conf
+      - mountPath: C:\conf
         name: {{ include "logs-collector.lowercase_chartname" . }}-configmap-windows
-      # Windows-specific paths
       - name: varlogpods
         mountPath: C:\var\log\pods
         readOnly: true
