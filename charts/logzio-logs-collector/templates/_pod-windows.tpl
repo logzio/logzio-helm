@@ -1,4 +1,8 @@
-{{- define "logs-collector.loggingPod" -}}
+{{/*
+Windows-specific pod template for logs collector.
+Uses Windows paths for log collection and checkpoint storage.
+*/}}
+{{- define "logs-collector.windowsPod" -}}
 {{- with .Values.imagePullSecrets }}
 imagePullSecrets:
   {{- toYaml . | nindent 2 }}
@@ -14,26 +18,18 @@ containers:
   - name: {{ include "logs-collector.lowercase_chartname" . }}
     command:
       - /{{ .Values.command.name }}
-      {{- if .Values.configMap.create }}
       - --config=/conf/relay.yaml
-      {{- end }}
       {{- range .Values.command.extraArgs }}
       - {{ . }}
       {{- end }}
     securityContext:
-      {{- if not (.Values.securityContext) }}
-      runAsUser: 0
-      runAsGroup: 0
-      {{- else -}}
       {{- toYaml .Values.securityContext | nindent 6 }}
-      {{- end }}
     {{- if .Values.image.digest }}
     image: "{{ ternary "" (print (.Values.global).imageRegistry "/") (empty (.Values.global).imageRegistry) }}{{ .Values.image.repository }}@{{ .Values.image.digest }}"
     {{- else }}
-    image: "{{ ternary "" (print (.Values.global).imageRegistry "/") (empty (.Values.global).imageRegistry) }}{{ .Values.image.repository }}:{{ include "logs-collector.imageTag" . }}"
+    image: "{{ ternary "" (print (.Values.global).imageRegistry "/") (empty (.Values.global).imageRegistry) }}{{ .Values.image.repository }}:{{ include "logs-collector.windowsImageTag" . }}"
     {{- end }}
     imagePullPolicy: {{ .Values.image.pullPolicy }}
-
     {{- $ports := include "logs-collector.podPortsConfig" . }}
     {{- if $ports }}
     ports:
@@ -134,20 +130,16 @@ containers:
       {{- toYaml . | nindent 6 }}
     {{- end }}
     volumeMounts:
-      {{- if .Values.configMap.create }}
       - mountPath: /conf
-        name: {{ include "logs-collector.lowercase_chartname" . }}-configmap
-      {{- end }}
+        name: {{ include "logs-collector.lowercase_chartname" . }}-configmap-windows
+      # Windows-specific paths
       - name: varlogpods
-        mountPath: /var/log/pods
-        readOnly: true
-      - name: varlibdockercontainers
-        mountPath: /var/lib/docker/containers
+        mountPath: C:\var\log\pods
         readOnly: true
       - name: varlibotelcol
-        mountPath: /var/lib/otelcol
+        mountPath: C:\var\lib\otelcol
       - name: varlogcontainers
-        mountPath: /var/log/containers
+        mountPath: C:\var\log\containers
         readOnly: true
       {{- if .Values.extraVolumeMounts }}
       {{- toYaml .Values.extraVolumeMounts | nindent 6 }}
@@ -163,31 +155,27 @@ initContainers:
 priorityClassName: {{ .Values.priorityClassName | quote }}
 {{- end }}
 volumes:
-  {{- if .Values.configMap.create }}
-  - name: {{ include "logs-collector.lowercase_chartname" . }}-configmap
+  - name: {{ include "logs-collector.lowercase_chartname" . }}-configmap-windows
     configMap:
-      name: {{ include "logs-collector.fullname" . }}{{ .configmapSuffix }}
+      name: {{ include "logs-collector.fullname" . }}-windows
       items:
         - key: relay
           path: relay.yaml
-  {{- end }}
+  # Windows-specific host paths
   - name: varlogpods
     hostPath:
-      path: /var/log/pods
+      path: C:\var\log\pods
   - name: varlibotelcol
     hostPath:
-      path: /var/lib/otelcol
+      path: C:\var\lib\otelcol
       type: DirectoryOrCreate
-  - name: varlibdockercontainers
-    hostPath:
-      path: /var/lib/docker/containers
   - name: varlogcontainers
     hostPath:
-      path: /var/log/containers
+      path: C:\var\log\containers
   {{- if .Values.extraVolumes }}
   {{- toYaml .Values.extraVolumes | nindent 2 }}
   {{- end }}
-{{ with (include "logs-collector.nodeSelector" .) }}{{ . }}{{ end }}
+{{ include "logs-collector.windowsNodeSelector" . }}
 {{ with (include "logs-collector.affinity" .) }}{{ . }}{{ end }}
 {{- if or .Values.tolerations .Values.global.tolerations }}
   {{- $allTolerations := concat (.Values.tolerations | default list) (.Values.global.tolerations | default list) }}

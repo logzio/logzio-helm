@@ -249,3 +249,19 @@ IsMatch(resource.attributes["{{ $sub }}"], "{{ $regex }}")
   {{- $_ := set $pipeline "processors" $new }}
   {{- end }}
 {{- end }}
+
+# Build config file for Windows daemonset logs Collector
+{{- define "logs-collector.loggingWindowsConfig" -}}
+{{- $values := deepCopy .Values -}}
+{{- $data := dict "Values" $values | mustMergeOverwrite (deepCopy .) -}}
+{{- $config := deepCopy .Values.windowsConfig }}
+
+{{- if (eq (include "logs-collector.resourceDetectionEnabled" .) "true") }}
+  {{- include "logs-collector.addResourceDetectionProcessors" (dict "config" $config "distribution" .Values.global.distribution) }}
+{{- end }}
+
+{{- /* Inject dynamic filters */}}
+{{- include "logs-collector.addFilterProcessors" (dict "config" $config "filters" .Values.filters) }}
+
+{{- tpl ($config | toYaml) . -}}
+{{- end }}

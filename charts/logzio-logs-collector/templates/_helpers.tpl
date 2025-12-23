@@ -256,18 +256,54 @@ affinity:
 {{- end -}}
 
 {{/*
-Merges local and global nodeSelector settings.
+Merges local and global nodeSelector settings with Linux OS selector (for Linux DaemonSet).
 */}}
 {{- define "logs-collector.nodeSelector" -}}
 {{- $nodeSelector := dict -}}
+{{/* Always add Linux selector for the main DaemonSet */}}
+{{- $nodeSelector = merge $nodeSelector (dict "kubernetes.io/os" "linux") -}}
 {{- if .Values.global.nodeSelector -}}
   {{- $nodeSelector = mergeOverwrite $nodeSelector .Values.global.nodeSelector -}}
 {{- end -}}
 {{- if .Values.nodeSelector -}}
   {{- $nodeSelector = mergeOverwrite $nodeSelector .Values.nodeSelector -}}
 {{- end -}}
-{{- if $nodeSelector -}}
 nodeSelector:
   {{- toYaml $nodeSelector | nindent 2 }}
 {{- end -}}
+
+{{/*
+Windows nodeSelector - targets Windows nodes only.
+*/}}
+{{- define "logs-collector.windowsNodeSelector" -}}
+{{- $nodeSelector := dict -}}
+{{- $nodeSelector = merge $nodeSelector (dict "kubernetes.io/os" "windows") -}}
+{{- if .Values.global.nodeSelector -}}
+  {{- $nodeSelector = mergeOverwrite $nodeSelector .Values.global.nodeSelector -}}
+{{- end -}}
+{{- if .Values.nodeSelector -}}
+  {{- $nodeSelector = mergeOverwrite $nodeSelector .Values.nodeSelector -}}
+{{- end -}}
+nodeSelector:
+  {{- toYaml $nodeSelector | nindent 2 }}
+{{- end -}}
+
+{{/*
+Get the image tag for Linux (default).
+*/}}
+{{- define "logs-collector.imageTag" -}}
+{{- .Values.image.tag | default .Chart.AppVersion -}}
+{{- end -}}
+
+{{/*
+Get the image tag for Windows.
+When Windows is enabled, appends -windows-<version>-amd64 to the tag.
+*/}}
+{{- define "logs-collector.windowsImageTag" -}}
+{{- $windowsVersion := "2022" -}}
+{{- if .Values.global.windows -}}
+  {{- $windowsVersion = .Values.global.windows.version | default "2022" | toString -}}
+{{- end -}}
+{{- $baseTag := .Values.image.tag | default .Chart.AppVersion -}}
+{{- printf "%s-windows-%s-amd64" $baseTag $windowsVersion -}}
 {{- end -}}
