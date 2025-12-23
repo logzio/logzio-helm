@@ -1,4 +1,8 @@
-{{- define "opentelemetry-collector.daemonset-pod" -}}
+{{/*
+Windows-specific standalone pod template.
+Uses Windows image tag and nodeSelector.
+*/}}
+{{- define "opentelemetry-collector.pod-windows" -}}
 {{- with .Values.imagePullSecrets }}
 imagePullSecrets:
   {{- toYaml . | nindent 2 }}
@@ -17,9 +21,9 @@ containers:
       {{- end }}
     securityContext:
       {{- toYaml .Values.containerSecurityContext | nindent 6 }}
-    image: "{{ .Values.image.repository }}:{{ include "opentelemetry-collector.imageTag" . }}"
+    image: "{{ .Values.image.repository }}:{{ include "opentelemetry-collector.windowsImageTag" . }}"
     imagePullPolicy: {{ .Values.image.pullPolicy }}
-{{- if .Values.metrics.enabled }}
+{{- if (or .Values.traces.enabled .Values.metrics.enabled .Values.signalFx.enabled) }}
     ports:
       {{- range $key, $port := .Values.ports }}
       {{- $shouldEnable := $port.enabled }}
@@ -57,6 +61,10 @@ containers:
         value: {{.Release.Name}}
       - name: REALESE_NS
         value: {{.Release.Namespace}}
+      - name: SPM_SERVICE_ENDPOINT
+        {{- $serviceName := include "opentelemetry-spm.fullname" .}}
+        value: {{ printf "http://%s.%s.svc.cluster.local:4317" $serviceName .Release.Namespace }}
+{{- if .Values.metrics.enabled }}
       - name: METRICS_TOKEN
         valueFrom:
           secretKeyRef:
@@ -68,11 +76,35 @@ containers:
           secretKeyRef:
             name: {{ .Values.secrets.name }}
             key: logzio-k8s-objects-logs-token
+      {{ end }} 
+         
+{{- end }}
+{{- if or (eq .Values.k8sObjectsConfig.enabled true) (eq .Values.traces.enabled true) }}  
       - name: LOGZIO_LISTENER_REGION
         valueFrom:
           secretKeyRef:
             name: {{ .Values.secrets.name }}
             key: logzio-listener-region            
+{{- end }}
+{{- if or (eq .Values.metrics.enabled true) (eq .Values.spm.enabled true) }}
+      - name: LISTENER_URL
+        valueFrom:
+          secretKeyRef:
+            name: {{ .Values.secrets.name }}
+            key: logzio-metrics-listener
+{{- end }}
+{{- if .Values.traces.enabled }}
+      - name: TRACES_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: {{ .Values.secrets.name }}
+            key: logzio-traces-shipping-token
+      {{ if .Values.global.customTracesEndpoint }}
+      - name: CUSTOM_TRACING_ENDPOINT
+        valueFrom:
+          secretKeyRef:
+            name: {{ .Values.secrets.name }}
+            key: custom-tracing-endpoint
       {{ end }}
       {{ if .Values.global.customLogsEndpoint }}
       - name: CUSTOM_LOGS_ENDPOINT
@@ -80,12 +112,25 @@ containers:
           secretKeyRef:
             name: {{ .Values.secrets.name }}
             key: custom-logs-endpoint
-      {{ end }}        
-      - name: LISTENER_URL
+      {{ end }}
+      - name: SAMPLING_PROBABILITY
         valueFrom:
           secretKeyRef:
             name: {{ .Values.secrets.name }}
-            key: logzio-metrics-listener
+            key: sampling-probability
+      - name: SAMPLING_LATENCY
+        valueFrom:
+          secretKeyRef:
+            name: {{ .Values.secrets.name }}
+            key: sampling-latency
+{{ if .Values.spm.enabled }}
+      - name: SPM_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: {{ .Values.secrets.name }}
+            key: logzio-spm-shipping-token        
+{{ end }}
+{{- end }}
       - name: ENV_ID
         valueFrom:
           secretKeyRef:
@@ -98,7 +143,6 @@ containers:
             name: {{ .Values.secrets.name }}
             key: opencost-duplicates
 {{- end }}
-
       {{- with .Values.extraEnvs }}
       {{- . | toYaml | nindent 6 }}
       {{- end }}
@@ -146,7 +190,7 @@ containers:
         {{- end }}
         path: {{ .Values.readinessProbe.httpGet.path }}
         port: {{ .Values.readinessProbe.httpGet.port }}
-    {{- include "opentelemetry-collector.resources" .Values.daemonsetCollector.resources | nindent 4 }}
+    {{- include "opentelemetry-collector.resources" .Values.standaloneCollector.resources | nindent 4 }}
     volumeMounts:
       - mountPath: /conf
         name: {{ .Chart.Name }}-configmap
@@ -180,7 +224,7 @@ priorityClassName: {{ .Values.priorityClassName | quote }}
 volumes:
   - name: {{ .Chart.Name }}-configmap
     configMap:
-      name: {{ include "opentelemetry-collector.daemonsetFullname" . }}{{ .configmapSuffix }}
+      name: {{ include "opentelemetry-collector.fullname" . }}{{ .configmapSuffix }}
       items:
         - key: relay
           path: relay.yaml
@@ -199,8 +243,8 @@ volumes:
     secret:
       secretName: {{ .secretName }}
   {{- end }}
-{{ with (include "opentelemetry-collector.nodeSelector" .) }}{{ . }}{{ end }}
-{{ with (include "opentelemetry-collector.daemonsetAffinity" .) }}{{ . }}{{ end }}
+{{ include "opentelemetry-collector.windowsNodeSelector" . }}
+{{ with (include "opentelemetry-collector.affinity" .) }}{{ . }}{{ end }}
 {{- if or .Values.tolerations .Values.global.tolerations }}
   {{- $allTolerations := concat (.Values.tolerations | default list) (.Values.global.tolerations | default list) }}
 tolerations:

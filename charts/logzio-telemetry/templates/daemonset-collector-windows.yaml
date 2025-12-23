@@ -1,0 +1,35 @@
+{{- if .Values.global.windows }}
+{{- if .Values.global.windows.enabled }}
+{{- if and (eq .Values.collector.mode "daemonset") (.Values.metrics.enabled) }}
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ include "opentelemetry-collector.daemonsetFullname" . }}-windows
+  labels:
+    {{- include "opentelemetry-collector.labels" . | nindent 4 }}
+    app.kubernetes.io/os: windows
+spec:
+  selector:
+    matchLabels:
+      {{- include "opentelemetry-collector.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/os: windows
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        {{- with .Values.daemonsetCollector.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "opentelemetry-collector.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/os: windows
+        {{- with .Values.daemonsetCollector.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- $podValues := deepCopy .Values.daemonsetCollector | mustMergeOverwrite (deepCopy .Values) }}
+      {{- $podData := dict "Values" $podValues "configmapSuffix" "" "isAgent" false }}
+      {{- include "opentelemetry-collector.daemonset-pod-windows" ($podData | mustMergeOverwrite (deepCopy .)) | nindent 6 }}
+{{- end }}
+{{- end }}
+{{- end }}

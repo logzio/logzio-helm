@@ -25,7 +25,7 @@ spec:
       hostNetwork: false
       containers:
         - name: windows-metric-proxy
-          image:  "{{ .Values.nginxWindowsImage.repository }}:{{ .Values.nginxWindowsImage.tag }}"
+          image:  "{{ .Values.nginxWindowsImage.repository }}:{{ include "opentelemetry-collector.nginxWindowsImageTag" . }}"
           ports:
             - name: metrics
               containerPort: 9100
@@ -40,17 +40,15 @@ spec:
             - name: PROXY_NAME
               valueFrom:
                 fieldRef:
-                  fieldPath: spec.nodeName
-        securityContext:
-          {{- toYaml .Values.containerSecurityContext | nindent 6 }}             
-      {{- if .Values.tolerations }}            
+                  fieldPath: spec.nodeName           
+      {{- if .Values.tolerations }}
       tolerations: {{- .Values.tolerations | toYaml | trim | nindent 8 }}
-      {{- end }}     
-      securityContext:
-        runAsNonRoot: false
-        {{- toYaml .Values.securityContext | nindent 6 }}
+      {{- end }}
       nodeSelector:
         kubernetes.io/os: windows
+        {{- with .Values.nodeSelector }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
 {{- end }}
 {{- end }}
 {{- end }}

@@ -1,0 +1,38 @@
+{{- if .Values.global.windows }}
+{{- if .Values.global.windows.enabled }}
+{{- if and (eq .Values.collector.mode "standalone") (.Values.metrics.enabled) }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "opentelemetry-collector.fullname" . }}-windows
+  labels:
+    {{- include "opentelemetry-collector.labels" . | nindent 4 }}
+    app.kubernetes.io/os: windows
+spec:
+{{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.standaloneCollector.replicaCount }}
+{{- end }}
+  selector:
+    matchLabels:
+      {{- include "opentelemetry-collector.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/os: windows
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        {{- with .Values.standaloneCollector.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "opentelemetry-collector.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/os: windows
+        {{- with .Values.standaloneCollector.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- $podValues := deepCopy .Values.standaloneCollector | mustMergeOverwrite (deepCopy .Values) }}
+      {{- $podData := dict "Values" $podValues "configmapSuffix" "" "isAgent" false }}
+      {{- include "opentelemetry-collector.pod-windows" ($podData | mustMergeOverwrite (deepCopy .)) | nindent 6 }}
+{{- end }}
+{{- end }}
+{{- end }}

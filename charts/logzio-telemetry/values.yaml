@@ -51,6 +51,12 @@ global:
   # Optional - Control enabling of the OpenTelemetry Collector's resource detection feature. Dependent on `distribution` value.
   resourceDetection:
     enabled: false
+  # Windows Support - These settings enable deployment of collectors on Windows nodes
+  windows:
+    # Set to true to deploy an additional collector on Windows nodes
+    enabled: false
+    # Windows Server version: "2019" or "2022" (must match your Windows node OS version)
+    version: "2022"
 
 secrets:
   name: logzio-secret  # Secret name
@@ -590,7 +596,11 @@ nginxWindowsImage:
   # Reverse proxy image to enable metrics scraping from windows nodes
   repository: logzio/logzio-windows-node-reverse-proxy
   pullPolicy: IfNotPresent
+  # Base tag - will be suffixed with Windows version (e.g., 0.0.1-ltsc2019 or 0.0.1-ltsc2022)
   tag: "0.0.1"
+  # Set to true to append Windows version suffix to tag (e.g., tag-ltsc2019, tag-ltsc2022)
+  # Set to false to use tag as-is (for multi-arch images)
+  useVersionSuffix: true
 windowsExporterInstallerImage:
   # Job image to install windows exporter on windows nodes
   repository: logzio/logzio-windows-exporter-installer
@@ -1188,7 +1198,7 @@ autoscaling:
   # targetMemoryUtilizationPercentage: 80
 
 windowsExporterInstallerJob:
-  interval: "*/10 * * * *"
+  interval: "*/2 * * * *"
   concurrencyPolicy: Forbid            # Future cronjob will run only after current job is finished
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 1
