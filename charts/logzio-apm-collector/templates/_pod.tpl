@@ -25,7 +25,7 @@ containers:
     {{- if .Values.image.digest }}
     image: "{{ .Values.image.repository }}@{{ .Values.image.digest }}"
     {{- else }}
-    image: "{{ .Values.image.repository }}:{{ include "apm-collector.imageTag" . }}"
+    image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
     {{- end }}
     imagePullPolicy: {{ .Values.image.pullPolicy }}
     {{- $ports := include "apm-collector.podPortsConfig" . }}

@@ -198,50 +198,17 @@ affinity:
 {{- end -}}
 {{- end -}}
 
-{{/*
-Merges local and global nodeSelector settings with Windows/Linux OS selector.
-*/}}
 {{- define "apm-collector.nodeSelector" -}}
 {{- $nodeSelector := dict -}}
-{{- $windowsEnabled := false -}}
-{{- if .Values.global.windows -}}
-  {{- $windowsEnabled = .Values.global.windows.enabled | default false -}}
-{{- end -}}
-{{/* Add OS selector based on Windows setting */}}
-{{- if $windowsEnabled -}}
-  {{- $nodeSelector = merge $nodeSelector (dict "kubernetes.io/os" "windows") -}}
-{{- else -}}
-  {{- $nodeSelector = merge $nodeSelector (dict "kubernetes.io/os" "linux") -}}
-{{- end -}}
+{{- $nodeSelector = merge $nodeSelector (dict "kubernetes.io/os" "linux") -}}
 {{/* Merge global nodeSelector */}}
 {{- if .Values.global.nodeSelector -}}
-  {{- $nodeSelector = merge $nodeSelector .Values.global.nodeSelector -}}
+  {{- $nodeSelector = mergeOverwrite $nodeSelector .Values.global.nodeSelector -}}
 {{- end -}}
-{{/* Merge local nodeSelector (highest priority) */}}
 {{- if .Values.nodeSelector -}}
-  {{- $nodeSelector = merge $nodeSelector .Values.nodeSelector -}}
+  {{- $nodeSelector = mergeOverwrite $nodeSelector .Values.nodeSelector -}}
 {{- end -}}
-{{- if $nodeSelector -}}
 nodeSelector:
   {{- toYaml $nodeSelector | nindent 2 }}
 {{- end -}}
-{{- end -}}
 
-{{/*
-Get the image tag based on OS (supports global.windows settings).
-When Windows is enabled, appends -windows-<version>-amd64 to the tag.
-*/}}
-{{- define "apm-collector.imageTag" -}}
-{{- $windowsEnabled := false -}}
-{{- $windowsVersion := "2022" -}}
-{{- if .Values.global.windows -}}
-  {{- $windowsEnabled = .Values.global.windows.enabled | default false -}}
-  {{- $windowsVersion = .Values.global.windows.version | default "2022" | toString -}}
-{{- end -}}
-{{- $baseTag := .Values.image.tag | default .Chart.AppVersion -}}
-{{- if $windowsEnabled -}}
-{{- printf "%s-windows-%s-amd64" $baseTag $windowsVersion -}}
-{{- else -}}
-{{- $baseTag -}}
-{{- end -}}
-{{- end -}}
