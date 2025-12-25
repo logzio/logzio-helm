@@ -16,7 +16,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/config: {{ include (print $.Template.BasePath "/configmap-windows.yaml") . | sha256sum }}
         {{- with .Values.daemonsetCollector.podAnnotations }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -28,7 +28,7 @@ spec:
         {{- end }}
     spec:
       {{- $podValues := deepCopy .Values.daemonsetCollector | mustMergeOverwrite (deepCopy .Values) }}
-      {{- $podData := dict "Values" $podValues "configmapSuffix" "" "isAgent" false }}
+      {{- $podData := dict "Values" $podValues "configmapSuffix" "-windows" "isAgent" false }}
       {{- include "opentelemetry-collector.daemonset-pod-windows" ($podData | mustMergeOverwrite (deepCopy .)) | nindent 6 }}
 {{- end }}
 {{- end }}
