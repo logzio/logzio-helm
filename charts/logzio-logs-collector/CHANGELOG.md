@@ -6,7 +6,6 @@
 - Add Windows node support via `global.windows.enabled` and `global.windows.version` settings.
   - When enabled, deploys an additional DaemonSet (`logzio-logs-collector-windows`) on Windows nodes.
   - Supports Windows Server 2019 and 2022.
-- Linux DaemonSet now explicitly targets Linux nodes with `kubernetes.io/os: linux` nodeSelector.
 
 ## 2.3.0
 - Support global setting for `nodeSelector` and `affinity`.
