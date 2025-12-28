@@ -23,6 +23,7 @@ This project packages the following Helm Charts:
 ### Table of content
 - [Installation instructions](#instructions-for-standard-deployment)
   - [EKS on fargate](#sending-telemetry-data-from-eks-on-fargate)
+  - [Windows nodes support](#windows-nodes-support)
 - [Custom config](#further-configuration)
   - [Custom endpoint for logs](#send-logs-to-a-custom-endpoint)
   - [Custom endpoint for metrics](#send-metrics-to-a-custom-endpoint)
@@ -151,6 +152,59 @@ helm install -n monitoring \
 --set global.logzioTracesToken="<<TRACES-SHIPPING-TOKEN>>" \
 logzio-monitoring logzio-helm/logzio-monitoring
 ```
+
+### Windows nodes support
+
+For mixed Linux/Windows clusters, enable Windows support to collect logs, metrics, and traces from Windows nodes (From version 7.10.0)
+
+#### Full telemetry collection (logs, metrics, traces) with Windows support
+
+```shell
+helm install -n monitoring \
+--set logs.enabled=true \
+--set global.logzioLogsToken="<<LOG-SHIPPING-TOKEN>>" \
+--set global.logzioRegion="<<LOGZIO-REGION>>" \
+--set global.env_id="<<ENV-ID>>" \
+--set logzio-k8s-telemetry.metrics.enabled=true \
+--set logzio-k8s-telemetry.collector.mode=daemonset \
+--set global.logzioMetricsToken="<<PROMETHEUS-METRICS-SHIPPING-TOKEN>>" \
+--set logzio-apm-collector.enabled=true \
+--set global.logzioTracesToken="<<TRACES-SHIPPING-TOKEN>>" \
+--set logzio-apm-collector.spm.enabled=true \
+--set global.logzioSpmToken="<<SPM-SHIPPING-TOKEN>>" \
+--set global.windows.enabled=true \
+--set global.windows.version="2022" \
+--set logzio-k8s-telemetry.secrets.windowsNodeUsername="<<WINDOWS-NODE-USERNAME>>" \
+--set logzio-k8s-telemetry.secrets.windowsNodePassword="<<WINDOWS-NODE-PASSWORD>>" \
+logzio-monitoring logzio-helm/logzio-monitoring
+```
+
+#### Windows parameters
+
+| Parameter | Description |
+| --- | --- |
+| `global.windows.enabled` | Enable Windows node support |
+| `global.windows.version` | Windows Server version: `"2019"` or `"2022"` |
+| `logzio-k8s-telemetry.secrets.windowsNodeUsername` | SSH username for Windows nodes (default: `azureuser` for AKS) |
+| `logzio-k8s-telemetry.secrets.windowsNodePassword` | SSH password for Windows nodes |
+
+#### How Windows telemetry collection works
+
+**Logs:**
+- A separate Windows DaemonSet (`logzio-logs-collector-windows`) runs on each Windows node
+- Collects container logs from `C:\var\log\pods\`
+- Uses Windows-compatible OTel collector image
+
+**Metrics:**
+- A separate Windows DaemonSet (`otel-collector-ds-windows`) runs on each Windows node
+- Collects kubelet metrics using Windows file paths for credentials
+- Scrapes Windows Exporter metrics (installed automatically via CronJob)
+- Note: cadvisor job metrics are not available on Windows nodes
+
+**Traces:**
+- The APM collector (`logzio-apm-collector`) runs on Linux nodes as a cluster-wide service
+- Applications on Windows nodes send traces to the APM collector service endpoint
+- No Windows-specific deployment needed for traces
 
 ### Send logs to a custom endpoint
 
