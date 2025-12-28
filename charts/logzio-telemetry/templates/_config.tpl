@@ -421,22 +421,12 @@ Build config file for standalone OpenTelemetry Collector daemonset
 
 {{/*
 Build config file for Windows OpenTelemetry Collector daemonset.
-Windows-specific: removes cadvisor, uses Windows paths, excludes windows-exporter from applications/endpoints jobs.
+Windows-specific: removes cadvisor, uses Windows paths for kubelet credentials.
 */}}
 {{- define "opentelemetry-collector.daemonsetCollectorConfigWindows" -}}
 {{- $configData := .Values.emptyConfig -}}
 {{- $metricsConfig := deepCopy .Values.daemonsetConfig | mustMergeOverwrite -}}
 {{- $_ := unset $metricsConfig.receivers "prometheus/cadvisor" -}}
-{{- $dropWindowsExporterPod := dict "source_labels" (list "__meta_kubernetes_pod_annotation_prometheus_windows_io_scrape") "regex" "true|\"true\"" "action" "drop" -}}
-{{- $dropWindowsExporterSvc := dict "source_labels" (list "__meta_kubernetes_service_annotation_prometheus_windows_io_scrape") "regex" "true|\"true\"" "action" "drop" -}}
-{{- range $job := (index $metricsConfig "receivers" "prometheus/applications" "config" "scrape_configs") -}}
-{{- $_ := set $job "relabel_configs" (prepend (default (list) $job.relabel_configs) $dropWindowsExporterPod) -}}
-{{- end -}}
-{{- range $job := (index $metricsConfig "receivers" "prometheus/infrastructure" "config" "scrape_configs") -}}
-{{- if eq $job.job_name "kubernetes-service-endpoints" -}}
-{{- $_ := set $job "relabel_configs" (prepend (default (list) $job.relabel_configs) $dropWindowsExporterSvc) -}}
-{{- end -}}
-{{- end -}}
 {{- range $job := (index $metricsConfig "receivers" "prometheus/kubelet" "config" "scrape_configs") -}}
 {{- $_ := set $job.authorization "credentials_file" "C:\\var\\run\\secrets\\kubernetes.io\\serviceaccount\\token" -}}
 {{- $_ := set $job.tls_config "ca_file" "C:\\var\\run\\secrets\\kubernetes.io\\serviceaccount\\ca.crt" -}}
