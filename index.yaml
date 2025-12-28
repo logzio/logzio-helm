@@ -1769,6 +1769,38 @@ entries:
   logzio-k8s-telemetry:
   - apiVersion: v2
     appVersion: 0.131.0
+    created: "2025-12-28T10:40:01.928371699Z"
+    dependencies:
+    - condition: kubeStateMetrics.enabled
+      name: kube-state-metrics
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 6.3.0
+    - condition: nodeExporter.enabled
+      name: prometheus-node-exporter
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 4.29.0
+    - condition: pushGateway.enabled
+      name: prometheus-pushgateway
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 2.4.2
+    description: logzio-k8s-telemetry allows you to ship metrics and traces from your
+      Kubernetes cluster using the OpenTelemetry collector.
+    digest: b52a616b3fe8404901fce077e5aa9782d60bbc1ee3f72187b4bb0e2191445015
+    maintainers:
+    - email: yotam.loewenbach@logz.io
+      name: yotamloe
+    - email: raul.gurshumo@logz.io
+      name: ralongit
+    name: logzio-k8s-telemetry
+    sources:
+    - https://github.com/prometheus/node_exporter
+    - https://github.com/kubernetes/kube-state-metrics
+    type: application
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/logzio-k8s-telemetry-5.9.0/logzio-k8s-telemetry-5.9.0.tgz
+    version: 5.9.0
+  - apiVersion: v2
+    appVersion: 0.131.0
     created: "2025-11-16T10:16:39.887616043Z"
     dependencies:
     - condition: kubeStateMetrics.enabled
@@ -4512,6 +4544,21 @@ entries:
     - https://logzio.github.io/logzio-helm/logzio-k8s-telemetry-0.0.1.tgz
     version: 0.0.1
   logzio-logs-collector:
+  - apiVersion: v2
+    appVersion: 0.133.0
+    created: "2025-12-28T10:40:02.118128944Z"
+    description: kubernetes logs collection agent for logz.io based on opentelemetry
+      collector
+    digest: b53b44d1e48f45567789cc79570f1cf32f1dac881c98430385ecf4dd54486c34
+    home: https://logz.io/
+    maintainers:
+    - email: yotam.loewenbach@logz.io
+      name: yotam loewenbach
+    name: logzio-logs-collector
+    type: application
+    urls:
+    - https://github.com/logzio/logzio-helm/releases/download/logzio-logs-collector-2.4.0/logzio-logs-collector-2.4.0.tgz
+    version: 2.4.0
   - apiVersion: v2
     appVersion: 0.133.0
     created: "2025-09-10T08:36:08.784683426Z"
@@ -10828,4 +10875,4 @@ entries:
     urls:
     - https://logzio.github.io/logzio-helm/prometheus-alerts-migrator-1.0.0.tgz
     version: 1.0.0
-generated: "2025-12-15T10:13:35.407117992Z"
+generated: "2025-12-28T10:40:02.118734973Z"
