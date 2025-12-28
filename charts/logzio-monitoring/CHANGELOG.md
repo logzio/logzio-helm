@@ -1,6 +1,14 @@
 # Changes by Version
 
 <!-- next version -->
+## 7.10.0
+- Add Windows node support for metrics and logs collection
+  - New `global.windows.enabled` and `global.windows.version` settings
+  - Upgrade `logzio-k8s-telemetry` chart to `5.9.0`
+    - Windows DaemonSet with Windows-specific OTel collector configuration
+  - Upgrade `logzio-logs-collector` chart to `2.4.0`
+    - Windows DaemonSet for log collection from Windows nodes
+
 ## 7.9.3
 - Upgrade `logzio-apm-collector` chart to `1.4.1`
   - Add span metrics attributes `http.method` , `http.status_code`
