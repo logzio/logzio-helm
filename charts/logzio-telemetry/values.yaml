@@ -1198,7 +1198,7 @@ autoscaling:
   # targetMemoryUtilizationPercentage: 80
 
 windowsExporterInstallerJob:
-  interval: "*/2 * * * *"
+  interval: "*/10 * * * *"
   concurrencyPolicy: Forbid            # Future cronjob will run only after current job is finished
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 1
