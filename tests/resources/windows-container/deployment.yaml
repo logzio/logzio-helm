@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: windows-prom-test
+  labels:
+    app: windows-prom-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: windows-prom-test
+  template:
+    metadata:
+      labels:
+        app: windows-prom-test
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/metrics"
+    spec:
+      nodeSelector:
+        kubernetes.io/os: windows
+      tolerations:
+        - key: "os"
+          operator: "Equal"
+          value: "windows"
+          effect: "NoSchedule"
+        - key: "node.kubernetes.io/os"
+          operator: "Equal"
+          value: "windows"
+          effect: "NoSchedule"
+      containers:
+        - name: metrics-server
+          image: mcr.microsoft.com/windows/servercore:ltsc2022
+          command: ["powershell", "-Command"]
+          args:
+            - |
+              $listener = New-Object System.Net.HttpListener
+              $listener.Prefixes.Add('http://+:8080/')
+              $listener.Start()
+              Write-Host 'Metrics server started on port 8080'
+              while ($listener.IsListening) {
+                $context = $listener.GetContext()
+                $response = $context.Response
+                $path = $context.Request.Url.AbsolutePath
+                if ($path -eq '/metrics') {
+                  $uptime = (Get-Date) - (Get-CimInstance Win32_OperatingSystem).LastBootUpTime
+                  $metrics = @"
+              # HELP windows_test_up Test metric indicating the exporter is up
+              # TYPE windows_test_up gauge
+              windows_test_up 1
+              # HELP windows_test_uptime_seconds System uptime in seconds
+              # TYPE windows_test_uptime_seconds gauge
+              windows_test_uptime_seconds $([math]::Round($uptime.TotalSeconds))
+              # HELP windows_test_requests_total Total number of requests
+              # TYPE windows_test_requests_total counter
+              windows_test_requests_total 1
+              "@
+                  $buffer = [Text.Encoding]::UTF8.GetBytes($metrics)
+                  $response.ContentType = 'text/plain; charset=utf-8'
+                  $response.ContentLength64 = $buffer.Length
+                  $response.OutputStream.Write($buffer, 0, $buffer.Length)
+                } else {
+                  $response.StatusCode = 404
+                }
+                $response.Close()
+              }
+          ports:
+            - containerPort: 8080
+              name: metrics
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+

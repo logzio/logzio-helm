@@ -17,7 +17,7 @@ containers:
       {{- end }}
     securityContext:
       {{- toYaml .Values.containerSecurityContext | nindent 6 }}
-    image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+    image: "{{ .Values.image.repository }}:{{ include "opentelemetry-collector.imageTag" . }}"
     imagePullPolicy: {{ .Values.image.pullPolicy }}
 {{- if (or .Values.traces.enabled .Values.metrics.enabled .Values.signalFx.enabled) }}
     ports:

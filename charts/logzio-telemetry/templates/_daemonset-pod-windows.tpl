@@ -1,4 +1,8 @@
-{{- define "opentelemetry-collector.daemonset-pod" -}}
+{{/*
+Windows-specific daemonset pod template.
+Uses Windows image tag and nodeSelector.
+*/}}
+{{- define "opentelemetry-collector.daemonset-pod-windows" -}}
 {{- with .Values.imagePullSecrets }}
 imagePullSecrets:
   {{- toYaml . | nindent 2 }}
@@ -17,7 +21,7 @@ containers:
       {{- end }}
     securityContext:
       {{- toYaml .Values.containerSecurityContext | nindent 6 }}
-    image: "{{ .Values.image.repository }}:{{ include "opentelemetry-collector.imageTag" . }}"
+    image: "{{ .Values.image.repository }}:{{ include "opentelemetry-collector.windowsImageTag" . }}"
     imagePullPolicy: {{ .Values.image.pullPolicy }}
 {{- if .Values.metrics.enabled }}
     ports:
@@ -199,7 +203,7 @@ volumes:
     secret:
       secretName: {{ .secretName }}
   {{- end }}
-{{ with (include "opentelemetry-collector.nodeSelector" .) }}{{ . }}{{ end }}
+{{ include "opentelemetry-collector.windowsNodeSelector" . }}
 {{ with (include "opentelemetry-collector.daemonsetAffinity" .) }}{{ . }}{{ end }}
 {{- if or .Values.tolerations .Values.global.tolerations }}
   {{- $allTolerations := concat (.Values.tolerations | default list) (.Values.global.tolerations | default list) }}

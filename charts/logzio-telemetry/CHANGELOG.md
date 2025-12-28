@@ -1,6 +1,13 @@
 # Changes by Version
 
 <!-- next version -->
+
+## 5.9.0
+- Add Windows node support for metrics collection via `global.windows.enabled` and `global.windows.version` settings.
+  - When enabled, deploys an additional DaemonSet or Deployment on Windows nodes (depending on collector mode).
+  - Supports Windows Server 2019 and 2022.
+- Linux collectors now explicitly target Linux nodes with `kubernetes.io/os: linux` nodeSelector.
+
 ## 5.8.1
 - Fix custom tracing endpoint: `global.CustomTracingEndpoint` >> `global.customTracesEndpoint`
 ## 5.8.0

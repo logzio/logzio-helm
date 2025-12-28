@@ -1,6 +1,12 @@
 # Changes by Version
 
 <!-- next version -->
+
+## 2.4.0
+- Add Windows node support via `global.windows.enabled` and `global.windows.version` settings.
+  - When enabled, deploys an additional DaemonSet (`logzio-logs-collector-windows`) on Windows nodes.
+  - Supports Windows Server 2019 and 2022.
+
 ## 2.3.0
 - Support global setting for `nodeSelector` and `affinity`.
 - Upgrade `otel/opentelemetry-collector-contrib` image to version `0.133.0`.

@@ -1,0 +1,19 @@
+{{- if .Values.global.windows }}
+{{- if .Values.global.windows.enabled }}
+{{- if and (eq .Values.collector.mode "daemonset") .Values.metrics.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "opentelemetry-collector.daemonsetFullname" . }}-windows
+  labels:
+    {{- include "opentelemetry-collector.labels" . | nindent 4 }}
+    app.kubernetes.io/os: windows
+data:
+  relay: |
+    {{- include "opentelemetry-collector.daemonsetCollectorConfigWindows" . | nindent 4 -}}
+{{- end }}
+{{- end }}
+{{- end }}
+
+
+

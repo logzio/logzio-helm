@@ -179,52 +179,122 @@ In these cases we can use the following `--set` commands to use an alternative i
 ```
 
 
-#### For clusters with Windows Nodes
+## Windows Node Support
 
+This chart provides full support for collecting metrics from Windows nodes in mixed Linux/Windows Kubernetes clusters.
 
-To extract and scrape metrics from Windows Nodes, a Windows Exporter service must be installed on the node host. This installation is accomplished by authenticating with a username and password via an SSH connection to the node through a job.
+### Architecture Overview
 
-By default, the Windows installer job will execute upon deployment and subsequently every 10 minutes, retaining the most recent failed and successful pods.
-You can modify these settings in the `values.yaml` file:
+When Windows support is enabled (`global.windows.enabled=true`), the chart deploys additional Windows-specific resources:
 
-```
+- **Windows DaemonSet** (`otel-collector-ds-windows`) - OTel collector running on each Windows node
+- **Windows ConfigMap** - Collector configuration with Windows-specific paths and receivers
+- **Nginx Proxy DaemonSet** (`nginx-win-node-proxy`) - Reverse proxy to expose Windows Exporter metrics
+- **Windows Exporter Installer** (CronJob) - Automatically installs Windows Exporter on nodes via SSH
+
+### Deployment Modes with Windows
+
+#### DaemonSet Mode (Recommended for Windows)
+
+In daemonset mode (`collector.mode=daemonset`), the chart deploys:
+- **Linux DaemonSet**: Runs on Linux nodes, collects cadvisor, kubelet, and application metrics
+- **Windows DaemonSet**: Runs on Windows nodes with Windows-specific configuration:
+  - Uses Windows file paths for kubelet credentials (`C:\var\run\secrets\...`)
+  - Scrapes `windows-metrics` job for Windows Exporter metrics
+
+#### Standalone Mode
+
+In standalone mode (`collector.mode=standalone`), only a **single Linux deployment** is created. This deployment:
+- Runs on Linux nodes and scrapes cluster-wide metrics
+- Can discover and scrape Windows nodes via Kubernetes service discovery
+
+### Windows Exporter Installation
+
+To collect node-level metrics from Windows nodes, the Windows Exporter service must be installed on each Windows node. The chart includes a CronJob that automatically installs and maintains the Windows Exporter via SSH.
+
+#### CronJob Configuration
+
+```yaml
 windowsExporterInstallerJob:
-  interval: "*/10 * * * *"           #In CronJob format
-  concurrencyPolicy: Forbid          # Future cronjob will run only after current job is finished
-  successfulJobsHistoryLimit: 1
-  failedJobsHistoryLimit: 1
+  interval: "*/10 * * * *"          # Run every 10 minutes (CronJob format)
+  concurrencyPolicy: Forbid         # Prevent concurrent executions
+  successfulJobsHistoryLimit: 1     # Keep 1 successful job
+  failedJobsHistoryLimit: 1         # Keep 1 failed job
 ```
 
-The default username for Windows Node pools is: `azureuser`. (This username and password are shared across all Windows node pools.)
+#### Windows Node Credentials
 
-You can change the password for your Windows node pools in the AKS cluster using the following command (this will only affect Windows node pools):
+The installer job requires SSH credentials to connect to Windows nodes:
 
-```
-    az aks update \
-    --resource-group $RESOURCE_GROUP \
-    --name $CLUSTER_NAME \
-    --windows-admin-password $NEW_PW
-```
+- **Default username**: `azureuser` (for AKS clusters)
+- **Password**: Must be provided via `secrets.windowsNodePassword`
 
-You can read more information at https://docs.microsoft.com/en-us/azure/aks/windows-faq,
-under `How do I change the administrator password for Windows Server nodes on my cluster?` section.
+For AKS clusters, you can update the Windows node pool password:
 
-
-###### Run the Helm deployment code for clusters with Windows Nodes:
-
-```
-helm install  \
---set global.logzioMetricsToken=<<PROMETHEUS-METRICS-SHIPPING-TOKEN>> \
---set global.logzioRegion=<<LISTENER-HOST>> \
---set global.env_id=<<ENV-TAG>> \
---set secrets.windowsNodeUsername=<<WINDOWS-NODE-USERNAME>> \
---set secrets.windowsNodePassword=<<WINDOWS-NODE-PASSWORD>> \
-logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry
+```bash
+az aks update \
+  --resource-group <RESOURCE_GROUP> \
+  --name <CLUSTER_NAME> \
+  --windows-admin-password "<NEW_PASSWORD>"
 ```
 
-* Replace `<<WINDOWS-NODE-USERNAME>>` with the username for the Node pool you want the Windows exporter to be installed on.
+See [Azure AKS Windows FAQ](https://docs.microsoft.com/en-us/azure/aks/windows-faq) for more details.
 
-* Replace `<<WINDOWS-NODE-PASSWORD>>` with the password for the Node pool you want the Windows exporter to be installed on.
+### Supported Windows Versions
+
+The chart supports Windows Server 2019 and 2022. Set the version to match your Windows nodes:
+
+| Windows Version | `global.windows.version` | Image Suffix |
+|----------------|--------------------------|--------------|
+| Windows Server 2019 | `"2019"` | `-windows-2019-amd64` |
+| Windows Server 2022 | `"2022"` | `-windows-2022-amd64` |
+
+### Deploying with Windows Support
+
+#### Basic Windows Metrics Collection
+
+```bash
+helm install logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry \
+  --set metrics.enabled=true \
+  --set global.logzioMetricsToken=<<PROMETHEUS-METRICS-SHIPPING-TOKEN>> \
+  --set global.logzioRegion=<<LOGZIO-REGION>> \
+  --set global.env_id=<<ENV-ID>> \
+  --set collector.mode=daemonset \
+  --set global.windows.enabled=true \
+  --set global.windows.version=2022 \
+  --set secrets.windowsNodeUsername=azureuser \
+  --set secrets.windowsNodePassword="<<WINDOWS-NODE-PASSWORD>>"
+```
+
+#### Windows with Application Metrics
+
+```bash
+helm install logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry \
+  --set metrics.enabled=true \
+  --set applicationMetrics.enabled=true \
+  --set global.logzioMetricsToken=<<PROMETHEUS-METRICS-SHIPPING-TOKEN>> \
+  --set global.logzioRegion=<<LOGZIO-REGION>> \
+  --set global.env_id=<<ENV-ID>> \
+  --set collector.mode=daemonset \
+  --set global.windows.enabled=true \
+  --set global.windows.version=2022 \
+  --set secrets.windowsNodeUsername=azureuser \
+  --set secrets.windowsNodePassword="<<WINDOWS-NODE-PASSWORD>>"
+```
+
+### Windows Configuration Values
+
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `global.windows.enabled` | Enable Windows node support | `false` |
+| `global.windows.version` | Windows Server version (`"2019"` or `"2022"`) | `"2022"` |
+| `secrets.windowsNodeUsername` | SSH username for Windows nodes | `azureuser` |
+| `secrets.windowsNodePassword` | SSH password for Windows nodes | `""` |
+| `windowsExporterInstallerJob.interval` | CronJob schedule for installer | `"*/10 * * * *"` |
+| `nginxWindowsImage.repository` | Nginx proxy image for Windows | `logzio/logzio-windows-node-reverse-proxy` |
+| `nginxWindowsImage.tag` | Base tag for nginx image | `"0.0.1"` |
+| `nginxWindowsImage.useVersionSuffix` | Append Windows version to tag | `true` |
+`
 
 ##### Check Logz.io for your metrics and traces
 

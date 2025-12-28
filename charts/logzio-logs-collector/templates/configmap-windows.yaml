@@ -1,0 +1,19 @@
+{{- if .Values.enabled }}
+{{- if eq .Values.mode "daemonset" }}
+{{- if .Values.global.windows }}
+{{- if .Values.global.windows.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "logs-collector.fullname" . }}-windows
+  namespace: {{ template "logs-collector.namespace" . }}
+  labels:
+    {{- include "logs-collector.labels" . | nindent 4 }}
+    app.kubernetes.io/os: windows
+data:
+  relay: |
+    {{- include "logs-collector.loggingWindowsConfig" . | nindent 4 }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

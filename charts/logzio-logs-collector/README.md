@@ -82,6 +82,32 @@ logzio-helm/logzio-logs-collector
 
 The SignalFx receiver will be available on port 9943 and will accept logs from SignalFx client libraries, forwarding them to Logz.io.
 
+### Windows Node Support
+
+The logs collector supports collecting logs from Windows nodes in mixed Linux/Windows Kubernetes clusters. When enabled, an additional DaemonSet is deployed specifically for Windows nodes.
+
+**Requirements:**
+- Kubernetes 1.23+ (for Windows HostProcess container support)
+- Windows Server 2019 or 2022 nodes
+
+To enable Windows node log collection:
+
+```
+helm install logzio-logs-collector -n monitoring \
+--set enabled=true \
+--set global.logzioLogsToken=<<token>> \
+--set global.logzioRegion=<<region>> \
+--set global.env_id=<<env_id>> \
+--set global.logType=<<logType>> \
+--set global.windows.enabled=true \
+--set global.windows.version="2022" \
+logzio-helm/logzio-logs-collector
+```
+
+Set `global.windows.version` to match your Windows Server version (`"2019"` or `"2022"`).
+
+**Note:** The Windows DaemonSet runs as `ContainerAdministrator` to access host log files mounted via hostPath volumes. This provides least-privilege access for reading container logs from `C:\var\log\pods`.
+
     
 ### Uninstalling the Chart
 
@@ -111,6 +137,8 @@ The table below lists the configurable parameters of the `logzio-logs-collector`
 | global.logzioLogsToken  | Secret with your Logz.io logs shipping token.                                    | `"token"`                                |
 | global.LogzioRegion     | Secret with your Logz.io region.                                                 | `"us"`                                   |
 | global.customLogsEndpoint   | Secret with your custom endpoint, overrides Logz.io region listener address.     | `""`                                     |
+| global.windows.enabled   | Enable deployment of Windows DaemonSet for Windows nodes.                        | `false`                                  |
+| global.windows.version   | Windows Server version: `"2019"` or `"2022"` (must match node OS).               | `"2022"`                                 |
 | configMap.create         | Specifies whether a configMap should be created.                                 | `true`                                   |
 | config                   | Base collector configuration, supports templating.                               | Complex structure (see `values.yaml`)    |
 | signalFx.enabled | Enable SignalFx receiver for accepting logs from SignalFx client libraries.      | `false`                                  |
