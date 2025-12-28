@@ -198,17 +198,19 @@ affinity:
 {{- end -}}
 {{- end -}}
 
+{{/*
+Merges local and global nodeSelector settings.
+*/}}
 {{- define "apm-collector.nodeSelector" -}}
 {{- $nodeSelector := dict -}}
-{{- $nodeSelector = merge $nodeSelector (dict "kubernetes.io/os" "linux") -}}
-{{/* Merge global nodeSelector */}}
 {{- if .Values.global.nodeSelector -}}
-  {{- $nodeSelector = mergeOverwrite $nodeSelector .Values.global.nodeSelector -}}
+  {{- $nodeSelector = merge $nodeSelector .Values.global.nodeSelector -}}
 {{- end -}}
 {{- if .Values.nodeSelector -}}
-  {{- $nodeSelector = mergeOverwrite $nodeSelector .Values.nodeSelector -}}
+  {{- $nodeSelector = merge $nodeSelector .Values.nodeSelector -}}
 {{- end -}}
+{{- if $nodeSelector -}}
 nodeSelector:
   {{- toYaml $nodeSelector | nindent 2 }}
 {{- end -}}
-
+{{- end -}}
