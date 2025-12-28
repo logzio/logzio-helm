@@ -2,6 +2,14 @@ logs:
   # Enables the deployment of the sub chart for sending logs
   enabled: false
 
+# Global Windows support settings
+global:
+  windows:
+    # Enable Windows node support for metrics and logs collection
+    enabled: false
+    # Windows Server version: "2019" or "2022"
+    version: "2022"
+
 logzio-k8s-telemetry:
   metrics:
     enabled: false
