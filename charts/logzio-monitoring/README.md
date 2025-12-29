@@ -155,7 +155,7 @@ logzio-monitoring logzio-helm/logzio-monitoring
 
 ### Windows nodes support
 
-For mixed Linux/Windows clusters, enable Windows support to collect logs, metrics, and traces from Windows nodes (From version 7.10.0)
+For mixed Linux/Windows clusters, enable Windows support to collect logs, metrics, and traces from Windows nodes (from version 7.10.0).
 
 #### Full telemetry collection (logs, metrics, traces) with Windows support
 
@@ -179,14 +179,20 @@ helm install -n monitoring \
 logzio-monitoring logzio-helm/logzio-monitoring
 ```
 
+#### Supported Windows versions
+
+| Windows Version | `global.windows.version` |
+|----------------|--------------------------|
+| Windows Server 2019 | `"2019"` |
+| Windows Server 2022 | `"2022"` |
 #### Windows parameters
 
-| Parameter | Description |
-| --- | --- |
-| `global.windows.enabled` | Enable Windows node support |
-| `global.windows.version` | Windows Server version: `"2019"` or `"2022"` |
-| `logzio-k8s-telemetry.secrets.windowsNodeUsername` | SSH username for Windows nodes (default: `azureuser` for AKS) |
-| `logzio-k8s-telemetry.secrets.windowsNodePassword` | SSH password for Windows nodes |
+| Parameter | Description | Default |
+| --- | --- | --- |
+| `global.windows.enabled` | Enable Windows node support | `false` |
+| `global.windows.version` | Windows Server version: `"2019"` or `"2022"` | `"2022"` |
+| `logzio-k8s-telemetry.secrets.windowsNodeUsername` | SSH username for Windows nodes | `azureuser` |
+| `logzio-k8s-telemetry.secrets.windowsNodePassword` | SSH password for Windows nodes | `""` |
 
 #### How Windows telemetry collection works
 
@@ -196,10 +202,10 @@ logzio-monitoring logzio-helm/logzio-monitoring
 - Uses Windows-compatible OTel collector image
 
 **Metrics:**
-- A separate Windows DaemonSet (`otel-collector-ds-windows`) runs on each Windows node
-- Collects kubelet metrics using Windows file paths for credentials
-- Scrapes Windows Exporter metrics (installed automatically via CronJob)
-- Note: cadvisor job metrics are not available on Windows nodes
+- In **daemonset mode**: A Windows DaemonSet (`otel-collector-ds-windows`) runs on each Windows node
+- In **standalone mode**: The Linux deployment scrapes Windows nodes via service discovery (no Windows pods)
+- Windows Exporter is installed automatically on Windows nodes via a CronJob (SSH-based)
+- Kubelet metrics use Windows file paths for credentials
 
 **Traces:**
 - The APM collector (`logzio-apm-collector`) runs on Linux nodes as a cluster-wide service
