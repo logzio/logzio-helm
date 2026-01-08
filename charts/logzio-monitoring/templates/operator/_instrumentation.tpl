@@ -13,13 +13,15 @@ metadata:
     helm.sh/hook-weight: "3"
 spec:
   env:
+    - name: OTEL_EXPORTER_OTLP_PROTOCOL
+      value: grpc
     {{- if $metricsEnabled }}
     - name: OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
-      value: {{ include "otel-operator.serviceAddr" (dict "serviceName" .Values.instrumentation.metricsServiceName "releaseNamespace" .Release.Namespace) }}:4318
+      value: {{ include "otel-operator.serviceAddr" (dict "serviceName" .Values.instrumentation.metricsServiceName "releaseNamespace" .Release.Namespace) }}:4317
     {{- end }}
     {{- if $tracesEnabled }}
     - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-      value: {{ include "otel-operator.serviceAddr" (dict "serviceName" .Values.instrumentation.tracesServiceName "releaseNamespace" .Release.Namespace) }}:4318
+      value: {{ include "otel-operator.serviceAddr" (dict "serviceName" .Values.instrumentation.tracesServiceName "releaseNamespace" .Release.Namespace) }}:4317
     {{- end }}
   resource:
     addK8sUIDAttributes: {{ .Values.instrumentation.addK8sUIDAttributes }}
@@ -37,6 +39,8 @@ spec:
         value: {{ include "otel-operator.rsourceExporterType" (dict "enabledResource" .Values.instrumentation.dotnet.metrics.enabled "enabledSubChart" $metricsEnabled) }}
       - name: OTEL_TRACES_EXPORTER
         value: {{ include "otel-operator.rsourceExporterType" (dict "enabledResource" .Values.instrumentation.dotnet.traces.enabled "enabledSubChart" $tracesEnabled) }}
+      - name: OTEL_LOGS_EXPORTER
+        value: none
     {{- with .Values.instrumentation.dotnet.extraEnv }}
       {{- . | toYaml | nindent 6 }}
     {{- end }}
@@ -50,6 +54,8 @@ spec:
         value: {{ include "otel-operator.rsourceExporterType" (dict "enabledResource" .Values.instrumentation.java.metrics.enabled "enabledSubChart" $metricsEnabled) }}
       - name: OTEL_TRACES_EXPORTER
         value: {{ include "otel-operator.rsourceExporterType" (dict "enabledResource" .Values.instrumentation.java.traces.enabled "enabledSubChart" $tracesEnabled) }}
+      - name: OTEL_LOGS_EXPORTER
+        value: none
     {{- with .Values.instrumentation.java.extraEnv }}
       {{- . | toYaml | nindent 6 }}
     {{- end }}
@@ -59,6 +65,8 @@ spec:
         value: {{ include "otel-operator.rsourceExporterType" (dict "enabledResource" .Values.instrumentation.python.metrics.enabled "enabledSubChart" $metricsEnabled) }}
       - name: OTEL_TRACES_EXPORTER
         value: {{ include "otel-operator.rsourceExporterType" (dict "enabledResource" .Values.instrumentation.python.traces.enabled "enabledSubChart" $tracesEnabled) }}
+      - name: OTEL_LOGS_EXPORTER
+        value: none
     {{- with .Values.instrumentation.python.extraEnv }}
       {{- . | toYaml | nindent 6 }}
     {{- end }}
@@ -72,6 +80,8 @@ spec:
         value: {{ include "otel-operator.rsourceExporterType" (dict "enabledResource" .Values.instrumentation.nodejs.metrics.enabled "enabledSubChart" $metricsEnabled) }}
       - name: OTEL_TRACES_EXPORTER
         value: {{ include "otel-operator.rsourceExporterType" (dict "enabledResource" .Values.instrumentation.nodejs.traces.enabled "enabledSubChart" $tracesEnabled) }}
+      - name: OTEL_LOGS_EXPORTER
+        value: none
     {{- with .Values.instrumentation.nodejs.extraEnv }}
       {{- . | toYaml | nindent 6 }}
     {{- end -}}
