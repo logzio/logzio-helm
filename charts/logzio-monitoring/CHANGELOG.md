@@ -1,6 +1,12 @@
 # Changes by Version
 
 <!-- next version -->
+## 7.10.1
+- otel-operator:
+  - Update opentelemetry-operator subchart `0.93.1` -> `0.102.0`
+  - Use explicit `grpc` protocol for instrumentation export 
+  - Disable logs exporter By default
+
 ## 7.10.0
 - Add Windows node support for metrics and logs collection
   - New `global.windows.enabled` and `global.windows.version` settings
