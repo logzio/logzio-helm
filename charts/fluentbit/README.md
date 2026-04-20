@@ -90,7 +90,10 @@ kubectl get nodes -o json | jq ".items[]|{name:.metadata.name, taints:.spec.tain
 
 
 ## Change log
-* 1.0.0 
+* 1.0.1
+  - Upgrade 'fluent-bit-output' image to `0.8.0`
+    - Upgrade fluent-bit to `v5.0.3`.
+* 1.0.0
   - Upgrade 'fluent-bit-output' image to 0.7.0
     - Upgrade FluentBit from `v3.1.4` to `v4.1.1`
     - Upgrade GoLang to `v1.25.0`
