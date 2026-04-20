@@ -1,1 +1,1 @@
-paramiko~=2.9.1
+paramiko~=3.5.1
