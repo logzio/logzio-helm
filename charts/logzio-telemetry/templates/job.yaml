@@ -44,7 +44,7 @@ spec:
       {{- if .Values.tolerations }}
       tolerations: {{- .Values.tolerations | toYaml | trim | nindent 8 }}
       {{- end }}
-
+---
 apiVersion: batch/v1
 kind: CronJob
 metadata:
