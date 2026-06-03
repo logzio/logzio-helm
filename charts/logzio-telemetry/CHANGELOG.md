@@ -2,6 +2,9 @@
 
 <!-- next version -->
 
+## 5.9.1
+- Fix a Helm templating issue when configuring the Windows metrics exporter.
+
 ## 5.9.0
 - Add Windows node support for metrics collection via `global.windows.enabled` and `global.windows.version` settings.
   - When enabled, deploys an additional DaemonSet or Deployment on Windows nodes (depending on collector mode).
