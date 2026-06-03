@@ -1,6 +1,10 @@
 # Changes by Version
 
 <!-- next version -->
+## 7.10.2
+- Upgrade `logzio-k8s-telemetry` chart to `5.9.1`
+    - Fix a Helm templating issue when configuring the Windows metrics exporter.
+
 ## 7.10.1
 - otel-operator:
   - Update opentelemetry-operator subchart `0.93.1` -> `0.102.0`
