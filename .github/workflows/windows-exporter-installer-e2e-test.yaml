@@ -97,10 +97,10 @@ jobs:
           WIN_NODE_IP=$(kubectl get nodes --selector=kubernetes.io/os=windows -o jsonpath='{.items[0].status.addresses[?(@.type=="InternalIP")].address}')
           echo "Windows node IP: $WIN_NODE_IP"
           # Run a debug pod to test SSH connectivity from inside the cluster
-          kubectl run ssh-test --image=busybox --restart=Never --command -- sh -c "nc -z -w 10 $WIN_NODE_IP 22 && echo 'SSH_OK' || echo 'SSH_FAIL'"
+          kubectl run ssh-test --image=busybox --restart=Never --overrides='{"spec":{"nodeSelector":{"kubernetes.io/os":"linux"}}}' --command -- sh -c "nc -z -w 10 $WIN_NODE_IP 22 && echo 'SSH_OK' || echo 'SSH_FAIL'"
           kubectl wait --for=condition=Ready pod/ssh-test --timeout=60s || true
           sleep 15
-          SSH_RESULT=$(kubectl logs ssh-test)
+          SSH_RESULT=$(kubectl logs ssh-test 2>/dev/null || echo "NO_LOGS")
           echo "SSH connectivity result: $SSH_RESULT"
           kubectl delete pod ssh-test --ignore-not-found
           if echo "$SSH_RESULT" | grep -q "SSH_FAIL"; then
