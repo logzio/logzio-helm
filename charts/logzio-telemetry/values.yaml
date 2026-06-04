@@ -605,7 +605,7 @@ windowsExporterInstallerImage:
   # Job image to install windows exporter on windows nodes
   repository: logzio/logzio-windows-exporter-installer
   pullPolicy: IfNotPresent
-  tag: "0.0.1"
+  tag: "0.0.2"
 spmImage:
   repository: otel/opentelemetry-collector-contrib
   pullPolicy: IfNotPresent

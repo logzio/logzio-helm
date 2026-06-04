@@ -1,8 +1,10 @@
 FROM python:3.9
 
+LABEL version="0.0.2"
+
 # Download and install kubectl
 # https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/
-RUN apt-get update \  
+RUN apt-get update \
     && apt-get -y install curl
 
 WORKDIR /etc/kubectl

@@ -2,6 +2,11 @@
 
 <!-- next version -->
 
+## 5.9.2
+- Fix Windows exporter installer failing to connect to nodes on AKS due to DNS resolution errors. The installer now uses the node's InternalIP instead of hostname.
+- Add `imagePullSecrets` support to the Windows exporter installer Job and CronJob for use with private container registries.
+- Bump `logzio-windows-exporter-installer` image to `0.0.2`.
+
 ## 5.9.1
 - Fix a Helm templating issue when configuring the Windows metrics exporter.
 

@@ -39,6 +39,10 @@ spec:
             {{- with .Values.containerSecurityContext }}
             {{- toYaml . | nindent 12 }}
             {{- end }}            
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       nodeSelector:
         kubernetes.io/os: linux
       {{- if .Values.tolerations }}
@@ -88,6 +92,10 @@ spec:
                 {{- with .Values.containerSecurityContext }}
                 {{- toYaml . | nindent 16 }}
                 {{- end }}
+          {{- with .Values.imagePullSecrets }}
+          imagePullSecrets:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           nodeSelector:
             kubernetes.io/os: linux
           {{- if .Values.tolerations }}
