@@ -1,0 +1,176 @@
+name: Test Windows Exporter Installer E2E
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'charts/logzio-telemetry/windows_exporter_installer/**'
+
+permissions:
+  contents: read
+
+jobs:
+  test-windows-exporter-installer:
+    name: Test Windows Exporter Installer on AKS
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      RESOURCE_GROUP: rg-win-exporter-test-${{ github.run_id }}
+      CLUSTER_NAME: aks-win-exporter-test-${{ github.run_id }}
+      ACR_NAME: acrwintest${{ github.run_id }}
+      LOCATION: eastus
+      WIN_ADMIN_USERNAME: ${{ secrets.WIN_ADMIN_USERNAME }}
+      WIN_ADMIN_PASSWORD: ${{ secrets.WIN_ADMIN_PASSWORD }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}","subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4.3.0
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Create resource group
+        run: az group create --name $RESOURCE_GROUP --location $LOCATION
+
+      - name: Create ACR
+        run: az acr create --resource-group $RESOURCE_GROUP --name $ACR_NAME --sku Basic
+
+      - name: Build installer image in ACR
+        run: |
+          az acr build \
+            --registry $ACR_NAME \
+            --image logzio-windows-exporter-installer:test-${{ github.run_id }} \
+            --file charts/logzio-telemetry/windows_exporter_installer/windows_exporter_installer.dockerfile \
+            charts/logzio-telemetry/windows_exporter_installer/
+
+      - name: Create AKS cluster with Windows node pool
+        run: |
+          az aks create \
+            --resource-group $RESOURCE_GROUP \
+            --name $CLUSTER_NAME \
+            --node-count 1 \
+            --node-vm-size Standard_B2s \
+            --network-plugin azure \
+            --windows-admin-username $WIN_ADMIN_USERNAME \
+            --windows-admin-password "$WIN_ADMIN_PASSWORD" \
+            --generate-ssh-keys
+
+          az aks nodepool add \
+            --resource-group $RESOURCE_GROUP \
+            --cluster-name $CLUSTER_NAME \
+            --name npwin \
+            --os-type Windows \
+            --node-count 1 \
+            --node-vm-size Standard_B2ms
+
+      - name: Get AKS credentials
+        run: az aks get-credentials --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME --overwrite-existing
+
+      - name: Create ACR image pull secret
+        run: |
+          az acr update --name $ACR_NAME --admin-enabled true
+          ACR_LOGIN_SERVER=$(az acr show --name $ACR_NAME --query loginServer -o tsv)
+          ACR_USERNAME=$(az acr credential show --name $ACR_NAME --query username -o tsv)
+          ACR_PASSWORD=$(az acr credential show --name $ACR_NAME --query "passwords[0].value" -o tsv)
+          kubectl create secret docker-registry acr-pull-secret \
+            --docker-server=$ACR_LOGIN_SERVER \
+            --docker-username=$ACR_USERNAME \
+            --docker-password=$ACR_PASSWORD
+
+      - name: Wait for nodes to be ready
+        run: |
+          echo "Waiting for all nodes to be ready..."
+          kubectl wait --for=condition=Ready nodes --all --timeout=300s
+          echo "=== Node Status ==="
+          kubectl get nodes -o wide
+
+      - name: Verify SSH access to Windows node
+        run: |
+          WIN_NODE_IP=$(kubectl get nodes --selector=kubernetes.io/os=windows -o jsonpath='{.items[0].status.addresses[?(@.type=="InternalIP")].address}')
+          echo "Windows node IP: $WIN_NODE_IP"
+          # Run a debug pod to test SSH connectivity from inside the cluster
+          kubectl run ssh-test --image=busybox --restart=Never --overrides='{"spec":{"nodeSelector":{"kubernetes.io/os":"linux"}}}' --command -- sh -c "nc -z -w 10 $WIN_NODE_IP 22 && echo 'SSH_OK' || echo 'SSH_FAIL'"
+          kubectl wait --for=condition=Ready pod/ssh-test --timeout=60s || true
+          sleep 15
+          SSH_RESULT=$(kubectl logs ssh-test 2>/dev/null || echo "NO_LOGS")
+          echo "SSH connectivity result: $SSH_RESULT"
+          kubectl delete pod ssh-test --ignore-not-found
+          if echo "$SSH_RESULT" | grep -q "SSH_FAIL"; then
+            echo "ERROR: SSH port 22 is not reachable on Windows node $WIN_NODE_IP"
+            echo "AKS Windows nodes may not have OpenSSH server enabled."
+            exit 1
+          fi
+
+      - name: Deploy Helm chart
+        run: |
+          cd charts/logzio-telemetry
+          helm dependency build
+          ACR_LOGIN_SERVER=$(az acr show --name $ACR_NAME --query loginServer -o tsv)
+          helm upgrade --install logzio-k8s-telemetry . \
+            --set metrics.enabled=true \
+            --set global.logzioMetricsToken=dummy \
+            --set global.logzioRegion=us \
+            --set secrets.windowsNodeUsername=$WIN_ADMIN_USERNAME \
+            --set secrets.windowsNodePassword="$WIN_ADMIN_PASSWORD" \
+            --set windowsExporterInstallerImage.repository=${ACR_LOGIN_SERVER}/logzio-windows-exporter-installer \
+            --set windowsExporterInstallerImage.tag=test-${{ github.run_id }} \
+            --set imagePullSecrets[0].name=acr-pull-secret
+
+      - name: Wait for installer Job to complete
+        run: |
+          echo "Waiting for windows-exporter-installer Job to complete..."
+          kubectl wait --for=condition=complete job/windows-exporter-installer --timeout=600s
+
+      - name: Verify installer logs
+        run: |
+          echo "=== Installer Job Logs ==="
+          JOB_POD=$(kubectl get pods --selector=job-name=windows-exporter-installer -o jsonpath='{.items[0].metadata.name}')
+          kubectl logs $JOB_POD
+
+          # Verify success messages and no errors
+          LOGS=$(kubectl logs $JOB_POD)
+          if echo "$LOGS" | grep -q "Finished installing windows exporter"; then
+            echo "SUCCESS: Windows exporter was installed"
+          elif echo "$LOGS" | grep -q "already running windows_exporter"; then
+            echo "SUCCESS: Windows exporter was already running"
+          else
+            echo "FAILURE: Expected success message not found in logs"
+            exit 1
+          fi
+
+          if echo "$LOGS" | grep -qi "error"; then
+            echo "WARNING: Errors found in logs:"
+            echo "$LOGS" | grep -i "error"
+            exit 1
+          fi
+
+      - name: Debug on failure
+        if: failure()
+        run: |
+          echo "=== Job Status ==="
+          kubectl get jobs -o wide
+          echo "=== Pod Status ==="
+          kubectl get pods -o wide
+          echo "=== Pod Descriptions ==="
+          kubectl describe pods --selector=job-name=windows-exporter-installer
+          echo "=== Events ==="
+          kubectl get events --sort-by=.metadata.creationTimestamp
+          echo "=== All Pod Logs ==="
+          for pod in $(kubectl get pods --selector=job-name=windows-exporter-installer -o jsonpath='{.items[*].metadata.name}'); do
+            echo "--- Logs for pod: $pod ---"
+            kubectl logs $pod || echo "Failed to get logs for $pod"
+          done
+          echo "=== Windows Nodes ==="
+          kubectl get nodes --selector=kubernetes.io/os=windows -o json | jq '.items[].status.addresses'
+
+      - name: Cleanup Azure resources
+        if: always()
+        run: az group delete --name $RESOURCE_GROUP --yes --no-wait
