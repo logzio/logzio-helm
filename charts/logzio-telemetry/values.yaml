@@ -522,6 +522,9 @@ metricsConfig:
             - source_labels: [__meta_kubernetes_pod_annotation_prometheus_windows_io_scrape]
               action: keep
               regex: true|"true"
+            - source_labels: [__meta_kubernetes_pod_node_name]
+              action: replace
+              target_label: kubernetes_node
           metric_relabel_configs: []
         - job_name: kubernetes-service-endpoints
           honor_timestamps: true
