@@ -12,7 +12,7 @@ spm:
   enabled: false # Send Span metrics, requires `traces.enabled`
 
 applicationMetrics:
-  ## Send application metrics, requires `metrics.enabled` and the `prometheus.io/scrape: true` annotaion set.
+  ## Send application metrics, requires `metrics.enabled` and the `prometheus.io/scrape: true` annotation set.
   enabled: false 
 kubeStateMetrics:
   ## If false, kube-state-metrics sub-chart will not be installed
@@ -190,7 +190,7 @@ prometheus-pushgateway:
     prometheus.io/scrape: "true"
   nodeSelector:
     kubernetes.io/os: linux
-# Configuration merge from the colelctor configs
+# Configuration merge from the collector configs
 emptyConfig: {}
 # Base configuration of the collector
 baseCollectorConfig:

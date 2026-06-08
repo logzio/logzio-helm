@@ -40,11 +40,6 @@ containers:
       {{- end }}
 {{- end }}
     env:
-      - name: MY_POD_IP
-        valueFrom:
-          fieldRef:
-            apiVersion: v1
-            fieldPath: status.podIP
       - name: KUBE_NODE_NAME
         valueFrom:
           fieldRef:
@@ -53,10 +48,6 @@ containers:
         value: {{ include "opentelemetry-collector.k360Metrics" . }}
       - name: LOGZIO_AGENT_VERSION
         value: {{.Chart.Version}}
-      - name: REALESE_NAME
-        value: {{.Release.Name}}
-      - name: REALESE_NS
-        value: {{.Release.Namespace}}
       - name: SPM_SERVICE_ENDPOINT
         {{- $serviceName := include "opentelemetry-spm.fullname" .}}
         value: {{ printf "http://%s.%s.svc.cluster.local:4317" $serviceName .Release.Namespace }}
@@ -102,13 +93,6 @@ containers:
             name: {{ .Values.secrets.name }}
             key: custom-tracing-endpoint
       {{ end }}
-      {{ if .Values.global.customLogsEndpoint }}
-      - name: CUSTOM_LOGS_ENDPOINT
-        valueFrom:
-          secretKeyRef:
-            name: {{ .Values.secrets.name }}
-            key: custom-logs-endpoint
-      {{ end }}
       - name: SAMPLING_PROBABILITY
         valueFrom:
           secretKeyRef:
@@ -124,9 +108,16 @@ containers:
         valueFrom:
           secretKeyRef:
             name: {{ .Values.secrets.name }}
-            key: logzio-spm-shipping-token        
+            key: logzio-spm-shipping-token
 {{ end }}
 {{- end }}
+      {{ if .Values.global.customLogsEndpoint }}
+      - name: CUSTOM_LOGS_ENDPOINT
+        valueFrom:
+          secretKeyRef:
+            name: {{ .Values.secrets.name }}
+            key: custom-logs-endpoint
+      {{ end }}
       - name: ENV_ID
         valueFrom:
           secretKeyRef:
