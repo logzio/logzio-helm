@@ -35,7 +35,7 @@ jobs:
         uses: azure/setup-helm@v4.3.0
 
       - name: Set up kubectl
-        uses: azure/setup-kubectl@v4
+        uses: azure/setup-kubectl@v5
 
       - name: Create resource group
         run: az group create --name $RESOURCE_GROUP --location $LOCATION
