@@ -2,6 +2,9 @@
 
 <!-- next version -->
 
+## 5.9.4
+- Add missing `k8sObjectsConfig`, `opencost`, `signalFx`, and `carbon` config to Windows daemonset collector.
+
 ## 5.9.3
 - Add `kubernetes_node` label to the `windows-metrics` scrape job relabel configs.
 

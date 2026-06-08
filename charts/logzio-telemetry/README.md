@@ -20,7 +20,7 @@ To disable the dependency during installation, set any of these values: `kubeSta
 | > 2.0.0 | v1.22.0 - v1.28.0 |
 | < 1.3.0 | <= v1.22.0 |
 
-#### Before installing the chart
+## Before installing the chart
 * Check if you have any taints on your nodes:
 
 ```
@@ -30,10 +30,10 @@ if you do, please add them as tolerations in values.yaml tolerations.
 
 * You are using `Helm` client with version `v3.9.0` or above
 
-#### Standard configuration
+## Standard configuration
 
 
-##### Deploy the Helm chart
+#### Deploy the Helm chart
 First add `logzio-helm` repo
 ```shell
 helm repo add logzio-helm https://logzio.github.io/logzio-helm
@@ -42,7 +42,7 @@ helm repo update
 
 To deploy the Helm chart, enter the relevant parameters for the placeholders and run the code. 
 
-###### Configure the parameters in the code
+##### Configure the parameters in the code
 - Replace `<<*ENV-ID*>>` with the name for your environment's identifier, to easily identify the telemetry data for each environment.
 - Replace `<<LOGZIO-REGION>>` with the name of your Logz.io region e.g `us`,`eu`.
 
@@ -56,10 +56,11 @@ To deploy the Helm chart, enter the relevant parameters for the placeholders and
 - Replace the Logz-io `<<TRACES-SHIPPING-TOKEN>>` with the [token](https://app.logz.io/#/dashboard/settings/manage-tokens/data-shipping) of the traces account to which you want to send your data.
 
 
+## Deploy the metrics chart:
 
-###### Run the Helm deployment code for clusters with no Windows Nodes
+> [!IMPORTANT]
+> For Windows Deployment add required flags as documented [here](#deploying-with-windows-support).
 
-#### Deploy the metrics chart:
 ```
 helm install  \
 --set metrics.enabled=true \
@@ -284,16 +285,16 @@ helm install logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry \
 
 ### Windows Configuration Values
 
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `global.windows.enabled` | Enable Windows node support | `false` |
-| `global.windows.version` | Windows Server version (`"2019"` or `"2022"`) | `"2022"` |
-| `secrets.windowsNodeUsername` | SSH username for Windows nodes | `azureuser` |
-| `secrets.windowsNodePassword` | SSH password for Windows nodes | `""` |
-| `windowsExporterInstallerJob.interval` | CronJob schedule for installer | `"*/10 * * * *"` |
-| `nginxWindowsImage.repository` | Nginx proxy image for Windows | `logzio/logzio-windows-node-reverse-proxy` |
-| `nginxWindowsImage.tag` | Base tag for nginx image | `"0.0.1"` |
-| `nginxWindowsImage.useVersionSuffix` | Append Windows version to tag | `true` |
+| Parameter                              | Description                                   | Default                                    |
+|----------------------------------------|-----------------------------------------------|--------------------------------------------|
+| `global.windows.enabled`               | Enable Windows node support                   | `false`                                    |
+| `global.windows.version`               | Windows Server version (`"2019"` or `"2022"`) | `"2022"`                                   |
+| `secrets.windowsNodeUsername`          | SSH username for Windows nodes                | `azureuser`                                |
+| `secrets.windowsNodePassword`          | SSH password for Windows nodes                | `""`                                       |
+| `windowsExporterInstallerJob.interval` | CronJob schedule for installer                | `"*/10 * * * *"`                           |
+| `nginxWindowsImage.repository`         | Nginx proxy image for Windows                 | `logzio/logzio-windows-node-reverse-proxy` |
+| `nginxWindowsImage.tag`                | Base tag for nginx image                      | `"0.0.1"`                                  |
+| `nginxWindowsImage.useVersionSuffix`   | Append Windows version to tag                 | `true`                                     |
 `
 
 ##### Check Logz.io for your metrics and traces
