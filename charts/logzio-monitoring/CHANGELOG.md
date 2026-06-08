@@ -1,6 +1,10 @@
 # Changes by Version
 
 <!-- next version -->
+## 7.10.4
+- Upgrade `logzio-k8s-telemetry` chart to `5.9.3`
+  - Add `kubernetes_node` label to the `windows-metrics` scrape job relabel configs.
+
 ## 7.10.3
 - Upgrade `logzio-k8s-telemetry` chart to `5.9.2`
   - Add `imagePullSecrets` support to the Windows exporter installer Job and CronJob for use with private container registries.
