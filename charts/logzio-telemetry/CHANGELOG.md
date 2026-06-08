@@ -2,6 +2,9 @@
 
 <!-- next version -->
 
+## 5.9.5
+- Quote Windows exporter installer credentials in `secrets.yaml` to fix YAML parsing errors when values contain special characters.
+
 ## 5.9.4
 - Add missing `k8sObjectsConfig`, `opencost`, `signalFx`, and `carbon` config to Windows daemonset collector.
 
