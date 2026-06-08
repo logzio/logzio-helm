@@ -4,6 +4,10 @@
 
 ## 5.9.5
 - Quote Windows exporter installer credentials in `secrets.yaml` to fix YAML parsing errors when values contain special characters.
+- Bump `logzio-windows-exporter-installer` image to `0.0.3`.
+  - Bump `paramiko` from `~=2.9.1` to `~=3.5.1` at .
+- Remove unused `MY_POD_IP`, `RELEASE_NAME` and `RELEASE_NS` environment variables from the pods.
+- Fix `CUSTOM_LOGS_ENDPOINT` environment variables injection in `standalone` mode, to not be dependent on `traces.enabled`.
 
 ## 5.9.4
 - Add missing `k8sObjectsConfig`, `opencost`, `signalFx`, and `carbon` config to Windows daemonset collector.
@@ -96,6 +100,10 @@
       - `secrets.CustomTracingEndpoint` >> `global.customTracesEndpoint`
       - Deprecate `secrets.p8s_logzio_name` and `secrets.ListenerHost`
         - Add `global.customMetricsEndpoint` to support sending metrics to a custom endpoint
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
 ## 4.3.2
   - Fix `prometheus/kubelet` scrape endpoint for standalone deployment
 ## 4.3.1
@@ -157,11 +165,6 @@
       - `kubeStateMetrics.enabled`
       - `pushGateway.enabled`
       - `nodeExporter.enabled`
-
-
-
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
 
 ## 2.2.0
   - Upgraded SPM collector image to version `0.80.0`.

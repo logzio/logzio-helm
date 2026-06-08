@@ -1,6 +1,6 @@
 FROM python:3.9
 
-LABEL version="0.0.2"
+LABEL version="0.0.3"
 
 # Download and install kubectl
 # https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/
@@ -17,14 +17,3 @@ COPY windows_exporter_installer.py etc/windows_exporter_installer.py
 # Python package that handles ssh connections
 RUN pip install paramiko
 ENTRYPOINT [ "python","./etc/windows_exporter_installer.py"]
-
-
-
-
-
-
-
-
-
-
-

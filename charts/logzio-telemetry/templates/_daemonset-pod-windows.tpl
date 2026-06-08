@@ -44,11 +44,6 @@ containers:
       {{- end }}
 {{- end }}
     env:
-      - name: MY_POD_IP
-        valueFrom:
-          fieldRef:
-            apiVersion: v1
-            fieldPath: status.podIP
       - name: KUBE_NODE_NAME
         valueFrom:
           fieldRef:
@@ -57,10 +52,6 @@ containers:
         value: {{ include "opentelemetry-collector.k360Metrics" . }}
       - name: LOGZIO_AGENT_VERSION
         value: {{.Chart.Version}}
-      - name: REALESE_NAME
-        value: {{.Release.Name}}
-      - name: REALESE_NS
-        value: {{.Release.Namespace}}
       - name: METRICS_TOKEN
         valueFrom:
           secretKeyRef:
