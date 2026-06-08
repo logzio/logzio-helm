@@ -2,6 +2,9 @@
 
 <!-- next version -->
 
+## 5.9.3
+- Add `kubernetes_node` label to the `windows-metrics` scrape job relabel configs.
+
 ## 5.9.2
 - Fix Windows exporter installer failing to connect to nodes on AKS due to DNS resolution errors. The installer now uses the node's InternalIP instead of hostname.
 - Add `imagePullSecrets` support to the Windows exporter installer Job and CronJob for use with private container registries.
