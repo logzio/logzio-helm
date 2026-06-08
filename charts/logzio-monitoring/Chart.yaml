@@ -13,7 +13,7 @@ dependencies:
     repository: "https://logzio.github.io/logzio-helm/"
     condition: logs.enabled
   - name: logzio-k8s-telemetry
-    version: "5.9.3"
+    version: "5.9.4"
     repository: "https://logzio.github.io/logzio-helm/"
     condition: logzio-k8s-telemetry.metrics.enabled
   - name: logzio-trivy

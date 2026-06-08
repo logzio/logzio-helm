@@ -2,8 +2,9 @@
 
 <!-- next version -->
 ## 7.10.4
-- Upgrade `logzio-k8s-telemetry` chart to `5.9.3`
+- Upgrade `logzio-k8s-telemetry` chart to `5.9.4`
   - Add `kubernetes_node` label to the `windows-metrics` scrape job relabel configs.
+  - Add missing `k8sObjectsConfig`, `opencost`, `signalFx`, and `carbon` config to Windows daemonset collector.
 
 ## 7.10.3
 - Upgrade `logzio-k8s-telemetry` chart to `5.9.2`
