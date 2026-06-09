@@ -9,7 +9,7 @@
 - Upgrade `logzio-k8s-telemetry` chart to `5.9.5`
   - Quote Windows exporter installer credentials in `secrets.yaml` to fix YAML parsing errors when values contain special characters.
   - Bump `logzio-windows-exporter-installer` image to `0.0.3`.
-      - Bump `paramiko` from `~=2.9.1` to `~=3.5.1` at .
+      - Bump `paramiko` from `~=2.9.1` to `~=3.5.1`.
   - Remove unused `MY_POD_IP`, `RELEASE_NAME` and `RELEASE_NS` environment variables from the pods.
   - Fix `CUSTOM_LOGS_ENDPOINT` environment variables injection in `standalone` mode, to not be dependent on `traces.enabled`.
 
