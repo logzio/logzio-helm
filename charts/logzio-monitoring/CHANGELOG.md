@@ -1,6 +1,10 @@
 # Changes by Version
 
 <!-- next version -->
+## 7.10.6
+- Upgrade `logzio-k8s-telemetry` chart to `5.9.6`
+  - Drop Windows nodes from `cadvisor` scrape job to prevent failed scrape warnings on Linux collectors in mixed-OS clusters.
+
 ## 7.10.5
 - Upgrade `logzio-k8s-telemetry` chart to `5.9.5`
   - Quote Windows exporter installer credentials in `secrets.yaml` to fix YAML parsing errors when values contain special characters.
