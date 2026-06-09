@@ -2,6 +2,9 @@
 
 <!-- next version -->
 
+## 5.9.6
+- Drop Windows nodes from `cadvisor` scrape job to prevent failed scrape warnings on Linux collectors in mixed-OS clusters.
+
 ## 5.9.5
 - Quote Windows exporter installer credentials in `secrets.yaml` to fix YAML parsing errors when values contain special characters.
 - Bump `logzio-windows-exporter-installer` image to `0.0.3`.
