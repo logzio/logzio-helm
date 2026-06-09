@@ -1,6 +1,14 @@
 # Changes by Version
 
 <!-- next version -->
+## 7.10.5
+- Upgrade `logzio-k8s-telemetry` chart to `5.9.5`
+  - Quote Windows exporter installer credentials in `secrets.yaml` to fix YAML parsing errors when values contain special characters.
+  - Bump `logzio-windows-exporter-installer` image to `0.0.3`.
+      - Bump `paramiko` from `~=2.9.1` to `~=3.5.1` at .
+  - Remove unused `MY_POD_IP`, `RELEASE_NAME` and `RELEASE_NS` environment variables from the pods.
+  - Fix `CUSTOM_LOGS_ENDPOINT` environment variables injection in `standalone` mode, to not be dependent on `traces.enabled`.
+
 ## 7.10.4
 - Upgrade `logzio-k8s-telemetry` chart to `5.9.4`
   - Add `kubernetes_node` label to the `windows-metrics` scrape job relabel configs.
