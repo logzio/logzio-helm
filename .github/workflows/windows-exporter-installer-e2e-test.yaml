@@ -32,7 +32,7 @@ jobs:
           creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}","subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
 
       - name: Set up Helm
-        uses: azure/setup-helm@v4.3.0
+        uses: azure/setup-helm@v5.0.0
 
       - name: Set up kubectl
         uses: azure/setup-kubectl@v4
