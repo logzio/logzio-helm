@@ -61,8 +61,6 @@ global:
 secrets:
   name: logzio-secret  # Secret name
   enabled: true  # Create secret
-  windowsNodeUsername: ""  # Windows Node Username
-  windowsNodePassword: ""  # Windows Node Password
   SamplingProbability: 10  # Traces Sampling Probability
   SamplingLatency: 500  # Traces Sampling Latency
 
@@ -520,14 +518,23 @@ metricsConfig:
           metrics_path: /metrics
           scheme: http
           kubernetes_sd_configs:
-          - role: pod
+          - role: node
           relabel_configs:
-            - source_labels: [__meta_kubernetes_pod_annotation_prometheus_windows_io_scrape]
+            - source_labels: [__meta_kubernetes_node_label_kubernetes_io_os]
+              regex: windows
               action: keep
-              regex: true|"true"
-            - source_labels: [__meta_kubernetes_pod_node_name]
+            - action: labelmap
+              regex: __meta_kubernetes_node_label_(.+)
+            - source_labels: [__meta_kubernetes_node_name]
               action: replace
               target_label: kubernetes_node
+            - source_labels: [__address__]
+              regex: '(.+):\d+'
+              replacement: '$${1}:9182'
+              target_label: __address__
+            - action: replace
+              replacement: kubernetes360
+              target_label: logzio_app
           metric_relabel_configs: []
         - job_name: kubernetes-service-endpoints
           honor_timestamps: true
@@ -598,20 +605,20 @@ image:
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
-nginxWindowsImage:
-  # Reverse proxy image to enable metrics scraping from windows nodes
-  repository: logzio/logzio-windows-node-reverse-proxy
-  pullPolicy: IfNotPresent
-  # Base tag - will be suffixed with Windows version (e.g., 0.0.1-ltsc2019 or 0.0.1-ltsc2022)
-  tag: "0.0.1"
-  # Set to true to append Windows version suffix to tag (e.g., tag-ltsc2019, tag-ltsc2022)
-  # Set to false to use tag as-is (for multi-arch images)
-  useVersionSuffix: true
-windowsExporterInstallerImage:
-  # Job image to install windows exporter on windows nodes
-  repository: logzio/logzio-windows-exporter-installer
-  pullPolicy: IfNotPresent
-  tag: "0.0.2"
+# windows_exporter, deployed as a HostProcess DaemonSet on Windows nodes.
+# Requires Kubernetes >= 1.26 (HostProcess GA) and a containerd runtime.
+windowsExporter:
+  image:
+    # Upstream prometheus-community windows_exporter HostProcess image
+    repository: ghcr.io/prometheus-community/windows-exporter
+    pullPolicy: IfNotPresent
+    # Pin an explicit version so exported metric names stay deterministic
+    tag: "0.31.8"
+  # Port the exporter listens on and that the collector scrapes (node InternalIP:port)
+  port: 9182
+  # Comma-separated list of collectors to enable
+  collectors: "cpu,cpu_info,container,logical_disk,memory,net,os,service,system,tcp"
+  resources: {}
 spmImage:
   repository: otel/opentelemetry-collector-contrib
   pullPolicy: IfNotPresent
@@ -1203,13 +1210,6 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
-windowsExporterInstallerJob:
-  interval: "*/10 * * * *"
-  concurrencyPolicy: Forbid            # Future cronjob will run only after current job is finished
-  successfulJobsHistoryLimit: 1
-  failedJobsHistoryLimit: 1
-  ttlSecondsAfterFinished: 3600        # First job only (Not CronJob)   
-
 podLabels:  {}
 annotations:  {}
 
@@ -1430,14 +1430,26 @@ daemonsetConfig:
           metrics_path: /metrics
           scheme: http
           kubernetes_sd_configs:
-          - role: pod
+          - role: node
+            selectors:
+            - field: metadata.name=${KUBE_NODE_NAME}
+              role: node
           relabel_configs:
-            - source_labels: [__meta_kubernetes_pod_node_name]
-              regex: '${KUBE_NODE_NAME}'
-              action: keep                     
-            - source_labels: [__meta_kubernetes_pod_annotation_prometheus_windows_io_scrape]
+            - source_labels: [__meta_kubernetes_node_label_kubernetes_io_os]
+              regex: windows
               action: keep
-              regex: true|"true"
+            - action: labelmap
+              regex: __meta_kubernetes_node_label_(.+)
+            - source_labels: [__meta_kubernetes_node_name]
+              action: replace
+              target_label: kubernetes_node
+            - source_labels: [__address__]
+              regex: '(.+):\d+'
+              replacement: '$${1}:9182'
+              target_label: __address__
+            - action: replace
+              replacement: kubernetes360
+              target_label: logzio_app
           metric_relabel_configs: []
         # Job to collect metrics from applications running on pods
         - job_name: kubernetes-service-endpoints
@@ -1549,7 +1561,7 @@ prometheusFilters:
     infrastructure:
       keep:
         # need to also enable the flag: enableMetricsFilter.aks=true
-        aks: kube_daemonset_labels|kube_daemonset_status_number_ready|kube_daemonset_status_number_available|kube_daemonset_status_number_unavailable|kube_daemonset_status_current_number_scheduled|kube_daemonset_status_number_misscheduled|kube_daemonset_status_desired_number_scheduled|kube_job_labels|kube_job_complete|kube_job_status_failed|kube_job_status_succeeded|kube_job_complete|kube_job_status_failed|kube_job_status_completion_time|kube_replicaset_labels|kube_replicaset_spec_replicas|kube_replicaset_status_replicas|kube_replicaset_status_ready_replicas|kube_statefulset_replicas|kube_statefulset_status_replicas|kube_statefulset_status_replicas_updated|kube_statefulset_status_replicas_available|kube_pod_container_status_terminated_reason|kube_node_labels|kube_pod_container_status_waiting_reason|node_memory_Buffers_bytes|node_memory_Cached_bytes|kube_deployment_labels|container_cpu_usage_seconds_total|container_memory_working_set_bytes|container_network_receive_bytes_total|container_network_transmit_bytes_total|i:|kube_deployment_status_replicas|kube_deployment_status_replicas_available|kube_deployment_status_replicas_unavailable|kube_deployment_status_replicas_updated|kube_node_info|kube_node_spec_unschedulable|kube_node_status_allocatable|kube_node_status_capacity|kube_node_status_condition|kube_pod_container_info|kube_pod_container_resource_requests|kube_pod_container_resource_requests_cpu_cores|kube_pod_container_resource_requests_memory_bytes|kube_pod_container_status_ready|kube_pod_container_status_restarts_total|kube_pod_container_status_running|kube_pod_container_status_terminated|kube_pod_container_status_waiting|kube_pod_info|kube_pod_status_phase|machine_cpu_cores|namespace|node_boot_time_seconds|node_cpu_seconds_total|node_disk_io_time_seconds_total|node_filesystem_avail_bytes|node_filesystem_free_bytes|node_filesystem_size_bytes|node_memory_MemFree_bytes|node_memory_MemTotal_bytes|node_network_receive_bytes_total|node_network_transmit_bytes_total|node_time_seconds|p8s_logzio_name|windows_container_cpu_usage_seconds_total|windows_container_memory_usage_commit_bytes|windows_container_network_receive_bytes_total|windows_container_network_transmit_bytes_total|windows_cpu_time_total|windows_cs_hostname|windows_cs_physical_memory_bytes|windows_logical_disk_free_bytes|windows_logical_disk_read_seconds_total|windows_logical_disk_size_bytes|windows_logical_disk_write_seconds_total|windows_net_bytes_received_total|windows_net_bytes_sent_total|windows_os_physical_memory_free_bytes|windows_system_system_up_time|kube_pod_status_ready|kube_pod_container_status_restarts_total|kube_pod_container_resource_limits|container_memory_usage_bytes|container_network_transmit_packets_total|container_network_receive_packets_total|container_network_transmit_packets_dropped_total|container_network_receive_packets_dropped_total|kube_pod_created|kube_pod_owner|kube_pod_status_reason|node_cpu_seconds_total|node_memory_MemAvailable_bytes|kube_node_role|kube_node_created|node_load1|node_load5|node_load15|node_disk_reads_completed_total|node_disk_writes_completed_total|node_disk_read_bytes_total|node_disk_written_bytes_total|node_disk_read_time_seconds_total|node_disk_write_time_seconds_total|node_network_transmit_packets_total|node_network_receive_packets_total|node_network_transmit_drop_total|node_network_receive_drop_total|kube_replicaset_owner|kube_deployment_created|kube_deployment_status_condition|kube_deployment_spec_replicas|kube_namespace_status_phase|kubelet_volume_stats_inodes|kubelet_volume_stats_inodes_used|kubelet_volume_stats_used_bytes|kube_persistentvolumeclaim_info|kube_persistentvolumeclaim_resource_requests_storage_bytes|kube_job_owner|container_cpu_cfs_throttled_seconds_total|kube_daemonset_status_observed_generation|kube_deployment_status_observed_generation|kube_statefulset_status_observed_generation|kube_statefulset_metadata_generation|kube_deployment_metadata_generation|kube_daemonset_metadata_generation
+        aks: kube_daemonset_labels|kube_daemonset_status_number_ready|kube_daemonset_status_number_available|kube_daemonset_status_number_unavailable|kube_daemonset_status_current_number_scheduled|kube_daemonset_status_number_misscheduled|kube_daemonset_status_desired_number_scheduled|kube_job_labels|kube_job_complete|kube_job_status_failed|kube_job_status_succeeded|kube_job_complete|kube_job_status_failed|kube_job_status_completion_time|kube_replicaset_labels|kube_replicaset_spec_replicas|kube_replicaset_status_replicas|kube_replicaset_status_ready_replicas|kube_statefulset_replicas|kube_statefulset_status_replicas|kube_statefulset_status_replicas_updated|kube_statefulset_status_replicas_available|kube_pod_container_status_terminated_reason|kube_node_labels|kube_pod_container_status_waiting_reason|node_memory_Buffers_bytes|node_memory_Cached_bytes|kube_deployment_labels|container_cpu_usage_seconds_total|container_memory_working_set_bytes|container_network_receive_bytes_total|container_network_transmit_bytes_total|i:|kube_deployment_status_replicas|kube_deployment_status_replicas_available|kube_deployment_status_replicas_unavailable|kube_deployment_status_replicas_updated|kube_node_info|kube_node_spec_unschedulable|kube_node_status_allocatable|kube_node_status_capacity|kube_node_status_condition|kube_pod_container_info|kube_pod_container_resource_requests|kube_pod_container_resource_requests_cpu_cores|kube_pod_container_resource_requests_memory_bytes|kube_pod_container_status_ready|kube_pod_container_status_restarts_total|kube_pod_container_status_running|kube_pod_container_status_terminated|kube_pod_container_status_waiting|kube_pod_info|kube_pod_status_phase|machine_cpu_cores|namespace|node_boot_time_seconds|node_cpu_seconds_total|node_disk_io_time_seconds_total|node_filesystem_avail_bytes|node_filesystem_free_bytes|node_filesystem_size_bytes|node_memory_MemFree_bytes|node_memory_MemTotal_bytes|node_network_receive_bytes_total|node_network_transmit_bytes_total|node_time_seconds|p8s_logzio_name|windows_container_cpu_usage_seconds_total|windows_container_memory_usage_commit_bytes|windows_container_network_receive_bytes_total|windows_container_network_transmit_bytes_total|windows_cpu_time_total|windows_os_hostname|windows_memory_physical_total_bytes|windows_logical_disk_free_bytes|windows_logical_disk_read_seconds_total|windows_logical_disk_size_bytes|windows_logical_disk_write_seconds_total|windows_net_bytes_received_total|windows_net_bytes_sent_total|windows_memory_available_bytes|windows_system_boot_time_timestamp|kube_pod_status_ready|kube_pod_container_status_restarts_total|kube_pod_container_resource_limits|container_memory_usage_bytes|container_network_transmit_packets_total|container_network_receive_packets_total|container_network_transmit_packets_dropped_total|container_network_receive_packets_dropped_total|kube_pod_created|kube_pod_owner|kube_pod_status_reason|node_cpu_seconds_total|node_memory_MemAvailable_bytes|kube_node_role|kube_node_created|node_load1|node_load5|node_load15|node_disk_reads_completed_total|node_disk_writes_completed_total|node_disk_read_bytes_total|node_disk_written_bytes_total|node_disk_read_time_seconds_total|node_disk_write_time_seconds_total|node_network_transmit_packets_total|node_network_receive_packets_total|node_network_transmit_drop_total|node_network_receive_drop_total|kube_replicaset_owner|kube_deployment_created|kube_deployment_status_condition|kube_deployment_spec_replicas|kube_namespace_status_phase|kubelet_volume_stats_inodes|kubelet_volume_stats_inodes_used|kubelet_volume_stats_used_bytes|kube_persistentvolumeclaim_info|kube_persistentvolumeclaim_resource_requests_storage_bytes|kube_job_owner|container_cpu_cfs_throttled_seconds_total|kube_daemonset_status_observed_generation|kube_deployment_status_observed_generation|kube_statefulset_status_observed_generation|kube_statefulset_metadata_generation|kube_deployment_metadata_generation|kube_daemonset_metadata_generation
         # need to also enable the flag: enableMetricsFilter.eks=true
         eks: kube_daemonset_labels|kube_daemonset_status_number_ready|kube_daemonset_status_number_available|kube_daemonset_status_number_unavailable|kube_daemonset_status_current_number_scheduled|kube_daemonset_status_number_misscheduled|kube_daemonset_status_desired_number_scheduled|kube_job_labels|kube_job_complete|kube_job_status_failed|kube_job_status_succeeded|kube_job_complete|kube_job_status_failed|kube_job_status_completion_time|kube_replicaset_labels|kube_replicaset_spec_replicas|kube_replicaset_status_replicas|kube_replicaset_status_ready_replicas|kube_statefulset_replicas|kube_statefulset_status_replicas|kube_statefulset_status_replicas_updated|kube_statefulset_status_replicas_available|kube_pod_container_status_terminated_reason|kube_node_labels|kube_pod_container_status_waiting_reason|node_memory_Buffers_bytes|node_memory_Cached_bytes|kube_deployment_labels|container_cpu_usage_seconds_total|container_memory_working_set_bytes|container_network_receive_bytes_total|container_network_transmit_bytes_total|kube_deployment_status_replicas|kube_deployment_status_replicas_available|kube_deployment_status_replicas_unavailable|kube_deployment_status_replicas_updated|kube_node_info|kube_node_spec_unschedulable|kube_node_status_allocatable|kube_node_status_capacity|kube_node_status_condition|kube_pod_container_resource_requests|kube_pod_container_status_ready|kube_pod_container_status_restarts_total|kube_pod_container_status_running|kube_pod_container_status_terminated|kube_pod_container_status_waiting|kube_pod_info|kube_pod_status_phase|machine_cpu_cores|namespace|node_boot_time_seconds|node_cpu_seconds_total|node_disk_io_time_seconds_total|node_filesystem_avail_bytes|node_filesystem_free_bytes|node_filesystem_size_bytes|node_memory_MemFree_bytes|node_memory_MemTotal_bytes|node_network_receive_bytes_total|node_network_transmit_bytes_total|node_time_seconds|p8s_logzio_name|kube_pod_status_ready|kube_pod_container_status_restarts_total|kube_pod_container_resource_limits|container_memory_usage_bytes|container_network_transmit_packets_total|container_network_receive_packets_total|container_network_transmit_packets_dropped_total|container_network_receive_packets_dropped_total|kube_pod_created|kube_pod_owner|kube_pod_status_reason|node_cpu_seconds_total|node_memory_MemAvailable_bytes|kube_node_role|kube_node_created|node_load1|node_load5|node_load15|node_disk_reads_completed_total|node_disk_writes_completed_total|node_disk_read_bytes_total|node_disk_written_bytes_total|node_disk_read_time_seconds_total|node_disk_write_time_seconds_total|node_network_transmit_packets_total|node_network_receive_packets_total|node_network_transmit_drop_total|node_network_receive_drop_total|kube_replicaset_owner|kube_deployment_created|kube_deployment_status_condition|kube_deployment_spec_replicas|kube_namespace_status_phase|kubelet_volume_stats_inodes|kubelet_volume_stats_inodes_used|kubelet_volume_stats_used_bytes|kube_persistentvolumeclaim_info|kube_persistentvolumeclaim_resource_requests_storage_bytes|kube_job_owner|kube_pod_container_info|container_cpu_cfs_throttled_seconds_total|kube_daemonset_status_observed_generation|kube_deployment_status_observed_generation|kube_statefulset_status_observed_generation|kube_statefulset_metadata_generation|kube_deployment_metadata_generation|kube_daemonset_metadata_generation
         # need to also enable the flag: enableMetricsFilter.gke=true
