@@ -1,0 +1,136 @@
+name: Test Windows Telemetry E2E
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'charts/logzio-telemetry/templates/daemonset-windows-exporter.yaml'
+      - 'charts/logzio-telemetry/templates/daemonset-collector-windows.yaml'
+      - 'charts/logzio-telemetry/templates/configmap-windows.yaml'
+      - 'charts/logzio-telemetry/templates/_daemonset-pod-windows.tpl'
+      - 'charts/logzio-telemetry/values.yaml'
+      - 'charts/logzio-telemetry/Chart.yaml'
+      - 'tests/windows_metrics_e2e_test.go'
+      - '.github/workflows/windows-telemetry-e2e-test.yaml'
+
+permissions:
+  contents: read
+
+jobs:
+  test-windows-telemetry:
+    name: Test Windows Telemetry on AKS
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    env:
+      RESOURCE_GROUP: rg-win-telemetry-test-${{ github.run_id }}
+      CLUSTER_NAME: aks-win-telemetry-test-${{ github.run_id }}
+      LOCATION: eastus
+      WIN_ADMIN_USERNAME: ${{ secrets.WIN_ADMIN_USERNAME }}
+      WIN_ADMIN_PASSWORD: ${{ secrets.WIN_ADMIN_PASSWORD }}
+      ENV_ID: win-telemetry-e2e-${{ github.run_id }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}","subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4.3.0
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Create resource group
+        run: az group create --name $RESOURCE_GROUP --location $LOCATION
+
+      - name: Create AKS cluster with Windows node pool
+        run: |
+          az aks create \
+            --resource-group $RESOURCE_GROUP \
+            --name $CLUSTER_NAME \
+            --node-count 1 \
+            --node-vm-size Standard_B2s \
+            --network-plugin azure \
+            --windows-admin-username $WIN_ADMIN_USERNAME \
+            --windows-admin-password "$WIN_ADMIN_PASSWORD" \
+            --generate-ssh-keys
+
+          az aks nodepool add \
+            --resource-group $RESOURCE_GROUP \
+            --cluster-name $CLUSTER_NAME \
+            --name npwin \
+            --os-type Windows \
+            --os-sku Windows2022 \
+            --node-count 1 \
+            --node-vm-size Standard_B2ms
+
+      - name: Get AKS credentials
+        run: az aks get-credentials --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME --overwrite-existing
+
+      - name: Wait for nodes to be ready
+        run: |
+          kubectl wait --for=condition=Ready nodes --all --timeout=300s
+          kubectl get nodes -o wide
+
+      - name: Deploy Helm chart (Windows enabled, daemonset mode)
+        run: |
+          cd charts/logzio-telemetry
+          helm dependency build
+          helm upgrade --install logzio-k8s-telemetry . \
+            --set metrics.enabled=true \
+            --set collector.mode=daemonset \
+            --set global.windows.enabled=true \
+            --set global.windows.version=2022 \
+            --set global.logzioMetricsToken=${{ secrets.LOGZIO_METRICS_TOKEN }} \
+            --set global.logzioRegion=us \
+            --set global.env_id=$ENV_ID
+
+      - name: Wait for windows_exporter and collectors to be running
+        run: |
+          kubectl rollout status ds/windows-exporter --timeout=600s
+          kubectl rollout status ds/logzio-k8s-telemetry-otel-collector-ds-windows --timeout=600s
+          kubectl get pods -o wide
+
+      - name: Verify Windows metrics in Logz.io
+        env:
+          LOGZIO_METRICS_API_KEY: ${{ secrets.LOGZIO_METRICS_API_KEY }}
+          KUBERNETES_ENV: aks-windows
+        run: |
+          # Give metrics time to ship and be queryable, then verify with retries.
+          for attempt in 1 2 3 4; do
+            echo "=== Verification attempt $attempt ==="
+            sleep 90
+            if go test -v ./tests/windows_metrics_e2e_test.go ./tests/common.go; then
+              echo "Windows metrics verified"
+              exit 0
+            fi
+          done
+          echo "ERROR: Windows metrics not found in Logz.io after retries"
+          exit 1
+
+      - name: Debug on failure
+        if: failure()
+        run: |
+          echo "=== Pods ==="
+          kubectl get pods -o wide
+          echo "=== windows-exporter DaemonSet ==="
+          kubectl describe ds/windows-exporter || true
+          echo "=== windows-exporter logs ==="
+          kubectl logs -l app.kubernetes.io/component=windows-exporter --all-containers --tail=100 || true
+          echo "=== Windows collector logs ==="
+          kubectl logs -l app.kubernetes.io/os=windows --tail=100 || true
+          echo "=== Events ==="
+          kubectl get events --sort-by=.metadata.creationTimestamp | tail -50
+
+      - name: Cleanup Azure resources
+        if: always()
+        run: az group delete --name $RESOURCE_GROUP --yes --no-wait
