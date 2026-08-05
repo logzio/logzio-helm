@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.5]
 - Upgrade OBI image `v0.3.0` >> `v0.10.0`
   - Fixes eBPF tracer load failures on newer kernels such as Kubernetes `1.36` on Amazon Linux 2023 (kernel `6.18`).
+  - `telemetry.sdk.name` >> `telemetry.distro.name`.
 
 ## [1.0.4]
 - Use pinned image version `v0.3.0`
