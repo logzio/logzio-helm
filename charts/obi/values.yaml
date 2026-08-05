@@ -27,7 +27,7 @@ metrics:
 
 image:
   repository: otel/ebpf-instrument
-  tag: "v0.3.0"
+  tag: "v0.10.0"
   pullPolicy: IfNotPresent
 
 # Enable host network for network-level context propagation
