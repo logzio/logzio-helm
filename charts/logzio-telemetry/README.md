@@ -245,6 +245,9 @@ To also collect application metrics, add `--set applicationMetrics.enabled=true`
 | `windowsExporter.port`             | Port the exporter listens on and is scraped from | `9182`                                                                 |
 | `windowsExporter.collectors`       | Comma-separated list of enabled collectors       | `cpu,cpu_info,container,logical_disk,memory,net,os,service,system,tcp` |
 
+> [!NOTE]
+> if you override `windowsExporter.port`, make sure to also edit the hardcoded `:9182` in the `windows-metrics` scrape job's `relabel_configs` in `values.yaml`
+
 ##### Check Logz.io for your metrics and traces
 
 Give your metrics some time to get from your system to ours, then open [Logz.io](https://app.logz.io/).

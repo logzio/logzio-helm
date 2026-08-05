@@ -1,6 +1,16 @@
 # Changes by Version
 
 <!-- next version -->
+## 7.11.0
+- Upgrade `logzio-k8s-telemetry` chart to `6.0.0`
+  - **Breaking change:** Rework Windows node metrics collection so Windows metrics include node-level labels.
+      - Windows metrics are now collected by a `windows_exporter` DaemonSet that runs directly on Windows nodes, replacing the previous reverse-proxy DaemonSet and SSH-based installer.
+      - Requires Kubernetes `1.26+` with a `containerd` runtime. Windows node credentials are no longer needed.
+      - Remove `secrets.windowsNodeUsername`, `secrets.windowsNodePassword`, `nginxWindowsImage`, `windowsExporterInstallerImage`, and `windowsExporterInstallerJob`. Add `windowsExporter` (image, port, collectors).
+      - Some Windows metric names changed to match the current `windows_exporter`:
+          - `windows_cs_physical_memory_bytes` >> `windows_memory_physical_total_bytes`
+          - `windows_os_physical_memory_free_bytes` >> `windows_memory_available_bytes`
+
 ## 7.10.6
 - Upgrade `logzio-k8s-telemetry` chart to `5.9.6`
   - Drop Windows nodes from `cadvisor` scrape job to prevent failed scrape warnings on Linux collectors in mixed-OS clusters.
