@@ -10,6 +10,10 @@
       - Some Windows metric names changed to match the current `windows_exporter`:
           - `windows_cs_physical_memory_bytes` >> `windows_memory_physical_total_bytes`
           - `windows_os_physical_memory_free_bytes` >> `windows_memory_available_bytes`
+- Upgrade `obi` chart to `1.0.5`:
+  - Upgrade OBI image `v0.3.0` >> `v0.10.0`
+      - Fixes eBPF tracer load failures on newer kernels such as Kubernetes `1.36` on Amazon Linux 2023 (kernel `6.18`).
+      - `telemetry.sdk.name` >> `telemetry.distro.name`.
 
 ## 7.10.6
 - Upgrade `logzio-k8s-telemetry` chart to `5.9.6`
