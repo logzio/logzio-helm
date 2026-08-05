@@ -55,8 +55,10 @@ logzio-k8s-telemetry allows you to ship metrics and traces from your Kubernetes 
 | global.logzioSpmToken | string | `""` | Logzio spm metrics token. |
 | global.logzioTracesToken | string | `""` | Logzio traces token. |
 | global.env_id | string | `"my_environment"` | Env id to be used with k8s 360. |
-| secrets.windowsNodePassword | string | `""` | Windows node password - will be used to install node-exporter for windows nodes. |
-| secrets.windowsNodeUsername | string | `""` | Windows username - will be used to install node-exporter for windows nodes. |
+| windowsExporter.image.repository | string | `"ghcr.io/prometheus-community/windows-exporter"` | windows_exporter HostProcess image used to collect Windows node metrics. |
+| windowsExporter.image.tag | string | `"0.31.8"` | windows_exporter image tag. |
+| windowsExporter.port | int | `9182` | Port the windows_exporter listens on and is scraped from. |
+| windowsExporter.collectors | string | `"cpu,cpu_info,container,logical_disk,memory,net,os,service,system,tcp"` | Comma-separated list of enabled windows_exporter collectors. |
 | standaloneCollector.resources | object | `{}` | Resource constraints for the standalone opentelemetry collector pod. When empty, no resource constraints are applied. [Example](README.md#configuring-resource-requests-and-limits). |
 | standaloneCollector.podLabels | string | `nil` | Selector labels that will be added to the collector pods. |
 | standaloneCollector.podAnnotations | string | `nil` | Selector labels that will be added to the collector pods. |
@@ -64,7 +66,6 @@ logzio-k8s-telemetry allows you to ship metrics and traces from your Kubernetes 
 | daemonsetCollector.podLabels | string | `nil` | Selector labels that will be added to the collector pods. |
 | spanMetricsAgregator.resources | object | `{}` | Resource constraints for the span metrics aggregator pod. When empty, no resource constraints are applied. [Example](README.md#configuring-resource-requests-and-limits). |
 | daemonsetCollector.podAnnotations | string | `nil` | Selector annotations that will be added to the collector pods. |
-| windowsExporterInstallerJob.interval | string | `"*/10 * * * *"` | Cronjob expression for the windows exporter installer job. |
 | signalFx.enabled | bool | `false` | Enable SignalFx receiver to accept metrics from SignalFx client libraries. |
 | signalFx.config | object | `{}` | Custom configuration for the SignalFx receiver pipeline, including receiver settings, processors, and exporters. |
 | carbon.enabled | bool | `false` | Enable Carbon receiver to accept metrics from Carbon/Graphite client libraries. |

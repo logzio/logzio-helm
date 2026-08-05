@@ -9,7 +9,6 @@ on:
       - 'charts/logzio-telemetry/templates/**'
       - 'charts/logzio-telemetry/Chart.yaml'
       - 'charts/logzio-telemetry/values.yaml'
-      - '!charts/logzio-telemetry/windows_exporter_installer/**'
       - '!**.md'
       - '!**/**/**.md'
       - '!**/**/**/**.md'
