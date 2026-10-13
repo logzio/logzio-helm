@@ -1,0 +1,14 @@
+{{ if .Values.enabled}}
+{{- if and (eq .Values.mode "standalone") (.Values.configMap.create) -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "metrics-collector.fullname" . }}-standalone
+  namespace: {{ template "metrics-collector.namespace" . }}
+  labels:
+    {{- include "metrics-collector.labels" . | nindent 4 }}
+data:
+  relay: |
+    {{- include "metrics-collector.standaloneCollectorConfig" . | nindent 4 -}}
+{{- end }}
+{{ end }}

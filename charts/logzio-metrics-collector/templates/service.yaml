@@ -1,0 +1,44 @@
+{{ if .Values.enabled}}
+{{- if or (eq (include "metrics-collector.serviceEnabled" .) "true") (.Values.ingress.enabled) -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "metrics-collector.fullname" . }}
+  namespace: {{ template "metrics-collector.namespace" . }}
+  labels:
+    {{- include "metrics-collector.labels" . | nindent 4 }}
+    {{- include "metrics-collector.component" . | nindent 4 }}
+  {{- if .Values.service.annotations }}
+  annotations:
+    {{- range $key, $value := .Values.service.annotations }}
+    {{- printf "%s: %s" $key (tpl $value $ | quote) | nindent 4 }}
+    {{- end }}
+  {{- end }}
+spec:
+  type: {{ .Values.service.type }}
+  {{- if .Values.service.clusterIP }}
+  clusterIP: {{ .Values.service.clusterIP }}
+  {{- end }}
+  {{- if and .Values.service.loadBalancerIP (eq .Values.service.type "LoadBalancer") }}
+  loadBalancerIP: {{ .Values.service.loadBalancerIP }}
+  {{- end }}
+  {{- if and .Values.service.loadBalancerSourceRanges (eq .Values.service.type "LoadBalancer") }}
+  loadBalancerSourceRanges:
+    {{- range .Values.service.loadBalancerSourceRanges }}
+    - {{ . }}
+    {{- end }}
+  {{- end }}
+  {{- $ports := include "metrics-collector.servicePortsConfig" . }}
+  {{- if $ports }}
+  ports:
+    {{- $ports | nindent 4}}
+  {{- end }}
+  selector:
+    {{- include "metrics-collector.selectorLabels" . | nindent 4 }}
+    {{- include "metrics-collector.component" . | nindent 4 }}
+  internalTrafficPolicy: {{ include "metrics-collector.serviceInternalTrafficPolicy" . }}
+  {{- if and (eq .Values.service.type "LoadBalancer") (.Values.service.externalTrafficPolicy) }}
+  externalTrafficPolicy: {{ .Values.service.externalTrafficPolicy }}
+  {{- end }}
+{{- end }}
+{{ end }}
