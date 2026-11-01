@@ -1,6 +1,21 @@
 # Changes by Version
 
 <!-- next version -->
+## 7.12.0
+- Upgrade `logzio-trivy` chart to `1.2.0`
+  - Upgrade Trivy-Operator version to `0.38.1`
+  - Upgrade `trivy-to-logzio` image to `0.3.0`
+      - Fix watch thread crashing on watch drop.
+      - Fix error message when `ENV_ID` is missing
+      - exit on startup when a required environment variable is missing.
+      - Recover the watch when its resource version expires (HTTP 410).
+      - Upgrade python version to `3.15.2`.
+      - Upgrade dependencies
+          - `kubernetes` to `37.0.1`
+          - `urllib3` to `2.8.0`
+- Upgrade `opentelemetry-operator` chart to `0.128.0`
+  - **Upgrade note:** When `otel-operator.enabled=true`, upgrade with `--reset-then-reuse-values` instead of `--reuse-values`. `--reuse-values` keeps the previous operator chart's default `manager.featureGates`, which the new chart no longer accepts.
+
 ## 7.11.0
 - Upgrade `logzio-k8s-telemetry` chart to `6.0.0`
   - **Breaking change:** Rework Windows node metrics collection so Windows metrics include node-level labels.
