@@ -1,6 +1,18 @@
 # Changes by Version
 
 <!-- next version -->
+## 1.2.0
+- Upgrade Trivy-Operator version to `0.38.1`
+- Upgrade `trivy-to-logzio` image to `0.3.0`
+  - Fix watch thread crashing on watch drop.
+  - Fix error message when `ENV_ID` is missing
+  - exit on startup when a required environment variable is missing.
+  - Recover the watch when its resource version expires (HTTP 410).
+  - Upgrade python version to `3.15.2`.
+  - Upgrade dependencies
+    - `kubernetes` to `37.0.1`
+    - `urllib3` to `2.8.0`
+
 ## 1.1.0
 - Support global setting for `nodeSelector` and `affinity`.
 - Upgrade Trivy-Operator version to `0.28.0`.
