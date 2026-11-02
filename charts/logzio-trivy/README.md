@@ -6,6 +6,12 @@ The `logzio-monitoring` Helm Chart deploys the [Trivy operator](https://github.c
 - This project is currently in *beta* and is prone to changes.
 - Currently only vulnerability is being collected.
 
+### Kubernetes versions compatibility
+
+| Chart Version | Kubernetes Version |
+|---|---|
+| >= 1.2.0 | v1.31.0 - v1.36.0 |
+
 ## Instructions for standard deployment:
 
 ### 1. Add the Helm Chart:
