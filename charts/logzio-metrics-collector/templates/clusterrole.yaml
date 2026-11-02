@@ -1,0 +1,35 @@
+{{ if .Values.enabled}}
+{{- if (.Values.clusterRole.create) -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "metrics-collector.clusterRoleName" . }}
+  labels:
+    {{- include "metrics-collector.labels" . | nindent 4 }}
+  {{- if .Values.clusterRole.annotations }}
+  annotations:
+    {{- range $key, $value := .Values.clusterRole.annotations }}
+    {{- printf "%s: %s" $key (tpl $value $ | quote) | nindent 4 }}
+    {{- end }}
+  {{- end }}
+rules:
+  {{- if .Values.clusterRole.rules -}}
+  {{ toYaml .Values.clusterRole.rules | nindent 2 -}}
+  {{- end }}
+  - apiGroups: [""]
+    resources: ["events", "namespaces", "namespaces/status", "nodes", "nodes/stats", "nodes/spec","nodes/metrics", "pods", "pods/status", "pods/metrics", "resourcequotas","replicationcontrollers", "replicationcontrollers/status", "services","endpoints" ]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["daemonsets", "deployments", "replicasets", "statefulsets"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["extensions"]
+    resources: ["daemonsets", "deployments", "replicasets"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["batch"]
+    resources: ["jobs", "cronjobs"]
+    verbs: ["get", "watch", "list"]
+  - apiGroups: ["autoscaling"]
+    resources: ["horizontalpodautoscalers"]
+    verbs: ["get", "watch", "list"]        
+{{- end }}
+{{ end }}
