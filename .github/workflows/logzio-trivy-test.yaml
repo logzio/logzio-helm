@@ -8,6 +8,9 @@ on:
       - 'charts/logzio-trivy/templates/**'
       - 'charts/logzio-trivy/values.yaml'
 
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest

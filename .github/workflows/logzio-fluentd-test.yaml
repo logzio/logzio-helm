@@ -9,6 +9,9 @@ on:
       - 'charts/fluentd/templates/**'
       - 'charts/fluentd/values.yaml'
 
+permissions:
+  contents: read
+
 jobs:
   test-helm-chart:
     name: Test Helm Chart on Kind

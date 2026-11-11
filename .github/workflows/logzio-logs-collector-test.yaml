@@ -8,6 +8,10 @@ on:
       - 'charts/logzio-logs-collector/Chart.yaml'
       - 'charts/logzio-logs-collector/templates/**'
       - 'charts/logzio-logs-collector/values.yaml'
+
+permissions:
+  contents: read
+
 jobs:
   test-helm-chart:
     name: Test Helm Chart on Kind
