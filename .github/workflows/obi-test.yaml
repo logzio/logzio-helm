@@ -8,6 +8,9 @@ on:
       - 'charts/obi/Chart.yaml'
       - 'charts/obi/templates/**'
       - 'charts/obi/values.yaml'
+permissions:
+  contents: read
+
 jobs:
   test-helm-chart:
     name: Test OBI Chart on Kind

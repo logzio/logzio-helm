@@ -8,6 +8,9 @@ on:
       - 'charts/fluentd/docker_windows/fluentd_windows.dockerfile'
       - 'charts/fluentd/docker_windows/fluentd_windows2022.dockerfile'
 
+permissions:
+  contents: read
+
 jobs:
   release-docker-windows:
     name: release fluentd windows 2019 docker image

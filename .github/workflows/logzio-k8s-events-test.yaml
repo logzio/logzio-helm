@@ -8,6 +8,9 @@ on:
       - 'charts/logzio-k8s-events/templates/**'
       - 'charts/logzio-k8s-events/values.yaml'
 
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest

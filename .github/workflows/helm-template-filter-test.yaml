@@ -18,6 +18,9 @@ on:
       - 'tests/template_filters_test.go'
       - '.github/workflows/helm-template-filter-test.yaml'
 
+permissions:
+  contents: read
+
 jobs:
   test-helm-template-filters:
     name: Test Helm Template Filters
