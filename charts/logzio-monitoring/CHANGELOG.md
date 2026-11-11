@@ -1,6 +1,52 @@
 # Changes by Version
 
 <!-- next version -->
+## 7.12.0
+- Upgrade `logzio-trivy` chart to `1.2.0`
+  - Upgrade Trivy-Operator version to `0.38.1`
+  - Upgrade `trivy-to-logzio` image to `0.3.0`
+      - Fix watch thread crashing on watch drop.
+      - Fix error message when `ENV_ID` is missing
+      - exit on startup when a required environment variable is missing.
+      - Recover the watch when its resource version expires (HTTP 410).
+      - Upgrade python version to `3.15.2`.
+      - Upgrade dependencies
+          - `kubernetes` to `37.0.1`
+          - `urllib3` to `2.8.0`
+- Upgrade `opentelemetry-operator` chart to `0.128.0`
+  - **Upgrade note:** When `otel-operator.enabled=true`, upgrade with `--reset-then-reuse-values` instead of `--reuse-values`. `--reuse-values` keeps the previous operator chart's default `manager.featureGates`, which the new chart no longer accepts.
+
+## 7.11.0
+- Upgrade `logzio-k8s-telemetry` chart to `6.0.0`
+  - **Breaking change:** Rework Windows node metrics collection so Windows metrics include node-level labels.
+      - Windows metrics are now collected by a `windows_exporter` DaemonSet that runs directly on Windows nodes, replacing the previous reverse-proxy DaemonSet and SSH-based installer.
+      - Requires Kubernetes `1.26+` with a `containerd` runtime. Windows node credentials are no longer needed.
+      - Remove `secrets.windowsNodeUsername`, `secrets.windowsNodePassword`, `nginxWindowsImage`, `windowsExporterInstallerImage`, and `windowsExporterInstallerJob`. Add `windowsExporter` (image, port, collectors).
+      - Some Windows metric names changed to match the current `windows_exporter`:
+          - `windows_cs_physical_memory_bytes` >> `windows_memory_physical_total_bytes`
+          - `windows_os_physical_memory_free_bytes` >> `windows_memory_available_bytes`
+- Upgrade `obi` chart to `1.0.5`:
+  - Upgrade OBI image `v0.3.0` >> `v0.10.0`
+      - Fixes eBPF tracer load failures on newer kernels such as Kubernetes `1.36` on Amazon Linux 2023 (kernel `6.18`).
+      - `telemetry.sdk.name` >> `telemetry.distro.name`.
+
+## 7.10.6
+- Upgrade `logzio-k8s-telemetry` chart to `5.9.6`
+  - Drop Windows nodes from `cadvisor` scrape job to prevent failed scrape warnings on Linux collectors in mixed-OS clusters.
+
+## 7.10.5
+- Upgrade `logzio-k8s-telemetry` chart to `5.9.5`
+  - Quote Windows exporter installer credentials in `secrets.yaml` to fix YAML parsing errors when values contain special characters.
+  - Bump `logzio-windows-exporter-installer` image to `0.0.3`.
+      - Bump `paramiko` from `~=2.9.1` to `~=3.5.1`.
+  - Remove unused `MY_POD_IP`, `RELEASE_NAME` and `RELEASE_NS` environment variables from the pods.
+  - Fix `CUSTOM_LOGS_ENDPOINT` environment variables injection in `standalone` mode, to not be dependent on `traces.enabled`.
+
+## 7.10.4
+- Upgrade `logzio-k8s-telemetry` chart to `5.9.4`
+  - Add `kubernetes_node` label to the `windows-metrics` scrape job relabel configs.
+  - Add missing `k8sObjectsConfig`, `opencost`, `signalFx`, and `carbon` config to Windows daemonset collector.
+
 ## 7.10.3
 - Upgrade `logzio-k8s-telemetry` chart to `5.9.2`
   - Add `imagePullSecrets` support to the Windows exporter installer Job and CronJob for use with private container registries.

@@ -48,20 +48,20 @@ func TestOBITraces(t *testing.T) {
 	}
 
 	if traceResponse.Hits.Total == 0 {
-		t.Errorf("No eBPF instrumented traces found - expected traces with telemetry.sdk.name='opentelemetry-ebpf-instrumentation'")
+		t.Errorf("No eBPF instrumented traces found - expected traces with telemetry.distro.name='opentelemetry-ebpf-instrumentation'")
 	} else {
 		logger.Info("Found eBPF instrumented traces", zap.Int("count", traceResponse.Hits.Total))
 
 		// Log first trace details for debugging
 		if len(traceResponse.Hits.Hits) > 0 {
 			firstHit := traceResponse.Hits.Hits[0]
-			var telemetrySdkName string
-			if sdkName, ok := firstHit.Source.Process.Tag["telemetry@sdk@name"]; ok {
-				telemetrySdkName, _ = sdkName.(string)
+			var telemetryDistroName string
+			if distroName, ok := firstHit.Source.Process.Tag["telemetry@distro@name"]; ok {
+				telemetryDistroName, _ = distroName.(string)
 			}
 			logger.Info("Sample trace",
 				zap.String("operation", firstHit.Source.OperationName),
-				zap.String("telemetry_sdk_name", telemetrySdkName))
+				zap.String("telemetry_distro_name", telemetryDistroName))
 		}
 	}
 
@@ -78,7 +78,7 @@ func fetchOBITraces(tracesApiKey string, envID string) (*OBITraceResponse, error
 	url := fmt.Sprintf("%s/search", BaseLogzioApiUrl)
 	client := &http.Client{}
 
-	query := fmt.Sprintf(`JaegerTag.env_id:%s AND type:jaegerSpan AND process.tag.telemetry@sdk@name:opentelemetry-ebpf-instrumentation`, envID)
+	query := fmt.Sprintf(`JaegerTag.env_id:%s AND type:jaegerSpan AND process.tag.telemetry@distro@name:opentelemetry-ebpf-instrumentation`, envID)
 	logger.Info("Fetching OBI traces", zap.String("url", url), zap.String("query", query))
 
 	formattedQuery := formatQuery(query)

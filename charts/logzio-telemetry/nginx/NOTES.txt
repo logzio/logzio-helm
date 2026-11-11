@@ -1,2 +1,0 @@
-Base on:
-https://github.com/OctopusDeploy/aks-prometheus-windows-exporter/tree/main/nginx

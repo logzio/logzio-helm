@@ -1,0 +1,67 @@
+{{- if .Values.global.windows }}
+{{- if .Values.global.windows.enabled }}
+{{- if .Values.metrics.enabled }}
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: windows-exporter
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "opentelemetry-collector.labels" . | nindent 4 }}
+    app.kubernetes.io/component: windows-exporter
+spec:
+  selector:
+    matchLabels:
+      {{- include "opentelemetry-collector.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: windows-exporter
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        {{- include "opentelemetry-collector.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: windows-exporter
+    spec:
+      hostNetwork: true
+      securityContext:
+        windowsOptions:
+          hostProcess: true
+          runAsUserName: "NT AUTHORITY\\SYSTEM"
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      initContainers:
+        - name: configure-firewall
+          image: "{{ .Values.windowsExporter.image.repository }}:{{ .Values.windowsExporter.image.tag }}"
+          imagePullPolicy: {{ .Values.windowsExporter.image.pullPolicy }}
+          command:
+            - powershell
+          args:
+            - -Command
+            - New-NetFirewallRule -DisplayName 'windows-exporter' -Direction inbound -Profile Any -Action Allow -LocalPort {{ .Values.windowsExporter.port }} -Protocol TCP
+      containers:
+        - name: windows-exporter
+          image: "{{ .Values.windowsExporter.image.repository }}:{{ .Values.windowsExporter.image.tag }}"
+          imagePullPolicy: {{ .Values.windowsExporter.image.pullPolicy }}
+          args:
+            - --web.listen-address=:{{ .Values.windowsExporter.port }}
+            - --collectors.enabled={{ .Values.windowsExporter.collectors }}
+          ports:
+            - name: metrics
+              containerPort: {{ .Values.windowsExporter.port }}
+              hostPort: {{ .Values.windowsExporter.port }}
+              protocol: TCP
+          {{- with .Values.windowsExporter.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- include "opentelemetry-collector.windowsNodeSelector" . | nindent 6 }}
+      {{- if or .Values.tolerations .Values.global.tolerations }}
+      {{- $allTolerations := concat (.Values.tolerations | default list) (.Values.global.tolerations | default list) }}
+      tolerations:
+        {{- toYaml $allTolerations | nindent 8 }}
+      {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

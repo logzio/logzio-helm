@@ -24,7 +24,7 @@ schedule: "07:00"
 # Container image
 image: logzio/trivy-to-logzio
 # Container image tag
-imageTag: 0.2.3
+imageTag: 0.3.0
 # Termination period (in seconds) to wait before killing Fluentd pod process on pod shutdown
 terminationGracePeriodSeconds: 30
 serviceAccount:

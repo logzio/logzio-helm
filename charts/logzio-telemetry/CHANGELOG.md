@@ -2,6 +2,31 @@
 
 <!-- next version -->
 
+## 6.0.0
+- **Breaking change:** Rework Windows node metrics collection so Windows metrics include node-level labels.
+  - Windows metrics are now collected by a `windows_exporter` DaemonSet that runs directly on Windows nodes, replacing the previous reverse-proxy DaemonSet and SSH-based installer.
+  - Requires Kubernetes `1.26+` with a `containerd` runtime. Windows node credentials are no longer needed.
+  - Remove `secrets.windowsNodeUsername`, `secrets.windowsNodePassword`, `nginxWindowsImage`, `windowsExporterInstallerImage`, and `windowsExporterInstallerJob`. Add `windowsExporter` (image, port, collectors).
+  - Some Windows metric names changed to match the current `windows_exporter`:
+    - `windows_cs_physical_memory_bytes` >> `windows_memory_physical_total_bytes`
+    - `windows_os_physical_memory_free_bytes` >> `windows_memory_available_bytes`
+
+## 5.9.6
+- Drop Windows nodes from `cadvisor` scrape job to prevent failed scrape warnings on Linux collectors in mixed-OS clusters.
+
+## 5.9.5
+- Quote Windows exporter installer credentials in `secrets.yaml` to fix YAML parsing errors when values contain special characters.
+- Bump `logzio-windows-exporter-installer` image to `0.0.3`.
+  - Bump `paramiko` from `~=2.9.1` to `~=3.5.1`.
+- Remove unused `MY_POD_IP`, `RELEASE_NAME` and `RELEASE_NS` environment variables from the pods.
+- Fix `CUSTOM_LOGS_ENDPOINT` environment variables injection in `standalone` mode, to not be dependent on `traces.enabled`.
+
+## 5.9.4
+- Add missing `k8sObjectsConfig`, `opencost`, `signalFx`, and `carbon` config to Windows daemonset collector.
+
+## 5.9.3
+- Add `kubernetes_node` label to the `windows-metrics` scrape job relabel configs.
+
 ## 5.9.2
 - Fix Windows exporter installer failing to connect to nodes on AKS due to DNS resolution errors. The installer now uses the node's InternalIP instead of hostname.
 - Add `imagePullSecrets` support to the Windows exporter installer Job and CronJob for use with private container registries.
@@ -87,6 +112,10 @@
       - `secrets.CustomTracingEndpoint` >> `global.customTracesEndpoint`
       - Deprecate `secrets.p8s_logzio_name` and `secrets.ListenerHost`
         - Add `global.customMetricsEndpoint` to support sending metrics to a custom endpoint
+
+<details>
+  <summary markdown="span"> Expand to check old versions </summary>
+
 ## 4.3.2
   - Fix `prometheus/kubelet` scrape endpoint for standalone deployment
 ## 4.3.1
@@ -148,11 +177,6 @@
       - `kubeStateMetrics.enabled`
       - `pushGateway.enabled`
       - `nodeExporter.enabled`
-
-
-
-<details>
-  <summary markdown="span"> Expand to check old versions </summary>
 
 ## 2.2.0
   - Upgraded SPM collector image to version `0.80.0`.

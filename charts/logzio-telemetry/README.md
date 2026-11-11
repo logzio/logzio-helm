@@ -20,7 +20,7 @@ To disable the dependency during installation, set any of these values: `kubeSta
 | > 2.0.0 | v1.22.0 - v1.28.0 |
 | < 1.3.0 | <= v1.22.0 |
 
-#### Before installing the chart
+## Before installing the chart
 * Check if you have any taints on your nodes:
 
 ```
@@ -30,10 +30,10 @@ if you do, please add them as tolerations in values.yaml tolerations.
 
 * You are using `Helm` client with version `v3.9.0` or above
 
-#### Standard configuration
+## Standard configuration
 
 
-##### Deploy the Helm chart
+#### Deploy the Helm chart
 First add `logzio-helm` repo
 ```shell
 helm repo add logzio-helm https://logzio.github.io/logzio-helm
@@ -42,7 +42,7 @@ helm repo update
 
 To deploy the Helm chart, enter the relevant parameters for the placeholders and run the code. 
 
-###### Configure the parameters in the code
+##### Configure the parameters in the code
 - Replace `<<*ENV-ID*>>` with the name for your environment's identifier, to easily identify the telemetry data for each environment.
 - Replace `<<LOGZIO-REGION>>` with the name of your Logz.io region e.g `us`,`eu`.
 
@@ -56,10 +56,11 @@ To deploy the Helm chart, enter the relevant parameters for the placeholders and
 - Replace the Logz-io `<<TRACES-SHIPPING-TOKEN>>` with the [token](https://app.logz.io/#/dashboard/settings/manage-tokens/data-shipping) of the traces account to which you want to send your data.
 
 
+## Deploy the metrics chart:
 
-###### Run the Helm deployment code for clusters with no Windows Nodes
+> [!IMPORTANT]
+> For Windows Deployment add required flags as documented [here](#deploying-with-windows-support).
 
-#### Deploy the metrics chart:
 ```
 helm install  \
 --set metrics.enabled=true \
@@ -183,14 +184,15 @@ In these cases we can use the following `--set` commands to use an alternative i
 
 This chart provides full support for collecting metrics from Windows nodes in mixed Linux/Windows Kubernetes clusters.
 
+> **Requirements:** Windows node metrics collection uses [HostProcess containers](https://kubernetes.io/docs/tasks/configure-pod-container/create-hostprocess-pod/), which require **Kubernetes >= 1.26** and a **containerd** runtime.
+
 ### Architecture Overview
 
 When Windows support is enabled (`global.windows.enabled=true`), the chart deploys additional Windows-specific resources:
 
 - **Windows DaemonSet** (`otel-collector-ds-windows`) - OTel collector running on each Windows node
 - **Windows ConfigMap** - Collector configuration with Windows-specific paths and receivers
-- **Nginx Proxy DaemonSet** (`nginx-win-node-proxy`) - Reverse proxy to expose Windows Exporter metrics
-- **Windows Exporter Installer** (CronJob) - Automatically installs Windows Exporter on nodes via SSH
+- **windows_exporter DaemonSet** (`windows-exporter`) - Runs the upstream [`windows_exporter`](https://github.com/prometheus-community/windows_exporter) as a HostProcess container on each Windows node, exposing node metrics on the node's InternalIP
 
 ### Deployment Modes with Windows
 
@@ -206,39 +208,7 @@ In daemonset mode (`collector.mode=daemonset`), the chart deploys:
 
 In standalone mode (`collector.mode=standalone`), only a **single Linux deployment** is created. This deployment:
 - Runs on Linux nodes and scrapes cluster-wide metrics
-- Can discover and scrape Windows nodes via Kubernetes service discovery
-
-### Windows Exporter Installation
-
-To collect node-level metrics from Windows nodes, the Windows Exporter service must be installed on each Windows node. The chart includes a CronJob that automatically installs and maintains the Windows Exporter via SSH.
-
-#### CronJob Configuration
-
-```yaml
-windowsExporterInstallerJob:
-  interval: "*/10 * * * *"          # Run every 10 minutes (CronJob format)
-  concurrencyPolicy: Forbid         # Prevent concurrent executions
-  successfulJobsHistoryLimit: 1     # Keep 1 successful job
-  failedJobsHistoryLimit: 1         # Keep 1 failed job
-```
-
-#### Windows Node Credentials
-
-The installer job requires SSH credentials to connect to Windows nodes:
-
-- **Default username**: `azureuser` (for AKS clusters)
-- **Password**: Must be provided via `secrets.windowsNodePassword`
-
-For AKS clusters, you can update the Windows node pool password:
-
-```bash
-az aks update \
-  --resource-group <RESOURCE_GROUP> \
-  --name <CLUSTER_NAME> \
-  --windows-admin-password "<NEW_PASSWORD>"
-```
-
-See [Azure AKS Windows FAQ](https://docs.microsoft.com/en-us/azure/aks/windows-faq) for more details.
+- Discovers and scrapes all Windows nodes via `role: node` service discovery
 
 ### Supported Windows Versions
 
@@ -251,8 +221,6 @@ The chart supports Windows Server 2019 and 2022. Set the version to match your W
 
 ### Deploying with Windows Support
 
-#### Basic Windows Metrics Collection
-
 ```bash
 helm install logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry \
   --set metrics.enabled=true \
@@ -261,40 +229,24 @@ helm install logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry \
   --set global.env_id=<<ENV-ID>> \
   --set collector.mode=daemonset \
   --set global.windows.enabled=true \
-  --set global.windows.version=2022 \
-  --set secrets.windowsNodeUsername=azureuser \
-  --set secrets.windowsNodePassword="<<WINDOWS-NODE-PASSWORD>>"
+  --set global.windows.version=2022
 ```
 
-#### Windows with Application Metrics
-
-```bash
-helm install logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry \
-  --set metrics.enabled=true \
-  --set applicationMetrics.enabled=true \
-  --set global.logzioMetricsToken=<<PROMETHEUS-METRICS-SHIPPING-TOKEN>> \
-  --set global.logzioRegion=<<LOGZIO-REGION>> \
-  --set global.env_id=<<ENV-ID>> \
-  --set collector.mode=daemonset \
-  --set global.windows.enabled=true \
-  --set global.windows.version=2022 \
-  --set secrets.windowsNodeUsername=azureuser \
-  --set secrets.windowsNodePassword="<<WINDOWS-NODE-PASSWORD>>"
-```
+To also collect application metrics, add `--set applicationMetrics.enabled=true`.
 
 ### Windows Configuration Values
 
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| `global.windows.enabled` | Enable Windows node support | `false` |
-| `global.windows.version` | Windows Server version (`"2019"` or `"2022"`) | `"2022"` |
-| `secrets.windowsNodeUsername` | SSH username for Windows nodes | `azureuser` |
-| `secrets.windowsNodePassword` | SSH password for Windows nodes | `""` |
-| `windowsExporterInstallerJob.interval` | CronJob schedule for installer | `"*/10 * * * *"` |
-| `nginxWindowsImage.repository` | Nginx proxy image for Windows | `logzio/logzio-windows-node-reverse-proxy` |
-| `nginxWindowsImage.tag` | Base tag for nginx image | `"0.0.1"` |
-| `nginxWindowsImage.useVersionSuffix` | Append Windows version to tag | `true` |
-`
+| Parameter                          | Description                                      | Default                                                                |
+|------------------------------------|--------------------------------------------------|------------------------------------------------------------------------|
+| `global.windows.enabled`           | Enable Windows node support                      | `false`                                                                |
+| `global.windows.version`           | Windows Server version (`"2019"` or `"2022"`)    | `"2022"`                                                               |
+| `windowsExporter.image.repository` | windows_exporter HostProcess image               | `ghcr.io/prometheus-community/windows-exporter`                        |
+| `windowsExporter.image.tag`        | windows_exporter image tag                       | `"0.31.8"`                                                             |
+| `windowsExporter.port`             | Port the exporter listens on and is scraped from | `9182`                                                                 |
+| `windowsExporter.collectors`       | Comma-separated list of enabled collectors       | `cpu,cpu_info,container,logical_disk,memory,net,os,service,system,tcp` |
+
+> [!NOTE]
+> if you override `windowsExporter.port`, make sure to also edit the hardcoded `:9182` in the `windows-metrics` scrape job's `relabel_configs` in `values.yaml`
 
 ##### Check Logz.io for your metrics and traces
 

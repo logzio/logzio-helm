@@ -433,6 +433,33 @@ Windows-specific: removes cadvisor, uses Windows paths for kubelet credentials.
 {{- end -}}
 {{- $infraReceivers := list "prometheus/infrastructure" "prometheus/kubelet" "prometheus/collector" "otlp" -}}
 {{- $_ := set (index $metricsConfig "service" "pipelines" "metrics/infrastructure") "receivers" $infraReceivers -}}
+
+{{/* Handle opencost config */}}
+{{- if .Values.opencost.enabled -}}
+{{- $opencostConfig := deepCopy .Values.opencost.config | mustMergeOverwrite -}}
+{{- $metricsConfig = deepCopy $opencostConfig | merge $metricsConfig | mustMergeOverwrite -}}
+{{/* merge processor list for opencost*/}}
+{{- $_ := set (index $metricsConfig "service" "pipelines" "metrics/infrastructure") "processors" (concat (index $metricsConfig "service" "pipelines" "metrics/infrastructure" "processors") (index $opencostConfig "service" "pipelines" "metrics/infrastructure" "processors" )) -}}
+{{- end -}}
+
+{{/* Handle k8s objects config */}}
+{{- if .Values.k8sObjectsConfig.enabled -}}
+{{- $k8sObjectsConfig := deepCopy .Values.k8sObjectsConfig.config | mustMergeOverwrite -}}
+{{- $metricsConfig = deepCopy $k8sObjectsConfig | merge $metricsConfig | mustMergeOverwrite -}}
+{{- end -}}
+
+{{/* Handle SignalFx config */}}
+{{- if and .Values.metrics.enabled .Values.signalFx.enabled -}}
+{{- $signalFxConfig := deepCopy .Values.signalFx.config | mustMergeOverwrite -}}
+{{- $metricsConfig = deepCopy $signalFxConfig | merge $metricsConfig | mustMergeOverwrite -}}
+{{- end -}}
+
+{{/* Handle Carbon config */}}
+{{- if and .Values.metrics.enabled .Values.carbon.enabled -}}
+{{- $carbonConfig := deepCopy .Values.carbon.config | mustMergeOverwrite -}}
+{{- $metricsConfig = deepCopy $carbonConfig | merge $metricsConfig | mustMergeOverwrite -}}
+{{- end -}}
+
 {{- $values := deepCopy .Values.daemonsetCollector | mustMergeOverwrite (deepCopy .Values) -}}
 {{- $data := dict "Values" $values | mustMergeOverwrite (deepCopy .) -}}
 {{- $config := include "opentelemetry-collector.baseConfig" $data | fromYaml -}}

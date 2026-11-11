@@ -20,6 +20,8 @@ This project packages the following Helm Charts:
 | > 3.0.0 | v1.22.0 - v1.28.0 |
 | < 2.0.0 | <= v1.22.0 |
 
+> **Windows node metrics** (from chart version 7.11.0) requires **Kubernetes >= 1.26** and a **containerd** runtime.
+
 ### Table of content
 - [Installation instructions](#instructions-for-standard-deployment)
   - [EKS on fargate](#sending-telemetry-data-from-eks-on-fargate)
@@ -174,8 +176,6 @@ helm install -n monitoring \
 --set global.logzioSpmToken="<<SPM-SHIPPING-TOKEN>>" \
 --set global.windows.enabled=true \
 --set global.windows.version="2022" \
---set logzio-k8s-telemetry.secrets.windowsNodeUsername="<<WINDOWS-NODE-USERNAME>>" \
---set logzio-k8s-telemetry.secrets.windowsNodePassword="<<WINDOWS-NODE-PASSWORD>>" \
 logzio-monitoring logzio-helm/logzio-monitoring
 ```
 
@@ -191,8 +191,10 @@ logzio-monitoring logzio-helm/logzio-monitoring
 | --- | --- | --- |
 | `global.windows.enabled` | Enable Windows node support | `false` |
 | `global.windows.version` | Windows Server version: `"2019"` or `"2022"` | `"2022"` |
-| `logzio-k8s-telemetry.secrets.windowsNodeUsername` | SSH username for Windows nodes | `azureuser` |
-| `logzio-k8s-telemetry.secrets.windowsNodePassword` | SSH password for Windows nodes | `""` |
+| `logzio-k8s-telemetry.windowsExporter.image.repository` | `windows_exporter` HostProcess image | `ghcr.io/prometheus-community/windows-exporter` |
+| `logzio-k8s-telemetry.windowsExporter.image.tag` | `windows_exporter` image tag | `0.31.8` |
+| `logzio-k8s-telemetry.windowsExporter.port` | Port the `windows_exporter` listens on and is scraped from | `9182` |
+| `logzio-k8s-telemetry.windowsExporter.collectors` | Comma-separated list of enabled `windows_exporter` collectors | `cpu,cpu_info,container,logical_disk,memory,net,os,service,system,tcp` |
 
 #### How Windows telemetry collection works
 
@@ -202,9 +204,9 @@ logzio-monitoring logzio-helm/logzio-monitoring
 - Uses Windows-compatible OTel collector image
 
 **Metrics:**
-- In **daemonset mode**: A Windows DaemonSet (`otel-collector-ds-windows`) runs on each Windows node
-- In **standalone mode**: The Linux deployment scrapes Windows nodes via service discovery (no Windows pods)
-- Windows Exporter is installed automatically on Windows nodes via a CronJob (SSH-based)
+- A `windows_exporter` DaemonSet (`windows-exporter`) runs as a HostProcess container on each Windows node, exposing node-level metrics on the node's InternalIP (port `9182`)
+- In **daemonset mode**: A Windows DaemonSet (`otel-collector-ds-windows`) runs on each Windows node and scrapes its local `windows_exporter`
+- In **standalone mode**: The Linux deployment discovers and scrapes all Windows nodes via `role: node` service discovery (no Windows collector pods)
 - Kubelet metrics use Windows file paths for credentials
 
 **Traces:**

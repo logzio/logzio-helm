@@ -191,5 +191,6 @@ jobs:
 
       - name: Delete Kind cluster
         if: always()
+        continue-on-error: true
         run: kind delete cluster --name kind-${{ github.run_id }}
 

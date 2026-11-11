@@ -369,27 +369,6 @@ When Windows is enabled, appends -windows-<version>-amd64 to the tag.
 {{- end -}}
 
 {{/*
-Get the nginx Windows proxy image tag based on Windows version.
-Appends -ltsc<version> suffix when useVersionSuffix is true.
-*/}}
-{{- define "opentelemetry-collector.nginxWindowsImageTag" -}}
-{{- $windowsVersion := "2022" -}}
-{{- if .Values.global.windows -}}
-  {{- $windowsVersion = .Values.global.windows.version | default "2022" | toString -}}
-{{- end -}}
-{{- $baseTag := .Values.nginxWindowsImage.tag | default "0.0.1" -}}
-{{- $useVersionSuffix := true -}}
-{{- if hasKey .Values.nginxWindowsImage "useVersionSuffix" -}}
-  {{- $useVersionSuffix = .Values.nginxWindowsImage.useVersionSuffix -}}
-{{- end -}}
-{{- if $useVersionSuffix -}}
-{{- printf "%s-ltsc%s" $baseTag $windowsVersion -}}
-{{- else -}}
-{{- $baseTag -}}
-{{- end -}}
-{{- end -}}
-
-{{/*
 Windows nodeSelector - targets Windows nodes only.
 */}}
 {{- define "opentelemetry-collector.windowsNodeSelector" -}}

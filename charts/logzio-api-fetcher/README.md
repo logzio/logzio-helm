@@ -240,6 +240,26 @@ By default `cloudflare` API type:
 </details>
 <details>
   <summary>
+    <span><a href="https://github.com/logzio/logzio-api-fetcher/tree/main/src/apis/cloudflare_logs">Cloudflare Logs Received</a></span>
+  </summary>
+
+For Cloudflare [Logs Received](https://developers.cloudflare.com/api/resources/logs/subresources/received/methods/get/) endpoint (`/zones/{zone_id}/logs/received`), use type `cloudflare_logs`.  
+This type dynamically manages `start` and `end` time windows, handles NDJSON responses, and automatically splits requests into 1-hour windows.
+
+## Configuration Options
+| Parameter Name          | Description                                                                               | Required/Optional | Default           |
+|-------------------------|-------------------------------------------------------------------------------------------|-------------------|-------------------|
+| name                    | Name of the API (custom name)                                                             | Optional          | the defined `url` |
+| cloudflare_account_id   | The Cloudflare Account ID                                                                 | Required          | -                 |
+| cloudflare_bearer_token | The Cloudflare Bearer token                                                               | Required          | -                 |
+| url                     | The request URL (do not include `start`/`end` params, they are managed automatically)     | Required          | -                 |
+| days_back_fetch         | The amount of days to fetch back in the first request (max: 7)                            | Optional          | 1 (day)           |
+| additional_fields       | Additional custom fields to add to the logs before sending to logzio                      | Optional          | -                 |
+| scrape_interval         | Time interval to wait between runs (unit: `minutes`)                                      | Optional          | 1 (minute)        |
+
+</details>
+<details>
+  <summary>
     <span><a href="https://github.com/logzio/logzio-api-fetcher/tree/main/src/apis/onepassword">1Password</a></span>
   </summary>
 
@@ -326,6 +346,47 @@ For structuring custom general Google Workspace API calls use type `google_works
 | scrape_interval             | Time interval to wait between runs (unit: `minutes`)                                                                                                                       | Optional          | 1 (minute)                                                         |
 
 </details>
+<details>
+  <summary>
+    <span><a href="https://github.com/logzio/logzio-api-fetcher/tree/main/src/apis/cisco_xdr">Cisco XDR</a></span>
+  </summary>
+
+For Cisco XDR (Extended Detection and Response) APIs, use type `cisco_xdr`.  
+This type authenticates with OAuth 2.0 client credentials (Basic Authentication) against the Cisco `/iroh/oauth2/token` endpoint, and sets `Content-Type` and `Accept` headers to `application/json` by default.
+
+## Configuration Options
+| Parameter Name                  | Description                                                                 | Required/Optional | Default           |
+|---------------------------------|-----------------------------------------------------------------------------|-------------------|-------------------|
+| name                            | Name of the API (custom name)                                               | Optional          | the defined `url` |
+| cisco_client_id                 | Cisco Client ID                                                             | Required          | -                 |
+| client_password                 | Cisco Client password                                                       | Required          | -                 |
+| data_request.url                | The request URL                                                             | Required          | -                 |
+| data_request.body               | The request body                                                            | Optional          | -                 |
+| data_request.method             | The request method (`GET` or `POST`)                                        | Optional          | `GET`             |
+| data_request.pagination         | Pagination settings if needed                                               | Optional          | -                 |
+| data_request.next_url           | If needed to update the URL in next requests based on the last response     | Optional          | -                 |
+| data_request.response_data_path | The path to the data inside the response                                    | Optional          | response root     |
+| additional_fields               | Additional custom fields to add to the logs before sending to logzio        | Optional          | -                 |
+| scrape_interval                 | Time interval to wait between runs (unit: `minutes`)                        | Optional          | 1 (minute)        |
+
+Example:
+```yaml
+apis:
+  - name: cisco_xdr_events
+    type: cisco_xdr
+    cisco_client_id: <<CISCO_CLIENT_ID>>
+    client_password: <<CISCO_CLIENT_SECRET>>
+    scrape_interval: 5
+    data_request:
+      url: https://visibility.amp.cisco.com/iroh/iroh-event/event/search
+      method: POST
+      body:
+        query: <<XDR_QUERY>>
+        limit: 1000
+      response_data_path: data
+```
+
+</details>
 
 
 > [!TIP]
@@ -375,6 +436,12 @@ apis:
 ```
 
 ## Changelog:
+- **1.3.0**:
+  - Update `logzio-api-fetcher` image from `2.0.0` -> `2.1.2`
+    - Add Cisco XDR support.
+    - Add `cloudflare_logs` type to support Cloudflare Logs Received endpoint (`/zones/{zone_id}/logs/received`).
+    - Bug fix for `cloudflare_logs` URLs with additional query parameters (e.g., `fields=`) being corrupted.
+    - Bug fix to prevent concurrent task execution when a previous task is still running.
 - **1.2.1**:
   - Update `logzio-api-fetcher` image from `0.3.1` -> `2.0.0`
     - **Note:** No breaking changes, major version bump is made to align with semantic versioning in future releases.
