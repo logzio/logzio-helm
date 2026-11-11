@@ -38,7 +38,7 @@ jobs:
         uses: azure/setup-helm@v5.0.0
 
       - name: Set up kubectl
-        uses: azure/setup-kubectl@v4
+        uses: azure/setup-kubectl@v5
 
       - name: Install Kind
         run: |
@@ -302,7 +302,7 @@ jobs:
         uses: azure/setup-helm@v5.0.0
 
       - name: Set up kubectl
-        uses: azure/setup-kubectl@v4
+        uses: azure/setup-kubectl@v5
 
       - name: Install Kind
         run: |
@@ -501,7 +501,7 @@ jobs:
         uses: azure/setup-helm@v5.0.0
 
       - name: Set up kubectl
-        uses: azure/setup-kubectl@v4
+        uses: azure/setup-kubectl@v5
 
       - name: Install Kind
         run: |
