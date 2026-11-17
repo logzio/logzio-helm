@@ -231,6 +231,7 @@ spmConfig:
         user-agent: "{{ .Chart.Name }}-{{ .Chart.Version }}-helm"
       timeout: 30s  # Time to wait per attempt to send data
       add_metric_suffixes: false
+      disable_scope_info: true  # don't add otel_scope_* labels to every series
   extensions:
     health_check:
       endpoint: :13133
@@ -351,6 +352,8 @@ command:
   name: otelcol-contrib
   extraArgs:
     - --feature-gates=connector.spanmetrics.legacyMetricNames  # rename traces_span_metrics_xxx >> xxx
+    - --feature-gates=-connector.spanmetrics.includeCollectorInstanceID  # don't add collector.instance.id to span metrics
+    - --feature-gates=-pkg.translator.zipkin.EmitV1HttpConventions,-pkg.translator.zipkin.DontEmitV0HttpConventions  # keep http.status_code on Zipkin spans, App360 relies on it
 
 #######################################################################################################################
 # Kubernetes Resources Configuration

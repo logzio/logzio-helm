@@ -1,6 +1,16 @@
 # Changes by Version
 
 <!-- next version -->
+## 2.0.0
+- **Breaking changes**
+  - Upgrade OpenTelemetry Collector from `0.133.0` to `0.165.0`.
+  - Spans received over Zipkin now use the current semantic conventions:
+    - `net.host.ip` >> `network.local.address`
+    - `net.peer.ip` >> `network.peer.address`
+    - `peer.service` >> `service.peer.name`
+    - `otel.library.name` / `otel.library.version` >> `otel.scope.name` / `otel.scope.version`
+    - `faas.id` >> `cloud.resource_id`
+
 ## 1.4.1
 - Add span metrics attributes `http.method` , `http.status_code`
 
