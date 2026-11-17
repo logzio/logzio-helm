@@ -211,6 +211,11 @@ jobs:
           kubectl apply -f tests/resources/logsgen.yaml
           kubectl rollout status deployment/log-generator --timeout=300s
 
+      - name: Deploy PVC-backed pod for kubelet volume metrics
+        run: |
+          kubectl apply -f tests/resources/kubelet-pvc.yaml
+          kubectl rollout status deployment/pvc-writer --timeout=300s
+
       - name: Run trace generator
         run: |
           kubectl apply -f tests/resources/tracegen-monitoring.yaml
