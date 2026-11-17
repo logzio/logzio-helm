@@ -19,13 +19,10 @@ containers:
       {{- toYaml .Values.containerSecurityContext | nindent 6 }}
     image: "{{ .Values.image.repository }}:{{ include "opentelemetry-collector.imageTag" . }}"
     imagePullPolicy: {{ .Values.image.pullPolicy }}
-{{- if (or .Values.traces.enabled .Values.metrics.enabled .Values.signalFx.enabled) }}
+{{- if .Values.metrics.enabled }}
     ports:
       {{- range $key, $port := .Values.ports }}
       {{- $shouldEnable := $port.enabled }}
-      {{- if eq $key "signalfx" }}
-        {{- $shouldEnable = $.Values.signalFx.enabled }}
-      {{- end }}
       {{- if eq $key "carbon" }}
         {{- $shouldEnable = $.Values.carbon.enabled }}
       {{- end }}
@@ -48,9 +45,6 @@ containers:
         value: {{ include "opentelemetry-collector.k360Metrics" . }}
       - name: LOGZIO_AGENT_VERSION
         value: {{.Chart.Version}}
-      - name: SPM_SERVICE_ENDPOINT
-        {{- $serviceName := include "opentelemetry-spm.fullname" .}}
-        value: {{ printf "http://%s.%s.svc.cluster.local:4317" $serviceName .Release.Namespace }}
 {{- if .Values.metrics.enabled }}
       - name: METRICS_TOKEN
         valueFrom:
@@ -66,50 +60,19 @@ containers:
       {{ end }} 
          
 {{- end }}
-{{- if or (eq .Values.k8sObjectsConfig.enabled true) (eq .Values.traces.enabled true) }}  
+{{- if .Values.k8sObjectsConfig.enabled }}
       - name: LOGZIO_LISTENER_REGION
         valueFrom:
           secretKeyRef:
             name: {{ .Values.secrets.name }}
             key: logzio-listener-region            
 {{- end }}
-{{- if or (eq .Values.metrics.enabled true) (eq .Values.spm.enabled true) }}
+{{- if .Values.metrics.enabled }}
       - name: LISTENER_URL
         valueFrom:
           secretKeyRef:
             name: {{ .Values.secrets.name }}
             key: logzio-metrics-listener
-{{- end }}
-{{- if .Values.traces.enabled }}
-      - name: TRACES_TOKEN
-        valueFrom:
-          secretKeyRef:
-            name: {{ .Values.secrets.name }}
-            key: logzio-traces-shipping-token
-      {{ if .Values.global.customTracesEndpoint }}
-      - name: CUSTOM_TRACING_ENDPOINT
-        valueFrom:
-          secretKeyRef:
-            name: {{ .Values.secrets.name }}
-            key: custom-tracing-endpoint
-      {{ end }}
-      - name: SAMPLING_PROBABILITY
-        valueFrom:
-          secretKeyRef:
-            name: {{ .Values.secrets.name }}
-            key: sampling-probability
-      - name: SAMPLING_LATENCY
-        valueFrom:
-          secretKeyRef:
-            name: {{ .Values.secrets.name }}
-            key: sampling-latency
-{{ if .Values.spm.enabled }}
-      - name: SPM_TOKEN
-        valueFrom:
-          secretKeyRef:
-            name: {{ .Values.secrets.name }}
-            key: logzio-spm-shipping-token
-{{ end }}
 {{- end }}
       {{ if .Values.global.customLogsEndpoint }}
       - name: CUSTOM_LOGS_ENDPOINT
@@ -211,7 +174,7 @@ priorityClassName: {{ .Values.priorityClassName | quote }}
 volumes:
   - name: {{ .Chart.Name }}-configmap
     configMap:
-      name: {{ include "opentelemetry-collector.fullname" . }}{{ .configmapSuffix }}
+      name: {{ .configmapName | default (printf "%s%s" (include "opentelemetry-collector.fullname" .) .configmapSuffix) }}
       items:
         - key: relay
           path: relay.yaml

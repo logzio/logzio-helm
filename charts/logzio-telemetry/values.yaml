@@ -4,12 +4,8 @@
 
 collector:
   mode: daemonset # possible values: standalone, daemonset
-traces:
-  enabled: false # Send traces telemetry
 metrics:
   enabled: false # Send metrics telemetry 
-spm:
-  enabled: false # Send Span metrics, requires `traces.enabled`
 
 applicationMetrics:
   ## Send application metrics, requires `metrics.enabled` and the `prometheus.io/scrape: true` annotation set.
@@ -30,18 +26,12 @@ fullnameOverride: "" # The resources name
 global:
   # Metrics account shipping token
   logzioMetricsToken: ""
-  # Tracing account shipping token
-  logzioTracesToken: ""
-  # Span Metrics account shipping token
-  logzioSpmToken: ""
   # Kubernetes objects Logs account shipping token
   logzioLogsToken: ""
   # Environment name 
   env_id: "my_environment"
-  # Traces & Logs listener address region code - https://docs.logz.io/docs/user-guide/admin/hosting-regions/account-region/
+  # Listener address region code - https://docs.logz.io/docs/user-guide/admin/hosting-regions/account-region/
   logzioRegion: "us"
-  # Custom Traces endpoint, overrides global.LogzioRegion listener address
-  customTracesEndpoint: ""
   # Custom Metrics endpoint, overrides global.LogzioRegion listener address
   customMetricsEndpoint: ""
   # Custom Logs endpoint, overrides global.LogzioRegion listener address
@@ -61,8 +51,6 @@ global:
 secrets:
   name: logzio-secret  # Secret name
   enabled: true  # Create secret
-  SamplingProbability: 10  # Traces Sampling Probability
-  SamplingLatency: 500  # Traces Sampling Latency
 
 # ---
 # Filters for Prometheus metrics (infrastructure/applications pipelines)
@@ -196,72 +184,6 @@ baseCollectorConfig:
     health_check:
       endpoint: :13133
   processors:
-    k8sattributes:
-      extract:
-        metadata:
-        - k8s.pod.name
-        - k8s.deployment.name
-        - k8s.namespace.name
-        - k8s.node.name
-        - k8s.statefulset.name
-        - k8s.replicaset.name
-        - k8s.daemonset.name
-        - k8s.cronjob.name
-        - k8s.job.name
-    resource/k8s:
-      attributes:
-      # Rename
-      - key: pod
-        action: insert
-        from_attribute: k8s.pod.name
-      - key: kubernetes_node
-        action: insert
-        from_attribute: k8s.node.name
-      - key: kubernetes_namespace
-        action: insert
-        from_attribute: k8s.namespace.name
-      - key: kubernetes_deployment
-        action: insert
-        from_attribute: k8s.deployment.name
-      - key: kubernetes_pod_ip
-        action: insert
-        from_attribute: k8s.pod.ip
-      - key: kubernetes_statefulset
-        action: insert
-        from_attribute: k8s.statefulset.name
-      - key: kubernetes_replicaset
-        action: insert
-        from_attribute: k8s.replicaset.name
-      - key: kubernetes_cronjob
-        action: insert
-        from_attribute: k8s.cronjob.name
-      - key: kubernetes_daemonset
-        action: insert
-        from_attribute: k8s.daemonset.name
-      - key: kubernetes_job
-        action: insert
-        from_attribute: k8s.job.name
-      # Delete old
-      - key: k8s.deployment.name
-        action: delete
-      - key: k8s.pod.name
-        action: delete
-      - key: k8s.namespace.name
-        action: delete
-      - key: k8s.node.name
-        action: delete
-      - key: k8s.pod.ip
-        action: delete
-      - key: k8s.statefulset.name
-        action: delete
-      - key: k8s.replicaset.name
-        action: delete
-      - key: k8s.daemonset.name
-        action: delete
-      - key: k8s.job.name
-        action: delete
-      - key: k8s.cronjob.name
-        action: delete
     batch: {}
     attributes/env_id:
       actions:
@@ -277,82 +199,6 @@ baseCollectorConfig:
     telemetry:
       logs:
         level: "info"
-# Traces configuration
-tracesConfig:
-  exporters:
-    logzio:
-      endpoint: ${CUSTOM_TRACING_ENDPOINT}
-      region: ${LOGZIO_LISTENER_REGION}
-      account_token: ${TRACES_TOKEN}
-      headers:
-        user-agent: "{{ .Chart.Name }}-{{ .Chart.Version }}-helm"
-  extensions:
-    pprof:
-      endpoint: :1777
-    zpages:
-      endpoint: :55679
-  receivers:
-    jaeger:
-      protocols:
-        thrift_compact:
-          endpoint: "0.0.0.0:6831"
-        thrift_binary:
-          endpoint: "0.0.0.0:6832"
-        grpc:
-          endpoint: "0.0.0.0:14250"
-        thrift_http:
-          endpoint: "0.0.0.0:14268"
-    otlp:
-      protocols:
-        grpc:
-          endpoint: "0.0.0.0:4317"
-        http:
-          endpoint: "0.0.0.0:4318"
-    zipkin:
-      endpoint: "0.0.0.0:9411"
-  processors:
-    tail_sampling:
-      policies:
-        [
-            {
-              name: error-in-policy,
-              type: status_code,
-              status_code: {status_codes: [ERROR]}
-            },
-            {
-              name: slow-traces-policy,
-              type: latency,
-              latency: {threshold_ms: "${SAMPLING_LATENCY}" }            
-            },
-            {
-              name: probability-policy,
-              type: probabilistic,
-              probabilistic: {sampling_percentage: "${SAMPLING_PROBABILITY}" }
-            }       
-        ]
-  service:
-    extensions:
-      - health_check
-      - pprof
-      - zpages
-    pipelines:
-      traces:
-        receivers: [jaeger, zipkin, otlp]
-        processors: [attributes/env_id, k8sattributes, resource/k8s, tail_sampling, batch]
-        exporters: [logzio]
-
-spmForwarderConfig:
-  exporters:
-    otlp:
-      endpoint: "${SPM_SERVICE_ENDPOINT}"
-      tls:
-        insecure: true
-  service:
-    pipelines:
-      traces/spm:
-        receivers: [jaeger, zipkin, otlp]
-        processors: [attributes/env_id, k8sattributes, batch]
-        exporters: [otlp]
 # Metrics standalone collector configuration 
 metricsConfig:
   extensions:
@@ -366,6 +212,7 @@ metricsConfig:
     batch: {}
   exporters:
     prometheusremotewrite/applications:
+      disable_scope_info: true  # don't add otel_scope_* labels to every series
       timeout: 30s
       endpoint: ${LISTENER_URL}
       external_labels:
@@ -374,6 +221,7 @@ metricsConfig:
         Authorization: "Bearer ${METRICS_TOKEN}"
         user-agent: "{{ .Chart.Name }}-{{ .Chart.Version }}-helm"
     prometheusremotewrite/infrastructure:
+      disable_scope_info: true  # don't add otel_scope_* labels to every series
       timeout: 30s
       endpoint: ${LISTENER_URL}
       external_labels:
@@ -619,10 +467,6 @@ windowsExporter:
   # Comma-separated list of collectors to enable
   collectors: "cpu,cpu_info,container,logical_disk,memory,net,os,service,system,tcp"
   resources: {}
-spmImage:
-  repository: otel/opentelemetry-collector-contrib
-  pullPolicy: IfNotPresent
-  tag: "0.103.0"
 imagePullSecrets: []
 
 # OpenTelemetry Collector executable
@@ -694,47 +538,11 @@ ports:
     servicePort: 4318
     hostPort: 4318
     protocol: TCP
-  jaeger-compact:
-    enabled: true
-    containerPort: 6831
-    servicePort: 6831
-    hostPort: 6831
-    protocol: UDP
-  jaeger-binary:
-    enabled: true
-    containerPort: 6832
-    servicePort: 6832
-    hostPort: 6832
-    protocol: UDP    
-  jaeger-thrift:
-    enabled: true
-    containerPort: 14268
-    servicePort: 14268
-    hostPort: 14268
-    protocol: TCP
-  jaeger-grpc:
-    enabled: true
-    containerPort: 14250
-    servicePort: 14250
-    hostPort: 14250
-    protocol: TCP
-  zipkin:
-    enabled: true
-    containerPort: 9411
-    servicePort: 9411
-    hostPort: 9411
-    protocol: TCP
   metrics:
     enabled: true
     containerPort: 8888
     servicePort: 8888
     hostPort: 8888
-    protocol: TCP
-  signalfx:
-    enabled: false
-    containerPort: 9943
-    servicePort: 9943
-    hostPort: 9943
     protocol: TCP
   carbon:
     enabled: false
@@ -742,34 +550,6 @@ ports:
     servicePort: 2003
     hostPort: 2003
     protocol: TCP
-
-# SignalFx config
-signalFx:
-  enabled: false
-  config:
-    receivers:
-      # SignalFx receiver to accept metrics from SignalFx client libraries # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/receiver/signalfxreceiver/README.md
-      signalfx:
-        endpoint: "0.0.0.0:9943"
-    processors:
-      # Batch processor to improve performance by grouping metrics
-      batch/signalfx: {}
-    exporters:
-      # Prometheus Remote Write exporter for Logz.io
-      prometheusremotewrite/signalfx:
-        endpoint: "${LISTENER_URL}"
-        headers:
-          Authorization: "Bearer ${METRICS_TOKEN}"
-          user-agent: '{{ .Chart.Name }}-{{ .Chart.Version }}-helm'          
-        external_labels:
-          p8s_logzio_name: ${ENV_ID}
-
-    service:
-      pipelines:
-        metrics/signalfx:
-          receivers: [signalfx]
-          processors: [batch/signalfx]
-          exporters: [prometheusremotewrite/signalfx]
 
 # Carbon config
 carbon:
@@ -786,6 +566,7 @@ carbon:
     exporters:
       # Prometheus Remote Write exporter for Logz.io
       prometheusremotewrite/carbon:
+        disable_scope_info: true  # don't add otel_scope_* labels to every series
         endpoint: "${LISTENER_URL}"
         headers:
           Authorization: "Bearer ${METRICS_TOKEN}"
@@ -803,6 +584,11 @@ carbon:
 # Kubernetes Object logs
 k8sObjectsConfig:
   enabled: false
+  # Resources for the single-replica k8s objects collector deployment
+  resources:
+    requests:
+      cpu: 50m
+      memory: 70Mi
   config:
     receivers:
       # Watch for changes in Kubernetes objects
@@ -877,6 +663,14 @@ k8sObjectsConfig:
           - context: log
             statements:
               - delete_key(body["object"]["metadata"], "managedFields")
+      # Don't add the k8sobjects receiver scope name and version to every object log
+      transform/remove_scope:
+        error_mode: ignore
+        log_statements:
+          - context: scope
+            statements:
+              - set(scope.name, "")
+              - set(scope.version, "")
       batch/k8sobjects: {}
     exporters:
       logzio/object_logs:
@@ -889,217 +683,8 @@ k8sObjectsConfig:
       pipelines:
         logs/k8sobjects:
           receivers: [k8sobjects/pull,k8sobjects/watch]
-          processors: [transform/pulled_object,transform/remove_managedfields,transform/log_type, resource/env_id, batch/k8sobjects]
+          processors: [transform/pulled_object,transform/remove_managedfields,transform/log_type,transform/remove_scope, resource/env_id, batch/k8sobjects]
           exporters: [logzio/object_logs]
-# Service graph metrics configuration
-serviceGraph:
-  enabled: true
-  config:
-    connectors:
-      servicegraph:
-        latency_histogram_buckets: [2ms, 8ms, 50ms, 100ms, 200ms, 500ms, 1s, 5s, 10s]
-        dimensions:
-          - env_id
-        store:
-          ttl: 5s
-          max_items: 100000
-        metrics_flush_interval: 60s
-    service:
-      pipelines:
-        traces:
-          exporters: [servicegraph]      
-        metrics/spm-logzio:
-          receivers: [servicegraph]
-# Span metrics configuration
-spanMetricsAgregator:
-  config:
-    processors:
-      metricstransform/metrics-rename:
-        transforms:
-        - include: ^duration(.*)$$
-          action: update
-          match_type: regexp
-          new_name: latency.$${1} 
-        - action: update
-          include: calls
-          new_name: calls_total
-      metricstransform/labels-rename:
-        transforms:
-        - action: update
-          include: ^latency
-          match_type: regexp
-          operations:
-          - action: update_label
-            label: span.name
-            new_label: operation
-        - action: update
-          include: ^calls
-          match_type: regexp
-          operations:
-          - action: update_label
-            label: span.name
-            new_label: operation  
-      batch/spanmetrics: {}
-    connectors:
-      spanmetrics:
-        aggregation_temporality: AGGREGATION_TEMPORALITY_CUMULATIVE
-        dimensions:
-        - name: rpc.grpc.status_code
-        - name: http.method
-        - name: http.status_code
-        - name: k8s.pod.name
-        - name: k8s.deployment.name
-        - name: k8s.namespace.name
-        - name: k8s.node.name
-        - name: k8s.statefulset.name
-        - name: k8s.replicaset.name
-        - name: k8s.daemonset.name
-        - name: k8s.cronjob.name
-        - name: k8s.job.name
-        - name: cloud.provider
-        - name: cloud.region
-        - name: db.system
-        - name: messaging.system
-        - default: ${ENV_ID}
-          name: env_id
-        dimensions_cache_size: 100000
-        histogram:
-          explicit:
-            buckets:
-            - 2ms
-            - 8ms
-            - 50ms
-            - 100ms
-            - 200ms
-            - 500ms
-            - 1s
-            - 5s
-            - 10s
-        metrics_expiration: 5m
-        resource_metrics_key_attributes:
-        - service.name
-        - telemetry.sdk.language
-        - telemetry.sdk.name
-    exporters:
-      logging:
-        loglevel: info
-      prometheus/spm:
-        endpoint: 0.0.0.0:8889
-      prometheusremotewrite/spm-logzio:
-        endpoint: ${LISTENER_URL}
-        headers:
-          Authorization: Bearer ${SPM_TOKEN}
-          user-agent: "{{ .Chart.Name }}-{{ .Chart.Version }}-helm"
-        timeout: 30s
-        add_metric_suffixes: false
-    receivers:
-      jaeger:
-        protocols:
-          grpc:
-            endpoint: "0.0.0.0:14250"
-          thrift_binary:
-            endpoint: "0.0.0.0:6832"
-          thrift_compact:
-            endpoint: "0.0.0.0:6831"
-          thrift_http:
-            endpoint: "0.0.0.0:14268"
-      otlp:
-        protocols:
-          grpc:
-            endpoint: "0.0.0.0:4317"
-          http:
-            endpoint: "0.0.0.0:4318"
-      zipkin:
-        endpoint: "0.0.0.0:9411"
-    service:
-      pipelines:
-        metrics/spm-logzio:
-          exporters:
-          - prometheusremotewrite/spm-logzio
-          - prometheus/spm
-          processors:
-          - metricstransform/metrics-rename
-          - metricstransform/labels-rename
-          - batch/spanmetrics
-          receivers:
-          - spanmetrics
-        traces:
-          exporters:
-          - logging
-          - spanmetrics
-          receivers:
-          - jaeger
-          - zipkin
-          - otlp
-      telemetry:
-        logs:
-          level: "info"
-
-  # service values        
-  service:
-    type: ClusterIP
-    annotations: {}
-  ports:
-    health-check:
-      enabled: true
-      containerPort: 13133
-      servicePort: 13133
-      hostPort: 13133
-      protocol: TCP  
-    otlp:
-      enabled: true
-      containerPort: 4317
-      servicePort: 4317
-      hostPort: 4317
-      protocol: TCP
-    otlp-http:
-      enabled: true
-      containerPort: 4318
-      servicePort: 4318
-      hostPort: 4318
-      protocol: TCP
-    jaeger-compact:
-      enabled: true
-      containerPort: 6831
-      servicePort: 6831
-      hostPort: 6831
-      protocol: UDP
-    jaeger-binary:
-      enabled: true
-      containerPort: 6832
-      servicePort: 6832
-      hostPort: 6832
-      protocol: UDP       
-    jaeger-thrift:
-      enabled: true
-      containerPort: 14268
-      servicePort: 14268
-      hostPort: 14268
-      protocol: TCP
-    jaeger-grpc:
-      enabled: true
-      containerPort: 14250
-      servicePort: 14250
-      hostPort: 14250
-      protocol: TCP
-    zipkin:
-      enabled: true
-      containerPort: 9411
-      servicePort: 9411
-      hostPort: 9411
-      protocol: TCP
-
-
-  resources: {}
-   ## Resources are not specified by default, to ensure the chart runs on environments with little resources.
-   ## If you want to specify resources, uncomment the following  lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-    # requests:
-    #   cpu: 256m
-    #   memory: 512Mi
-    # limits:
-    #   cpu: 512m
-    #   memory: 1024Mi
-
 # Configuration for standalone OpenTelemetry Collector deployment, enabled by default
 standaloneCollector:
   enabled: false
@@ -1271,6 +856,7 @@ daemonsetConfig:
     batch: {}
   exporters:
     prometheusremotewrite/applications:
+      disable_scope_info: true  # don't add otel_scope_* labels to every series
       timeout: 30s
       endpoint: ${LISTENER_URL}
       external_labels:
@@ -1279,6 +865,7 @@ daemonsetConfig:
         Authorization: "Bearer ${METRICS_TOKEN}"
         user-agent: "{{ .Chart.Name }}-{{ .Chart.Version }}-helm"
     prometheusremotewrite/infrastructure:
+      disable_scope_info: true  # don't add otel_scope_* labels to every series
       timeout: 30s
       endpoint: ${LISTENER_URL}
       external_labels:

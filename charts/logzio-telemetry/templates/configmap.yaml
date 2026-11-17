@@ -1,4 +1,4 @@
-{{- if or (and (eq .Values.collector.mode "standalone") (.Values.metrics.enabled)) (.Values.traces.enabled) }}
+{{- if and (eq .Values.collector.mode "standalone") (.Values.metrics.enabled) }}
 apiVersion: v1
 kind: ConfigMap
 metadata:

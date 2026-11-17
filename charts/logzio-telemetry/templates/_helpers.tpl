@@ -52,21 +52,6 @@ If release name contains chart name it will be used as a full name.
 {{- end }}
 
 
-{{- define "opentelemetry-spm.fullname" -}}
-{{- if .Values.fullnameOverride }}
-{{- printf "%s-%s" .Values.fullnameOverride "spm" | trunc 63 | trimSuffix "-" }}
-{{- else }}
-{{- $spmNameWithChart := printf "%s-%s" .Chart.Name "spm"}}
-{{- $spmNameFullOverride := printf "%s-%s" .Values.nameOverride "spm"}}
-{{- $name := default $spmNameWithChart $spmNameFullOverride }}
-{{- if contains $name .Release.Name }}
-{{- .Release.Name | trunc 63 | trimSuffix "-" }}
-{{- else }}
-{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
-{{- end }}
-{{- end }}
-{{- end }}
-
 {{/*
 Create chart name and version as used by the chart label.
 */}}
@@ -87,30 +72,12 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
 {{/*
-SPM labels
-*/}}
-{{- define "opentelemetry-collector-spm.labels" -}}
-helm.sh/chart: {{ include "opentelemetry-collector.chart" . }}
-{{ include "opentelemetry-collector-spm.selectorLabels" . }}
-{{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-{{- end }}
-app.kubernetes.io/managed-by: {{ .Release.Service }}
-{{- end }}
-
-{{/*
 Selector labels
 */}}
 {{- define "opentelemetry-collector.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "opentelemetry-collector.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{ include "opentelemetry-collector.component" . }}
-{{- end }}
-
-{{- define "opentelemetry-collector-spm.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "opentelemetry-collector.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
-{{ include "spm-collector.component" . }}
 {{- end }}
 
 
@@ -219,13 +186,6 @@ component: logzio-telemetry-collector-standalone
 {{- end }}
 
 {{/*
-Get SPM component name
-*/}}
-{{- define "spm-collector.component" -}}
-component: standalone-collector-spm
-{{- end }}
-
-{{/*
 Merges local and global affinity settings for the standalone collector.
 */}}
 {{- define "opentelemetry-collector.affinity" -}}
@@ -316,27 +276,10 @@ https://listener.logz.io:8071
 {{- end }}
 
 {{/*
-Builds the full logzio traces listener address
-*/}}
-{{- define "traces-collector.listenerAddress" }}
-{{- if ne .Values.global.customTracesEndpoint "" -}}
-{{- printf "%s" .Values.global.customTracesEndpoint -}}
-{{- else }}
-{{- $region := .Values.global.logzioRegion -}}
-{{- if or (eq $region "us") (not $region) -}}
-https://listener.logz.io:8071
-{{- else }}
-{{- printf "https://listener-%s.logz.io:8071" $region }}
-{{- end }}
-{{- end }}
-{{- end }}
-
-{{/*
 Common resources template that handles conditional rendering of resources section.
 Only renders the resources section if there are actual requests or limits defined.
 Usage: {{ include "opentelemetry-collector.resources" .Values.standaloneCollector.resources }}
        {{ include "opentelemetry-collector.resources" .Values.daemonsetCollector.resources }}
-       {{ include "opentelemetry-collector.resources" .Values.spanMetricsAgregator.resources }}
 */}}
 {{- define "opentelemetry-collector.resources" -}}
 {{- if . }}
