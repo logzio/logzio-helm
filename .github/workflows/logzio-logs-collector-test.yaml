@@ -19,7 +19,7 @@ jobs:
     steps:
       - name: Generate random id
         id: random_id
-        run: echo "::set-output name=rand::$(echo $RANDOM)"
+        run: echo "rand=$RANDOM" >> "$GITHUB_OUTPUT"
 
       - name: Set ENV_ID
         run: echo "ENV_ID=logs-test-run-${{ steps.random_id.outputs.rand }}" >> $GITHUB_ENV
@@ -40,7 +40,7 @@ jobs:
 
       - name: Install Kind
         run: |
-          curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.11.1/kind-Linux-amd64"
+          curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.33.0/kind-Linux-amd64"
           chmod +x ./kind
           mv ./kind /usr/local/bin/kind
 
@@ -120,7 +120,7 @@ jobs:
 
       - name: Install Kind
         run: |
-          curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.11.1/kind-Linux-amd64"
+          curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.33.0/kind-Linux-amd64"
           chmod +x ./kind
           sudo mv ./kind /usr/local/bin/kind
 
