@@ -2,6 +2,12 @@
 
 <!-- next version -->
 
+## 3.0.0
+- **Breaking changes**
+  - Upgrade `otel/opentelemetry-collector-contrib` image to version `0.165.0`.
+  - Remove the SignalFx receiver (`signalFx.*` values and port `9943`), it was removed from the OpenTelemetry Collector. Send logs over OTLP instead.
+  - Rename the `container_image_tag` log field to `container_image_tags`, following the `k8sattributes` processor move to `container.image.tags`. The field is now an array.
+
 ## 2.4.0
 - Add Windows node support via `global.windows.enabled` and `global.windows.version` settings.
   - When enabled, deploys an additional DaemonSet (`logzio-logs-collector-windows`) on Windows nodes.

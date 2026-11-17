@@ -23,9 +23,6 @@ containers:
     ports:
       {{- range $key, $port := .Values.ports }}
       {{- $shouldEnable := $port.enabled }}
-      {{- if eq $key "signalfx" }}
-        {{- $shouldEnable = $.Values.signalFx.enabled }}
-      {{- end }}
       {{- if eq $key "carbon" }}
         {{- $shouldEnable = $.Values.carbon.enabled }}
       {{- end }}
@@ -53,25 +50,6 @@ containers:
           secretKeyRef:
             name: {{ .Values.secrets.name }}
             key: logzio-metrics-shipping-token
-      {{ if .Values.k8sObjectsConfig.enabled }}
-      - name: OBJECTS_LOGS_TOKEN
-        valueFrom:
-          secretKeyRef:
-            name: {{ .Values.secrets.name }}
-            key: logzio-k8s-objects-logs-token
-      - name: LOGZIO_LISTENER_REGION
-        valueFrom:
-          secretKeyRef:
-            name: {{ .Values.secrets.name }}
-            key: logzio-listener-region            
-      {{ end }}
-      {{ if .Values.global.customLogsEndpoint }}
-      - name: CUSTOM_LOGS_ENDPOINT
-        valueFrom:
-          secretKeyRef:
-            name: {{ .Values.secrets.name }}
-            key: custom-logs-endpoint
-      {{ end }}        
       - name: LISTENER_URL
         valueFrom:
           secretKeyRef:
