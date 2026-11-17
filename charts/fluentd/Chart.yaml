@@ -6,6 +6,3 @@ keywords:
   - fluentd
 version: 1.0.2
 appVersion: 1.5.6
-maintainers:
-  - name: Yotam loewenbach
-    email: yotam.loewenbach@logz.io

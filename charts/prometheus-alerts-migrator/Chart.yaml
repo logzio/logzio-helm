@@ -8,6 +8,3 @@ version: 3.0.2
 
 appVersion: "v1.3.2"
 
-maintainers:
-- name: yotamloe
-  email: yotam.loewenbach@logz.io
