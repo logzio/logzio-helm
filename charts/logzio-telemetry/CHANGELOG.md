@@ -2,6 +2,11 @@
 
 <!-- next version -->
 
+## 7.0.1
+- Fix the `kubernetes-nodes` (kubelet) scrape job in `daemonset` mode, its node selector used `$KUBE_NODE_NAME` which isn't expanded by the collector, so no kubelet metrics were collected.
+- Limit the `kubernetes-cadvisor` scrape job in `daemonset` mode to the collector's own node. Since `5.6.0` every collector pod scraped cAdvisor of every node, so each node's cAdvisor metrics were sent once per collector pod.
+- Fix the chart failing to render when `opencost.enabled=true`.
+
 ## 7.0.0
 - **Breaking changes**
   - Upgrade `otel/opentelemetry-collector-contrib` image to version `0.165.0`.
