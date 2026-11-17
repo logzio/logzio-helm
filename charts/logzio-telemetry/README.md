@@ -65,6 +65,17 @@ helm install  \
 logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry
 ```
 
+#### Deploy the metrics chart on EKS Fargate
+```
+helm install  \
+--set metrics.enabled=true \
+--set collector.mode=standalone \
+--set global.logzioMetricsToken=<<PROMETHEUS-METRICS-SHIPPING-TOKEN>> \
+--set global.logzioRegion=<<LOGZIO-REGION>> \
+--set global.env_id=<<ENV-ID>> \
+logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry
+```
+
 #### Deploy metrics chart with Kuberenetes object logs correlation
 **Note** `k8sObjectsConfig.enabled=true` will have no effect unless `metrics.enabled` is also set to `true`
 
