@@ -4,7 +4,4 @@ version: 3.0.0
 description: kubernetes logs collection agent for logz.io based on opentelemetry collector
 type: application
 home: https://logz.io/
-maintainers:
-  - name: yotam loewenbach
-    email: yotam.loewenbach@logz.io
 appVersion: 0.165.0
