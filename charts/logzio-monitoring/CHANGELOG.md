@@ -1,6 +1,32 @@
 # Changes by Version
 
 <!-- next version -->
+## 8.0.0
+- **Breaking changes:**
+  - Upgrade `logzio-k8s-telemetry` chart to `7.0.1`
+    - Upgrade `otel/opentelemetry-collector-contrib` image to version `0.165.0`.
+    - Remove traces and span metrics support, use `logzio-apm-collector` instead.
+      - Remove `traces`, `spm`, `tracesConfig`, `spmForwarderConfig`, `spanMetricsAgregator`, `serviceGraph`, `spmImage`, `secrets.SamplingProbability` and `secrets.SamplingLatency`.
+      - Remove the Jaeger and Zipkin ports and the `pprof` and `zpages` extensions.
+    - Remove the SignalFx receiver (`signalFx.*` values and port `9943`), it was removed from the OpenTelemetry Collector. Send metrics over OTLP instead.
+    - The collector's own `otelcol_*` metrics no longer have the `service_name`, `service_instance_id` and `service_version` labels.
+    - Kubernetes object logs (`k8sObjectsConfig.enabled`) are now collected by a single-replica deployment instead of every collector pod.
+    - Fix the `kubernetes-nodes` (kubelet) scrape job in `daemonset` mode, its node selector used `$KUBE_NODE_NAME` which isn't expanded by the collector, so no kubelet metrics were collected.
+    - Limit the `kubernetes-cadvisor` scrape job in `daemonset` mode to the collector's own node, so each node's cAdvisor metrics are sent once instead of once per collector pod.
+    - Fix the chart failing to render when `opencost.enabled=true`.
+  - Upgrade `logzio-logs-collector` chart to `3.0.0`
+    - Upgrade `otel/opentelemetry-collector-contrib` image to version `0.165.0`.
+    - Remove the SignalFx receiver (`signalFx.*` values and port `9943`). Send logs over OTLP instead.
+    - Rename the `container_image_tag` log field to `container_image_tags`. The field is now an array.
+  - Upgrade `logzio-apm-collector` chart to `2.0.0`
+    - Upgrade OpenTelemetry Collector from `0.133.0` to `0.165.0`.
+    - Spans received over Zipkin now use the current semantic conventions:
+      - `net.host.ip` >> `network.local.address`
+      - `net.peer.ip` >> `network.peer.address`
+      - `peer.service` >> `service.peer.name`
+      - `otel.library.name` / `otel.library.version` >> `otel.scope.name` / `otel.scope.version`
+      - `faas.id` >> `cloud.resource_id`
+
 ## 7.12.0
 - Upgrade `logzio-trivy` chart to `1.2.0`
   - Upgrade Trivy-Operator version to `0.38.1`
