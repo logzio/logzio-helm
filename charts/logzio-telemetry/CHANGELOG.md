@@ -2,6 +2,16 @@
 
 <!-- next version -->
 
+## 7.0.0
+- **Breaking changes**
+  - Upgrade `otel/opentelemetry-collector-contrib` image to version `0.165.0`.
+  - Remove traces and span metrics support, use the [`logzio-apm-collector`](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-apm-collector) chart instead.
+    - Remove `traces`, `spm`, `tracesConfig`, `spmForwarderConfig`, `spanMetricsAgregator`, `serviceGraph`, `spmImage`, `secrets.SamplingProbability`, `secrets.SamplingLatency`, `global.logzioTracesToken`, `global.logzioSpmToken` and `global.customTracesEndpoint`.
+    - Remove the Jaeger and Zipkin ports and the `pprof` and `zpages` extensions.
+  - Remove the SignalFx receiver (`signalFx.*` values and port `9943`), it was removed from the OpenTelemetry Collector. Send metrics over OTLP instead.
+  - The collector's own `otelcol_*` metrics no longer have the `service_name`, `service_instance_id` and `service_version` labels.
+- Kubernetes object logs (`k8sObjectsConfig.enabled`) are now collected by a single-replica deployment instead of every collector pod.
+
 ## 6.0.0
 - **Breaking change:** Rework Windows node metrics collection so Windows metrics include node-level labels.
   - Windows metrics are now collected by a `windows_exporter` DaemonSet that runs directly on Windows nodes, replacing the previous reverse-proxy DaemonSet and SSH-based installer.

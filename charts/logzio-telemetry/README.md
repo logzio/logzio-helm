@@ -1,13 +1,13 @@
 # Logzio-k8s-telemetry
 
-**Note**: This chart is specifically designed for shipping metrics and traces only. For a chart that handles all telemetry data—including logs, metrics, traces, and SPM—please use our [Logzio Monitoring chart](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-monitoring).
+**Note**: This chart is specifically designed for shipping metrics only. To ship traces and span metrics use the [logzio-apm-collector chart](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-apm-collector). For a chart that handles all telemetry data—including logs, metrics, traces, and SPM—please use our [Logzio Monitoring chart](https://github.com/logzio/logzio-helm/tree/master/charts/logzio-monitoring).
 
 ##  Overview
 
-You can use a Helm chart to ship Kubernetes metrics and traces to Logz.io via the OpenTelemetry collector.
+You can use a Helm chart to ship Kubernetes metrics to Logz.io via the OpenTelemetry collector.
 The Helm tool is used to manage packages of pre-configured Kubernetes resources that use charts.
 
-**logzio-k8s-telemetry** allows you to ship metrics and traces from your Kubernetes cluster to Logz.io with the OpenTelemetry collector.
+**logzio-k8s-telemetry** allows you to ship metrics from your Kubernetes cluster to Logz.io with the OpenTelemetry collector.
 
 **Note:** This chart is a fork of the [opentelemtry-collector](https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-collector) Helm chart. 
 It is also dependent on the [kube-state-metrics](https://github.com/kubernetes/kube-state-metrics/tree/master/charts/kube-state-metrics) and [prometheus-node-exporter](https://github.com/helm/charts/tree/master/stable/prometheus-node-exporter) charts, which are installed by default. 
@@ -51,11 +51,6 @@ To deploy the Helm chart, enter the relevant parameters for the placeholders and
 - Replace the Logz-io `<<PROMETHEUS-METRICS-SHIPPING-TOKEN>>` with the [token](https://app.logz.io/#/dashboard/settings/manage-tokens/data-shipping) of the metrics account to which you want to send your data.
 
 
-#### For traces:
-- Enable the traces configuration for this chart: --set traces.enabled=true
-- Replace the Logz-io `<<TRACES-SHIPPING-TOKEN>>` with the [token](https://app.logz.io/#/dashboard/settings/manage-tokens/data-shipping) of the traces account to which you want to send your data.
-
-
 ## Deploy the metrics chart:
 
 > [!IMPORTANT]
@@ -70,62 +65,10 @@ helm install  \
 logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry
 ```
 
-#### Deploy the traces chart:
-```
-helm install \
---set traces.enabled=true \
---set global.logzioTracesToken=<<TRACES-SHIPPING-TOKEN>> \
---set global.logzioRegion=<<LOGZIO-REGION>> \
---set global.env_id=<<ENV-ID>> \
-logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry
-```
-
-#### Deploy the traces chart with span metrics:
-**Note** `spm.enabled=true` will have no effect unless `traces.enabled` is also set to `true`
-```
-helm install \
---set traces.enabled=true \
---set spm.enabled=true \
---set global.logzioSpmToken=<<SPM-SHIPPING-TOKEN>> \
---set global.logzioTracesToken=<<TRACES-SHIPPING-TOKEN>> \
---set global.logzioRegion=<<LOGZIO-REGION>> \
---set global.env_id=<<ENV-ID>> \
-logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry
-```
-
-#### Deploy both charts with span metrics:
-**Note** `spm.enabled=true` will have no effect unless `traces.enabled` is also set to `true`
-```
-helm install  \
---set traces.enabled=true \
---set spm.enabled=true \
---set global.logzioTracesToken=<<TRACES-SHIPPING-TOKEN>> \
---set global.logzioSpmToken=<<SPM-SHIPPING-TOKEN>> \
---set global.logzioRegion=<<LOGZIO-REGION>> \
---set metrics.enabled=true \
---set global.logzioMetricsToken=<<PROMETHEUS-METRICS-SHIPPING-TOKEN>> \
---set global.env_id=<<ENV-ID>> \
-logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry
-```
-
-#### Deploy both charts with span metrics and service graph
-**Note** `serviceGraph.enabled=true` will have no effect unless `traces.enabled` & `spm.enabled=true` is also set to `true`
-```
-helm install  \
---set traces.enabled=true \
---set spm.enabled=true \
---set serviceGraph.enabled=true \
---set global.logzioTracesToken=<<TRACES-SHIPPING-TOKEN>> \
---set global.logzioSpmToken=<<SPM-SHIPPING-TOKEN>> \
---set global.logzioRegion=<<LOGZIO-REGION>> \
---set metrics.enabled=true \
---set global.logzioMetricsToken=<<PROMETHEUS-METRICS-SHIPPING-TOKEN>> \
---set global.env_id=<<ENV-ID>> \
-logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry
-```
-
 #### Deploy metrics chart with Kuberenetes object logs correlation
 **Note** `k8sObjectsConfig.enabled=true` will have no effect unless `metrics.enabled` is also set to `true`
+
+The Kubernetes object logs are collected by a separate single-replica deployment (`<<RELEASE-NAME>>-otel-collector-k8s-objects`), so each object is shipped once regardless of the number of nodes. Its resources can be set with `k8sObjectsConfig.resources`.
 ```
 helm install  \
 --set metrics.enabled=true \
@@ -136,22 +79,6 @@ helm install  \
 --set global.env_id=<<ENV-ID>> \
 logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry
 ```
-
-#### Deploy the metrics chart with SignalFx receiver:
-The SignalFx receiver allows the chart to accept metrics from SignalFx client libraries and forward them to Logz.io. This is useful when migrating from SignalFx or when you have applications already instrumented with SignalFx libraries.
-
-**Note** `signalFx.enabled=true` will have no effect unless `metrics.enabled` is also set to `true`
-```
-helm install  \
---set metrics.enabled=true \
---set signalFx.enabled=true \
---set global.logzioMetricsToken=<<PROMETHEUS-METRICS-SHIPPING-TOKEN>> \
---set global.logzioRegion=<<LOGZIO-REGION>> \
---set global.env_id=<<ENV-ID>> \
-logzio-k8s-telemetry logzio-helm/logzio-k8s-telemetry
-```
-
-The SignalFx receiver will listen on port 9943 for incoming metrics. You can customize the receiver configuration by modifying the `signalFx.config` section in your values file.
 
 #### Deploy the metrics chart with Carbon receiver:
 The Carbon receiver allows the chart to accept metrics from Carbon/Graphite client libraries and forward them to Logz.io. This is useful when migrating from Graphite or when you have applications sending metrics in Carbon format.
@@ -248,17 +175,9 @@ To also collect application metrics, add `--set applicationMetrics.enabled=true`
 > [!NOTE]
 > if you override `windowsExporter.port`, make sure to also edit the hardcoded `:9182` in the `windows-metrics` scrape job's `relabel_configs` in `values.yaml`
 
-##### Check Logz.io for your metrics and traces
+##### Check Logz.io for your metrics
 
 Give your metrics some time to get from your system to ours, then open [Logz.io](https://app.logz.io/).
-
-## Example usage - traces 
-
-* Go to `hotrod.yml` file inside this directory.
-* Change the `<<otel-cluster-ip>>` parameter to the cluster-ip address of your opentelemetry collector **service** on port `14268`
-* Deploy the `hotrod.yml` to your kubernetes cluster (example: `kubectl apply -f hotrod.yml`).
-* Access the hotrod pod on port 8080 and start sending traces.
-
 
 ####  Customizing Helm chart parameters
 See `VALUES.md` for additional information.
@@ -490,58 +409,12 @@ https://github.com/aws/containers-roadmap/issues/965
 
 
 ### Collector deployment modes
-The default collector deployment is as a DaemonSet. This is the recommended deployment method. However, in some cases, such as a small cluster with a low count of metrics/traces, a standalone collector deployment may be more beneficial. For such scenarios, you can use the standalone deployment for the pod:
+The default collector deployment is as a DaemonSet. This is the recommended deployment method. However, in some cases, such as a small cluster with a low count of metrics, a standalone collector deployment may be more beneficial. For such scenarios, you can use the standalone deployment for the pod:
 
 ```
 --set collector.mode=standalone
 ```
 
-
-### Using pprof extention
-The pprof extension in the OpenTelemetry Collector allows you to view and analyze the profile of the collector during runtime. Here's how you can use it:
-
-To download the `go tool pprof` command, you need to install the Go programming language. You can download and install Go from the [official website](https://golang.org/dl/).
-
-Once Go is installed, you can use the `go` command to install pprof and other tools:
-
-
-```
-go get -u golang.org/x/tools/cmd/pprof
-```
-This command will download and install pprof along with any necessary dependencies. You can then use the `go tool pprof` command.
-
-Alternatively, you can install pprof using a package manager, such as `apt-get` on Ubuntu or `brew` on macOS:
-
-
-```
-sudo apt-get install pprof # on Ubuntu
-brew install pprof # on macOS
-```
-
-Forward the 1777 pprof port of the collector pod to your local network using the following command:
-```
-kubectl port-forward <<pod>> 1777:1777
-```
-Use the `go tool pprof` command to fetch the profile and visualize it in the web UI on port 1212.
-To view the heap memory profile:
-```
-go tool pprof -http=localhost:1212 http://localhost:1777/debug/pprof/heap
-```
-To view the CPU profile:
-```
-go tool pprof -http=localhost:1212 http://localhost:1777/debug/pprof/profile
-```
-Or to look at a 30-second CPU profile:
-```
-go tool pprof -http=localhost:1212 http://localhost:1777/debug/pprof/profile?seconds=30
-
-```
-You can also use the pprof extension to view other types of profiles, such as goroutine, thread creation, and block. To do this, replace the endpoint in the `go tool pprof` command with the appropriate profile type. For example, to view the goroutine profile:
-
-```
-go tool pprof -http=localhost:1212 http://localhost:1777/debug/pprof/goroutine
-```
-You can find a complete list of the available profile types and their corresponding endpoints in the pprof [documentation](https://golang.org/pkg/net/http/pprof/).
 
 ### Uninstalling the Chart
 

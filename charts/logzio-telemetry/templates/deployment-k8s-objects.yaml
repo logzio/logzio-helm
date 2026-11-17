@@ -1,0 +1,26 @@
+{{- if and .Values.metrics.enabled .Values.k8sObjectsConfig.enabled }}
+{{- /* Single replica: the k8sobjects receiver reads cluster-wide objects, more replicas would ship duplicate object logs */}}
+{{- $selectorLabels := dict "app.kubernetes.io/name" (include "opentelemetry-collector.name" .) "app.kubernetes.io/instance" .Release.Name "component" "logzio-telemetry-k8s-objects" }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "opentelemetry-collector.serviceName" . }}-k8s-objects
+  labels:
+    {{- include "opentelemetry-collector.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- toYaml $selectorLabels | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap-k8s-objects.yaml") . | sha256sum }}
+      labels:
+        {{- toYaml $selectorLabels | nindent 8 }}
+    spec:
+      {{- $podValues := deepCopy .Values }}
+      {{- $_ := set $podValues.standaloneCollector "resources" .Values.k8sObjectsConfig.resources }}
+      {{- $podData := dict "Values" $podValues "configmapName" (printf "%s-k8s-objects" (include "opentelemetry-collector.serviceName" .)) "isAgent" false }}
+      {{- include "opentelemetry-collector.pod" ($podData | mustMergeOverwrite (deepCopy .)) | nindent 6 }}
+{{- end }}

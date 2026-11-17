@@ -1,4 +1,4 @@
-{{- if or (eq .Values.collector.mode "standalone") (.Values.traces.enabled) }}
+{{- if and (eq .Values.collector.mode "standalone") (.Values.metrics.enabled) }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:

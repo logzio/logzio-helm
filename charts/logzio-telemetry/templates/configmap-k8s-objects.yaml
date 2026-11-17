@@ -1,0 +1,13 @@
+{{- if and .Values.metrics.enabled .Values.k8sObjectsConfig.enabled }}
+{{- $config := include "opentelemetry-collector.baseConfig" . | fromYaml }}
+{{- $config = deepCopy .Values.k8sObjectsConfig.config | mustMergeOverwrite $config }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "opentelemetry-collector.serviceName" . }}-k8s-objects
+  labels:
+    {{- include "opentelemetry-collector.labels" . | nindent 4 }}
+data:
+  relay: |
+    {{- tpl ($config | toYaml) . | nindent 4 }}
+{{- end }}

@@ -2,14 +2,7 @@
 
 ![Version: 2.0.0](https://img.shields.io/badge/Version-2.0.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.70.0](https://img.shields.io/badge/AppVersion-0.80.0-informational?style=flat-square)
 
-logzio-k8s-telemetry allows you to ship metrics and traces from your Kubernetes cluster using the OpenTelemetry collector.
-
-## Maintainers
-
-| Name | Email | Url |
-| ---- | ------ | --- |
-| yotamloe | <yotam.loewenbach@logz.io> |  |
-| tamirmich | <tamir.michaeli@logz.io> |  |
+logzio-k8s-telemetry allows you to ship metrics from your Kubernetes cluster using the OpenTelemetry collector.
 
 ## Source Code
 
@@ -31,8 +24,6 @@ logzio-k8s-telemetry allows you to ship metrics and traces from your Kubernetes 
 | collector.mode | string | `"daemonset"` | The mode in which that collector will be deployed. Possible values: `"standalone"`,`"daemonset"` Large scale clusters should use `daemonset`.|
 | baseCollectorConfig.exporters.logging.loglevel | string | `"info"` | log level that will be used with the collector. The value must be updated for the service telemetry in order to take effect. |
 | baseCollectorConfig.service.telemetry.logs.level | string | `"info"` | log level that will be used with the collector. The value must be updated for the exporter logging in order to take effect. |
-| tracesConfig.exporters.logging.loglevel | string | `"info"` | log level that will be used with the collector. The value must be updated for the service telemetry in order to take effect. |
-| tracesConfig.service.telemetry.logs.level | string | `"info"` | log level that will be used with the collector. The value must be updated for the exporter logging in order to take effect. |
 | command.extraArgs | list | `[]` | Additional arguments for the opentelemetry collector. |
 | command.name | string | `"otelcol-contrib"` | Command name for the opentelemetry collector executable. |
 | disableKubeDnsScraping | bool | `false` | Enabling this flag will disable kube-dns service scraping. |
@@ -46,14 +37,11 @@ logzio-k8s-telemetry allows you to ship metrics and traces from your Kubernetes 
 | kubeStateMetrics.enabled | bool | `true` | Controlles the deployment of the kube-state-metrics sub chart. |
 | applicationMetrics.enabled | bool | `false` | wheter or not to enable `applications` scrape job. |
 | metrics.enabled | bool | `false` | Controlles the activation of metrics collection. |
-| traces.enabled | bool | `false` | Controlles the activation of traces collection. |
 | nameOverride | string | `"otel-collector"` | Name override for the opentelemetry collector. |
 | nodeExporter.enabled | bool | `true` | Controlles the deployment of the node-exporter sub chart. |
 | pushGateway.enabled | bool | `true` | Controlles the deployment of the prometheus-pushgateway sub chart. |
 | global.logzioRegion | string | `"us"` | Logzio listener region. |
 | global.logzioMetricsToken | string | `""` | Logzio metrics token. |
-| global.logzioSpmToken | string | `""` | Logzio spm metrics token. |
-| global.logzioTracesToken | string | `""` | Logzio traces token. |
 | global.env_id | string | `"my_environment"` | Env id to be used with k8s 360. |
 | windowsExporter.image.repository | string | `"ghcr.io/prometheus-community/windows-exporter"` | windows_exporter HostProcess image used to collect Windows node metrics. |
 | windowsExporter.image.tag | string | `"0.31.8"` | windows_exporter image tag. |
@@ -64,10 +52,9 @@ logzio-k8s-telemetry allows you to ship metrics and traces from your Kubernetes 
 | standaloneCollector.podAnnotations | string | `nil` | Selector labels that will be added to the collector pods. |
 | daemonsetCollector.resources | object | `{}` | Resource constraints for the daemonset opentelemetry collector pods. When empty, no resource constraints are applied. [Example](README.md#configuring-resource-requests-and-limits). |
 | daemonsetCollector.podLabels | string | `nil` | Selector labels that will be added to the collector pods. |
-| spanMetricsAgregator.resources | object | `{}` | Resource constraints for the span metrics aggregator pod. When empty, no resource constraints are applied. [Example](README.md#configuring-resource-requests-and-limits). |
 | daemonsetCollector.podAnnotations | string | `nil` | Selector annotations that will be added to the collector pods. |
-| signalFx.enabled | bool | `false` | Enable SignalFx receiver to accept metrics from SignalFx client libraries. |
-| signalFx.config | object | `{}` | Custom configuration for the SignalFx receiver pipeline, including receiver settings, processors, and exporters. |
+| k8sObjectsConfig.enabled | bool | `false` | Ship Kubernetes object logs from a single-replica deployment. Requires `metrics.enabled` and `global.logzioLogsToken`. |
+| k8sObjectsConfig.resources | object | `{"requests":{"cpu":"50m","memory":"70Mi"}}` | Resource requests for the k8s objects collector pod. |
 | carbon.enabled | bool | `false` | Enable Carbon receiver to accept metrics from Carbon/Graphite client libraries. |
 | carbon.config | object | `{}` | Custom configuration for the Carbon receiver pipeline, including receiver settings, processors, and exporters. |
 | livenessProbe | object | `{}` | Liveness probe configuration for collector pods. Determines if the collector is running and should be restarted if unresponsive. [Details](README.md#configuring-health-probes). |

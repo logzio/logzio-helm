@@ -15,8 +15,6 @@ Build config file for standalone OpenTelemetry Collector
 {{- define "opentelemetry-collector.standaloneCollectorConfig" -}}
 {{- $configData := .Values.emptyConfig }}
 {{- $metricsConfig := deepCopy .Values.metricsConfig | mustMergeOverwrite  }}
-{{- $tracesConfig := deepCopy .Values.tracesConfig | mustMergeOverwrite }}
-{{- $spmConfig := deepCopy .Values.spmForwarderConfig | mustMergeOverwrite }}
 {{- $values := deepCopy .Values.standaloneCollector | mustMergeOverwrite (deepCopy .Values) }}
 {{- $data := dict "Values" $values | mustMergeOverwrite (deepCopy .) }}
 {{- $config := include "opentelemetry-collector.baseConfig" $data | fromYaml }}
@@ -35,18 +33,6 @@ Build config file for standalone OpenTelemetry Collector
 {{- $_ := set (index $metricsConfig "service" "pipelines" "metrics/infrastructure") "processors" (concat (index $metricsConfig "service" "pipelines" "metrics/infrastructure" "processors") (index $opencostConfig "service" "pipelines" "metrics/infrastructure" "processors" )) -}}
 {{- end -}}
 
-{{/* Handle k8s objects config */}}
-{{- if .Values.k8sObjectsConfig.enabled -}}
-{{- $k8sObjectsConfig := deepCopy .Values.k8sObjectsConfig.config | mustMergeOverwrite -}}
-{{- $metricsConfig = deepCopy $k8sObjectsConfig | merge $metricsConfig | mustMergeOverwrite -}}
-{{- end -}}
-
-{{/* Handle SignalFx config */}}
-{{- if and .Values.metrics.enabled .Values.signalFx.enabled -}}
-{{- $signalFxConfig := deepCopy .Values.signalFx.config | mustMergeOverwrite -}}
-{{- $metricsConfig = deepCopy $signalFxConfig | merge $metricsConfig | mustMergeOverwrite -}}
-{{- end -}}
-
 {{/* Handle Carbon config */}}
 {{- if and .Values.metrics.enabled .Values.carbon.enabled -}}
 {{- $carbonConfig := deepCopy .Values.carbon.config | mustMergeOverwrite -}}
@@ -58,28 +44,13 @@ Build config file for standalone OpenTelemetry Collector
   {{- if $resDetectionConfig }}
     {{- range $key, $value := $resDetectionConfig }}
       {{- $_ := set $metricsConfig "processors" (merge (index $metricsConfig "processors") (dict $key $value)) }}
-      {{- $_ := set $tracesConfig "processors" (merge (index $tracesConfig "processors") (dict $key $value)) }}
       {{- $_ := set (index $metricsConfig "service" "pipelines" "metrics/infrastructure") "processors" (prepend (index $metricsConfig "service" "pipelines" "metrics/infrastructure" "processors") $key) }}
-      {{- $_ := set (index $tracesConfig "service" "pipelines" "traces") "processors" (prepend (index $tracesConfig "service" "pipelines" "traces" "processors") $key) }}
-      {{- $_ := set (index $spmConfig "service" "pipelines" "traces/spm") "processors" (prepend (index $spmConfig "service" "pipelines" "traces/spm" "processors") $key) }}
     {{- end }}
   {{- end }}
 {{- end }}
 
-{{- if and (and (eq .Values.collector.mode "standalone") (.Values.metrics.enabled)) .Values.traces.enabled  .Values.spm.enabled }}
-{{- $configData = $metricsConfig  | merge $tracesConfig | merge $spmConfig | mustMergeOverwrite }}
-
-{{- else if and (and (eq .Values.collector.mode "standalone") (.Values.metrics.enabled)) .Values.traces.enabled }}
-{{- $configData = $metricsConfig  | merge $tracesConfig | mustMergeOverwrite }}
-
-{{- else if and .Values.spm.enabled .Values.traces.enabled -}}
-{{- $configData = $tracesConfig  | merge $spmConfig | mustMergeOverwrite }}
-
-{{- else if (and (eq .Values.collector.mode "standalone") (.Values.metrics.enabled)) -}}
+{{- if (and (eq .Values.collector.mode "standalone") (.Values.metrics.enabled)) -}}
 {{- $configData = $metricsConfig  }}
-
-{{- else if .Values.traces.enabled -}}
-{{- $configData = $tracesConfig }}
 {{- end -}}
 
 
@@ -184,12 +155,6 @@ Build config file for standalone OpenTelemetry Collector
 {{- .Values.standaloneCollector.configOverride | merge $configData | mustMergeOverwrite $config | toYaml}}
 {{- end -}}
 
-{{- define "opentelemetry-collector.spanMetricsAggregatorConfig" -}}
-{{- $configData := .Values.emptyConfig }}
-{{- $spmConfig := deepCopy .Values.spanMetricsAgregator.config | mustMergeOverwrite }}
-{{- $configData = merge $spmConfig | mustMergeOverwrite }}
-{{- end -}}
-
 
 {{/*
 Convert memory value from resources.limit to numeric value in MiB to be used by otel memory_limiter processor.
@@ -289,18 +254,6 @@ Build config file for standalone OpenTelemetry Collector daemonset
 {{- $metricsConfig = deepCopy $opencostConfig | merge $metricsConfig | mustMergeOverwrite }}
 {{/* merge processor list for opencost*/}}
 {{- $_ := set (index $metricsConfig "service" "pipelines" "metrics/infrastructure") "processors" (concat (index $metricsConfig "service" "pipelines" "metrics/infrastructure" "processors") (index $opencostConfig "service" "pipelines" "metrics/infrastructure" "processors" )) -}}
-{{- end }}
-
-{{/* Handle k8s objects config */}}
-{{- if .Values.k8sObjectsConfig.enabled }}
-{{- $k8sObjectsConfig := deepCopy .Values.k8sObjectsConfig.config | mustMergeOverwrite }}
-{{- $metricsConfig = deepCopy $k8sObjectsConfig | merge $metricsConfig | mustMergeOverwrite }}
-{{- end }}
-
-{{/* Handle SignalFx config */}}
-{{- if and .Values.metrics.enabled .Values.signalFx.enabled }}
-{{- $signalFxConfig := deepCopy .Values.signalFx.config | mustMergeOverwrite }}
-{{- $metricsConfig = deepCopy $signalFxConfig | merge $metricsConfig | mustMergeOverwrite }}
 {{- end }}
 
 {{/* Handle Carbon config */}}
@@ -440,18 +393,6 @@ Windows-specific: removes cadvisor, uses Windows paths for kubelet credentials.
 {{- $metricsConfig = deepCopy $opencostConfig | merge $metricsConfig | mustMergeOverwrite -}}
 {{/* merge processor list for opencost*/}}
 {{- $_ := set (index $metricsConfig "service" "pipelines" "metrics/infrastructure") "processors" (concat (index $metricsConfig "service" "pipelines" "metrics/infrastructure" "processors") (index $opencostConfig "service" "pipelines" "metrics/infrastructure" "processors" )) -}}
-{{- end -}}
-
-{{/* Handle k8s objects config */}}
-{{- if .Values.k8sObjectsConfig.enabled -}}
-{{- $k8sObjectsConfig := deepCopy .Values.k8sObjectsConfig.config | mustMergeOverwrite -}}
-{{- $metricsConfig = deepCopy $k8sObjectsConfig | merge $metricsConfig | mustMergeOverwrite -}}
-{{- end -}}
-
-{{/* Handle SignalFx config */}}
-{{- if and .Values.metrics.enabled .Values.signalFx.enabled -}}
-{{- $signalFxConfig := deepCopy .Values.signalFx.config | mustMergeOverwrite -}}
-{{- $metricsConfig = deepCopy $signalFxConfig | merge $metricsConfig | mustMergeOverwrite -}}
 {{- end -}}
 
 {{/* Handle Carbon config */}}
