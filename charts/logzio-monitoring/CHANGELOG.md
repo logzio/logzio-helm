@@ -1,6 +1,10 @@
 # Changes by Version
 
 <!-- next version -->
+## 8.0.1
+- Upgrade `logzio-k8s-telemetry` chart to `7.0.2`
+  - Remove the `cluster-admin` ClusterRoleBinding in `standalone` mode.
+
 ## 8.0.0
 - **Breaking changes:**
   - Upgrade `logzio-k8s-telemetry` chart to `7.0.1`
