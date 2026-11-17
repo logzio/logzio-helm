@@ -17,7 +17,7 @@ type LogResponse struct {
 		Total int `json:"total"`
 		Hits  []struct {
 			Source struct {
-				ContainerImageTag  string `json:"container_image_tag"`
+				ContainerImageTags any    `json:"container_image_tags"`
 				ContainerImageName string `json:"container_image_name"`
 				ContainerName      string `json:"k8s_container_name"`
 				NamespaceName      string `json:"k8s_namespace_name"`
@@ -47,7 +47,7 @@ func TestLogzioMonitoringLogs(t *testing.T) {
 
 	for _, hit := range logResponse.Hits.Hits {
 		kubernetes := hit.Source
-		if kubernetes.ContainerImageTag == "" || kubernetes.ContainerName == "" || kubernetes.NamespaceName == "" || kubernetes.PodName == "" || kubernetes.PodUID == "" || kubernetes.NodeName == "" || kubernetes.ContainerImageName == "" || kubernetes.LogLevel == "" {
+		if kubernetes.ContainerImageTags == nil || kubernetes.ContainerName == "" || kubernetes.NamespaceName == "" || kubernetes.PodName == "" || kubernetes.PodUID == "" || kubernetes.NodeName == "" || kubernetes.ContainerImageName == "" || kubernetes.LogLevel == "" {
 			logger.Error("Missing log fields", zap.Any("log", hit))
 			t.Errorf("Missing log fields")
 			break

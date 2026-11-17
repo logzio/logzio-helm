@@ -14,12 +14,6 @@
   {{- include "logs-collector.addResourceDetectionProcessors" (dict "config" $config "distribution" .Values.global.distribution) }}
 {{- end }}
 
-{{- /* Handle SignalFx config */}}
-{{- if .Values.signalFx.enabled }}
-{{- $signalFxConfig := deepCopy .Values.signalFx.config | mustMergeOverwrite }}
-{{- $config = deepCopy $signalFxConfig | merge $config | mustMergeOverwrite }}
-{{- end }}
-
 {{- /* Inject dynamic filters */}}
 {{- include "logs-collector.addFilterProcessors" (dict "config" $config "filters" .Values.filters) }}
 
@@ -36,12 +30,6 @@
   {{- include "logs-collector.addResourceDetectionProcessors" (dict "config" $config "distribution" .Values.global.distribution) }}
 {{- end }}
 
-{{- /* Handle SignalFx config */}}
-{{- if .Values.signalFx.enabled }}
-{{- $signalFxConfig := deepCopy .Values.signalFx.config | mustMergeOverwrite }}
-{{- $config = deepCopy $signalFxConfig | merge $config | mustMergeOverwrite }}
-{{- end }}
-
 {{- include "logs-collector.addFilterProcessors" (dict "config" $config "filters" .Values.filters) }}
 
 {{- tpl ($config | toYaml) . -}}
@@ -52,9 +40,6 @@
 {{- $ports := deepCopy .Values.ports }}
 {{- range $key, $port := $ports }}
 {{- $shouldEnable := $port.enabled }}
-{{- if eq $key "signalfx" }}
-  {{- $shouldEnable = $.Values.signalFx.enabled }}
-{{- end }}
 {{- if $shouldEnable }}
 - name: {{ $key }}
   port: {{ $port.servicePort }}
@@ -75,9 +60,6 @@
 {{- $ports := deepCopy .Values.ports }}
 {{- range $key, $port := $ports }}
 {{- $shouldEnable := $port.enabled }}
-{{- if eq $key "signalfx" }}
-  {{- $shouldEnable = $.Values.signalFx.enabled }}
-{{- end }}
 {{- if $shouldEnable }}
 - name: {{ $key }}
   containerPort: {{ $port.containerPort }}
