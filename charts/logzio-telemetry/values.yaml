@@ -941,7 +941,7 @@ daemonsetConfig:
           kubernetes_sd_configs:
           - role: node
             selectors:
-            - field: metadata.name=$KUBE_NODE_NAME
+            - field: metadata.name=${KUBE_NODE_NAME}
               role: node
           metric_relabel_configs: []
           relabel_configs:
@@ -977,6 +977,10 @@ daemonsetConfig:
             credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
           kubernetes_sd_configs:
           - role: node
+            selectors:
+            # only scrape the node the collector runs on
+            - field: metadata.name=${KUBE_NODE_NAME}
+              role: node
           relabel_configs:
           - source_labels: [__meta_kubernetes_node_label_kubernetes_io_os]
             regex: windows
