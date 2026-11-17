@@ -3,7 +3,7 @@
 <!-- next version -->
 ## 8.0.0
 - **Breaking changes:**
-  - Upgrade `logzio-k8s-telemetry` chart to `7.0.0`
+  - Upgrade `logzio-k8s-telemetry` chart to `7.0.1`
     - Upgrade `otel/opentelemetry-collector-contrib` image to version `0.165.0`.
     - Remove traces and span metrics support, use `logzio-apm-collector` instead.
       - Remove `traces`, `spm`, `tracesConfig`, `spmForwarderConfig`, `spanMetricsAgregator`, `serviceGraph`, `spmImage`, `secrets.SamplingProbability` and `secrets.SamplingLatency`.
@@ -11,6 +11,9 @@
     - Remove the SignalFx receiver (`signalFx.*` values and port `9943`), it was removed from the OpenTelemetry Collector. Send metrics over OTLP instead.
     - The collector's own `otelcol_*` metrics no longer have the `service_name`, `service_instance_id` and `service_version` labels.
     - Kubernetes object logs (`k8sObjectsConfig.enabled`) are now collected by a single-replica deployment instead of every collector pod.
+    - Fix the `kubernetes-nodes` (kubelet) scrape job in `daemonset` mode, its node selector used `$KUBE_NODE_NAME` which isn't expanded by the collector, so no kubelet metrics were collected.
+    - Limit the `kubernetes-cadvisor` scrape job in `daemonset` mode to the collector's own node, so each node's cAdvisor metrics are sent once instead of once per collector pod.
+    - Fix the chart failing to render when `opencost.enabled=true`.
   - Upgrade `logzio-logs-collector` chart to `3.0.0`
     - Upgrade `otel/opentelemetry-collector-contrib` image to version `0.165.0`.
     - Remove the SignalFx receiver (`signalFx.*` values and port `9943`). Send logs over OTLP instead.
