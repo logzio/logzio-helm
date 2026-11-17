@@ -141,6 +141,8 @@ For example, to change a value named `someField` in `logzio-fluentd`'s `values.y
 
 To ship logs from pods running on Fargate, set the `fargateLogRouter.enabled` value to `true`. This will deploy a dedicated `aws-observability` namespace and a `configmap` for the Fargate log router. More information about EKS Fargate logging can be found [here](https://docs.aws.amazon.com/eks/latest/userguide/fargate-logging.html)
 
+To collect metrics from pods running on Fargate, set `logzio-k8s-telemetry.collector.mode` to `standalone`. The metrics DaemonSet isn't scheduled on Fargate nodes.
+
 ```shell
 helm install -n monitoring \
 --set logs.enabled=true \
@@ -149,6 +151,7 @@ helm install -n monitoring \
 --set global.logzioLogsToken="<<LOG-SHIPPING-TOKEN>>" \
 --set global.logzioRegion="<<LOGZIO-REGION>>" \
 --set logzio-k8s-telemetry.metrics.enabled=true \
+--set logzio-k8s-telemetry.collector.mode=standalone \
 --set global.logzioMetricsToken="<<PROMETHEUS-METRICS-SHIPPING-TOKEN>>" \
 --set logzio-apm-collector.enabled=true \
 --set global.logzioTracesToken="<<TRACES-SHIPPING-TOKEN>>" \
