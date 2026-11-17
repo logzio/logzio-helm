@@ -1,6 +1,8 @@
 # Changes by Version
 
 <!-- next version -->
+## 7.0.2
+- Remove the `cluster-admin` ClusterRoleBinding in `standalone` mode, the collector uses the chart's ClusterRole.
 
 ## 7.0.1
 - Fix the `kubernetes-nodes` (kubelet) scrape job in `daemonset` mode, its node selector used `$KUBE_NODE_NAME` which isn't expanded by the collector, so no kubelet metrics were collected.
