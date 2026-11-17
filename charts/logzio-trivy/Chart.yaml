@@ -13,8 +13,3 @@ dependencies:
   - name: trivy-operator
     version: "0.38.1"
     repository: "https://aquasecurity.github.io/helm-charts/"
-maintainers:
-  - name: Miri Bar
-    email: miri.ignatiev@logz.io
-  - name: Raul Gurshumov
-    email: raul.gurshumo@logz.io    
