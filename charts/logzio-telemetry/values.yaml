@@ -663,6 +663,14 @@ k8sObjectsConfig:
           - context: log
             statements:
               - delete_key(body["object"]["metadata"], "managedFields")
+      # Don't add the k8sobjects receiver scope name and version to every object log
+      transform/remove_scope:
+        error_mode: ignore
+        log_statements:
+          - context: scope
+            statements:
+              - set(scope.name, "")
+              - set(scope.version, "")
       batch/k8sobjects: {}
     exporters:
       logzio/object_logs:
@@ -675,7 +683,7 @@ k8sObjectsConfig:
       pipelines:
         logs/k8sobjects:
           receivers: [k8sobjects/pull,k8sobjects/watch]
-          processors: [transform/pulled_object,transform/remove_managedfields,transform/log_type, resource/env_id, batch/k8sobjects]
+          processors: [transform/pulled_object,transform/remove_managedfields,transform/log_type,transform/remove_scope, resource/env_id, batch/k8sobjects]
           exporters: [logzio/object_logs]
 # Configuration for standalone OpenTelemetry Collector deployment, enabled by default
 standaloneCollector:

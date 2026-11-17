@@ -279,20 +279,6 @@ daemonsetCollector:
       cpu: "300m"
 ```
 
-For span metrics collector:
-```yaml
-spanMetricsAgregator:
-  # Default: resources: {} (no resource constraints)
-  # Example with resource constraints:
-  resources:
-    requests:
-      memory: "512Mi"
-      cpu: "256m"
-    limits:
-      memory: "1Gi"
-      cpu: "512m"
-```
-
 > [!WARNING]
 > When the `requests` and `limits` objects are empty (`{}`), no resource constraints are applied to the pods.
 > 

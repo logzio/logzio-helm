@@ -19,8 +19,9 @@ spec:
       labels:
         {{- toYaml $selectorLabels | nindent 8 }}
     spec:
-      {{- $podValues := deepCopy .Values }}
-      {{- $_ := set $podValues.standaloneCollector "resources" .Values.k8sObjectsConfig.resources }}
-      {{- $podData := dict "Values" $podValues "configmapName" (printf "%s-k8s-objects" (include "opentelemetry-collector.serviceName" .)) "isAgent" false }}
-      {{- include "opentelemetry-collector.pod" ($podData | mustMergeOverwrite (deepCopy .)) | nindent 6 }}
+      {{- $podData := dict "configmapName" (printf "%s-k8s-objects" (include "opentelemetry-collector.serviceName" .)) "isAgent" false }}
+      {{- $podCtx := $podData | mustMergeOverwrite (deepCopy .) }}
+      {{- /* set after the merge so standaloneCollector.resources isn't deep-merged into it */}}
+      {{- $_ := set $podCtx.Values.standaloneCollector "resources" .Values.k8sObjectsConfig.resources }}
+      {{- include "opentelemetry-collector.pod" $podCtx | nindent 6 }}
 {{- end }}
