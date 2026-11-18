@@ -1,7 +1,6 @@
 # Changes by Version
 
 <!-- next version -->
-- Add a default restricted security context to the collector pods.
 ## 2.0.0
 - **Breaking changes**
   - Upgrade OpenTelemetry Collector from `0.133.0` to `0.165.0`.
