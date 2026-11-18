@@ -109,11 +109,7 @@ Create the name of the clusterRoleBinding to use
 Create the name of the clusterRole to use
 */}}
 {{- define "opentelemetry-collector.clusterRoleName" -}}
-{{- if .Values.clusterRole.create }}
 {{- default (include "opentelemetry-collector.fullname" .) .Values.clusterRole.name }}
-{{- else }}
-{{- default "default" .Values.clusterRole.name }}
-{{- end }}
 {{- end }}
 
 
