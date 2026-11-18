@@ -1,7 +1,6 @@
 # Changes by Version
 
 <!-- next version -->
-- Name the ClusterRole and ClusterRoleBinding after the release instead of `default`.
 ## 7.0.2
 - Remove the `cluster-admin` ClusterRoleBinding in `standalone` mode, the collector uses the chart's ClusterRole.
 
