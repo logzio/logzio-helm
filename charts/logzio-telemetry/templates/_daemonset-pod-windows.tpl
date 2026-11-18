@@ -9,7 +9,7 @@ imagePullSecrets:
 {{- end }}
 serviceAccountName: {{ include "opentelemetry-collector.serviceAccountName" . }}
 securityContext:
-  {{- toYaml .Values.podSecurityContext | nindent 2 }}
+  {{- toYaml .Values.windowsPodSecurityContext | nindent 2 }}
 enableServiceLinks: {{ .Values.enableServiceLinks }}
 containers:
   - name: {{ .Chart.Name }}
@@ -20,7 +20,7 @@ containers:
       - {{ . }}
       {{- end }}
     securityContext:
-      {{- toYaml .Values.containerSecurityContext | nindent 6 }}
+      {{- toYaml .Values.windowsContainerSecurityContext | nindent 6 }}
     image: "{{ .Values.image.repository }}:{{ include "opentelemetry-collector.windowsImageTag" . }}"
     imagePullPolicy: {{ .Values.image.pullPolicy }}
 {{- if .Values.metrics.enabled }}

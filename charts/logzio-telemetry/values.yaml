@@ -483,9 +483,19 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
-podSecurityContext: {}
+podSecurityContext:
+  seccompProfile:
+    type: RuntimeDefault
 securityContext: {}
-containerSecurityContext: {}
+containerSecurityContext:
+  runAsNonRoot: true
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL
+windowsPodSecurityContext: {}
+windowsContainerSecurityContext: {}
 
 nodeSelector: {}
 linuxNodeSelector: {

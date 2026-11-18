@@ -531,9 +531,19 @@ additionalLabels: {}
 #######################################################################################################################
 # Pod Configuration
 #######################################################################################################################
-podSecurityContext: {}
-spmPodSecurityContext: {}
-containerSecurityContext: {}
+podSecurityContext:
+  seccompProfile:
+    type: RuntimeDefault
+spmPodSecurityContext:
+  seccompProfile:
+    type: RuntimeDefault
+containerSecurityContext:
+  runAsNonRoot: true
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL
 
 nodeSelector: {}
 tolerations: []
