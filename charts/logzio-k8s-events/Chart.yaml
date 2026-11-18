@@ -5,5 +5,5 @@ keywords:
   - logging
   - k8s
   - kubernetes
-version: 2.0.0
-appVersion: 0.0.4
+version: 3.0.0
+appVersion: 1.0.0

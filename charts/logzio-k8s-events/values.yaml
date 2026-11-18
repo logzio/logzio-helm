@@ -6,7 +6,7 @@
 image:
   repository: logzio/logzio-k8s-events
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.0.4"
+  tag: "1.0.0"
 
 k8sApp: logzio-k8s-events
 
@@ -55,6 +55,23 @@ resources:
     cpu: 100m
     memory: 200Mi
 terminationGracePeriodSeconds: 30
+
+# Print each full event to the container's stdout. By default only a one-line summary is printed
+debug: false
+
+# Regex of additional env var names whose values are hashed, e.g. "internal_id|^ssn$".
+# It extends the built-in pattern (password, secret, token, api_key, ...)
+sensitiveEnvNames: ""
+
+# Secret holding the key for hashing sensitive values. Set it to keep hashes comparable across restarts,
+# otherwise a random key is used on each container start
+maskingHashKeySecret:
+  name: ""
+  # The entry in that Secret holding the hash key. Only used if maskingHashKeySecret.name is set
+  key: masking-hash-key
+
+# Extra environment variables for the container. Each item takes a `name` and either a `value` or a `valueFrom`
+envVars: []
 
 secret:
   enabled: true

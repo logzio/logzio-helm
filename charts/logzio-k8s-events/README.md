@@ -54,6 +54,28 @@ helm install --namespace=monitoring \
 logzio-k8s-events logzio-helm/logzio-k8s-events
 ```
 
+#### Optional Settings
+
+| Value | Description | Default |
+|---|---|---|
+| `debug` | Print each full event to the container's stdout. By default only a one-line summary is printed. | `false` |
+| `sensitiveEnvNames` | Regex of additional env var names whose values are hashed, e.g. `internal_id\|^ssn$`. It extends the built-in pattern (`password`, `secret`, `token`, `api_key`, ...). | |
+| `maskingHashKeySecret.name` | Name of a Secret holding the key for hashing sensitive values. Set it to keep hashes comparable across restarts. | Random key on each container start |
+| `maskingHashKeySecret.key` | The entry in that Secret holding the hash key. Only used if `maskingHashKeySecret.name` is set. | `masking-hash-key` |
+
+For example, to keep hashes comparable across restarts:
+
+```shell
+kubectl create secret generic k8s-events-hash-key -n monitoring --from-literal=masking-hash-key='<<RANDOM-KEY>>'
+
+helm install --namespace=monitoring \
+--set global.logzioLogsToken='<<SHIPPING-TOKEN>>' \
+--set global.logzioRegion='<<LOGZIO-REGION>>' \
+--set global.env_id='<<ENV-ID>>' \
+--set maskingHashKeySecret.name=k8s-events-hash-key \
+logzio-k8s-events logzio-helm/logzio-k8s-events
+```
+
 #### Deployment Events Versioning
 
 To add a versioning indicator to our K8S 360 and Service Overview UI, you must include the specified annotation in the metadata of each resource whose versioning you wish to track. The 'View commit' button will link to the commit URL in your version control system (VCS) from the `logzio/commit_url` annotation value.

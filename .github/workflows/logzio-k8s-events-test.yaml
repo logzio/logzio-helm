@@ -31,6 +31,7 @@ jobs:
 
       - name: Deploy K8S Events Helm Chart
         run: |
+          kubectl create secret generic k8s-events-hash-key --from-literal=masking-hash-key=test-key
           cd charts/logzio-k8s-events
           helm upgrade --install \
           --set global.env_id=${{ env.ENV_ID }} \
@@ -40,6 +41,13 @@ jobs:
           --set global.tolerations[0].effect="NoSchedule" \
           --set global.logzioLogsToken=${{ secrets.LOGZIO_LOGS_TOKEN }} \
           --set global.logzioRegion=us \
+          --set debug=true \
+          --set sensitiveEnvNames='internal_id' \
+          --set maskingHashKeySecret.name=k8s-events-hash-key \
+          --set envVars[0].name=EXTRA_BOOL \
+          --set envVars[0].value=true \
+          --set envVars[1].name=POD_NAME \
+          --set envVars[1].valueFrom.fieldRef.fieldPath=metadata.name \
           logzio-k8s-events .
 
       - name: Verify deployment Status
@@ -47,6 +55,11 @@ jobs:
           kubectl rollout status deployment/logzio-k8s-events --timeout=300s
           kubectl get deployment logzio-k8s-events -o json | jq '.status.numberReady == .status.desiredNumberScheduled'
           kubectl get deployment logzio-k8s-events -o jsonpath='{.spec.template.spec.tolerations}' | grep -q 'global-key'
+          kubectl get deployment logzio-k8s-events -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="DEBUG")].value}' | grep -qx 'true'
+          kubectl get deployment logzio-k8s-events -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="SENSITIVE_ENV_NAMES")].value}' | grep -qx 'internal_id'
+          kubectl get deployment logzio-k8s-events -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="MASKING_HASH_KEY")].valueFrom.secretKeyRef.name}' | grep -qx 'k8s-events-hash-key'
+          kubectl get deployment logzio-k8s-events -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="EXTRA_BOOL")].value}' | grep -qx 'true'
+          kubectl get deployment logzio-k8s-events -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="POD_NAME")].valueFrom.fieldRef.fieldPath}' | grep -qx 'metadata.name'
 
       - name: Cleanup Environment
         run: |
