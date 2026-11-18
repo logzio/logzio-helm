@@ -180,6 +180,11 @@ jobs:
           go get go.uber.org/zap
           go test -v ./tests/metrics_e2e_test.go ./tests/common.go -run 'TestContainerMetrics|TestInfrastructureMetrics|TestKubeletMetrics|TestMetricsFilterExcludeKubeSystemNamespace'
 
+      - name: Run k8s objects logs test
+        env:
+          LOGZIO_LOGS_API_KEY: ${{ secrets.LOGZIO_LOGS_API_KEY }}
+        run: go test -v ./tests/k8s_objects_logs_e2e_test.go ./tests/common.go
+
       - name: Debug test failure (if any)
         if: failure()
         run: |
