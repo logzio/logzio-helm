@@ -112,7 +112,9 @@ func TestKubeletMetrics(t *testing.T) {
 	requiredMetrics := map[string][]string{
 		"kube_pod_container_info":            {"p8s_logzio_name", "namespace"},
 		"kube_daemonset_status_number_ready": {"p8s_logzio_name", "daemonset"},
-		"kubelet_volume_stats_used_bytes":    {"p8s_logzio_name", "namespace", "persistentvolumeclaim"},
+	}
+	if os.Getenv("KUBERNETES_ENV") == "" {
+		requiredMetrics["kubelet_volume_stats_used_bytes"] = []string{"p8s_logzio_name", "namespace", "persistentvolumeclaim"}
 	}
 	envId := os.Getenv("ENV_ID")
 	query := fmt.Sprintf(`{env_id='%s'}`, envId)

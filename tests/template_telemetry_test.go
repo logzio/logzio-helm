@@ -31,8 +31,9 @@ type scrapeJob struct {
 		} `yaml:"selectors"`
 	} `yaml:"kubernetes_sd_configs"`
 	RelabelConfigs []struct {
-		Action string `yaml:"action"`
-		Regex  string `yaml:"regex"`
+		Action       string   `yaml:"action"`
+		Regex        string   `yaml:"regex"`
+		SourceLabels []string `yaml:"source_labels"`
 	} `yaml:"relabel_configs"`
 }
 
@@ -117,7 +118,7 @@ func scopedToOwnNode(job scrapeJob, role string) bool {
 		return false
 	}
 	for _, r := range job.RelabelConfigs {
-		if r.Action == "keep" && r.Regex == ownNode {
+		if r.Action == "keep" && r.Regex == ownNode && len(r.SourceLabels) == 1 && strings.HasSuffix(r.SourceLabels[0], "_node_name") {
 			return true
 		}
 	}
@@ -125,7 +126,7 @@ func scopedToOwnNode(job scrapeJob, role string) bool {
 }
 
 func TestCollectorConfigsHaveNoBareEnvVars(t *testing.T) {
-	bareVar := regexp.MustCompile(`\$[A-Za-z_][A-Za-z0-9_]*`)
+	bareVar := regexp.MustCompile(`(?:^|[^$])(\$[A-Za-z_][A-Za-z0-9_]*)`)
 	cases := []struct {
 		chart string
 		args  []string
@@ -138,8 +139,8 @@ func TestCollectorConfigsHaveNoBareEnvVars(t *testing.T) {
 	for _, c := range cases {
 		for name, relay := range collectorConfigs(helmTemplate(t, c.chart, c.args...)) {
 			for _, line := range strings.Split(relay, "\n") {
-				if m := bareVar.FindString(line); m != "" {
-					t.Errorf("%s: %s is not expanded by the collector, use ${%s}: %s", name, m, m[1:], strings.TrimSpace(line))
+				if m := bareVar.FindStringSubmatch(line); m != nil {
+					t.Errorf("%s: %s is not expanded by the collector, use ${%s}: %s", name, m[1], m[1][1:], strings.TrimSpace(line))
 				}
 			}
 		}
@@ -191,7 +192,7 @@ func TestTelemetryOptionalFeaturesRender(t *testing.T) {
 		"carbon":              {"--set", "carbon.enabled=true"},
 		"windows":             {"--set", "global.windows.enabled=true"},
 		"podDisruptionBudget": {"--set", "podDisruptionBudget.enabled=true"},
-		"autoscaling":         {"--set", "collector.mode=standalone", "--set", "autoscaling.enabled=true"},
+		"autoscaling":         {"--set", "collector.mode=standalone", "--set", "standaloneCollector.enabled=true", "--set", "autoscaling.enabled=true"},
 	}
 	for name, args := range features {
 		t.Run(name, func(t *testing.T) {
