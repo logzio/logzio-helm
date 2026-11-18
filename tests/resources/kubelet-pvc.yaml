@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kubelet-metrics-pvc
+  annotations:
+    volumeType: local
+spec:
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests:
+      storage: 10Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pvc-writer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pvc-writer
+  template:
+    metadata:
+      labels:
+        app: pvc-writer
+    spec:
+      containers:
+        - name: pvc-writer
+          image: busybox:1.36
+          command: ["sh", "-c", "echo data > /data/file && sleep infinity"]
+          volumeMounts:
+            - name: data
+              mountPath: /data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: kubelet-metrics-pvc
