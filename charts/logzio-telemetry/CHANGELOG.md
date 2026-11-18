@@ -1,6 +1,9 @@
 # Changes by Version
 
 <!-- next version -->
+## 7.1.0
+- Name the ClusterRole and ClusterRoleBinding after the release instead of `default`.
+- Discover service endpoints with the `EndpointSlice` API instead of the deprecated `Endpoints` API.
 ## 7.0.2
 - Remove the `cluster-admin` ClusterRoleBinding in `standalone` mode, the collector uses the chart's ClusterRole.
 
