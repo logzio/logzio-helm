@@ -170,6 +170,14 @@ clusterRoleRules:
   - get
   - list
   - watch
+- apiGroups:
+  - discovery.k8s.io
+  resources:
+  - endpointslices
+  verbs:
+  - get
+  - list
+  - watch
 
 prometheus-pushgateway:
   serviceAnnotations:
@@ -390,7 +398,7 @@ metricsConfig:
           metrics_path: /metrics
           scheme: http
           kubernetes_sd_configs:
-          - role: endpoints
+          - role: endpointslice
           relabel_configs:
             - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scrape]
               action: keep
@@ -1049,7 +1057,7 @@ daemonsetConfig:
           metrics_path: /metrics
           scheme: http
           kubernetes_sd_configs:
-          - role: endpoints
+          - role: endpointslice
           relabel_configs:
             - source_labels: [__meta_kubernetes_pod_node_name]
               regex: '${KUBE_NODE_NAME}'
