@@ -7,6 +7,9 @@ on:
       - 'charts/logzio-k8s-events/Chart.yaml'
       - 'charts/logzio-k8s-events/templates/**'
       - 'charts/logzio-k8s-events/values.yaml'
+      - '.github/workflows/logzio-k8s-events-test.yaml'
+      - 'tests/k8s_events_logs_e2e_test.go'
+      - 'tests/resources/k8s-events-workload.yaml'
 
 permissions:
   contents: read
@@ -15,8 +18,20 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+      - name: Generate random id
+        id: random_id
+        run: echo "rand=$(echo $RANDOM)" >> $GITHUB_OUTPUT
+
+      - name: Set ENV_ID
+        run: echo "ENV_ID=k8s-events-test-run-${{ steps.random_id.outputs.rand }}" >> $GITHUB_ENV
+
       - name: Checkout code
         uses: actions/checkout@v7
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
 
       - name: Install Kind
         run: |
@@ -31,7 +46,7 @@ jobs:
 
       - name: Deploy K8S Events Helm Chart
         run: |
-          kubectl create secret generic k8s-events-hash-key --from-literal=masking-hash-key=test-key
+          kubectl create secret generic k8s-events-hash-key --from-literal=masking-hash-key="$(openssl rand -hex 32)"
           cd charts/logzio-k8s-events
           helm upgrade --install \
           --set global.env_id=${{ env.ENV_ID }} \
@@ -61,6 +76,21 @@ jobs:
           kubectl get deployment logzio-k8s-events -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="EXTRA_BOOL")].value}' | grep -qx 'true'
           kubectl get deployment logzio-k8s-events -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="POD_NAME")].valueFrom.fieldRef.fieldPath}' | grep -qx 'metadata.name'
 
+      - name: Create and update test resources
+        run: |
+          # Events from before the informers sync are ignored
+          sleep 20
+          kubectl apply -f tests/resources/k8s-events-workload.yaml
+          sleep 5
+          kubectl -n k8s-events-e2e patch secret db --type merge -p '{"stringData":{"value":"E2E-MARKER-DATA-CHANGED"}}'
+          kubectl -n k8s-events-e2e set env deployment/app NEW_VAR=1
+
+      - name: Run k8s events logs test
+        env:
+          LOGZIO_LOGS_API_KEY: ${{ secrets.LOGZIO_LOGS_API_KEY }}
+        run: go test -v ./tests/k8s_events_logs_e2e_test.go ./tests/common.go
+
       - name: Cleanup Environment
+        if: always()
         run: |
           kind delete cluster --name kind-${{ github.run_id }}
