@@ -1,0 +1,45 @@
+# Resources for the logzio-k8s-events e2e test. The marker values must never reach Logz.io in plaintext.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: k8s-events-e2e
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db
+  namespace: k8s-events-e2e
+stringData:
+  value: E2E-MARKER-DATA
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+  namespace: k8s-events-e2e
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: k8s-events-e2e
+  template:
+    metadata:
+      labels:
+        app: k8s-events-e2e
+    spec:
+      containers:
+        - name: app
+          image: registry.k8s.io/pause:3.10
+          env:
+            # Matched by the sensitiveEnvNames value the test installs the chart with
+            - name: INTERNAL_ID
+              value: E2E-MARKER-ENV
+            - name: LOG_LEVEL
+              value: debug
+          volumeMounts:
+            - name: db
+              mountPath: /db
+      volumes:
+        - name: db
+          secret:
+            secretName: db

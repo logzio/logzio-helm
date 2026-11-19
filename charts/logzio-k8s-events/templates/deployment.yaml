@@ -32,17 +32,39 @@ spec:
       containers:
         - name: {{ .Values.k8sApp }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        {{- if (or .Values.secret.name .Values.envVars) }}
+        {{- $debug := eq (toString .Values.debug) "true" }}
+        {{- $hashKeySecret := .Values.maskingHashKeySecret | default dict }}
+        {{- if (or .Values.secret.name .Values.envVars $debug .Values.sensitiveEnvNames $hashKeySecret.name) }}
           env:
           {{- range .Values.envVars }}
             - name: {{ .name | quote }}
-            {{- if .value }}
-              value: {{ with .value }}{{ tpl . $ | quote }}{{- end }}
+            {{- if and (hasKey . "value") (not (kindIs "invalid" .value)) }}
+            {{- $value := .value }}
+            {{- /* YAML numbers arrive as floats, which toString would print as 1e+06 */}}
+            {{- if and (kindIs "float64" $value) (eq $value (float64 (int64 $value))) }}
+            {{- $value = int64 $value }}
+            {{- end }}
+              value: {{ tpl (toString $value) $ | quote }}
             {{- end }}
             {{- if .valueFrom }}
               valueFrom:
-            {{ .valueFrom | toYaml | indent 16 }}
+                {{- toYaml .valueFrom | nindent 16 }}
             {{- end }}
+          {{- end }}
+          {{- if $debug }}
+            - name: DEBUG
+              value: "true"
+          {{- end }}
+          {{- with .Values.sensitiveEnvNames }}
+            - name: SENSITIVE_ENV_NAMES
+              value: {{ . | quote }}
+          {{- end }}
+          {{- with $hashKeySecret.name }}
+            - name: MASKING_HASH_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ . | quote }}
+                  key: {{ $hashKeySecret.key | default "masking-hash-key" | quote }}
           {{- end }}
           {{- if .Values.secret.name }}
             - name: LOGZIO_TOKEN
