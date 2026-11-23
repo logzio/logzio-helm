@@ -1,6 +1,16 @@
 # Changes by Version
 
 <!-- next version -->
+## 8.2.0
+- Upgrade `logzio-k8s-events` chart to `3.0.0`
+  - **Breaking changes:**
+    - `metadata.managedFields` is no longer shipped.
+    - Masked values are hashed with HMAC-SHA256 instead of MD5.
+    - Only a one-line summary of each event is printed to stdout.
+  - Mask sensitive env var values and Secrets deleted while the watch was down.
+  - Batch logs and set `@timestamp` to the time of the event.
+  - Add `debug`, `sensitiveEnvNames`, `maskingHashKeySecret` and `envVars` settings.
+
 ## 8.1.0
 - Upgrade `logzio-k8s-telemetry` chart to `7.1.0`
   - Remove the `cluster-admin` ClusterRoleBinding in `standalone` mode.
