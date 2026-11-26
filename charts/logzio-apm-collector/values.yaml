@@ -10,8 +10,9 @@ spm:
   enabled: false
 
 # Enable Service Graph metrics
+# Left empty, it follows `spm.enabled`. Set `true`/`false` to override.
 serviceGraph:
-  enabled: false
+  enabled:
 
 # Specifies a custom name for the chart's resources
 nameOverride: ""
@@ -204,18 +205,29 @@ traceConfig:
         - key: env_id
           value: ${ENV_ID}
           action: insert
+    # Current instrumentation writes the new semantic-convention names; APM reads the old ones.
+    # Copy each new name to the old one when the old one is missing.
+    transform/semconv:
+      error_mode: ignore
+      trace_statements:
+        - context: span
+          statements:
+            - set(attributes["db.system"], attributes["db.system.name"]) where attributes["db.system"] == nil and attributes["db.system.name"] != nil
+            - set(attributes["db.name"], attributes["db.namespace"]) where attributes["db.name"] == nil and attributes["db.namespace"] != nil
+            - set(attributes["http.method"], attributes["http.request.method"]) where attributes["http.method"] == nil and attributes["http.request.method"] != nil
+            - set(attributes["http.status_code"], attributes["http.response.status_code"]) where attributes["http.status_code"] == nil and attributes["http.response.status_code"] != nil
     batch: {}
   service:
     extensions: [health_check]
     pipelines:
       traces:
         receivers: [zipkin, otlp]
-        processors: [attributes/env_id, k8sattributes, resource/k8s, tail_sampling, batch]
+        processors: [attributes/env_id, k8sattributes, resource/k8s, transform/semconv, tail_sampling, batch]
         exporters: [logzio]
-      # Removed if spm.enabled is false
+      # Removed if both spm and serviceGraph are disabled
       traces/spm:
         receivers: [zipkin, otlp]
-        processors: [attributes/env_id, k8sattributes, batch]
+        processors: [attributes/env_id, k8sattributes, transform/semconv, batch]
         exporters: [otlp/spm_forwarder]
     telemetry:
       logs:
@@ -290,6 +302,11 @@ spmConfig:
         - name: cloud.provider
         - name: cloud.region
         - name: db.system
+        - name: db.system.name
+        - name: db.name
+        - name: db.namespace
+        - name: rpc.service
+        - name: rpc.system
         - name: messaging.system
         - default: ${ENV_ID}
           name: env_id
@@ -315,6 +332,19 @@ spmConfig:
         latency_histogram_buckets: [2ms, 8ms, 50ms, 100ms, 200ms, 500ms, 1s, 5s, 10s]
         dimensions:
           - env_id
+        # Name database nodes after the database, not its type.
+        database_name_attributes: [db.name, db.namespace]
+        # Attributes that name the called node when it doesn't send its own spans (databases, queues, AWS SDK, external HTTP).
+        # Earlier entries win.
+        virtual_node_peer_attributes:
+          - peer.service
+          - service.peer.name
+          - db.name
+          - db.system
+          - messaging.destination.name
+          - messaging.system
+          - rpc.service
+          - server.address
         store:
           ttl: 5s
           max_items: 100000

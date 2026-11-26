@@ -5,7 +5,7 @@ Below you can find a complete list of settings in `values.yaml`.
 |-----------------------------------------------|---------------------------------------------------------------------------------------------|---------------------------------------------------------------|
 | enabled                                       | Toggle for enabling the Helm chart deployment                                               | `false`                                                       |
 | spm.enabled                                   | Toggle for enabling SPM Collection                                                          | `false`                                                       |
-| serviceGraph.enabled                          | Toggle for enabling Service Graph metrics Collection                                        | `false`                                                       |
+| serviceGraph.enabled                          | Toggle for enabling Service Graph metrics Collection. Empty follows `spm.enabled`.          | `` (empty)                                                    |
 | nameOverride                                  | Override the default name for the deployment.                                               | `""`                                                          |
 | fullnameOverride                              | Override the default name for the deployment.                                               | `""`                                                          |
 | namespaceOverride                             | Override the namespace into which the resources will be deployed.                           | `""`                                                          |

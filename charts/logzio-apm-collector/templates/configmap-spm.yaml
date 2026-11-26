@@ -1,4 +1,4 @@
-{{ if and .Values.enabled (or .Values.spm.enabled .Values.serviceGraph.enabled) }}
+{{ if and .Values.enabled (or .Values.spm.enabled (include "apm-collector.serviceGraphEnabled" .)) }}
 {{- if .Values.configMap.create }}
 apiVersion: v1
 kind: ConfigMap
