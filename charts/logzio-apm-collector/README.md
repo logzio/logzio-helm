@@ -242,7 +242,7 @@ SPM keeps these span attributes as span metrics dimensions:
 | Database | `db.system`, `db.system.name`, `db.name`, `db.namespace` |
 | Messaging | `messaging.system` |
 | Kubernetes | `k8s.pod.name`, `k8s.deployment.name`, `k8s.namespace.name`, `k8s.node.name`, `k8s.statefulset.name`, `k8s.replicaset.name`, `k8s.daemonset.name`, `k8s.cronjob.name`, `k8s.job.name` |
-| Cloud | `cloud.provider`, `cloud.region` |
+| Cloud | `cloud.provider`, `cloud.region`, `cloud.account.id` |
 | Environment | `env_id` |
 
 Current OpenTelemetry instrumentation writes newer attribute names. When a span has only the new name, the collector copies it to the old one, so both are present:

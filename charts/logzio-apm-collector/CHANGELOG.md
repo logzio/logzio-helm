@@ -1,6 +1,9 @@
 # Changes by Version
 
 <!-- next version -->
+## 2.1.1
+- Add span metrics dimension `cloud.account.id`, so dashboards can match span metrics to CloudWatch data for the same AWS account and region.
+
 ## 2.1.0
 - Keep current OpenTelemetry attributes as span metrics dimensions: `db.system.name`, `db.namespace`, `rpc.service`, `rpc.system` (alongside `db.system`, and new `db.name`).
 - Add `transform/semconv` processor: when a span has only the new attribute name, copy it to the old one (`db.system.name` >> `db.system`, `db.namespace` >> `db.name`, `http.request.method` >> `http.method`, `http.response.status_code` >> `http.status_code`).
