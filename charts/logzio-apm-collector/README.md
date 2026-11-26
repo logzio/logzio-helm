@@ -250,6 +250,8 @@ Current OpenTelemetry instrumentation writes newer attribute names. When a span 
 
 To change the list, override `spmConfig.connectors.spanmetrics.dimensions`.
 
+Service Graph names a called node that doesn't send its own spans from the first attribute present, in this order: `peer.service`, `service.peer.name`, `db.name`, `db.system`, `messaging.destination.name`, `messaging.system`, `rpc.service`, `server.address`. Database nodes are named after the database (`db.name`, then `db.namespace`). To change this, override `spmConfig.connectors.servicegraph.virtual_node_peer_attributes` and `database_name_attributes`.
+
 ## Uninstalling
 To uninstall the `logzio-apm-collector` chart, you can use:
 ```shell

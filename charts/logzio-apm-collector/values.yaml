@@ -332,6 +332,19 @@ spmConfig:
         latency_histogram_buckets: [2ms, 8ms, 50ms, 100ms, 200ms, 500ms, 1s, 5s, 10s]
         dimensions:
           - env_id
+        # Name database nodes after the database, not its type.
+        database_name_attributes: [db.name, db.namespace]
+        # Attributes that name the called node when it doesn't send its own spans (databases, queues, AWS SDK, external HTTP).
+        # Earlier entries win.
+        virtual_node_peer_attributes:
+          - peer.service
+          - service.peer.name
+          - db.name
+          - db.system
+          - messaging.destination.name
+          - messaging.system
+          - rpc.service
+          - server.address
         store:
           ttl: 5s
           max_items: 100000
