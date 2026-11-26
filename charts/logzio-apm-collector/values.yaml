@@ -301,6 +301,7 @@ spmConfig:
         - name: k8s.job.name
         - name: cloud.provider
         - name: cloud.region
+        - name: cloud.account.id
         - name: db.system
         - name: db.system.name
         - name: db.name
