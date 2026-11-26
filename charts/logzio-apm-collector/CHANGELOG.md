@@ -1,6 +1,11 @@
 # Changes by Version
 
 <!-- next version -->
+## 2.1.0
+- Keep current OpenTelemetry attributes as span metrics dimensions: `db.system.name`, `db.namespace`, `rpc.service`, `rpc.system` (alongside `db.system`, and new `db.name`).
+- Add `transform/semconv` processor: when a span has only the new attribute name, copy it to the old one (`db.system.name` >> `db.system`, `db.namespace` >> `db.name`, `http.request.method` >> `http.method`, `http.response.status_code` >> `http.status_code`).
+- Service Graph now follows `spm.enabled` by default. `serviceGraph.enabled` defaults to empty; set it to `false` to keep it off with SPM on.
+
 ## 2.0.0
 - **Breaking changes**
   - Upgrade OpenTelemetry Collector from `0.133.0` to `0.165.0`.

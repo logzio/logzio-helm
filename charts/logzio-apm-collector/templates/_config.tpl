@@ -84,7 +84,7 @@
 {{- end }}
 
 
-{{- if not (or .Values.spm.enabled .Values.serviceGraph.enabled) }}
+{{- if not (or .Values.spm.enabled (include "apm-collector.serviceGraphEnabled" .)) }}
 {{- $_ := unset $tracesConfig.service.pipelines "traces/spm" }}
 {{- end -}}
 
@@ -97,7 +97,7 @@
 {{/* Build config file for SPM Collector */}}
 {{- define "spm-collector.config" -}}
 {{- $spmConfig := deepCopy .Values.spmConfig }}
-{{- if .Values.serviceGraph.enabled }}
+{{- if (include "apm-collector.serviceGraphEnabled" .) }}
 {{- $_ := set (index $spmConfig "service" "pipelines" "metrics/spm-logzio") "receivers" (append (index $spmConfig "service" "pipelines" "metrics/spm-logzio" "receivers") "servicegraph") -}}
 {{- $_ := set (index $spmConfig "service" "pipelines" "traces") "exporters" (append (index $spmConfig "service" "pipelines" "traces" "exporters") "servicegraph") -}}
 {{- end }}

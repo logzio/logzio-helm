@@ -38,7 +38,7 @@ logzio-apm-collector logzio-helm/logzio-apm-collector
 ```
 
 > [!NOTE]
-> To disable either one of SPM or Service Graph remove the relevant `--set XXX.enabled` line from the above command.
+> Service Graph follows `spm.enabled` unless you set `serviceGraph.enabled`. To turn it off while keeping SPM, set `--set serviceGraph.enabled=false`. To disable SPM, remove the `--set spm.enabled` line.
 
 > [!IMPORTANT]
 > Values of `<<LOGZIO_TRACES_TOKEN>>`, `<<LOGZIO_SPM_TOKEN>>` and `<<LOGZIO_REGION_CODE>>` can be found in your Logz.io account.  
@@ -54,6 +54,7 @@ logzio-apm-collector logzio-helm/logzio-apm-collector
 - [Enable File Storage extension](#enable-file-storage-extension)
 - [Resolve `Readiness probe` and `Liveness probe` failures](#resolve-readiness-probe-and-liveness-probe-failures)
 - [Filtering traces (since 1.3.0)](#filtering-traces-since-130)
+- [Span metrics dimensions](#span-metrics-dimensions)
 
 
 
@@ -230,6 +231,24 @@ Processing order:
 
 The chart translates these rules into OpenTelemetry `filter` processors and injects them directly **after** the `k8sattributes` processor so Kubernetes metadata is available during matching.
 
+
+## Span metrics dimensions
+SPM keeps these span attributes as span metrics dimensions:
+
+| Area | Dimensions |
+|------|------------|
+| HTTP | `http.method`, `http.status_code`, `http.request.method`, `http.response.status_code` |
+| RPC | `rpc.grpc.status_code`, `rpc.service`, `rpc.system` |
+| Database | `db.system`, `db.system.name`, `db.name`, `db.namespace` |
+| Messaging | `messaging.system` |
+| Kubernetes | `k8s.pod.name`, `k8s.deployment.name`, `k8s.namespace.name`, `k8s.node.name`, `k8s.statefulset.name`, `k8s.replicaset.name`, `k8s.daemonset.name`, `k8s.cronjob.name`, `k8s.job.name` |
+| Cloud | `cloud.provider`, `cloud.region` |
+| Environment | `env_id` |
+
+Current OpenTelemetry instrumentation writes newer attribute names. When a span has only the new name, the collector copies it to the old one, so both are present:
+`db.system.name` >> `db.system`, `db.namespace` >> `db.name`, `http.request.method` >> `http.method`, `http.response.status_code` >> `http.status_code`.
+
+To change the list, override `spmConfig.connectors.spanmetrics.dimensions`.
 
 ## Uninstalling
 To uninstall the `logzio-apm-collector` chart, you can use:

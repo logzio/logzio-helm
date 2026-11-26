@@ -37,3 +37,13 @@ The SPM service address
 {{- $serviceName := include "spm-collector.fullname" .}}
 {{- printf "http://%s.%s.svc.cluster.local:4317" $serviceName .Release.Namespace }}
 {{- end }}
+
+{{/*
+Service Graph is on when serviceGraph.enabled is true, or when it is unset and spm.enabled is true.
+Returns "true" or "".
+*/}}
+{{- define "apm-collector.serviceGraphEnabled" -}}
+{{- $sg := .Values.serviceGraph.enabled -}}
+{{- if kindIs "invalid" $sg }}{{ $sg = .Values.spm.enabled }}{{ end -}}
+{{- if $sg }}true{{ end -}}
+{{- end -}}
